@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="线性规划——模型引出 在总量有限的条件下，如何合理分配以实现最大化、最小化或最优化目标？  生产优化：某工厂计划生产两种机床，每种机床的单位利润不同，且在生产过程中会消耗不同数量的资源，如电力、工时和材料。如何安排生产数量，以使总利润最大？ 资产配置：总资产为 \(A\)，可投资于 \(n\) 种不同的金融资产。每种资产具有不同的平均收益率、风险损失率和手续费。如何分配投资比例，才能在控">
+<meta property="og:type" content="article">
+<meta property="og:title" content="线性规划">
+<meta property="og:url" content="http://example.com/2025/05/22/LinearProgramming/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="线性规划——模型引出 在总量有限的条件下，如何合理分配以实现最大化、最小化或最优化目标？  生产优化：某工厂计划生产两种机床，每种机床的单位利润不同，且在生产过程中会消耗不同数量的资源，如电力、工时和材料。如何安排生产数量，以使总利润最大？ 资产配置：总资产为 \(A\)，可投资于 \(n\) 种不同的金融资产。每种资产具有不同的平均收益率、风险损失率和手续费。如何分配投资比例，才能在控">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-05-22T01:32:43.000Z">
+<meta property="article:modified_time" content="2025-05-23T12:13:01.661Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/05/22/LinearProgramming/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2025/05/22/LinearProgramming/","path":"2025/05/22/LinearProgramming/","title":"线性规划"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>线性规划 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E6%A8%A1%E5%9E%8B%E5%BC%95%E5%87%BA"><span class="nav-number">1.</span> <span class="nav-text">线性规划——模型引出</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8%E6%80%BB%E9%87%8F%E6%9C%89%E9%99%90%E7%9A%84%E6%9D%A1%E4%BB%B6%E4%B8%8B%E5%A6%82%E4%BD%95%E5%90%88%E7%90%86%E5%88%86%E9%85%8D%E4%BB%A5%E5%AE%9E%E7%8E%B0%E6%9C%80%E5%A4%A7%E5%8C%96%E6%9C%80%E5%B0%8F%E5%8C%96%E6%88%96%E6%9C%80%E4%BC%98%E5%8C%96%E7%9B%AE%E6%A0%87"><span class="nav-number">1.1.</span> <span class="nav-text">在总量有限的条件下，如何合理分配以实现最大化、最小化或最优化目标？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%90%E5%90%8C%E5%AD%A6%E7%89%B9%E5%88%AB%E5%96%9C%E6%AC%A2%E7%8E%A9%E4%B8%80%E6%AC%BE%E6%B8%B8%E6%88%8F%E6%83%B3%E6%89%BE%E5%88%B0%E6%9C%80%E5%BF%AB%E5%8D%87%E7%BA%A7%E5%88%B0%E6%BB%A1%E7%BA%A7%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">1.2.</span> <span class="nav-text">某同学特别喜欢玩一款游戏，想找到最快升级到满级的方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92"><span class="nav-number">1.3.</span> <span class="nav-text">线性规划</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E6%A8%A1%E5%9E%8B%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">线性规划——模型原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E6%A8%A1%E5%9E%8B%E7%9A%84%E4%B8%89%E8%A6%81%E7%B4%A0"><span class="nav-number">2.1.</span> <span class="nav-text">线性规划模型的三要素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E6%A8%A1%E5%9E%8B%E5%BB%BA%E7%AB%8B%E6%AD%A5%E9%AA%A4"><span class="nav-number">2.2.</span> <span class="nav-text">线性规划模型建立步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%90%E5%90%8C%E5%AD%A6%E7%89%B9%E5%88%AB%E5%96%9C%E6%AC%A2%E7%8E%A9%E4%B8%80%E6%AC%BE%E6%B8%B8%E6%88%8F%E6%83%B3%E6%89%BE%E5%88%B0%E6%9C%80%E5%BF%AB%E5%8D%87%E7%BA%A7%E5%88%B0%E6%BB%A1%E7%BA%A7%E7%9A%84%E6%96%B9%E6%B3%95-1"><span class="nav-number">2.2.1.</span> <span class="nav-text">某同学特别喜欢玩一款游戏，想找到最快升级到满级的方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E7%9A%84%E8%A1%A8%E7%8E%B0%E5%BD%A2%E5%BC%8F"><span class="nav-number">2.3.</span> <span class="nav-text">线性规划的表现形式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E6%A8%A1%E5%9E%8B%E7%89%B9%E7%82%B9"><span class="nav-number">2.4.</span> <span class="nav-text">线性规划模型特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E5%9E%8B%E8%A7%84%E5%88%92%E6%A8%A1%E5%9E%8B%E6%B1%82%E8%A7%A3"><span class="nav-number">2.5.</span> <span class="nav-text">线型规划模型求解</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E5%85%B8%E5%9E%8B%E4%BE%8B%E9%A2%98"><span class="nav-number">3.</span> <span class="nav-text">线性规划——典型例题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BE%8B%E9%A2%981998%E5%B9%B4%E5%9B%BD%E8%B5%9Ba%E9%A2%98"><span class="nav-number">3.1.</span> <span class="nav-text">例题（1998年国赛A题）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%95%E8%B5%84%E6%94%B6%E7%9B%8A%E9%97%AE%E9%A2%98"><span class="nav-number">3.1.1.</span> <span class="nav-text">投资收益问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="nav-number">3.1.2.</span> <span class="nav-text">问题分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E5%81%87%E8%AE%BE"><span class="nav-number">3.1.3.</span> <span class="nav-text">模型假设</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E5%BB%BA%E7%AB%8B"><span class="nav-number">3.1.4.</span> <span class="nav-text">模型建立</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E7%9A%84%E7%AE%80%E5%8C%96"><span class="nav-number">3.1.5.</span> <span class="nav-text">模型的简化</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92matlab%E4%BB%A3%E7%A0%81%E6%B1%82%E8%A7%A3"><span class="nav-number">4.</span> <span class="nav-text">线性规划——matlab代码求解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#matlab-linprog%E5%87%BD%E6%95%B0"><span class="nav-number">4.1.</span> <span class="nav-text">Matlab linprog函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B1%82%E8%A7%A3%E6%9F%90%E5%90%8C%E5%AD%A6%E6%B8%B8%E6%88%8F%E5%8D%87%E7%BA%A7%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">4.2.</span> <span class="nav-text">求解某同学游戏升级的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B1%82%E8%A7%A3%E6%8A%95%E8%B5%84%E6%94%B6%E7%9B%8A%E9%97%AE%E9%A2%98"><span class="nav-number">4.3.</span> <span class="nav-text">求解投资收益问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E6%9E%9C%E5%88%86%E6%9E%90"><span class="nav-number">4.4.</span> <span class="nav-text">结果分析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92python%E4%BB%A3%E7%A0%81%E6%B1%82%E8%A7%A3"><span class="nav-number">5.</span> <span class="nav-text">线性规划——python代码求解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#python-linprog%E5%87%BD%E6%95%B0"><span class="nav-number">5.1.</span> <span class="nav-text">python linprog函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3"><span class="nav-number">5.1.1.</span> <span class="nav-text">参数详解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="nav-number">5.1.2.</span> <span class="nav-text">返回值</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B1%82%E8%A7%A3%E6%9F%90%E5%90%8C%E5%AD%A6%E6%B8%B8%E6%88%8F%E5%8D%87%E7%BA%A7%E7%9A%84%E9%97%AE%E9%A2%98-1"><span class="nav-number">5.2.</span> <span class="nav-text">求解某同学游戏升级的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B1%82%E8%A7%A3%E6%8A%95%E8%B5%84%E6%94%B6%E7%9B%8A%E9%97%AE%E9%A2%98-1"><span class="nav-number">5.3.</span> <span class="nav-text">求解投资收益问题</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/05/22/LinearProgramming/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="线性规划 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          线性规划
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-05-22 09:32:43" itemprop="dateCreated datePublished" datetime="2025-05-22T09:32:43+08:00">2025-05-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-05-23 20:13:01" itemprop="dateModified" datetime="2025-05-23T20:13:01+08:00">2025-05-23</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="线性规划模型引出">线性规划——模型引出</h1>
+<h2
+id="在总量有限的条件下如何合理分配以实现最大化最小化或最优化目标">在总量有限的条件下，如何合理分配以实现最大化、最小化或最优化目标？</h2>
+<ul>
+<li><p><strong>生产优化</strong>：某工厂计划生产两种机床，每种机床的单位利润不同，且在生产过程中会消耗不同数量的资源，如电力、工时和材料。<strong>如何安排生产数量，以使总利润最大？</strong></p></li>
+<li><p><strong>资产配置</strong>：总资产为 <span
+class="math inline">\(A\)</span>，可投资于 <span
+class="math inline">\(n\)</span>
+种不同的金融资产。每种资产具有不同的平均收益率、风险损失率和手续费。<strong>如何分配投资比例，才能在控制风险的同时，实现收益最大化？</strong></p></li>
+<li><p><strong>物流调度</strong>：某商品从 <span
+class="math inline">\(n\)</span> 个产地运输至 <span
+class="math inline">\(p\)</span>
+个销售地。各产地的产量已知，销售地的需求量也已确定。不同产地到销售地的运输成本不同。<strong>如何安排运输计划，才能在满足供需的前提下，使总运营成本最小？</strong></p></li>
+<li><p><strong>车辆调度</strong>：不同类型车辆的承载能力不同。工地之间需安排车辆进行运输作业，多个线路需满足各自的运输需求。<strong>如何调配车辆，使车次安排最合理、资源利用率最高？</strong></p></li>
+</ul>
+<p>以上列举的是一些常见的<strong>运筹优化问题</strong>，也是数学建模竞赛中经常出现的题型。本质上，它们都是在特定约束条件下，寻求某个目标的极大或极小值，也就是典型的<strong>极值</strong>问题。在这类问题中，线性规划是最常用、也最有效的建模与求解工具之一。</p>
+<h2
+id="某同学特别喜欢玩一款游戏想找到最快升级到满级的方法">某同学特别喜欢玩一款游戏，想找到最快升级到满级的方法</h2>
+<ul>
+<li>游戏中每天有 <strong>100 点体力</strong>可用，玩家可以通过反复挑战
+<strong>A、B、C 三张地图</strong>来获取经验值升级。</li>
+<li>每次通关可获得的经验分别为：A 图 <strong>20 点</strong>、B 图
+<strong>30 点</strong>、C 图 <strong>45 点</strong>。</li>
+<li>每次通关所需体力分别为：A 图 <strong>4 点</strong>、B 图 <strong>8
+点</strong>、C 图 <strong>15 点</strong>。</li>
+<li>每天通关的总次数上限为 <strong>20 次</strong>（A、B、C
+图加起来不超过 20 次）。</li>
+</ul>
+<p><strong>问题</strong>：这位同学应该如何分配通关 A、B、C
+三张地图的次数，才能在今天<strong>获得最多的经验值</strong>？</p>
+<h2 id="线性规划">线性规划</h2>
+<ul>
+<li><p><strong>线性规划</strong>（Linear Programming，简称
+LP）是运筹学中最早研究、发展最快、应用最广泛的方法之一。它是一种数学工具，主要用于研究<strong>在线性约束条件下，如何使线性目标函数达到极值</strong>的问题，常用于辅助人们进行科学决策与管理。</p></li>
+<li><p>作为运筹学的重要分支，线性规划在<strong>军事、经济、管理、工程</strong>等领域具有广泛应用。它为在资源有限的情况下，如何做出最优配置与决策，提供了科学依据和有效手段。</p></li>
+</ul>
+<h1 id="线性规划模型原理">线性规划——模型原理</h1>
+<h2 id="线性规划模型的三要素">线性规划模型的三要素</h2>
+<ul>
+<li><strong>决策变量</strong>:
+问题中要确定的未知量，用于表明规划问题中的用数量表示的方案、措施等，可由决策者决定和控制；<br />
+</li>
+<li><strong>目标函数</strong>:
+决策变量的函数，优化目标通常是求该函数的最大值或最小值；<br />
+</li>
+<li><strong>约束条件</strong>:
+决策变量的取值所受到的约束和限制条件，通常用含有决策变量的等式或不等式表示。</li>
+</ul>
+<h2 id="线性规划模型建立步骤">线性规划模型建立步骤</h2>
+<ul>
+<li>从实际问题中建立数学模型一般有以下三个步骤：
+<ol type="1">
+<li>根据影响所要达到目的的因素找到决策变量<br />
+</li>
+<li>由决策变量和所在达到目的之间的函数关系确定目标函数<br />
+</li>
+<li>由决策变量所受的限制条件确定决策变量所要满足的约束条件</li>
+</ol></li>
+</ul>
+<h3
+id="某同学特别喜欢玩一款游戏想找到最快升级到满级的方法-1">某同学特别喜欢玩一款游戏，想找到最快升级到满级的方法</h3>
+<ul>
+<li><strong>决策变量</strong>：三个地图通关次数。设A、B、C三个地图通关的次数分别为<span
+class="math inline">\(x_1, x_2, x_3\)</span></li>
+<li><strong>目标函数</strong>：获得的经验最高。设经验为<span
+class="math inline">\(y\)</span>，<span class="math inline">\(\max y =
+20x_1 + 30x_2 + 45x_3\)</span></li>
+<li><strong>约束条件</strong>：
+<ul>
+<li>消耗体力不能超过100：<span class="math inline">\(4x_1 + 8x_2 + 15x_3
+\leqslant 100\)</span></li>
+<li>三个地图最多通关20次：<span class="math inline">\(x_1 + x_2 + x_3
+\leqslant 20\)</span></li>
+<li>隐藏约束条件：<span class="math inline">\(x_1, x_2, x_3 \geqslant
+0\)</span></li>
+</ul></li>
+</ul>
+<h2 id="线性规划的表现形式">线性规划的表现形式</h2>
+<ul>
+<li><p>一般形式/代数形式<br />
+<span class="math display">\[\begin{aligned}
+&amp;\max(\text{求}\min)~z=c_1x_1+c_2x_2+\cdots+c_nx_n,\\
+&amp;\mathrm{s.t.}\begin{cases}  
+a_{11}x_1+a_{12}x_2+\cdots+a_{1n}x_n\leqslant(\text{或}=,\geqslant)b_1,\\
+a_{21}x_1+a_{22}x_2+\cdots+a_{2n}x_n\leqslant(\text{或}=,\geqslant)b_2,\\
+\vdots\\
+a_{m1}x_1+a_{m2}x_2+\cdots+a_{mn}x_n\leqslant(\text{或}=,\geqslant)b_m,\\
+x_1,x_2,\cdots,x_n\geqslant 0.
+\end{cases}
+\end{aligned}\Rightarrow\begin{aligned}
+&amp;\max~y=20x_1+30x_2+45x_3,\\
+&amp;\mathrm{s.t.}\begin{cases}  
+4x_1+8x_2+15x_3\leqslant 100,\\
+x_1+x_2+x_3\leqslant 20,\\
+x_1, x_2, x_3\geqslant 0.  
+\end{cases}
+\end{aligned}\]</span></p></li>
+<li><p>简写形式： <span class="math display">\[\begin{aligned}
+&amp;\max(\text{或}\min)~z=\sum\limits_{j=1}^{n}c_j x_j\\
+&amp;\mathrm{s.t.}\begin{cases}   
+\sum\limits_{j=1}^{n} a_{ij}x_j\leqslant(\text{或}=,\geqslant)
+b_i,&amp;i=1,2,\cdots,m,\\   
+x_j\geqslant 0,&amp;j=1,2,\cdots,n.  
+\end{cases}
+\end{aligned}\]</span></p></li>
+<li><p>矩阵表现形式：</p></li>
+</ul>
+<p><span class="math display">\[\begin{aligned}
+&amp;\max(\text{式}\min)~z = c^T x,\\
+&amp;\mathrm{s.t.}\begin{cases}   
+Ax\leqslant(\text{或}=,\geqslant)b,\\   
+x\geqslant0.  
+\end{cases}\\
+&amp;c=[c_1, c_2, \cdots,
+c_n]^T\text{——目标函数的系数向量，即价值向量；}\\
+&amp;x=[x_1, x_2, \cdots, x_n]^T\text{——决策向量；}\\
+&amp;A=(a_{ij})_{m\times n}\text{——约束方程组的系数矩阵；}\\
+&amp;b=[b_1, b_2, \cdots, b_m]^T\text{——约束方程组的常数向量。}
+\end{aligned}\Rightarrow\begin{aligned}
+&amp;\max~y=c^T x,\\
+&amp;\mathrm{s.t.}   
+\begin{cases}   
+Ax\leqslant b,\\   
+x\geqslant0.  
+\end{cases}\\
+&amp;c=[20, 30, 45]^T\\  
+&amp;x=[x_1, x_2, x_3]^T\\  
+&amp;A=\begin{bmatrix}  
+4&amp;8&amp;15\\  
+1&amp;1&amp;1  
+\end{bmatrix},\\
+&amp;b = [100, 20]^T
+\end{aligned}\]</span></p>
+<h2 id="线性规划模型特点">线性规划模型特点</h2>
+<ul>
+<li>要解决的问题是优化类的（即在有限的资源条件下，获取最大的收益）。<br />
+</li>
+<li>目标函数和约束条件都是决策变量的线性函数，即不存在 <span
+class="math inline">\(x^2,e^x,\frac{1}{x},\sin x,\log_2 x\)</span>
+等。<br />
+</li>
+<li>线性规划模型：在一组线性约束条件下，求线性目标函数的最大值或最小值。</li>
+</ul>
+<p>数学建模的过程，就是把题目“翻译”成数学语言的过程一组公式，加上对这组公式含义的解释，就是一个数学模型。</p>
+<h2 id="线型规划模型求解">线型规划模型求解</h2>
+<ul>
+<li>线性规划求解可采用单纯形法，证明比较复杂，有兴趣可以自行学习。<br />
+</li>
+<li>推荐采用 matlab、python 的相关函数进行求解。</li>
+</ul>
+<h1 id="线性规划典型例题">线性规划——典型例题</h1>
+<h2 id="例题1998年国赛a题">例题（1998年国赛A题）</h2>
+<ul>
+<li>市场上有<span
+class="math inline">\(n\)</span>种资产（如股票、债券、……）<span
+class="math inline">\(s_i\)</span>（<span class="math inline">\(i =
+1,2,\cdots,n\)</span>）供投资者选择，某公司有数额为 <span
+class="math inline">\(M\)</span>
+的一笔相当大的资金可用作一个时期的投资。公司财务分析人员对这 <span
+class="math inline">\(n\)</span>
+种资产进行了评估，估算出在这一时期内购买资产的平均收益率为 <span
+class="math inline">\(r_i\)</span>，并预测出购买 <span
+class="math inline">\(s_i\)</span> 的风险损失率为 <span
+class="math inline">\(q_i\)</span>。考虑到投资越分散，总的风险越小，公司确定，当用这笔资金购买若干种资产时，总体风险可用所投资的
+<span class="math inline">\(s_i\)</span> 中最大的一个风险来度量。<br />
+</li>
+<li>购买 <span class="math inline">\(s_i\)</span> 要付交易费，费率为
+<span class="math inline">\(p_i\)</span>，并且当购买额不超过给定值 <span
+class="math inline">\(u_i\)</span> 时，交易费按购买 <span
+class="math inline">\(u_i\)</span>
+计算（不买当然无须付费）。另外，假定同期银行存款利率是 <span
+class="math inline">\(r_0\)</span>（<span
+class="math inline">\(r_0=5\%\)</span>），且既无交易费又无风险。<br />
+</li>
+<li>已知 <span class="math inline">\(n=4\)</span>
+时的相关数据如表所示。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">$ s_i $</th>
+<th style="text-align: center;"><span
+class="math inline">\(r_i(\%)\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(q_i(\%)\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(p_i(\%)\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(u_i(\text{元})\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">$ s_1 $</td>
+<td style="text-align: center;">28</td>
+<td style="text-align: center;">2.5</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">103</td>
+</tr>
+<tr>
+<td style="text-align: center;">$ s_2 $</td>
+<td style="text-align: center;">21</td>
+<td style="text-align: center;">1.5</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">198</td>
+</tr>
+<tr>
+<td style="text-align: center;">$ s_3 $</td>
+<td style="text-align: center;">23</td>
+<td style="text-align: center;">5.5</td>
+<td style="text-align: center;">4.5</td>
+<td style="text-align: center;">52</td>
+</tr>
+<tr>
+<td style="text-align: center;">$ s_4 $</td>
+<td style="text-align: center;">25</td>
+<td style="text-align: center;">2.6</td>
+<td style="text-align: center;">6.5</td>
+<td style="text-align: center;">40</td>
+</tr>
+</tbody>
+</table>
+<h3 id="投资收益问题">投资收益问题</h3>
+<ul>
+<li>投资收益问题：给上述公司设计投资组合方案，用给定资金 <span
+class="math inline">\(M\)</span>
+，有选择地购买若干种资产或存银行生息，使净收益尽可能大，总体风险尽可能小。</li>
+</ul>
+<h3 id="问题分析">问题分析</h3>
+<ul>
+<li>决策变量：投资不同项目 <span class="math inline">\(s_i\)</span> 的为
+<span class="math inline">\(x_i\)</span> (<span class="math inline">\(i
+= 1,2,\cdots,n\)</span>) ；</li>
+<li>目标函数：净收益 <span class="math inline">\(Q\)</span>
+尽可能大、总风险尽可能小；<br />
+</li>
+<li>约束条件：总资金 <span class="math inline">\(M\)</span>
+有限，每一笔投资都是非负数；<br />
+</li>
+<li>且已知，目标函数和约束条件都是决策变量的线性函数。</li>
+</ul>
+<h3 id="模型假设">模型假设</h3>
+<ul>
+<li>可供投资的资金数额 <span class="math inline">\(M\)</span>
+相当大；<br />
+</li>
+<li>投资越分散，总的风险越小，总体风险可用所投资的 <span
+class="math inline">\(s_i\)</span> 中最大的一个风险来度量；</li>
+<li>可供选择的 <span class="math inline">\(n+1\)</span>
+种资产（含银行存款）之间是相互独立的；</li>
+<li>每种资产可购买的数量为任意值；</li>
+<li>在当前投资周期内，<span
+class="math inline">\(r_i,q_i,p_i,u_i\)</span>（<span
+class="math inline">\(i=0,1,\cdots,n\)</span>）固定不变；</li>
+<li>不考虑在资产交易过程中产生的其他费用，如股票交易和花税等；</li>
+<li>由于投资数额 <span class="math inline">\(M\)</span>
+相当大，而题目设定的定额 <span class="math inline">\(u_i\)</span> 相对
+<span class="math inline">\(M\)</span> 很小，<span
+class="math inline">\(p_i\)</span> 更小，因此假设每一笔交易 <span
+class="math inline">\(x_i\)</span> 都大于对应定额 <span
+class="math inline">\(u_i\)</span>.</li>
+</ul>
+<h3 id="模型建立">模型建立</h3>
+<ul>
+<li>总体风险用所投资的 <span class="math inline">\(s_i\)</span>
+中最大的一个风险来衡量，即 <span class="math inline">\(\max\{q_i
+x_i|i=1,2,\cdots,n\}\)</span>。<br />
+</li>
+<li>购买 <span class="math inline">\(s_i\)</span>（<span
+class="math inline">\(i=1,2,\cdots,n\)</span>）所付交易费本来是一个分段函数，但假设中已经假设每一笔交易
+<span class="math inline">\(x_i\)</span> 都大于对应定额 <span
+class="math inline">\(u_i\)</span>，所以交易费 <span
+class="math inline">\(=p_i x_i\)</span>。这样购买 <span
+class="math inline">\(s_i\)</span> 的净收益可以简化为 <span
+class="math inline">\((r_i-p_i)x_i\)</span> 。<br />
+</li>
+<li><span class="math inline">\(\text{目标函数为}\begin{cases}
+\max\sum\limits_{i=0}^n (r_i - p_i)x_i, \\
+\min\{\max\limits_{1 \leqslant i \leqslant n} \{q_ix_i\}\}
+\end{cases}\text{，约束条件为}\begin{cases}
+\sum\limits_{i=0}^n (1 + p_i)x_i = M, \\
+x_i \geqslant 0, i = 0,1,\cdots,n.
+\end{cases}\)</span><br />
+</li>
+<li>这是一个多目标规划模型！</li>
+</ul>
+<h3 id="模型的简化">模型的简化</h3>
+<ul>
+<li><p>在实际投资中，投资者承受风险的程度不一样，若给定风险一个界限
+<span class="math inline">\(a\)</span>，使最大的一个风险 <span
+class="math inline">\(\frac{q_ix_i}{M} \leqslant
+a\)</span>，可找到相应的投资方案。这样把多目标规划变成一个目标的线性规划。</p></li>
+<li><p>这里将目标函数 <span
+class="math inline">\(\min\{\max\limits_{1\leqslant i\leqslant
+n}\{q_ix_i\}\}\)</span> 转化为约束条件：<span
+class="math inline">\(\frac{q_i x_i}{M}\leqslant
+a\)</span>（总体风险小于某个常数）</p></li>
+</ul>
+<p><span class="math inline">\(\begin{aligned}
+&amp;\max\sum_{i=0}^n (r_i - p_i)x_i\quad\text{目标函数：总收益最大}\\
+&amp;\text{s.t.}\begin{cases}
+\frac{q_ix_i}{M}\leqslant
+a,i=1,2,\cdots,n,&amp;\text{风险率不超过某定值}\\
+\sum_{i=0}^n(1+p_i)x_i=M,&amp;\text{投资所有项目的总金额加起来等于总资产}\\
+x_i\geqslant0,i=0,1,\cdots,n.&amp;\text{投资的金额都是非负数}
+\end{cases}
+\end{aligned}\)</span></p>
+<h1 id="线性规划matlab代码求解">线性规划——matlab代码求解</h1>
+<h2 id="matlab-linprog函数">Matlab linprog函数</h2>
+<p><span class="math display">\[[x, fval]=\text{linprog}(f, A, b, Aeq,
+beq, lb, ub)\]</span></p>
+<p><span class="math display">\[\begin{aligned}  
+&amp;\min_{x}f^T x,\\  
+&amp;\text{s.t.} \begin{cases}
+A\cdot x\leqslant b,\\  
+Aeq\cdot x=beq,\\  
+lb\leqslant x\leqslant ub.
+\end{cases}
+\end{aligned}\]</span></p>
+<ul>
+<li><span class="math inline">\(f\)</span>
+——目标函数的系数向量（必须是求最小值形式下的）<br />
+</li>
+<li><span class="math inline">\(A, b\)</span>
+——不等式约束条件的变量系数矩阵和常数项矩阵（必须是<span
+class="math inline">\(\leqslant\)</span>形式）<br />
+</li>
+<li><span class="math inline">\(Aeq, beq\)</span>
+——等式约束条件的系数矩阵和常数项矩阵<br />
+</li>
+<li><span class="math inline">\(lb, ub\)</span>
+——决策变量的最小取值和最大取值<br />
+</li>
+<li><span class="math inline">\(x\)</span>
+是返回的最优解的变量取值，<span class="math inline">\(fval\)</span>
+返回目标函数的最优值</li>
+</ul>
+<p><strong>注意：</strong></p>
+<p>要调用 linprog
+函数，必须是标准形式，即目标函数是求最小值，约束条件都是小于等于号或等号.
+如果不满足标准形式，我们可以用同乘“-”变号来继续求解。</p>
+<h2 id="求解某同学游戏升级的问题">求解某同学游戏升级的问题</h2>
+<p><span class="math display">\[\begin{aligned}  
+&amp;\max~y = 20x_1 + 30x_2 + 45x_3, \\  
+&amp;\text{s.t.}\begin{cases}
+4x_1 + 8x_2 + 15x_3 \leqslant 100, \\  
+x_1 + x_2 + x_3 \leqslant 20, \\  
+x_1, x_2, x_3 \geqslant 0.
+\end{cases}
+\end{aligned}~\Rightarrow~\begin{aligned}  
+&amp;\min~-y=-20x_1-30x_2-45x_3,\\
+&amp;\text{s.t.}\begin{cases}
+4x_1+8x_2+15x_3\leqslant100,\\  
+\quad x_1 + x_2 + x_3 \leqslant 20, \\  
+x_1, x_2, x_3 \geqslant 0.
+\end{cases}
+\end{aligned}\]</span><br />
+<span class="math display">\[[x, fval]=\text{linprog}(f, A, b, Aeq, beq,
+lb, ub)\]</span><br />
+<span class="math display">\[\begin{aligned}
+&amp;\min~f^T x,\\
+&amp;\text{s.t.}\begin{cases}
+A\cdot x\leqslant b,\\
+Aeq\cdot x=beq,\\
+lb\leqslant x\leqslant ub.
+\end{cases}~\Rightarrow~
+\begin{cases}
+f=[-20, -30, -45]^T,\\
+A=\begin{bmatrix}4&amp;8&amp;15\\1&amp;1&amp;1\end{bmatrix},\\
+b=[100, 20]^T,\\
+lb=[0, 0, 0]^T.
+\end{cases}~\Rightarrow~
+\begin{cases}
+[x, fval]=\text{linprog}(f,A,b,[],[],lb)\\
+y=-fval.
+\end{cases}
+\end{aligned}\]</span></p>
+<ul>
+<li>Matlab代码<br />
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">clc</span><br><span class="line">clear all</span><br><span class="line">close all</span><br><span class="line">f = [<span class="number">-20</span>; <span class="number">-30</span>; <span class="number">-45</span>];  </span><br><span class="line">A = [<span class="number">4</span>, <span class="number">8</span>, <span class="number">15</span>; <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>];  </span><br><span class="line">b = [<span class="number">100</span>; <span class="number">20</span>];  </span><br><span class="line">lb = <span class="built_in">zeros</span>(<span class="number">3</span>, <span class="number">1</span>);  </span><br><span class="line">[x,fval]=linprog(f,A,b,[],[],lb)  <span class="comment">%没有等号约束 </span></span><br><span class="line">y = -fval<span class="comment">%目标函数为最大化  </span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;A、B、C三图分别通关的次数为：&#x27;</span>)  </span><br><span class="line"><span class="built_in">disp</span>(x)  </span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;最终获得的经验为：&#x27;</span>)  </span><br><span class="line"><span class="built_in">disp</span>(y)  </span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>A、B、C三图分别通关的次数为：<br />
+15.0000<br />
+5.0000<br />
+0</p>
+<p>最终获得的经验为：<br />
+450</p>
+<p><strong>注意</strong>：这个题目其实是整数线性规划，并不适用这个函数，这里求出整数解是巧合！</p>
+<h2 id="求解投资收益问题">求解投资收益问题</h2>
+<p><span class="math display">\[\begin{aligned}
+&amp;\max\sum\limits_{i=0}^{n}(r_i-p_i)x_i\\  
+&amp;\text{s.t.}\begin{cases}  
+\frac{q_i x_i}{M}\leqslant a, i = 1,2,\cdots,n, \\  
+\sum_{i=0}^{n} (1 + p_i)x_i = M, \\  
+x_i \geqslant 0, i = 0,1,\cdots,n.  
+\end{cases}
+\end{aligned}~\Rightarrow~
+\begin{aligned}
+&amp;\min\sum\limits_{i=0}^{n}(p_i - r_i)x_i\\
+&amp;\text{s.t.}\begin{cases}  
+\frac{q_i x_i}{M}\leqslant a, i=1,2,\cdots,n, \\  
+\sum\limits_{i=0}^{n}(1 + p_i)x_i=M,\\  
+x_i\geqslant0,i=0,1,\cdots,n.  
+\end{cases}
+\end{aligned}\]</span></p>
+<ul>
+<li>目标函数同乘“-”号化为标准形式，约束条件满足标准形式，无需处理</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><span
+class="math inline">\(s_i\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(r_i(\%)\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(q_i(\%)\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(p_i(\%)\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(u_i\)</span>(元)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(s_1\)</span></td>
+<td style="text-align: center;">28</td>
+<td style="text-align: center;">2.5</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">103</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(s_2\)</span></td>
+<td style="text-align: center;">21</td>
+<td style="text-align: center;">1.5</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">198</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(s_3\)</span></td>
+<td style="text-align: center;">23</td>
+<td style="text-align: center;">5.5</td>
+<td style="text-align: center;">4.5</td>
+<td style="text-align: center;">52</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(s_4\)</span></td>
+<td style="text-align: center;">25</td>
+<td style="text-align: center;">2.6</td>
+<td style="text-align: center;">6.5</td>
+<td style="text-align: center;">40</td>
+</tr>
+</tbody>
+</table>
+<p><span class="math display">\[\begin{aligned}
+&amp;\min f = [-0.05, -0.27, -0.19, -0.185, -0.185] \cdot [x_0, x_1,
+x_2, x_3, x_4]^T\\
+&amp;\text{s.t.}\begin{cases}  
+x_0 + 1.01x_1 + 1.02x_2 + 1.045x_3 + 1.065x_4 = M, \\  
+0.025x_1 \leqslant aM, \\  
+0.015x_2 \leqslant aM, \\  
+0.055x_3 \leqslant aM, \\  
+0.026x_4 \leqslant aM, \\  
+x_i \geqslant 0 (i = 0,1,\cdots, 4).  
+\end{cases}
+\end{aligned}\]</span></p>
+<ul>
+<li>这里不妨取 <span class="math inline">\(M=1\)</span> 万元<br />
+</li>
+<li>由于 <span class="math inline">\(a\)</span>
+是任意给定的风险度，到底怎样没有一个准则，不同的投资者有不同的风险度。我们从
+<span class="math inline">\(a=0\)</span> 开始，以步长 <span
+class="math inline">\(\Delta a=0.001\)</span> 进行循环搜索，搜索至 <span
+class="math inline">\(a=5\%\)</span>（低风险者能够接受的风险）</li>
+<li>下面是代码详解<br />
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">clc</span><br><span class="line">clear all</span><br><span class="line">close all</span><br><span class="line"><span class="comment">% a矩阵的元素是不同风险率，从0到0.05等差取值，相邻两个数相差0.001  </span></span><br><span class="line">a = (<span class="number">0</span>:<span class="number">0.001</span>:<span class="number">0.05</span>);  </span><br><span class="line">f = [<span class="number">-0.05</span>,<span class="number">-0.27</span>,<span class="number">-0.19</span>,<span class="number">-0.185</span>,<span class="number">-0.185</span>]; <span class="comment">% 目标函数的系数向量  </span></span><br><span class="line"><span class="comment">% 用zeros(4,1)先构造4行一列的全是0的矩阵，也就是对x_0无约束；  </span></span><br><span class="line"><span class="comment">% 再构造对角矩阵diag([0.025, 0.015, 0.055, 0.026]), 对角线上元素为约束条件中变量的系数  </span></span><br><span class="line">A = [<span class="built_in">zeros</span>(<span class="number">4</span>,<span class="number">1</span>), <span class="built_in">diag</span>([<span class="number">0.025</span>, <span class="number">0.015</span>, <span class="number">0.055</span>, <span class="number">0.026</span>])];  </span><br><span class="line">Aeq = [<span class="number">1</span>,<span class="number">1.01</span>,<span class="number">1.02</span>,<span class="number">1.045</span>,<span class="number">1.065</span>]; <span class="comment">% 等式约束的系数矩阵，也就是所有资产投资  </span></span><br><span class="line">beq = <span class="number">1</span>;  </span><br><span class="line">lb = <span class="built_in">zeros</span>(<span class="number">5</span>,<span class="number">1</span>);  </span><br><span class="line">Q = <span class="built_in">zeros</span>(<span class="number">1</span>,<span class="built_in">length</span>(a)); <span class="comment">% 初始化保存最优解的矩阵0，因为现在还没求出最优解，元素全设为0  </span></span><br><span class="line">XX = []; <span class="comment">% 定义个空矩阵，用来表示不同风险率下的最优解  </span></span><br><span class="line"><span class="comment">% 利用矩阵0存储风险率a(i)下最大的收益；for循环中i在变化，风险率a(i)不同，求出对应的最优解存在矩阵0内  </span></span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="built_in">length</span>(a) <span class="comment">% length求出矩阵a的元素个数，有多少个元素，就循环多少次</span></span><br><span class="line">    b = a(<span class="built_in">i</span>)*<span class="built_in">ones</span>(<span class="number">4</span>,<span class="number">1</span>); <span class="comment">% b是约束条件的常数项矩阵,4行1列，每个元素值都是常数a(i) </span></span><br><span class="line">    [x,y] = linprog(f,A,b,Aeq,beq,lb); <span class="comment">% 调用linprog函数</span></span><br><span class="line">    Q(<span class="built_in">i</span>) = -y; <span class="comment">% 负负得正，就是所需求的最大值了</span></span><br><span class="line">    XX = [XX,x&#x27;]</span><br><span class="line"><span class="keyword">end</span>  </span><br><span class="line"><span class="built_in">plot</span>(a,Q,<span class="string">&#x27;*r&#x27;</span>); <span class="comment">% 以风险率为横轴，收益为纵轴，绘制不同风险率下的最优收益  </span></span><br><span class="line">xlabel(<span class="string">&#x27;风险率&#x27;</span>); <span class="comment">% x和y轴分别附上标签  </span></span><br><span class="line">ylabel(<span class="string">&#x27;最大收益&#x27;</span>);  </span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="结果分析">结果分析</h2>
+<ul>
+<li><p>风险 <span class="math inline">\(a\)</span> 与收益 <span
+class="math inline">\(Q\)</span> 之间的关系见图。从图中可以看出：</p>
+<p>1）风险不超过 2.5% 时，风险大，收益也大。</p>
+<p>2）在 <span class="math inline">\(a = 0.006\)</span>
+附近有一个转折点，在这一点左边，风险增加很小时，利润增长很快。在这一点右边，风险增加很大时，利润增长很缓慢，所以对于风险和收益没有特殊偏好的投资者来说，应该选择由线的转折点作为最优投资组合，大约是
+<span class="math inline">\(a=0.6\%\)</span>，<span
+class="math inline">\(Q = 2000\)</span>，所对应投资方案为：</p>
+<p>风险度 <span class="math inline">\(a = 0.006\)</span>，收益 <span
+class="math inline">\(Q=2019\)</span> 元；<span
+class="math inline">\(x_0=0\)</span> 元，<span
+class="math inline">\(x_1=2400\)</span> 元，<span
+class="math inline">\(x_2 = 4000\)</span> 元，<span
+class="math inline">\(x_3 = 1091\)</span> 元，<span
+class="math inline">\(x_4=2212\)</span> 元。</p></li>
+<li><p>本题中做了很多模型假设，理论上来说不做也可以求解，且考虑更全面，但数据比赛时间很紧张，合理的假设也很重要。<br />
+</p></li>
+<li><p>除了固定风险来简化模型，也可以固定收益，或者赋予风险收益相应的权重，来权衡二者的取舍。</p></li>
+</ul>
+<h1 id="线性规划python代码求解">线性规划——python代码求解</h1>
+<h2 id="python-linprog函数">python linprog函数</h2>
+<p><span class="math display">\[\begin{aligned}  
+&amp;\min_{x}c^T x,\\  
+&amp;\text{s.t.} \begin{cases}
+A_{ub}\cdot x\leqslant b_{ub},\\  
+A_{eq}\cdot x=b_{eq},\\  
+x\in bounds.
+\end{cases}
+\end{aligned}\]</span></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">scipy.optimize.linprog(</span><br><span class="line">    c, </span><br><span class="line">    A_ub=<span class="literal">None</span>, </span><br><span class="line">    b_ub=<span class="literal">None</span>, </span><br><span class="line">    A_eq=<span class="literal">None</span>, </span><br><span class="line">    b_eq=<span class="literal">None</span>, </span><br><span class="line">    bounds=<span class="literal">None</span>, </span><br><span class="line">    method=<span class="string">&#x27;highs&#x27;</span>, </span><br><span class="line">    options=<span class="literal">None</span>, </span><br><span class="line">    x0=<span class="literal">None</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<hr />
+<h3 id="参数详解"><strong>参数详解</strong></h3>
+<table>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 23%" />
+<col style="width: 23%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr>
+<th>参数</th>
+<th>类型</th>
+<th>描述</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>c</code></strong></td>
+<td>一维数组</td>
+<td>目标函数的系数向量（需最小化 ( c^T x )）</td>
+<td>必填</td>
+</tr>
+<tr>
+<td><strong><code>A_ub</code></strong></td>
+<td>二维数组</td>
+<td>不等式约束矩阵（( A_{ub} x b_{ub} )）</td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><strong><code>b_ub</code></strong></td>
+<td>一维数组</td>
+<td>不等式约束右侧值（( b_{ub} )）</td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><strong><code>A_eq</code></strong></td>
+<td>二维数组</td>
+<td>等式约束矩阵（( A_{eq} x = b_{eq} )）</td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><strong><code>b_eq</code></strong></td>
+<td>一维数组</td>
+<td>等式约束右侧值（( b_{eq} )）</td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><strong><code>bounds</code></strong></td>
+<td>元组列表</td>
+<td>变量边界（<code>(min, max)</code>，<code>None</code>表示无限制）</td>
+<td><code>(0, None)</code>（非负）</td>
+</tr>
+<tr>
+<td><strong><code>method</code></strong></td>
+<td>字符串</td>
+<td>求解算法：<br>- <code>'highs'</code>（推荐）<br>-
+<code>'interior-point'</code><br>- <code>'revised simplex'</code></td>
+<td><code>'highs'</code></td>
+</tr>
+<tr>
+<td><strong><code>options</code></strong></td>
+<td>字典</td>
+<td>求解器选项（如 <code>maxiter</code>, <code>tol</code> 等）</td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><strong><code>x0</code></strong></td>
+<td>一维数组</td>
+<td>初始猜测解（仅部分方法支持）</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="返回值"><strong>返回值</strong></h3>
+<p>返回一个 <code>OptimizeResult</code> 对象，包含以下关键属性： -
+<strong><code>x</code></strong>：最优解向量（若存在）。 -
+<strong><code>fun</code></strong>：目标函数的最小值。 -
+<strong><code>success</code></strong>：布尔值，表示是否求解成功。 -
+<strong><code>status</code></strong>：状态码（<code>0</code>
+表示成功，其他值为错误类型）。 -
+<strong><code>message</code></strong>：求解状态的描述信息。 -
+<strong><code>slack</code></strong>：不等式约束的松弛变量（正值表示约束未激活）。
+-
+<strong><code>con</code></strong>：等式约束的残差（接近0表示满足约束）。</p>
+<p><span class="math display">\[\begin{aligned}  
+&amp;\min_{x}c^T x,\\  
+&amp;\text{s.t.} \begin{cases}
+A\cdot x\leqslant b,\\  
+Aeq\cdot x=beq,\\  
+lb\leqslant x\leqslant ub.
+\end{cases}
+\end{aligned}\]</span></p>
+<p><strong>注意：</strong></p>
+<p>要调用 linprog
+函数，必须是标准形式，即目标函数是求最小值，约束条件都是小于等于号或等号.
+如果不满足标准形式，我们可以用同乘“-”变号来继续求解。</p>
+<h2 id="求解某同学游戏升级的问题-1">求解某同学游戏升级的问题</h2>
+<p><span class="math display">\[\begin{aligned}  
+&amp;\max~y = 20x_1 + 30x_2 + 45x_3, \\  
+&amp;\text{s.t.}\begin{cases}
+4x_1 + 8x_2 + 15x_3 \leqslant 100, \\  
+x_1 + x_2 + x_3 \leqslant 20, \\  
+x_1, x_2, x_3 \geqslant 0.
+\end{cases}
+\end{aligned}~\Rightarrow~\begin{aligned}  
+&amp;\min~-y=-20x_1-30x_2-45x_3,\\
+&amp;\text{s.t.}\begin{cases}
+4x_1+8x_2+15x_3\leqslant100,\\  
+\quad x_1 + x_2 + x_3 \leqslant 20, \\  
+x_1, x_2, x_3 \geqslant 0.
+\end{cases}
+\end{aligned}\]</span><br />
+result = linprog (c, A_ub, b_ub, A_eq, b_eq, bounds, method) <span
+class="math display">\[\begin{aligned}
+&amp;\min~c^T x,\\
+&amp;\text{s.t.}\begin{cases}
+A_{ub}\cdot x\leqslant b_{ub},\\
+A_{eq}\cdot x=b_{eq},\\
+x\in bounds.
+\end{cases}~\Rightarrow~
+\begin{cases}
+c=[-20, -30, -45]^T,\\
+A_{ub}=\begin{bmatrix}4&amp;8&amp;15\\1&amp;1&amp;1\end{bmatrix},\\
+b_{ub}=[100, 20]^T,\\
+x_1,x_2,x_3\in[0, +\infty）.
+\end{cases}
+\end{aligned}\]</span></p>
+<ul>
+<li>Python代码<br />
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linprog</span><br><span class="line">c = [-<span class="number">20</span>,-<span class="number">30</span>,-<span class="number">45</span>]</span><br><span class="line">A_ub = [[<span class="number">4</span>, <span class="number">8</span>, <span class="number">15</span>],</span><br><span class="line">        [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>]]</span><br><span class="line">b_ub = [<span class="number">100</span>,<span class="number">20</span>]</span><br><span class="line">bounds = [[<span class="number">0</span>,<span class="literal">None</span>],[<span class="number">0</span>,<span class="literal">None</span>],[<span class="number">0</span>,<span class="literal">None</span>]]</span><br><span class="line">result=linprog(c,A_ub,b_ub,bounds=bounds)  <span class="comment">#没有等号约束</span></span><br><span class="line"><span class="comment">#或写成result = linprog(c,A_ub=A_ub,b_ub=b_ub,bounds=bounds,method=&#x27;highs&#x27;)</span></span><br><span class="line">y = -result.fun  <span class="comment">#目标函数为最大化</span></span><br><span class="line"><span class="built_in">print</span>(result)    <span class="comment">#此行可以不要</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;A、B、C三图分别通关的次数为：&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(result.x)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;最终获得的经验为：&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(y)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>A、B、C三图分别通关的次数为：<br />
+15.0000<br />
+5.0000<br />
+0</p>
+<p>最终获得的经验为：<br />
+450</p>
+<p><strong>注意</strong>：这个题目其实是整数线性规划，并不适用这个函数，这里求出整数解是巧合！</p>
+<h2 id="求解投资收益问题-1">求解投资收益问题</h2>
+<p><span class="math display">\[\begin{aligned}
+&amp;\max\sum\limits_{i=0}^{n}(r_i-p_i)x_i\\  
+&amp;\text{s.t.}\begin{cases}  
+\frac{q_i x_i}{M}\leqslant a, i = 1,2,\cdots,n, \\  
+\sum_{i=0}^{n} (1 + p_i)x_i = M, \\  
+x_i \geqslant 0, i = 0,1,\cdots,n.  
+\end{cases}
+\end{aligned}~\Rightarrow~
+\begin{aligned}
+&amp;\min\sum\limits_{i=0}^{n}(p_i - r_i)x_i\\
+&amp;\text{s.t.}\begin{cases}  
+\frac{q_i x_i}{M}\leqslant a, i=1,2,\cdots,n, \\  
+\sum\limits_{i=0}^{n}(1 + p_i)x_i=M,\\  
+x_i\geqslant0,i=0,1,\cdots,n.  
+\end{cases}
+\end{aligned}\]</span></p>
+<ul>
+<li>目标函数同乘“-”号化为标准形式，约束条件满足标准形式，无需处理</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><span
+class="math inline">\(s_i\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(r_i(\%)\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(q_i(\%)\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(p_i(\%)\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(u_i\)</span>(元)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(s_1\)</span></td>
+<td style="text-align: center;">28</td>
+<td style="text-align: center;">2.5</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">103</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(s_2\)</span></td>
+<td style="text-align: center;">21</td>
+<td style="text-align: center;">1.5</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">198</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(s_3\)</span></td>
+<td style="text-align: center;">23</td>
+<td style="text-align: center;">5.5</td>
+<td style="text-align: center;">4.5</td>
+<td style="text-align: center;">52</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(s_4\)</span></td>
+<td style="text-align: center;">25</td>
+<td style="text-align: center;">2.6</td>
+<td style="text-align: center;">6.5</td>
+<td style="text-align: center;">40</td>
+</tr>
+</tbody>
+</table>
+<p><span class="math display">\[\begin{aligned}
+&amp;\min f = [-0.05, -0.27, -0.19, -0.185, -0.185] \cdot [x_0, x_1,
+x_2, x_3, x_4]^T\\
+&amp;\text{s.t.}\begin{cases}  
+x_0 + 1.01x_1 + 1.02x_2 + 1.045x_3 + 1.065x_4 = M, \\  
+0.025x_1 \leqslant aM, \\  
+0.015x_2 \leqslant aM, \\  
+0.055x_3 \leqslant aM, \\  
+0.026x_4 \leqslant aM, \\  
+x_i \geqslant 0 (i = 0,1,\cdots, 4).  
+\end{cases}
+\end{aligned}\]</span></p>
+<ul>
+<li>这里不妨取 <span class="math inline">\(M=1\)</span> 万元<br />
+</li>
+<li>由于 <span class="math inline">\(a\)</span>
+是任意给定的风险度，到底怎样没有一个准则，不同的投资者有不同的风险度。我们从
+<span class="math inline">\(a=0\)</span> 开始，以步长 <span
+class="math inline">\(\Delta a=0.001\)</span> 进行循环搜索，搜索至 <span
+class="math inline">\(a=5\%\)</span>（低风险者能够接受的风险）</li>
+<li>下面是python代码详解<br />
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">## 导入必要的库</span></span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt <span class="comment"># 用于绘图</span></span><br><span class="line"><span class="keyword">from</span> numpy <span class="keyword">import</span> ones, diag, c_, zeros <span class="comment"># 用于创建和操作数组</span></span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linprog <span class="comment"># 用于执行线性规划</span></span><br><span class="line"><span class="comment"># 设置matplotlib的参数使其支持LaTeX文本和字体大小</span></span><br><span class="line">plt.rc(<span class="string">&#x27;text&#x27;</span>, usetex=<span class="literal">True</span>)</span><br><span class="line">plt.rc(<span class="string">&#x27;font&#x27;</span>, size=<span class="number">16</span>)</span><br><span class="line"><span class="comment"># 线性规划问题的目标函数系数</span></span><br><span class="line">c = [-<span class="number">0.05</span>, -<span class="number">0.27</span>, -<span class="number">0.19</span>, -<span class="number">0.185</span>, -<span class="number">0.185</span>]</span><br><span class="line"><span class="comment"># 线性不等式约束的系数矩阵（A * x &lt;= b）</span></span><br><span class="line"><span class="comment"># 使用c_来合并数组，zeros创建一个全0的数组作为第一列，</span></span><br><span class="line"><span class="comment"># diag创建一个对角阵</span></span><br><span class="line">A = c_[zeros(<span class="number">4</span>), diag([<span class="number">0.025</span>, <span class="number">0.015</span>, <span class="number">0.055</span>, <span class="number">0.026</span>])]</span><br><span class="line"><span class="comment"># 线性等式约束的系数矩阵和右侧的值（Acq * x = bcq）</span></span><br><span class="line">Aeq = [[<span class="number">1</span>, <span class="number">1.01</span>, <span class="number">1.02</span>, <span class="number">1.045</span>, <span class="number">1.065</span>]]</span><br><span class="line">beq = [<span class="number">1</span>]</span><br><span class="line"><span class="comment"># 初始化参数a，以及两个用于存储结果的空列表</span></span><br><span class="line">a = <span class="number">0</span></span><br><span class="line">aa = []</span><br><span class="line">ss = []</span><br><span class="line"><span class="comment"># 循环，a的值从0开始，以0.001的步长增加，直到0.05</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> a &lt; <span class="number">0.05</span>:</span><br><span class="line">    <span class="comment"># 创建线性不等式约束的右侧值（b）</span></span><br><span class="line">    b = ones(<span class="number">4</span>) * a</span><br><span class="line">    <span class="comment"># 执行线性规划，得到最优解</span></span><br><span class="line">    res = linprog(c, A, b, Aeq, beq,bounds=[(<span class="number">0</span>, <span class="literal">None</span>), (<span class="number">0</span>, <span class="literal">None</span>), (<span class="number">0</span>, <span class="literal">None</span>), (<span class="number">0</span>, <span class="literal">None</span>), (<span class="number">0</span>, <span class="literal">None</span>)])</span><br><span class="line">    <span class="comment"># 提取线性规划的解向量x和最优值Q</span></span><br><span class="line">    x = res.x</span><br><span class="line">    Q = -res.fun</span><br><span class="line">    <span class="comment"># 将当前的a值和对应的最优值Q存入列表</span></span><br><span class="line">    aa.append(a)</span><br><span class="line">    ss.append(Q)</span><br><span class="line">    <span class="comment"># a增加0.001</span></span><br><span class="line">    a = a + <span class="number">0.001</span></span><br><span class="line"><span class="comment"># 绘制结果，a值与最优值Q之间的关系图</span></span><br><span class="line">plt.plot(aa, ss, <span class="string">&#x27;r*&#x27;</span>) <span class="comment"># 使用红色星号标记数据点</span></span><br><span class="line"><span class="comment"># 设置坐标轴标签，其中a和Q将使用LaTeX格式显示</span></span><br><span class="line">plt.xlabel(<span class="string">&#x27;$a$&#x27;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&#x27;$Q$&#x27;</span>, rotation=<span class="number">90</span>)</span><br><span class="line"><span class="comment"># 保存绘制的图像到文件中，分辨率为500dpi</span></span><br><span class="line">plt.savefig(<span class="string">&#x27;figure-LP2.png&#x27;</span>, dpi=<span class="number">500</span>)</span><br><span class="line"><span class="comment"># 显示图形</span></span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/05/14/maze/" rel="prev" title="迷宫程序及其中用到的函数逐一解析">
+                  <i class="fa fa-angle-left"></i> 迷宫程序及其中用到的函数逐一解析
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/05/23/mandelbrot/" rel="next" title="绘制mandelbrot集时所用到函数逐个解析">
+                  绘制mandelbrot集时所用到函数逐个解析 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

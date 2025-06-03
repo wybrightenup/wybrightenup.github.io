@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.23.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="非线性规划——模型引出 除了线性规划模型，优化类问题往往还有一些更复杂的  常见的收益率、传播率、经济增长率等规划问题，通常涉及 \(\frac{1}{x}\) 形式的表达，属于典型的非线性问题。 空间运动问题（如空间约束、避障、角度调整等），由于涉及曲线轨迹和角度变化，常用到三角函数、指数函数等非线性表达，因而也属于非线性问题的范畴。 运输优化问题，例如已知多个坐标点，需确定最优运">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NonlinearProgramming">
+<meta property="og:url" content="http://example.com/2025/05/30/NonlinearProgramming/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="非线性规划——模型引出 除了线性规划模型，优化类问题往往还有一些更复杂的  常见的收益率、传播率、经济增长率等规划问题，通常涉及 \(\frac{1}{x}\) 形式的表达，属于典型的非线性问题。 空间运动问题（如空间约束、避障、角度调整等），由于涉及曲线轨迹和角度变化，常用到三角函数、指数函数等非线性表达，因而也属于非线性问题的范畴。 运输优化问题，例如已知多个坐标点，需确定最优运">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-05-30T07:24:33.000Z">
+<meta property="article:modified_time" content="2025-05-30T08:41:27.421Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/05/30/NonlinearProgramming/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2025/05/30/NonlinearProgramming/","path":"2025/05/30/NonlinearProgramming/","title":"NonlinearProgramming"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>NonlinearProgramming | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E6%A8%A1%E5%9E%8B%E5%BC%95%E5%87%BA"><span class="nav-number">1.</span> <span class="nav-text">非线性规划——模型引出</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%99%A4%E4%BA%86%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96%E7%B1%BB%E9%97%AE%E9%A2%98%E5%BE%80%E5%BE%80%E8%BF%98%E6%9C%89%E4%B8%80%E4%BA%9B%E6%9B%B4%E5%A4%8D%E6%9D%82%E7%9A%84"><span class="nav-number">1.1.</span> <span class="nav-text">除了线性规划模型，优化类问题往往还有一些更复杂的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E6%A8%A1%E5%9E%8B%E5%BC%95%E5%87%BA-1"><span class="nav-number">1.2.</span> <span class="nav-text">非线性规划——模型引出</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E7%AE%80%E4%BB%8B"><span class="nav-number">1.2.1.</span> <span class="nav-text">非线性规划简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E6%A8%A1%E5%9E%8B%E7%89%B9%E7%82%B9"><span class="nav-number">1.2.2.</span> <span class="nav-text">非线性规划模型特点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E6%A8%A1%E5%9E%8B%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">非线性规划——模型原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%A0%87%E5%87%86%E5%9E%8B"><span class="nav-number">2.1.</span> <span class="nav-text">非线性规划模型的标准型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E6%B1%82%E8%A7%A3%E7%9A%84matlab%E5%87%BD%E6%95%B0"><span class="nav-number">2.2.</span> <span class="nav-text">非线性规划求解的Matlab函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E5%85%B8%E5%9E%8B%E4%BE%8B%E9%A2%98"><span class="nav-number">3.</span> <span class="nav-text">非线性规划——典型例题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E5%9D%80%E9%97%AE%E9%A2%98"><span class="nav-number">3.1.</span> <span class="nav-text">选址问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.2.</span> <span class="nav-text">建立模型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E5%85%B8%E5%9E%8B%E4%BE%8B%E9%A2%98-1"><span class="nav-number">4.</span> <span class="nav-text">非线性规划——典型例题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E5%9D%80%E9%97%AE%E9%A2%98-1"><span class="nav-number">4.1.</span> <span class="nav-text">选址问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E4%BB%A3%E7%A0%81%E6%B1%82%E8%A7%A3"><span class="nav-number">5.</span> <span class="nav-text">非线性规划——代码求解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81"><span class="nav-number">5.1.</span> <span class="nav-text">示例代码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E4%BB%A3%E7%A0%81%E6%B1%82%E8%A7%A3-1"><span class="nav-number">6.</span> <span class="nav-text">非线性规划——代码求解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81-1"><span class="nav-number">6.1.</span> <span class="nav-text">示例代码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E4%BB%A3%E7%A0%81%E6%B1%82%E8%A7%A3-2"><span class="nav-number">7.</span> <span class="nav-text">非线性规划——代码求解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81-2"><span class="nav-number">7.1.</span> <span class="nav-text">示例代码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E4%BB%A3%E7%A0%81%E6%B1%82%E8%A7%A3-3"><span class="nav-number">8.</span> <span class="nav-text">非线性规划——代码求解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81-3"><span class="nav-number">8.1.</span> <span class="nav-text">示例代码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E4%BB%A3%E7%A0%81%E6%B1%82%E8%A7%A3-4"><span class="nav-number">9.</span> <span class="nav-text">非线性规划——代码求解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BE%8B%E9%A2%98%E4%BB%A3%E7%A0%81"><span class="nav-number">9.1.</span> <span class="nav-text">例题代码</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/05/30/NonlinearProgramming/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="NonlinearProgramming | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          NonlinearProgramming
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2025-05-30 15:24:33 / Modified: 16:41:27" itemprop="dateCreated datePublished" datetime="2025-05-30T15:24:33+08:00">2025-05-30</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="非线性规划模型引出">非线性规划——模型引出</h1>
+<h2
+id="除了线性规划模型优化类问题往往还有一些更复杂的">除了线性规划模型，优化类问题往往还有一些更复杂的</h2>
+<ul>
+<li><p><strong>常见的收益率、传播率、经济增长率等规划问题</strong>，通常涉及
+<span class="math inline">\(\frac{1}{x}\)</span>
+形式的表达，属于典型的非线性问题。</p></li>
+<li><p><strong>空间运动问题</strong>（如空间约束、避障、角度调整等），由于涉及曲线轨迹和角度变化，常用到三角函数、指数函数等非线性表达，因而也属于非线性问题的范畴。</p></li>
+<li><p><strong>运输优化问题</strong>，例如已知多个坐标点，需确定最优运输路径。此类问题通常用到欧几里得距离公式，其数学形式包含变量的平方和开方，因此也属于非线性问题。</p></li>
+<li><p>示例：</p></li>
+</ul>
+[
+<span class="math display">\[\begin{aligned}
+&amp;\min~y = x_1^2 + x_2^2 - x_1x_2 - 2x_1 - 5x_2, \\
+&amp;\text{s.t.} \begin{cases} (-x_1 - 1)^2 + x_2 \geq 0, \\
+2x_1 - 3x_2 + 6 \geq 0
+\end{cases}
+\end{aligned}\]</span>
+<p>]</p>
+<ul>
+<li>这就是一个非线性规划模型，与线性规划类似，它同样需要在确定决策变量的基础上，构建目标函数并列出相应的约束条件。</li>
+</ul>
+<h2 id="非线性规划模型引出-1">非线性规划——模型引出</h2>
+<h3 id="非线性规划简介">非线性规划简介</h3>
+<p><strong>非线性规划</strong>是运筹学的重要分支，致力于求解目标函数或约束条件包含<strong>非线性函数</strong>的最优化问题。20世纪50年代初，库恩（H.W.
+Kuhn）和塔克（A.W.
+Tucker）提出的<strong>基本定理</strong>（K-T条件）为该领域奠定了理论基础。该方法在工业、交通运输、经济管理与军事等领域应用广泛，尤其在<strong>最优设计</strong>中提供关键的数学基础与计算方法，具有显著的实用价值。</p>
+<h3 id="非线性规划模型特点">非线性规划模型特点</h3>
+<ul>
+<li><strong>非线性特征：</strong>
+模型中至少包含一个<strong>非线性项</strong>，例如 ( x^2 )、( e^x )、(
+)、( x )、( _2 x ) 等形式。</li>
+<li><strong>与线性规划的区别：</strong>
+<ul>
+<li><strong>线性规划 (LP)：</strong>
+存在通用的精确求解方法（如单纯形法），其最优解必然位于可行域的边界上。</li>
+<li><strong>非线性规划 (NLP)：</strong>
+最优解（若存在）可能出现在可行域的<strong>内部或边界任意点</strong>。目前尚无适用于所有
+NLP 问题的通用解法，不同算法有其特定的适用范围。</li>
+</ul></li>
+<li><strong>数学建模中的应用：</strong> 对于数学建模实践，掌握利用
+MATLAB
+等工具的<strong>内置函数</strong>求解非线性规划问题（通常得到近似最优解）即可满足需求。</li>
+</ul>
+<h1 id="非线性规划模型原理">非线性规划——模型原理</h1>
+<h2 id="非线性规划模型的标准型">非线性规划模型的标准型</h2>
+<p><span class="math display">\[\begin{aligned}
+&amp;\min ~f(x)\\
+&amp;\text{s.t.}\begin{cases}
+Ax \leq b,~Aeq\cdot x = beq&amp;(\text{线性})\\
+c(x) \leq 0,~Ceq(x) = 0&amp;(\text{非线性})\\
+lb \leq x \leq ub
+\end{cases}
+\end{aligned}\]</span></p>
+<h2 id="非线性规划求解的matlab函数">非线性规划求解的Matlab函数</h2>
+<ul>
+<li><p><strong>fmincon函数</strong>: [x, fval] = fmincon ( fun, x0, A,
+b, Aeq, beq, lb, ub, nonlcon, option)</p>
+<ul>
+<li>( fun )：把目标函数定义为一个单独的函数文件（min）</li>
+<li>( x0 )：决策变量的初始值</li>
+<li>( A, b )：线性约束的不等式变量系数矩阵和常数项矩阵（&lt;或≤）</li>
+<li>( Aeq, beq )：线性约束的等式变量系数矩阵和常数项矩阵</li>
+<li>( lb, ub )：决策变量的最小取值和最大取值</li>
+<li>( nonlcon )：非线性约束，包括不等式和等式</li>
+<li>( option )：求解非线性规划使用的方法</li>
+</ul></li>
+<li><p>非线性规划中对于初始值( x0
+)的选取非常重要，因为非线性规划的算法求解出来的是一个局部最优解。如果要求全局最优解，有两个思路：</p>
+<ul>
+<li>给定不同的初始值，在里面找到一个最优解；</li>
+<li>先用蒙特卡罗模拟，得到一个蒙特卡罗解，然后将这个解作为初始值求最优解</li>
+</ul></li>
+<li><p>options选项可以给定求解的算法，一共有五种：interior-point（内点法）、trust-region-reflective（信赖域反射法）、sqp（序列二次规划法）、sqp-legacy（约束非线性优化算法）、active-set（有效集法）。不同的算法有其各自的优缺点和适用情况，我们可以改变求解的算法来对比求解的结果。</p></li>
+<li><p>fun表示目标函数，我们要编写一个独立的“m文件”储存目标函数 function
+f = fun(x) f = …… end</p></li>
+<li><p><strong>nonlcon</strong>
+表示非线性部分的约束，也要编写一个独立的“m文件”储存非线性约束条件<br />
+<span class="math display">\[\begin{aligned}
+&amp;function ~~[c, ceq] = nonlfun(x)\\
+&amp;\qquad c=[非线性不等式约束1;\\
+&amp;\qquad\qquad\vdots\\
+&amp;\qquad 非线性不等式约束n]\\
+&amp;\qquad ceq=[非线性等式约束1;\\
+&amp;\qquad\qquad\vdots\\
+&amp;\qquad 非线性等式约束m]\\
+&amp;end
+\end{aligned}\]</span></p></li>
+<li><p>决策变量下标要改为括号，比如 ( x_1 ) 要改为 ( x(1)
+)，matlab才能识别</p></li>
+<li><p>若不存在某种约束，可以用“[]”替代，若后面全为“[]”且option使用默认，后面的“[]”可省略</p></li>
+</ul>
+<h1 id="非线性规划典型例题">非线性规划——典型例题</h1>
+<h2 id="选址问题">选址问题</h2>
+<ul>
+<li>临时料场：( A(5,1) )，( B(2,7) )；日储量各20吨。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">工地位置坐标及日需求量</th>
+<th style="text-align: center;">I</th>
+<th style="text-align: center;">II</th>
+<th style="text-align: center;">III</th>
+<th style="text-align: center;">IV</th>
+<th style="text-align: center;">V</th>
+<th style="text-align: center;">VI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">横坐标</td>
+<td style="text-align: center;">1.25</td>
+<td style="text-align: center;">8.75</td>
+<td style="text-align: center;">0.5</td>
+<td style="text-align: center;">5.75</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">7.25</td>
+</tr>
+<tr>
+<td style="text-align: center;">纵坐标</td>
+<td style="text-align: center;">1.25</td>
+<td style="text-align: center;">0.75</td>
+<td style="text-align: center;">4.75</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">6.5</td>
+<td style="text-align: center;">7.25</td>
+</tr>
+<tr>
+<td style="text-align: center;">日需求量</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">11</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>（1）试制定每天的供应计划，即从两料场分别向各工地运送多少吨水泥，使总的吨千米数最小？</li>
+<li>（2）为了进一步减少吨千米数，打算舍弃两个临时料场，改建两个新的，日储量各为20吨，问应建在何处，节省的吨千米数为多大？</li>
+</ul>
+<h2 id="建立模型">建立模型</h2>
+<ul>
+<li><p>确定决策变量<br />
+设第<span class="math inline">\(i\)</span>个工地的坐标 ((a_i,
+b_i))，水泥日用量 (d_i)，(i = 1, 2, ..., 6)；料场位置 ((x_j,
+y_j))，日储量 (e_j)，(j = 1, 2)；从料场向工地的运送量为
+(x_{ij})</p></li>
+<li><p>确定约束条件<br />
+料场水泥运输总量不超过其日储量：(<em>{i=1}^6 x</em>{ij} e_j, j = 1,
+2)</p>
+<p>两个料场向某工地运输量之和等于该工地水泥日用量：(<em>{j=1}^2
+x</em>{ij} = d_i, i = 1, 2, ..., 6)</p></li>
+<li><p>3）确定目标函数<br />
+求总吨千米数最小，即运送量乘运送距离求和最小 (min f = <em>{j=1}^2
+</em>{i=1}^6 x_{ij} )</p></li>
+<li><p>4）建立模型<br />
+[ min f = <em>{j=1}^2 </em>{i=1}^6 x_{ij} ]<br />
+[ s.t.</p>
+<span class="math display">\[\begin{cases}
+  \sum_{i=1}^6 x_{ij} \leq e_j, j = 1, 2 \\
+  \sum_{j=1}^2 x_{ij} = d_i, i = 1, 2, ..., 6 \\
+  x_{ij} \geq 0, i = 1, 2, ..., 6; j = 1, 2
+  \end{cases}\]</span>
+<p>]</p></li>
+</ul>
+<h1 id="非线性规划典型例题-1">非线性规划——典型例题</h1>
+<h2 id="选址问题-1">选址问题</h2>
+<ul>
+<li><p>5）求解<br />
+✓ 对于第一问：因料场位置已知，故决策变量仅为 ( x_{ij}
+)，为线性规划模型<br />
+✓ 对于第二问：新料场位置未知，所以 ( x_j ) 和 ( y_j )
+均为变量，且不是线性的，故为非线性规划模型</p>
+<p>✓ 共有8个约束<br />
+[ min f = <em>{j=1}^2 </em>{i=1}^6 x_{ij} ] [ s.t.</p>
+<span class="math display">\[\begin{cases}
+  \sum_{i=1}^6 x_{ij} \leq e_j, j = 1, 2 \\
+  \sum_{j=1}^2 x_{ij} = d_i, i = 1, 2, \ldots, 6 \\
+  x_{ij} \geq 0, i = 1, 2, \ldots, 6; j = 1, 2
+  \end{cases}\]</span>
+<p>]</p>
+<p>✓ 注意，在 Matlab 里这些双角标的变量要改为单角标的变量，如 ( x_{11}
+x_1, x_{21} x_2, , x_{62} x_{12} )</p></li>
+</ul>
+<h1 id="非线性规划代码求解">非线性规划——代码求解</h1>
+<h2 id="示例代码">示例代码</h2>
+<p>[<span class="math display">\[\begin{align*}
+&amp;min \quad y = x_1^2 + x_2^2 - x_1x_2 - 2x_1 - 5x_2, \\
+&amp;s.t.
+\begin{cases}
+-(x_1 - 1)^2 + x_2 \geq 0, \\
+2x_1 - 3x_2 + 6 \geq 0
+\end{cases}
+\end{align*}\]</span>]</p>
+<p>clear; clc<br />
+format long g %将Matlab的计算结果显示为一般的长数字格式</p>
+<p>%% 例题1的求解<br />
+% min f(x) = x1^2 + x2^2 - x1*x2 - 2x1 - 5x2<br />
+% s.t. -(x1-1)^2 + x2 &gt;= 0 ; 2x1-3x2+6 &gt;= 0<br />
+x0 = [0 0]; %任意给定一个初始值<br />
+A = [-2 3]; b = 6;<br />
+[x,fval] = fmincon(<span class="citation"
+data-cites="fun1">@fun1</span>,x0,A,b,[],[],[],[],<span class="citation"
+data-cites="non1fun1">@non1fun1</span>) %
+fun1.m和non1fun1.m必须在当前文件夹<br />
+fval = -fval</p>
+<h1 id="非线性规划代码求解-1">非线性规划——代码求解</h1>
+<h2 id="示例代码-1">示例代码</h2>
+<p>%% 使用其他算法对例题求解<br />
+% 使用interior point算法（内点法）<br />
+option = optimoptions('fmincon','Algorithm','interior-point')<br />
+[x,fval] = fmincon(<span class="citation"
+data-cites="fun1">@fun1</span>,x0,A,b,[],[],[],[],<span class="citation"
+data-cites="nonlfun1">@nonlfun1</span>,option)<br />
+fval = -fval</p>
+<p>% 使用SQP算法（序列二次规划法）<br />
+option = optimoptions('fmincon','Algorithm','sqp')<br />
+[x,fval] = fmincon(<span class="citation"
+data-cites="fun1">@fun1</span>,x0,A,b,[],[],[],[],<span class="citation"
+data-cites="nonlfun1">@nonlfun1</span>,option)<br />
+fval = -fval %得到-4.358，远远大于内点法得到的-1，猜想是初始值的影响</p>
+<p>% 改变初始值试试<br />
+x0 = [1 1]; %任意给定一个初始值<br />
+[x,fval] = fmincon(<span class="citation"
+data-cites="fun1">@fun1</span>,x0,A,b,[],[],[],[],<span class="citation"
+data-cites="nonlfun1">@nonlfun1</span>,option) %
+最小值为-1，和内点法相同<br />
+fval = -fval</p>
+<h1 id="非线性规划代码求解-2">非线性规划——代码求解</h1>
+<h2 id="示例代码-2">示例代码</h2>
+<p>%% 使用蒙特卡罗的方法来求初始值（推荐） clc, clear; n=10000000;
+%生成的随机数组数 x1=unifrnd(-100,100,n,1);
+%生成在[-100,100]之间均匀分布的随机数组 x2=unifrnd(-100,100,n,1);
+fmin=+inf; %初始化函数的最小值为正无穷 for i=1:n x = [x1(i), x2(i)]; if
+((x(1)-1)^2-x(2)&lt;=0) &amp; (-2<em>x(1)+3</em>x(2)-6 &lt;= 0)
+%判断是否满足条件 result = -x(1)<sup>2-x(2)</sup>2
++x(1)<em>x(2)+2</em>x(1)+5*x(2); if result &lt; fmin fmin = result; x0 =
+x; end end end disp('蒙特卡罗选取的初始值为: '); disp(x0) A = [-2 3]; b
+= 6; [x, fval] = fmincon(<span class="citation"
+data-cites="fun1">@fun1</span>,x0,A,b,[],[],[],[],<span class="citation"
+data-cites="non1fun1">@non1fun1</span>) fval = -fval</p>
+<h1 id="非线性规划代码求解-3">非线性规划——代码求解</h1>
+<h2 id="示例代码-3">示例代码</h2>
+<p>function f = fun1(x) % 目标函数 % 输入x为决策变量向量[x1,x2] %
+输出f为目标函数值 % max f(x) = x1^2 + x2^2 - x1<em>x2 - 2x1 - 5x2 f =
+-x(1)<sup>2-x(2)</sup>2 + x(1)</em>x(2)+2<em>x(1)+5</em>x(2); end</p>
+<p>function [c, ceq] = nonlfun1(x) % 非线性约束函数 %
+输入x为决策变量向量[x1,x2] %
+输出c为非线性不等式约束，ceq为非线性等式约束 % -(x1-1)^2 + x2 &gt;= 0 c
+= [(x(1)-1)^2 - x(2)]; ceq = []; % 无非线性等式约束 end</p>
+<h1 id="非线性规划代码求解-4">非线性规划——代码求解</h1>
+<h2 id="例题代码">例题代码</h2>
+<p>代码较复杂，可直接看代码文件xuanzhiwenti.m。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/05/29/MonteCarloMethod/" rel="prev" title="Monte Carlo Method">
+                  <i class="fa fa-angle-left"></i> Monte Carlo Method
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

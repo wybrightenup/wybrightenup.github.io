@@ -179,7 +179,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/10/15/AnalyticHierarchyProcess/" class="post-title-link" itemprop="url">AnalyticHierarchyProcess</a>
+          <a href="/2025/10/15/AnalyticHierarchyProcess/" class="post-title-link" itemprop="url">层次分析算法</a>
         </h2>
 
         <div class="post-meta-container">
@@ -190,7 +190,14 @@
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2025-10-15 11:24:07" itemprop="dateCreated datePublished" datetime="2025-10-15T11:24:07+08:00">2025-10-15</time>
+      <time title="Created: 2025-10-15 00:00:00" itemprop="dateCreated datePublished" datetime="2025-10-15T00:00:00+08:00">2025-10-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-10-17 11:39:41" itemprop="dateModified" datetime="2025-10-17T11:39:41+08:00">2025-10-17</time>
     </span>
 
   
@@ -203,7 +210,1057 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          
+          <h1 id="层次分析-模型引出">层次分析 | 模型引出</h1>
+<h2 id="问题的提出">问题的提出</h2>
+<p>日常生活中有很多的<strong>决策问题</strong>。决策是指在面临多种方案时需要依据一定的标准选择某一种方案。</p>
+<ul>
+<li>买衣服，一般要根据质量、颜色、价格、款式等方面的因素选择</li>
+<li>旅游，是去风光秀丽的苏州，还是去迷人的北戴河，或者是去山水甲天下的桂林，那一般会依据景色、费用、食宿条件、旅途等因素来判断哪个地方</li>
+</ul>
+<p><strong>XX微博要选出一个明星作为微博之星，现在有三个候选明星A、B、C，该选择哪位明星呢？</strong></p>
+<ul>
+<li>考虑一个明星的成就可以看其粉丝数、颜值、作品数量、作品质量（考虑用作品来辨平均评分代替）</li>
+<li>A、B、C的相关数据如下</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">明星</th>
+<th style="text-align: center;">粉丝数</th>
+<th style="text-align: center;">颜值</th>
+<th style="text-align: center;">作品质量</th>
+<th style="text-align: center;">作品数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">6000w</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">6.5</td>
+<td style="text-align: center;">25</td>
+</tr>
+<tr>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">3400w</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">8.1</td>
+<td style="text-align: center;">46</td>
+</tr>
+<tr>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">5500w</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">7.5</td>
+<td style="text-align: center;">31</td>
+</tr>
+</tbody>
+</table>
+<p><strong>直接相加？</strong> <span
+class="math display">\[6000\mathrm{w}+10+25+6.5=?\]</span></p>
+<ul>
+<li><p>XX微博要选出一个明星作为微博之星，现在有三个候选明星A、B、C，该选择哪位明星呢？</p></li>
+<li><p>怎么能让指标在同一数量级，且保证在同一指标下其差距不变？
+归一化处理：指标的数组<span
+class="math display">\[[a~b~c]\]</span>归一化处理得到<span
+class="math display">\[a/(a+b+c),b/(a+b+c),c/(a+b+c)\]</span></p></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">明星</th>
+<th style="text-align: center;">粉丝数</th>
+<th style="text-align: center;">颜值</th>
+<th style="text-align: center;">作品质量</th>
+<th style="text-align: center;">作品数量</th>
+<th style="text-align: center;">评分</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">0.40</td>
+<td style="text-align: center;">0.42</td>
+<td style="text-align: center;">0.29</td>
+<td style="text-align: center;">0.25</td>
+<td style="text-align: center;">1.36</td>
+</tr>
+<tr>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">0.23</td>
+<td style="text-align: center;">0.25</td>
+<td style="text-align: center;">0.37</td>
+<td style="text-align: center;">0.45</td>
+<td style="text-align: center;">1.30</td>
+</tr>
+<tr>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">0.37</td>
+<td style="text-align: center;">0.33</td>
+<td style="text-align: center;">0.34</td>
+<td style="text-align: center;">0.30</td>
+<td style="text-align: center;">1.35</td>
+</tr>
+</tbody>
+</table>
+<p><strong>A当选？</strong></p>
+<p>实际上每个指标的重要性是不同的</p>
+<ul>
+<li>来给每一个指标加上权重，微博公司考虑宣传效果，认为粉丝数量重要，作品数量最不重要</li>
+</ul>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">明星</th>
+<th style="text-align: center;">粉丝数(0.4)</th>
+<th style="text-align: center;">颜值（0.3）</th>
+<th style="text-align: center;">作品质量(0.2)</th>
+<th style="text-align: center;">作品数量(0.1)</th>
+<th style="text-align: center;">评分</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">0.40*0.4</td>
+<td style="text-align: center;">0.42*0.3</td>
+<td style="text-align: center;">0.29*0.3</td>
+<td style="text-align: center;">0.25*0.2</td>
+<td style="text-align: center;">0.365</td>
+</tr>
+<tr>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">0.23*0.4</td>
+<td style="text-align: center;">0.25*0.3</td>
+<td style="text-align: center;">0.37*0.3</td>
+<td style="text-align: center;">0.45*0.2</td>
+<td style="text-align: center;">0.293</td>
+</tr>
+<tr>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">0.37*0.4</td>
+<td style="text-align: center;">0.33*0.3</td>
+<td style="text-align: center;">0.34*0.3</td>
+<td style="text-align: center;">0.30*0.2</td>
+<td style="text-align: center;">0.342</td>
+</tr>
+</tbody>
+</table>
+<p><strong>如何科学地设定权重？</strong></p>
+<h2 id="基本概念">基本概念</h2>
+<p>面临各种各样的方案，要进行比较、判断、评价、直至最后的决策。这个过程中都是一些主观的因素，这些因素可能由于个人情况的不同，有相应不同的比重，所以这样主观因素给数学方法的解决带来了很多的不便。</p>
+<p><strong>层次分析法（Analytic Hierarchy Process，简称
+AHP）是对一些较为复杂、较为模糊的问题作出决策的简易方法，它特别适用于那些难于完全定量分析的问题。它是美国运筹学家
+T. L. Saaty 教授于上世纪 70
+年代初期提出的一种简便、灵活而又实用的多准则决策方法。</strong></p>
+<h1 id="层次分析-模型原理">层次分析 | 模型原理</h1>
+<h2 id="模型原理">模型原理</h2>
+<p>应用 AHP 分析决策问题时，首先要把问题
+<strong>条理化、层次化</strong>，构造出一个有层次的结构模型。在这个模型下，复杂问题被分解为元素的组成部分。这些元素又按其属性及关系形成若干层次。上一层次的元素作为准则对下一层次有关元素起支配作用。这些层次可以分为三类：</p>
+<ul>
+<li>最高层：这一层次中只有一个元素，一般它是分析问题的
+<strong>预定目标或理想结果</strong>，因此也称为目标层。</li>
+<li>中间层：这一层次中包含了为实现目标所涉及的中间环节，它可以由若干个层次组成，包括所需考虑的准则、子准则，因此也称为准则层。</li>
+<li>最底层：这一层次包括了为实现目标可供选择的各种措施、决策方案等，因此也称为措施层或方案层。</li>
+</ul>
+<h2 id="基本步骤">基本步骤</h2>
+<p>运用层次分析法建模，大体上可按下面四个步骤进行：</p>
+<ul>
+<li>建立递阶层次结构模型</li>
+<li>构造出各层次中的所有判断矩阵</li>
+<li>一致性检验</li>
+<li>求权重后进行评价
+<img src="/images/AnalyticHierarchyProcess/层次分析图1.png" alt="图1" style="width: 100%;"></li>
+</ul>
+<h1 id="层次分析-典型例题">层次分析 | 典型例题</h1>
+<h2 id="建立递阶层次结构模型">建立递阶层次结构模型</h2>
+<p>继续来选择微博之星，其递阶层次结构模型如下：
+<img src="/images/AnalyticHierarchyProcess/层次分析图2.png" alt="图1" style="width: 100%;"></p>
+<h2 id="构造出各层次中的所有判断矩阵">构造出各层次中的所有判断矩阵</h2>
+<ul>
+<li>对指标的重要性进行<strong>两两比较</strong>，构造判断矩阵，从而科学求出权重</li>
+<li>矩阵中元素 $ a_{ij} $ 的意义是，第 $ i $ 个指标相对第 $ j $
+个指标的重要程度</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">标度</th>
+<th style="text-align: center;">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">表示两个因素相比，具有同样重要性</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td
+style="text-align: center;">表示两个因素相比，一个因素比另一个因素<strong>稍微</strong>重要</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td
+style="text-align: center;">表示两个因素相比，一个因素比另一个因素<strong>明显</strong>重要</td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td
+style="text-align: center;">表示两个因素相比，一个因素比另一个因素<strong>强烈</strong>重要</td>
+</tr>
+<tr>
+<td style="text-align: center;">9</td>
+<td
+style="text-align: center;">表示两个因素相比，一个因素比另一个因素<strong>极端</strong>重要</td>
+</tr>
+<tr>
+<td style="text-align: center;">2, 4, 6, 8</td>
+<td style="text-align: center;">上述两相邻判断的中值</td>
+</tr>
+</tbody>
+</table>
+<p><strong>构造例题中的判断矩阵</strong></p>
+<ul>
+<li>粉丝数跟作品数量比显然明显重要，那么 <span
+class="math inline">\(a_{14}=5\)</span>，反过来，作品质量相比粉丝数的重要性那就是<span
+class="math inline">\(1/5,\quad a_{41}\text{为}1/5\)</span>.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">明星</th>
+<th style="text-align: center;">粉丝数</th>
+<th style="text-align: center;">颜值</th>
+<th style="text-align: center;">作品质量</th>
+<th style="text-align: center;">作品数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">6000w</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">6.5</td>
+<td style="text-align: center;">25</td>
+</tr>
+<tr>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">3400w</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">8.1</td>
+<td style="text-align: center;">46</td>
+</tr>
+<tr>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">5500w</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">7.5</td>
+<td style="text-align: center;">31</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"></th>
+<th style="text-align: center;">粉丝数</th>
+<th style="text-align: center;">颜值</th>
+<th style="text-align: center;">作品质量</th>
+<th style="text-align: center;">作品数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">粉丝数</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">5</td>
+</tr>
+<tr>
+<td style="text-align: center;">颜值</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">作品质量</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">作品数量</td>
+<td style="text-align: center;">1/5</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">1</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>依次对变量进行两两比较，得到完整的判断矩阵，如下表所示：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"></th>
+<th style="text-align: center;">粉丝数</th>
+<th style="text-align: center;">颜值</th>
+<th style="text-align: center;">作品质量</th>
+<th style="text-align: center;">作品数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">粉丝数</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">5</td>
+</tr>
+<tr>
+<td style="text-align: center;">颜值</td>
+<td style="text-align: center;">1/2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1/2</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品质量</td>
+<td style="text-align: center;">1/3</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1/2</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品数量</td>
+<td style="text-align: center;">1/5</td>
+<td style="text-align: center;">1/2</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>因两两比较的过程中忽略了其他因素，导致最后的结果可能出现矛盾。</li>
+</ul>
+<p>如上表可以看出 $ a_{23} = 1/2 $ 代表在重要性上，颜值不如作品质量；$
+a_{24} = 2 $
+代表着颜值比作品数量重要，因此可以看出作品质量比作品数量重要，但 $
+a_{34} = 1/2 $ 意味着作品质量不如作品数量重要，与上一个矛盾！</p>
+<ul>
+<li>所以需要一致性检验</li>
+</ul>
+<h2 id="一致性检验">一致性检验</h2>
+<ul>
+<li><span
+class="math inline">\(a_{ij}=\frac{i\text{的重要程度}}{j\text{的重要程度}}\)</span>，<span
+class="math inline">\(a_{ik}=\frac{i\text{的重要程度}}{k\text{的重要程度}}\)</span>,
+<span
+class="math inline">\(a_{kj}=\frac{k\text{的重要程度}}{j\text{的重要程度}}\)</span></li>
+<li>易得 <span class="math inline">\(a_{ij}=a_{ik}a_{kj}\)</span>
+且<strong>矩阵各行（列）成倍数关系</strong></li>
+</ul>
+<p>满足这两条的矩阵称为<strong>一致矩阵</strong>，不会出现矛盾的情况。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"></th>
+<th style="text-align: center;">A</th>
+<th style="text-align: center;">B</th>
+<th style="text-align: center;">C</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">4</td>
+</tr>
+<tr>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">1/2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">1/4</td>
+<td style="text-align: center;">1/2</td>
+<td style="text-align: center;">1</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p>若矩阵中每个元素 $ a_{ij} &gt; 0 $ 且满足 $ a_{ij} a_{ji} = 1
+$，则我们称该矩阵为<strong>正互反矩阵</strong>。<strong>在层次分析法中，我们构造的判断矩阵均是正互反矩阵。</strong></p></li>
+<li><p>若正互反矩阵满足 $ a_{ik} a_{kj} = a_{ij}
+$，则我们称其为<strong>一致矩阵</strong>。</p></li>
+<li><p><strong>注意：</strong>
+在使用判断矩阵求权重之前，必须对其进行一致性检验，以免产生矛盾。</p></li>
+<li><p><strong>一致性检验原理</strong>：检验我们构造的判断矩阵和一致矩阵是否有太大差别。</p></li>
+<li><p><strong>证明过程</strong> <span
+class="math display">\[\begin{bmatrix}
+  a_{11} &amp; \cdots &amp; a_{1n} \\
+  \vdots &amp; \ddots &amp; \vdots \\
+  a_{n1} &amp; \cdots &amp; a_{nn}
+  \end{bmatrix}\]</span> 为一致矩阵的条件 <span
+class="math display">\[\begin{cases}
+  a_{ij} &gt; 0 \\
+  a_{11} = a_{22} = \cdots = a_{nn} = 1 \\
+  [a_{i1}, a_{i2}, \cdots, a_{in}] = k_i[a_{11}, a_{12}, \cdots, a_{1n}]
+\\
+  a_{ij} = a_{ik} \times a_{kj}
+  \end{cases}\]</span></p></li>
+<li><p>引理：<span class="math inline">\(A\)</span>为<span
+class="math inline">\(n\)</span>阶方阵，且<span
+class="math inline">\(r(A)=1\)</span>，则<span
+class="math inline">\(A\)</span>有一个特征值为<span
+class="math inline">\(tr(A)\)</span>，其余特征值均为0.</p></li>
+<li><p>因为一致矩阵的各行成比例且不是零矩阵，所以一致矩阵的秩一定为1</p></li>
+<li><p>由引理可知：一致矩阵有一个特征值为<span
+class="math inline">\(n\)</span>，其余特征值均为0</p></li>
+<li><p>易得，特征值为<span
+class="math inline">\(n\)</span>时，对应的特征向量刚好为 <span
+class="math display">\[k\left[ \frac{1}{a_{11}}, \frac{1}{a_{12}},
+\cdots, \frac{1}{a_{1n}} \right]^T\]</span></p></li>
+<li><p>引理：<span class="math inline">\(n\)</span>阶正互反矩阵<span
+class="math inline">\(A\)</span>为一致矩阵时当且仅当最大特征值<span
+class="math inline">\(\lambda_{\max} = n\)</span>。且当正互反矩阵<span
+class="math inline">\(A\)</span>非一致时，一定满足<span
+class="math inline">\(\lambda_{\max} &gt;
+n\)</span>，判断矩阵越不一致时，最大特征值与<span
+class="math inline">\(n\)</span>相差就越大。</p></li>
+</ul>
+<h3 id="一致性检验的步骤">一致性检验的步骤</h3>
+<ol type="1">
+<li>计算<strong>一致性指标</strong><span
+class="math inline">\(CI\)</span><br />
+<span
+class="math display">\[CI=\frac{\lambda_{max}-n}{n-1}\]</span></li>
+<li>查找对应的<strong>平均随机一致性指标</strong><span
+class="math inline">\(RI\)</span></li>
+</ol>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><span
+class="math inline">\(n\)</span></th>
+<th style="text-align: center;">1</th>
+<th style="text-align: center;">2</th>
+<th style="text-align: center;">3</th>
+<th style="text-align: center;">4</th>
+<th style="text-align: center;">5</th>
+<th style="text-align: center;">6</th>
+<th style="text-align: center;">7</th>
+<th style="text-align: center;">8</th>
+<th style="text-align: center;">9</th>
+<th style="text-align: center;">10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">RI</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0.52</td>
+<td style="text-align: center;">0.89</td>
+<td style="text-align: center;">1.12</td>
+<td style="text-align: center;">1.26</td>
+<td style="text-align: center;">1.36</td>
+<td style="text-align: center;">1.41</td>
+<td style="text-align: center;">1.46</td>
+<td style="text-align: center;">1.49</td>
+</tr>
+</tbody>
+</table>
+<p>注：<span
+class="math inline">\(RI\)</span>我们只需要会查表即可，不用管怎么来的。在实际运用中，<span
+class="math inline">\(n\)</span>很少超过10，如果指标的个数大于10，则可考虑建立二级指标体系，或使用我们以后要学习的模糊综合评价模型。</p>
+<ol start="3" type="1">
+<li>计算<strong>一致性比例</strong><span
+class="math inline">\(CR\)</span><br />
+<span class="math display">\[CR = \frac{CI}{RI} \quad \begin{cases}
+0, &amp; \text{判断矩阵为一致矩阵} \\
+&lt; 0.1, &amp; \text{判断矩阵一致} \\
+\geqslant 0.1, &amp; \text{判断矩阵不一致}
+\end{cases}\]</span></li>
+</ol>
+<p>注：特征值可用matlab软件进行计算，没学过线性代数的同学也不需要担心。如果特征值中有虚数，则比较的是特征值的模长。</p>
+<h3 id="对例题进行一致性检验">对例题进行一致性检验</h3>
+<ul>
+<li>回到刚刚微博之星</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"></th>
+<th style="text-align: center;">粉丝数</th>
+<th style="text-align: center;">颜值</th>
+<th style="text-align: center;">作品质量</th>
+<th style="text-align: center;">作品数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">粉丝数</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">5</td>
+</tr>
+<tr>
+<td style="text-align: center;">颜值</td>
+<td style="text-align: center;">1/2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1/2</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品质量</td>
+<td style="text-align: center;">1/3</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1/2</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品数量</td>
+<td style="text-align: center;">1/5</td>
+<td style="text-align: center;">1/2</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>当前判断矩阵的 <span class="math inline">\(\lambda_{max} =
+4.68\)</span>，<span class="math inline">\(n = 4\)</span>，求得 <span
+class="math inline">\(CI = 0.227\)</span>，查表 <span
+class="math inline">\(RI=0.89\)</span>，得 <span
+class="math inline">\(CR = 0.255\)</span></li>
+</ul>
+<p><span class="math display">\[CR \geqslant 0.1\]</span></p>
+<h3 id="需修改判断矩阵">需修改判断矩阵</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"></th>
+<th style="text-align: center;">粉丝数</th>
+<th style="text-align: center;">颜值</th>
+<th style="text-align: center;">作品质量</th>
+<th style="text-align: center;">作品数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">粉丝数</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">5</td>
+</tr>
+<tr>
+<td style="text-align: center;">颜值</td>
+<td style="text-align: center;">1/2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1/2</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品质量</td>
+<td style="text-align: center;">1/3</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品数量</td>
+<td style="text-align: center;">1/5</td>
+<td style="text-align: center;">1/2</td>
+<td style="text-align: center;">1/2</td>
+<td style="text-align: center;">1</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>当前判断矩阵的 <span class="math inline">\(\lambda_{max} =
+4.1128\)</span>，<span class="math inline">\(n = 4\)</span>，求得 <span
+class="math inline">\(CI=0.227\)</span>，查表 <span
+class="math inline">\(RI=0.89\)</span>，得 <span
+class="math inline">\(CR=0.0418\)</span></li>
+</ul>
+<p><span class="math display">\[CR &lt; 0.1\]</span></p>
+<p>通过一致性检验</p>
+<h2 id="求权重">求权重</h2>
+<h3 id="算术平均法求权重">算术平均法求权重</h3>
+<p>第一步：将判断矩阵按照列归一化（每一个元素除以其所在列的和）</p>
+<p>第二步：将归一化的各列相加（按行求和）</p>
+<p>第三步：将相加后得到的向量中每个元素除以<span
+class="math inline">\(n\)</span>即可得到权重向量</p>
+<p>假设判断矩阵<span class="math inline">\(A = \begin{bmatrix}
+a_{11} &amp; \cdots &amp; a_{1n} \\
+\vdots &amp; \ddots &amp; \vdots \\
+a_{n1} &amp; \cdots &amp; a_{nn}
+\end{bmatrix}\)</span></p>
+<p>那么算术平均法求得的权重向量 <span
+class="math inline">\(w_i=\frac{1}{n}\sum\limits_{j=1}^{n}\frac{a_{ij}}{\sum\limits_{k=1}^{n}a_{kj}}\)</span>
+（<span class="math inline">\(i=1,2,3,\cdots,n\)</span>）</p>
+<ul>
+<li><strong>用算术平均法求出微博之星的指标权重</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"></th>
+<th style="text-align: center;">粉丝数</th>
+<th style="text-align: center;">颜值</th>
+<th style="text-align: center;">作品质量</th>
+<th style="text-align: center;">作品数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">粉丝数</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">5</td>
+</tr>
+<tr>
+<td style="text-align: center;">颜值</td>
+<td style="text-align: center;">1/2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1/2</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品质量</td>
+<td style="text-align: center;">1/3</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品数量</td>
+<td style="text-align: center;">1/5</td>
+<td style="text-align: center;">1/2</td>
+<td style="text-align: center;">1/2</td>
+<td style="text-align: center;">1</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"></th>
+<th style="text-align: center;">粉丝数</th>
+<th style="text-align: center;">颜值</th>
+<th style="text-align: center;">作品质量</th>
+<th style="text-align: center;">作品数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">粉丝数</td>
+<td style="text-align: center;">0.492</td>
+<td style="text-align: center;">0.364</td>
+<td style="text-align: center;">0.600</td>
+<td style="text-align: center;">0.500</td>
+</tr>
+<tr>
+<td style="text-align: center;">颜值</td>
+<td style="text-align: center;">0.246</td>
+<td style="text-align: center;">0.182</td>
+<td style="text-align: center;">0.100</td>
+<td style="text-align: center;">0.200</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品质量</td>
+<td style="text-align: center;">0.164</td>
+<td style="text-align: center;">0.364</td>
+<td style="text-align: center;">0.200</td>
+<td style="text-align: center;">0.200</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品数量</td>
+<td style="text-align: center;">0.098</td>
+<td style="text-align: center;">0.091</td>
+<td style="text-align: center;">0.100</td>
+<td style="text-align: center;">0.100</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"></th>
+<th style="text-align: center;">权重</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">粉丝数</td>
+<td style="text-align: center;">0.489</td>
+</tr>
+<tr>
+<td style="text-align: center;">颜值</td>
+<td style="text-align: center;">0.182</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品质量</td>
+<td style="text-align: center;">0.232</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品数量</td>
+<td style="text-align: center;">0.097</td>
+</tr>
+</tbody>
+</table>
+<h3 id="几何平均法求权重">几何平均法求权重</h3>
+<p>第一步：将判断矩阵的元素按照行相乘得到一个新的列向量<br />
+第二步：将新的向量的每个分量开<span
+class="math inline">\(n\)</span>次方<br />
+第三步：对该列向量进行归一化即可得到权重向量</p>
+<p>假设判断矩阵 <span class="math inline">\(A=\begin{bmatrix} a_{11}
+&amp; \cdots &amp; a_{1n} \\ \vdots &amp; \ddots &amp; \vdots \\ a_{n1}
+&amp; \cdots &amp; a_{nn} \end{bmatrix}\)</span></p>
+<p>那么几何平均法求得的权重向量 <span
+class="math inline">\(w_i=\frac{\left(\prod\limits_{j=1}^n a_{ij}
+\right)^{\frac{1}{n}}}{\sum\limits_{k=1}^{n} \left(\prod\limits_{j=1}^n
+a_{kj} \right)^\frac{1}{n}},(i=1,2,\ldots,n)\)</span></p>
+<ul>
+<li><strong>用几何平均法求出微博之星的指标权重</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"></th>
+<th style="text-align: center;">粉丝数</th>
+<th style="text-align: center;">颜值</th>
+<th style="text-align: center;">作品质量</th>
+<th style="text-align: center;">作品数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">粉丝数</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">5</td>
+</tr>
+<tr>
+<td style="text-align: center;">颜值</td>
+<td style="text-align: center;">1/2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1/2</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品质量</td>
+<td style="text-align: center;">1/3</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品数量</td>
+<td style="text-align: center;">1/5</td>
+<td style="text-align: center;">1/2</td>
+<td style="text-align: center;">1/2</td>
+<td style="text-align: center;">1</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"></th>
+<th style="text-align: center;">行相乘后开方</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">粉丝数</td>
+<td style="text-align: center;">2.34</td>
+</tr>
+<tr>
+<td style="text-align: center;">颜值</td>
+<td style="text-align: center;">0.84</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品质量</td>
+<td style="text-align: center;">1.07</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品数量</td>
+<td style="text-align: center;">0.47</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"></th>
+<th style="text-align: center;">权重</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">粉丝数</td>
+<td style="text-align: center;">0.495</td>
+</tr>
+<tr>
+<td style="text-align: center;">颜值</td>
+<td style="text-align: center;">0.178</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品质量</td>
+<td style="text-align: center;">0.227</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品数量</td>
+<td style="text-align: center;">0.100</td>
+</tr>
+</tbody>
+</table>
+<h3 id="特征值法求权重">特征值法求权重</h3>
+<p>一致矩阵有一个特征值 $ n $，其余特征值均为0。</p>
+<p>另外，我们很容易得到，特征值为 $ n $ 时，对应的特征向量刚好为 <span
+class="math inline">\(k\left[\frac{1}{a_{11}},\frac{1}{a_{12}},\cdots,\frac{1}{a_{1n}}\right]^T\)</span>
+（<span class="math inline">\(k\neq 0\)</span>）</p>
+<p>假如我们的判断矩阵一致性可以接受，那么我们可以仿照一致矩阵权重的求法。</p>
+<p><strong>第一步：求出矩阵 $ n $
+的最大特征值以及其对应的特征向量。</strong></p>
+<p><strong>第二步：对求出的特征向量进行归一化即可得到我们的权重。</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"></th>
+<th style="text-align: center;">粉丝数</th>
+<th style="text-align: center;">颜值</th>
+<th style="text-align: center;">作品质量</th>
+<th style="text-align: center;">作品数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">粉丝数</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">5</td>
+</tr>
+<tr>
+<td style="text-align: center;">颜值</td>
+<td style="text-align: center;">1/2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1/2</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品质量</td>
+<td style="text-align: center;">1/3</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品数量</td>
+<td style="text-align: center;">1/5</td>
+<td style="text-align: center;">1/2</td>
+<td style="text-align: center;">1/2</td>
+<td style="text-align: center;">1</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"></th>
+<th style="text-align: center;">特征向量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">颜值</td>
+<td style="text-align: center;">0.8487</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品质量</td>
+<td style="text-align: center;">0.3076</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品数量</td>
+<td style="text-align: center;">0.3962</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品数量</td>
+<td style="text-align: center;">0.1676</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"></th>
+<th style="text-align: center;">特征向量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">颜值</td>
+<td style="text-align: center;">0.493</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品质量</td>
+<td style="text-align: center;">0.179</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品数量</td>
+<td style="text-align: center;">0.230</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品数量</td>
+<td style="text-align: center;">0.097</td>
+</tr>
+</tbody>
+</table>
+<p>最大特征值为4.1128 一致性比例<span
+class="math inline">\(CR=0.1128/3=0.04\)</span> 其对应的特征向量：<span
+class="math display">\[ 0.8487 \quad 0.3076 \quad 0.3962 \quad 0.1676
+\]</span> 对其进行归一化得到权重：<span class="math display">\[ 0.493
+\quad 0.179 \quad 0.230 \quad 0.097 \]</span></p>
+<h2 id="求评分">求评分</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">权重表格</th>
+<th style="text-align: center;">算术平均法</th>
+<th style="text-align: center;">几何平均法</th>
+<th style="text-align: center;">特征值法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">粉丝数</td>
+<td style="text-align: center;">0.489</td>
+<td style="text-align: center;">0.495</td>
+<td style="text-align: center;">0.493</td>
+</tr>
+<tr>
+<td style="text-align: center;">颜值</td>
+<td style="text-align: center;">0.182</td>
+<td style="text-align: center;">0.178</td>
+<td style="text-align: center;">0.179</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品质量</td>
+<td style="text-align: center;">0.232</td>
+<td style="text-align: center;">0.227</td>
+<td style="text-align: center;">0.230</td>
+</tr>
+<tr>
+<td style="text-align: center;">作品数量</td>
+<td style="text-align: center;">0.097</td>
+<td style="text-align: center;">0.100</td>
+<td style="text-align: center;">0.097</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>如果选择特征值法，综合评分=0.493<span
+class="math inline">\(*\)</span>粉丝数+0.179<span
+class="math inline">\(*\)</span>颜值+0.230<span
+class="math inline">\(*\)</span>作品质量+0.097<span
+class="math inline">\(*\)</span>作品数量</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">明星</th>
+<th style="text-align: center;">粉丝数</th>
+<th style="text-align: center;">颜值</th>
+<th style="text-align: center;">作品质量</th>
+<th style="text-align: center;">作品数量</th>
+<th style="text-align: center;">评分</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">0.40*0.493</td>
+<td style="text-align: center;">0.42*0.179</td>
+<td style="text-align: center;">0.29*0.23</td>
+<td style="text-align: center;">0.25*0.097</td>
+<td style="text-align: center;">0.363</td>
+</tr>
+<tr>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">0.23*0.493</td>
+<td style="text-align: center;">0.25*0.179</td>
+<td style="text-align: center;">0.37*0.23</td>
+<td style="text-align: center;">0.45*0.097</td>
+<td style="text-align: center;">0.287</td>
+</tr>
+<tr>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">0.37*0.493</td>
+<td style="text-align: center;">0.33*0.179</td>
+<td style="text-align: center;">0.34*0.23</td>
+<td style="text-align: center;">0.30*0.097</td>
+<td style="text-align: center;">0.349</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>A当选微博之星</li>
+</ul>
+<h1 id="层次分析-相关代码-matlab">层次分析 | 相关代码-Matlab</h1>
+<h2 id="一致性检验代码">一致性检验代码</h2>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">%A=[1 2 3 5;1/2 1 1/2 2;1/3 2 1 1/2;1/5 1/2 2 1]</span></span><br><span class="line"><span class="comment">%A=[1 2 3 5;1/2 1 1/2 2;1/3 2 1 2;1/5 1/2 1/2 1]</span></span><br><span class="line">A = input(<span class="string">&#x27;判断矩阵A=&#x27;</span>);  </span><br><span class="line"><span class="comment">%输入判断矩阵  </span></span><br><span class="line"></span><br><span class="line">[n,n] = <span class="built_in">size</span>(A);  </span><br><span class="line"><span class="comment">%获取A的行和列  </span></span><br><span class="line"></span><br><span class="line"><span class="comment">%求出最大特征值以及对应的特征向量  </span></span><br><span class="line"></span><br><span class="line">[V,D] = eig(A);  </span><br><span class="line"><span class="comment">%V是特征向量 D是特征值构成的对角矩阵  </span></span><br><span class="line"></span><br><span class="line">Max_eig = <span class="built_in">max</span>(<span class="built_in">max</span>(D));  </span><br><span class="line"><span class="comment">%先求出每一列的最大值，再求最大值中的最大值  </span></span><br><span class="line"></span><br><span class="line">CI = (Max_eig - n) / (n<span class="number">-1</span>);  </span><br><span class="line"></span><br><span class="line">RI=[<span class="number">0</span> <span class="number">0.0001</span> <span class="number">0.52</span> <span class="number">0.89</span> <span class="number">1.12</span> <span class="number">1.26</span> <span class="number">1.36</span> <span class="number">1.41</span> <span class="number">1.46</span> <span class="number">1.49</span> <span class="number">1.52</span> <span class="number">1.54</span> <span class="number">1.56</span> <span class="number">1.58</span> <span class="number">1.59</span>];  </span><br><span class="line"></span><br><span class="line"><span class="comment">%注意：这里的RI最多支持 n = 15  </span></span><br><span class="line"></span><br><span class="line"><span class="comment">%这里n=2时，一定是一致矩阵，所以CI = 0，我们为了避免分母为0，将这里的第二个元素改为了很接近的正数  </span></span><br><span class="line"></span><br><span class="line">CR=CI/RI(n);  </span><br><span class="line"></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;一致性指标CI=&#x27;</span>); <span class="built_in">disp</span>(CI);  </span><br><span class="line"></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;一致性比例CR=&#x27;</span>); <span class="built_in">disp</span>(CR);  </span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> CR&lt;<span class="number">0.10</span>  </span><br><span class="line"></span><br><span class="line">    <span class="built_in">disp</span>(<span class="string">&#x27;因为CR&lt;0.10，所以该判断矩阵A的一致性可以接受！&#x27;</span>);  </span><br><span class="line"></span><br><span class="line"><span class="keyword">else</span>  </span><br><span class="line"></span><br><span class="line">    <span class="built_in">disp</span>(<span class="string">&#x27;注意：CR &gt;= 0.10，因此该判断矩阵A需要进行修改！&#x27;</span>);  </span><br><span class="line"></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<h2 id="求权重代码">求权重代码</h2>
+<ol type="1">
+<li>算术平均法求权重</li>
+</ol>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">%A=[1 2 3 5;1/2 1 1/2 2;1/3 2 1 2;1/5 1/2 1/2 1]</span></span><br><span class="line">A = input(<span class="string">&#x27;判断矩阵A=&#x27;</span>); <span class="comment">%输入判断矩阵  </span></span><br><span class="line">ASum = sum(A,<span class="number">1</span>); <span class="comment">%将判断矩阵每列求和  </span></span><br><span class="line">[n,n] = <span class="built_in">size</span>(A); <span class="comment">%获取A的行和列，用于对ASum复制，对应位相除归一化  </span></span><br><span class="line">Ar = <span class="built_in">repmat</span>(ASum,n,<span class="number">1</span>); <span class="comment">%复制Asum n行1列为Ar矩阵  </span></span><br><span class="line">Stand_A = A./Ar; <span class="comment">%归一化  </span></span><br><span class="line">ASumr = sum(Stand_A,<span class="number">2</span>); <span class="comment">%各列相加到同一行  </span></span><br><span class="line"><span class="built_in">disp</span>(ASumr/n); <span class="comment">%将相加后得到的向量每个元素除以n可以得到权重向量  </span></span><br></pre></td></tr></table></figure>
+<ol start="2" type="1">
+<li>几何平均法求权重</li>
+</ol>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">clc;  </span><br><span class="line"><span class="comment">%A=[1 2 3 5;1/2 1 1/2 2;1/3 2 1 2;1/5 1/2 1/2 1]</span></span><br><span class="line">A = input(<span class="string">&#x27;判断矩阵A=&#x27;</span>); <span class="comment">%输入判断矩阵  </span></span><br><span class="line">[n,n] = <span class="built_in">size</span>(A); <span class="comment">%获取A的行和列  </span></span><br><span class="line">prod_A = prod(A,<span class="number">2</span>); <span class="comment">%将A中每一行元素相乘得到－列向量  </span></span><br><span class="line">prod_n_A = prod_A.^(<span class="number">1</span>/n); <span class="comment">%将新的向量的每个分量开n次方等价求1/n次方  </span></span><br><span class="line">re_prod_A = prod_n_A./sum(prod_n_A); <span class="comment">%归一化处理  </span></span><br><span class="line"><span class="built_in">disp</span>(re_prod_A); <span class="comment">%展示权重结果  </span></span><br></pre></td></tr></table></figure>
+<ol start="3" type="1">
+<li>特征值法计算权重</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">clc;  </span><br><span class="line">%A=[1 2 3 5;1/2 1 1/2 2;1/3 2 1 2;1/5 1/2 1/2 1]</span><br><span class="line">A = input(&#x27;判断矩阵A=&#x27;); %输入判断矩阵  </span><br><span class="line">[n,n] = size(A); %获取A的行和列  </span><br><span class="line">%求出最大特征值以及对应的特征向量  </span><br><span class="line">[V,D] = eig(A); %V是特征向量 D是特征值构成的对角矩阵  </span><br><span class="line">Max.eig = max(max(D)); %先求出每一列的最大值，再求最大值中的最大值  </span><br><span class="line">[r,c] = find(Max.eig == D,1); %使用find()函数找出最大特征值对应的特征向量  </span><br><span class="line">%对特征向量进行归一化得到所需权重  </span><br><span class="line">disp(V(:,c)./sum(V(:,c)));</span><br></pre></td></tr></table></figure>
+<h1 id="层次分析-相关代码-python">层次分析 | 相关代码-Python</h1>
+<h2 id="一致性检验代码-1">一致性检验代码</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># numpy pandas matplotlib</span></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="comment"># 定义矩阵A</span></span><br><span class="line"><span class="comment"># A = np.array([[1, 2, 3, 5], [1/2, 1, 1/2, 2], [1/3, 2, 1, 1/2], [1/5, 1/2, 2, 1]])</span></span><br><span class="line">A = np.array([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>], [<span class="number">1</span>/<span class="number">2</span>, <span class="number">1</span>, <span class="number">1</span>/<span class="number">2</span>, <span class="number">2</span>], [<span class="number">1</span>/<span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">2</span>], [<span class="number">1</span>/<span class="number">5</span>, <span class="number">1</span>/<span class="number">2</span>, <span class="number">1</span>/<span class="number">2</span>, <span class="number">1</span>]])</span><br><span class="line">n = A.shape[<span class="number">0</span>] <span class="comment"># 获取A的行</span></span><br><span class="line"><span class="comment"># 求出最大特征值以及对应的特征向量</span></span><br><span class="line">eig_val, eig_vec = np.linalg.eig(A) <span class="comment"># eig_val是特征值，eig_vec是特征向量</span></span><br><span class="line">Max_eig = <span class="built_in">max</span>(eig_val) <span class="comment"># 求特征值的最大值</span></span><br><span class="line">CI = (Max_eig - n) / (n-<span class="number">1</span>)</span><br><span class="line">RI = [<span class="number">0</span>, <span class="number">0.0001</span>, <span class="number">0.52</span>, <span class="number">0.89</span>, <span class="number">1.12</span>, <span class="number">1.26</span>, <span class="number">1.36</span>, <span class="number">1.41</span>, <span class="number">1.46</span>, <span class="number">1.49</span>, <span class="number">1.52</span>, <span class="number">1.54</span>, <span class="number">1.56</span>, <span class="number">1.58</span>, <span class="number">1.59</span>]</span><br><span class="line"><span class="comment"># 注意，这里的RI最多支持 n = 15</span></span><br><span class="line"><span class="comment"># 这里n=2时，一定是一致矩阵，所以CI = 0，我们为了避免分母为0，将这里的第二个元素改为了很接近0的正数</span></span><br><span class="line">CR = CI / RI[n]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;一致性指标CI=&#x27;</span>, CI)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;一致性比例CR=&#x27;</span>, CR)</span><br><span class="line"><span class="keyword">if</span> CR &lt; <span class="number">0.10</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;因为CR&lt;0.10，所以该判断矩阵A的一致性可以接受！&#x27;</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;注意：CR &gt;= 0.10，因此该判断矩阵A需要进行修改！&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="求权重代码-1">求权重代码</h2>
+<ol type="1">
+<li>算术平均法求权重</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np  </span><br><span class="line"><span class="comment"># 定义判断矩阵A  </span></span><br><span class="line">A = np.array([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>], [<span class="number">1</span>/<span class="number">2</span>, <span class="number">1</span>, <span class="number">1</span>/<span class="number">2</span>, <span class="number">2</span>], [<span class="number">1</span>/<span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">2</span>], [<span class="number">1</span>/<span class="number">5</span>, <span class="number">1</span>/<span class="number">2</span>, <span class="number">1</span>/<span class="number">2</span>, <span class="number">1</span>]])  </span><br><span class="line"><span class="comment"># 按列求和  </span></span><br><span class="line">ASum = np.<span class="built_in">sum</span>(A, axis=<span class="number">0</span>)  </span><br><span class="line"><span class="comment"># 获取A的行和列  </span></span><br><span class="line">n= A.shape[<span class="number">0</span>]  </span><br><span class="line"><span class="comment"># 按列归一化  </span></span><br><span class="line">Stand_A = A / ASum  </span><br><span class="line"><span class="comment"># 按行求和  </span></span><br><span class="line">ASumr = np.<span class="built_in">sum</span>(Stand_A, axis=<span class="number">1</span>)  </span><br><span class="line"><span class="comment"># 计算权重向量  </span></span><br><span class="line">weights = ASumr / n  </span><br><span class="line"><span class="built_in">print</span>(weights)</span><br></pre></td></tr></table></figure>
+<ol start="2" type="1">
+<li>几何平均法求权重</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np  </span><br><span class="line"><span class="comment"># 定义判断矩阵A  </span></span><br><span class="line">A = np.array([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>], [<span class="number">1</span>/<span class="number">2</span>, <span class="number">1</span>, <span class="number">1</span>/<span class="number">2</span>, <span class="number">2</span>], [<span class="number">1</span>/<span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">2</span>], [<span class="number">1</span>/<span class="number">5</span>, <span class="number">1</span>/<span class="number">2</span>, <span class="number">1</span>/<span class="number">2</span>, <span class="number">1</span>]])  </span><br><span class="line"><span class="comment"># 获取A的行和列  </span></span><br><span class="line">n= A.shape[<span class="number">0</span>]  </span><br><span class="line"><span class="comment"># 将A中每一行元素相乘得到一列向量  </span></span><br><span class="line">prod_A = np.prod(A, axis=<span class="number">1</span>)  </span><br><span class="line"><span class="comment"># 将新的向量的每个分量开n次方等价求1/n次方  </span></span><br><span class="line">prod_n_A = np.power(prod_A, <span class="number">1</span>/n)  </span><br><span class="line"><span class="comment"># 归一化处理  </span></span><br><span class="line">re_prod_A = prod_n_A / np.<span class="built_in">sum</span>(prod_n_A)  </span><br><span class="line"><span class="comment"># 展示权重结果  </span></span><br><span class="line"><span class="built_in">print</span>(re_prod_A)</span><br></pre></td></tr></table></figure>
+<ol start="3" type="1">
+<li>特征值法计算权重</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np  </span><br><span class="line"><span class="comment"># 定义判断矩阵A  </span></span><br><span class="line">A = np.array([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>], [<span class="number">1</span>/<span class="number">2</span>, <span class="number">1</span>, <span class="number">1</span>/<span class="number">2</span>, <span class="number">2</span>], [<span class="number">1</span>/<span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">2</span>], [<span class="number">1</span>/<span class="number">5</span>, <span class="number">1</span>/<span class="number">2</span>, <span class="number">1</span>/<span class="number">2</span>, <span class="number">1</span>]])  </span><br><span class="line"><span class="comment"># 获取A的行和列  </span></span><br><span class="line">n= A.shape[<span class="number">0</span>]  </span><br><span class="line"><span class="comment"># 求出特征值和特征向量  </span></span><br><span class="line">eig_values, eig_vectors = np.linalg.eig(A)  </span><br><span class="line"><span class="comment"># 找出最大特征值的索引  </span></span><br><span class="line">max_index = np.argmax(eig_values)  </span><br><span class="line"><span class="comment"># 找出对应的特征向量  </span></span><br><span class="line">max_vector = eig_vectors[:, max_index]  </span><br><span class="line"><span class="comment"># 对特征向量进行归一化处理，得到权重  </span></span><br><span class="line">weights = max_vector / np.<span class="built_in">sum</span>(max_vector)  </span><br><span class="line"><span class="comment"># 输出权重  </span></span><br><span class="line"><span class="built_in">print</span>(weights)</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -3750,7 +4807,7 @@ Library）或其分支 Pillow 库中的一个函数，用于将 NumPy 数组转�
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-09-22 10:36:27" itemprop="dateModified" datetime="2025-09-22T10:36:27+08:00">2025-09-22</time>
+      <time title="Modified: 2025-10-17 14:17:58" itemprop="dateModified" datetime="2025-10-17T14:17:58+08:00">2025-10-17</time>
     </span>
 
   

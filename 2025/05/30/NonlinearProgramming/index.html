@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="非线性规划——模型引出 除了线性规划模型，优化类问题往往还有一些更复杂的  常见的收益率、传播率、经济增长率等规划问题，通常涉及 \(\frac{1}{x}\) 形式的表达，属于典型的非线性问题。 空间运动问题（如空间约束、避障、角度调整等），由于涉及曲线轨迹和角度变化，常用到三角函数、指数函数等非线性表达，因而也属于非线性问题的范畴。 运输优化问题，例如已知多个坐标点，需确定最优运">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NonlinearProgramming">
+<meta property="og:url" content="http://example.com/2025/05/30/NonlinearProgramming/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="非线性规划——模型引出 除了线性规划模型，优化类问题往往还有一些更复杂的  常见的收益率、传播率、经济增长率等规划问题，通常涉及 \(\frac{1}{x}\) 形式的表达，属于典型的非线性问题。 空间运动问题（如空间约束、避障、角度调整等），由于涉及曲线轨迹和角度变化，常用到三角函数、指数函数等非线性表达，因而也属于非线性问题的范畴。 运输优化问题，例如已知多个坐标点，需确定最优运">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-05-30T07:24:33.000Z">
+<meta property="article:modified_time" content="2025-06-14T10:23:55.002Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2025/05/30/NonlinearProgramming/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2025/05/30/NonlinearProgramming/","path":"2025/05/30/NonlinearProgramming/","title":"NonlinearProgramming"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>NonlinearProgramming | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E6%A8%A1%E5%9E%8B%E5%BC%95%E5%87%BA"><span class="nav-number">1.</span> <span class="nav-text">非线性规划——模型引出</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%99%A4%E4%BA%86%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96%E7%B1%BB%E9%97%AE%E9%A2%98%E5%BE%80%E5%BE%80%E8%BF%98%E6%9C%89%E4%B8%80%E4%BA%9B%E6%9B%B4%E5%A4%8D%E6%9D%82%E7%9A%84"><span class="nav-number">1.1.</span> <span class="nav-text">除了线性规划模型，优化类问题往往还有一些更复杂的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E6%A8%A1%E5%9E%8B%E5%BC%95%E5%87%BA-1"><span class="nav-number">1.2.</span> <span class="nav-text">非线性规划——模型引出</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E7%AE%80%E4%BB%8B"><span class="nav-number">1.2.1.</span> <span class="nav-text">非线性规划简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E6%A8%A1%E5%9E%8B%E7%89%B9%E7%82%B9"><span class="nav-number">1.2.2.</span> <span class="nav-text">非线性规划模型特点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E6%A8%A1%E5%9E%8B%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">非线性规划——模型原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E6%A8%A1%E5%9E%8B%E7%9A%84matlab%E6%A0%87%E5%87%86%E5%9E%8B"><span class="nav-number">2.1.</span> <span class="nav-text">非线性规划模型的matlab标准型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E6%B1%82%E8%A7%A3%E7%9A%84matlab%E5%87%BD%E6%95%B0fmicon"><span class="nav-number">2.1.1.</span> <span class="nav-text">非线性规划求解的Matlab函数:fmicon</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E6%A8%A1%E5%9E%8B%E7%9A%84python%E6%A0%87%E5%87%86%E5%9E%8B"><span class="nav-number">2.2.</span> <span class="nav-text">非线性规划模型的python标准型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E6%B1%82%E8%A7%A3%E7%9A%84python%E5%87%BD%E6%95%B0minimize"><span class="nav-number">2.2.1.</span> <span class="nav-text">非线性规划求解的python函数:minimize</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#scipy.optimize.minimize-%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3%E8%A1%A8"><span class="nav-number">2.2.2.</span> <span class="nav-text">scipy.optimize.minimize
+参数详解表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95"><span class="nav-number">2.2.3.</span> <span class="nav-text">优化算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="nav-number">2.2.4.</span> <span class="nav-text">返回值</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E5%85%B8%E5%9E%8B%E4%BE%8B%E9%A2%98"><span class="nav-number">3.</span> <span class="nav-text">非线性规划——典型例题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E5%9D%80%E9%97%AE%E9%A2%98"><span class="nav-number">3.1.</span> <span class="nav-text">选址问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.2.</span> <span class="nav-text">建立模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AE%E5%AE%9A%E5%86%B3%E7%AD%96%E5%8F%98%E9%87%8F"><span class="nav-number">3.2.1.</span> <span class="nav-text">确定决策变量  </span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AE%E5%AE%9A%E7%BA%A6%E6%9D%9F%E6%9D%A1%E4%BB%B6"><span class="nav-number">3.2.2.</span> <span class="nav-text">确定约束条件  </span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AE%E5%AE%9A%E7%9B%AE%E6%A0%87%E5%87%BD%E6%95%B0"><span class="nav-number">3.2.3.</span> <span class="nav-text">确定目标函数  </span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B%E6%A8%A1%E5%9E%8B-1"><span class="nav-number">3.2.4.</span> <span class="nav-text">建立模型  </span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81%E6%B1%82%E8%A7%A3"><span class="nav-number">4.</span> <span class="nav-text">示例代码求解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#matlab%E4%BB%A3%E7%A0%81%E6%B1%82%E8%A7%A3"><span class="nav-number">4.1.</span> <span class="nav-text">matlab代码求解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E9%BB%98%E8%AE%A4%E7%AE%97%E6%B3%95"><span class="nav-number">4.1.1.</span> <span class="nav-text">使用默认算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8interior-point%E7%AE%97%E6%B3%95"><span class="nav-number">4.1.2.</span> <span class="nav-text">使用interior point算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8sqp%E7%AE%97%E6%B3%95%E5%BA%8F%E5%88%97%E4%BA%8C%E6%AC%A1%E8%A7%84%E5%88%92%E6%B3%95"><span class="nav-number">4.1.3.</span> <span class="nav-text">使用SQP算法（序列二次规划法）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95%E6%94%B9%E5%8F%98%E5%88%9D%E5%A7%8B%E5%80%BC"><span class="nav-number">4.1.4.</span> <span class="nav-text">尝试改变初始值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E8%92%99%E7%89%B9%E5%8D%A1%E7%BD%97%E7%9A%84%E6%96%B9%E6%B3%95%E6%9D%A5%E6%B1%82%E5%88%9D%E5%A7%8B%E5%80%BC%E6%8E%A8%E8%8D%90"><span class="nav-number">4.1.5.</span> <span class="nav-text">使用蒙特卡罗的方法来求初始值（推荐）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#python%E4%BB%A3%E7%A0%81%E6%B1%82%E8%A7%A3"><span class="nav-number">4.2.</span> <span class="nav-text">python代码求解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E9%BB%98%E8%AE%A4%E7%AE%97%E6%B3%95-1"><span class="nav-number">4.2.1.</span> <span class="nav-text">使用默认算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8slsqp%E7%AE%97%E6%B3%95%E5%BA%8F%E5%88%97%E4%BA%8C%E6%AC%A1%E8%A7%84%E5%88%92%E6%B3%95%E6%B1%82%E8%A7%A3"><span class="nav-number">4.2.2.</span> <span class="nav-text"> 使用SLSQP算法（序列二次规划法）求解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E8%92%99%E7%89%B9%E5%8D%A1%E7%BD%97%E7%9A%84%E6%96%B9%E6%B3%95%E6%9D%A5%E6%89%BE%E5%88%9D%E5%A7%8B%E5%80%BC%E6%8E%A8%E8%8D%90"><span class="nav-number">4.2.3.</span> <span class="nav-text">使用蒙特卡罗的方法来找初始值(推荐)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%80%89%E5%9D%80%E9%97%AE%E9%A2%98%E4%BB%A3%E7%A0%81%E6%B1%82%E8%A7%A3"><span class="nav-number">5.</span> <span class="nav-text">选址问题代码求解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#matlab%E4%BB%A3%E7%A0%81%E6%B1%82%E8%A7%A3-1"><span class="nav-number">5.1.</span> <span class="nav-text">matlab代码求解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E9%97%AE%E4%BB%A3%E7%A0%81%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92"><span class="nav-number">5.1.1.</span> <span class="nav-text">第一问代码（线性规划）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E9%97%AE%E4%BB%A3%E7%A0%81%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92"><span class="nav-number">5.1.2.</span> <span class="nav-text">第二问代码（非线性规划）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%88%9D%E5%A7%8B%E5%80%BC%E4%B8%BA%E5%B7%B2%E7%9F%A5%E6%9D%A1%E4%BB%B6%E5%92%8C%E7%AC%AC%E4%B8%80%E9%97%AE%E7%9A%84%E5%80%BC"><span class="nav-number">5.1.2.1.</span> <span class="nav-text">设置初始值为已知条件和第一问的值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E8%92%99%E7%89%B9%E5%8D%A1%E7%BD%97%E6%B3%95%E6%B1%82%E4%B8%80%E4%B8%AA%E8%BF%91%E4%BC%BC%E8%A7%A3%E4%BD%9C%E4%B8%BA%E5%88%9D%E5%A7%8B%E5%80%BC"><span class="nav-number">5.1.2.2.</span> <span class="nav-text">使用蒙特卡罗法求一个近似解作为初始值</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#python%E4%BB%A3%E7%A0%81%E6%B1%82%E8%A7%A3-1"><span class="nav-number">5.2.</span> <span class="nav-text">python代码求解</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/05/30/NonlinearProgramming/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="NonlinearProgramming | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          NonlinearProgramming
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-05-30 15:24:33" itemprop="dateCreated datePublished" datetime="2025-05-30T15:24:33+08:00">2025-05-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-06-14 18:23:55" itemprop="dateModified" datetime="2025-06-14T18:23:55+08:00">2025-06-14</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="非线性规划模型引出">非线性规划——模型引出</h1>
+<h2
+id="除了线性规划模型优化类问题往往还有一些更复杂的">除了线性规划模型，优化类问题往往还有一些更复杂的</h2>
+<ul>
+<li><p><strong>常见的收益率、传播率、经济增长率等规划问题</strong>，通常涉及
+<span class="math inline">\(\frac{1}{x}\)</span>
+形式的表达，属于典型的非线性问题。</p></li>
+<li><p><strong>空间运动问题</strong>（如空间约束、避障、角度调整等），由于涉及曲线轨迹和角度变化，常用到三角函数、指数函数等非线性表达，因而也属于非线性问题的范畴。</p></li>
+<li><p><strong>运输优化问题</strong>，例如已知多个坐标点，需确定最优运输路径。此类问题通常用到欧几里得距离公式，其数学形式包含变量的平方和开方，因此也属于非线性问题。</p></li>
+<li><p><strong>示例</strong>：</p></li>
+</ul>
+<p><span class="math display">\[\begin{aligned}
+&amp;\max~y=x_1^2+x_2^2-x_1x_2-2x_1-5x_2,\\
+&amp;\text{s.t.}\begin{cases}(-x_1-1)^2+x_2\geqslant 0,\\
+2x_1-3x_2+6\geqslant 0
+\end{cases}
+\end{aligned}\]</span></p>
+<p>这就是一个非线性规划模型，与线性规划类似，它同样需要在确定决策变量的基础上，构建目标函数并列出相应的约束条件。</p>
+<h2 id="非线性规划模型引出-1">非线性规划——模型引出</h2>
+<h3 id="非线性规划简介">非线性规划简介</h3>
+<p><strong>非线性规划</strong>是运筹学的重要分支，致力于求解目标函数或约束条件包含<strong>非线性函数</strong>的最优化问题。20世纪50年代初，库恩（H.W.
+Kuhn）和塔克（A.W.
+Tucker）提出的<strong>基本定理</strong>（K-T条件）为该领域奠定了理论基础。该方法在工业、交通运输、经济管理与军事等领域应用广泛，尤其在<strong>最优设计</strong>中提供关键的数学基础与计算方法，具有显著的实用价值。</p>
+<h3 id="非线性规划模型特点">非线性规划模型特点</h3>
+<ul>
+<li><strong>非线性特征：</strong>
+模型中至少包含一个<strong>非线性项</strong>，例如 <span
+class="math inline">\(x^2\)</span>、<span
+class="math inline">\(e^x\)</span>、<span
+class="math inline">\(\frac{1}{x}\)</span>、<span
+class="math inline">\(\sin x\)</span>、<span
+class="math inline">\(\log_2 x\)</span> 等形式。</li>
+<li><strong>与线性规划的区别：</strong>
+<ul>
+<li><strong>线性规划 (LP)：</strong>
+存在通用的精确求解方法（如单纯形法），其最优解必然位于可行域的边界上。</li>
+<li><strong>非线性规划 (NLP)：</strong>
+最优解（若存在）可能出现在可行域的<strong>内部或边界任意点</strong>。目前尚无适用于所有
+NLP 问题的通用解法，不同算法有其特定的适用范围。</li>
+</ul></li>
+<li><strong>数学建模中的应用：</strong> 对于数学建模实践，掌握利用
+MATLAB
+等工具的<strong>内置函数</strong>求解非线性规划问题（通常得到近似最优解）即可满足需求。</li>
+</ul>
+<h1 id="非线性规划模型原理">非线性规划——模型原理</h1>
+<h2 id="非线性规划模型的matlab标准型">非线性规划模型的matlab标准型</h2>
+<p><span class="math display">\[\begin{aligned}
+&amp;\min ~f(x)\\
+&amp;\text{s.t.}\begin{cases}
+Ax \leqslant b,~Aeq\cdot x = beq&amp;(\text{线性})\\
+C(x) \leqslant 0,~Ceq(x) = 0&amp;(\text{非线性})\\
+lb \leqslant x \leqslant ub
+\end{cases}
+\end{aligned}\]</span></p>
+<h3
+id="非线性规划求解的matlab函数fmicon">非线性规划求解的Matlab函数:fmicon</h3>
+<ul>
+<li><p><strong>fmincon函数</strong>: <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[x, fval] = fmincon ( fun, x0, A, b, Aeq, beq, lb, ub, nonlcon, option)</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>fun：把目标函数定义为一个单独的函数文件（min）</li>
+<li>x0：决策变量的初始值</li>
+<li>A, b：线性约束的不等式变量系数矩阵和常数项矩阵（<span
+class="math inline">\(&lt;\)</span> 或 <span
+class="math inline">\(\leqslant\)</span>）</li>
+<li>Aeq, beq：线性约束的等式变量系数矩阵和常数项矩阵</li>
+<li>lb, ub：决策变量的最小取值和最大取值</li>
+<li>nonlcon：非线性约束，包括不等式和等式</li>
+<li>option：求解非线性规划使用的方法</li>
+</ul></li>
+<li><p>非线性规划中对于初始值<span
+class="math inline">\(x0\)</span>的选取非常重要，因为非线性规划的算法求解出来的是一个局部最优解。如果要求全局最优解，有两个思路：</p>
+<ul>
+<li>给定不同的初始值，在里面找到一个最优解；</li>
+<li>先用蒙特卡罗模拟，得到一个蒙特卡罗解，然后将这个解作为初始值求最优解</li>
+</ul></li>
+<li><p>options选项可以给定求解的算法，一共有五种：interior-point（内点法）、trust-region-reflective（信赖域反射法）、sqp（序列二次规划法）、sqp-legacy（约束非线性优化算法）、active-set（有效集法）。不同的算法有其各自的优缺点和适用情况，我们可以改变求解的算法来对比求解的结果。</p></li>
+<li><p>fun表示目标函数，我们要编写一个独立的“m文件”储存目标函数
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span> = <span class="title">fun</span><span class="params">(x)</span></span></span><br><span class="line">   f=……</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p></li>
+<li><p><strong>nonlcon</strong>
+表示非线性部分的约束，也要编写一个独立的“m文件”储存非线性约束条件  
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span>  <span class="params">[c, ceq]</span> = <span class="title">nonlfun</span><span class="params">(x)</span></span></span><br><span class="line">  c=[非线性不等式约束<span class="number">1</span>;</span><br><span class="line">    ……</span><br><span class="line">    非线性不等式约束n]</span><br><span class="line">  ceq=[非线性等式约束<span class="number">1</span>;</span><br><span class="line">      ……</span><br><span class="line">      非线性等式约束m]</span><br></pre></td></tr></table></figure></p></li>
+<li><p>决策变量下标要改为括号，比如 <span
+class="math inline">\(x_1\)</span> 要改为 <span
+class="math inline">\(x(1)\)</span>，matlab才能识别</p></li>
+<li><p>若不存在某种约束，可以用“[]”替代，若后面全为“[]”且option使用默认，后面的“[]”可省略</p></li>
+</ul>
+<h2 id="非线性规划模型的python标准型">非线性规划模型的python标准型</h2>
+<p><span class="math display">\[\begin{aligned}
+&amp;\min ~f(x)\\
+&amp;\text{s.t.}\begin{cases}
+h_i(x) = 0,i=1,\cdots,m\\
+g_j(x) \geqslant 0,j=1,\cdots,n\\
+lb \leqslant x \leqslant ub
+\end{cases}
+\end{aligned}\]</span></p>
+<h3
+id="非线性规划求解的python函数minimize">非线性规划求解的python函数:minimize</h3>
+<p><code>scipy.optimize.minimize</code> 是 SciPy
+库中用于寻找函数最小值的核心函数。以下是所有参数的详细介绍和完整用法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> minimize</span><br><span class="line"></span><br><span class="line">result = minimize(fun, x0, args=(), method=<span class="literal">None</span>, jac=<span class="literal">None</span>, hess=<span class="literal">None</span>,hessp=<span class="literal">None</span>, bounds=<span class="literal">None</span>, constraints=(), tol=<span class="literal">None</span>, callback=<span class="literal">None</span>, options=<span class="literal">None</span>)</span><br></pre></td></tr></table></figure>
+<h3
+id="scipy.optimize.minimize-参数详解表"><code>scipy.optimize.minimize</code>
+参数详解表</h3>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>参数</strong></th>
+<th style="text-align: center;"><strong>功能</strong></th>
+<th style="text-align: center;"><strong>格式/要求</strong></th>
+<th style="text-align: center;"><strong>默认值</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><strong><code>fun</code></strong></td>
+<td style="text-align: center;">目标函数</td>
+<td
+style="text-align: center;">需要最小化的目标函数。这个函数需要接收一个或多个参数，并返回对应的目标函数值</td>
+<td style="text-align: center;"><strong>必需</strong></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong><code>x0</code></strong></td>
+<td style="text-align: center;">初始猜测值</td>
+<td style="text-align: center;">决策变量的初始值。它是一个一维的 numpy
+数组</td>
+<td style="text-align: center;"><strong>必需</strong></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong><code>args</code></strong></td>
+<td style="text-align: center;">额外参数</td>
+<td style="text-align: center;">用于向目标函数 fun
+和约束函数（如果有）传递额外的固定参数</td>
+<td style="text-align: center;"><code>()</code></td>
+</tr>
+<tr>
+<td
+style="text-align: center;"><strong><code>method</code></strong></td>
+<td style="text-align: center;">优化算法</td>
+<td
+style="text-align: center;">格式：字符串。指定求解优化问题所使用的算法方法。不同的问题类型（例如无约束优化、有约束优化等）可选用不同的合适算法</td>
+<td style="text-align: center;">自动选择</td>
+</tr>
+<tr>
+<td
+style="text-align: center;"><strong><code>jac,hess,hessp</code></strong></td>
+<td
+style="text-align: center;">用于加速梯度优化的一些参数，大多数中小规模问题或简单函数不用管</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">-</td>
+</tr>
+<tr>
+<td
+style="text-align: center;"><strong><code>bounds</code></strong></td>
+<td style="text-align: center;">变量边界</td>
+<td style="text-align: center;">格式：<br>•
+<code>[(min0,max0), (min1,max1), ...]</code></td>
+<td style="text-align: center;"><code>None</code></td>
+</tr>
+<tr>
+<td
+style="text-align: center;"><strong><code>constraints</code></strong></td>
+<td style="text-align: center;">约束条件</td>
+<td style="text-align: center;">格式：字典或字典列表：<br>•
+等式：<code>&#123;'type':'eq', 'fun':F&#125;</code><br>•
+不等式：<code>&#123;'type':'ineq', 'fun':F&#125;</code></td>
+<td style="text-align: center;"><code>()</code></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong><code>tol</code></strong></td>
+<td style="text-align: center;">容差阈值</td>
+<td style="text-align: center;">格式：浮点数。
+<br>用于控制优化算法何时认为已经收敛并停止迭代。当算法在某次迭代后的改进程度小于这个容差值时，就会停止迭代。一般不用设置</td>
+<td style="text-align: center;">算法默认值</td>
+</tr>
+<tr>
+<td
+style="text-align: center;"><strong><code>callback</code></strong></td>
+<td style="text-align: center;">回调函数</td>
+<td style="text-align: center;">可调用：<code>callback(xk)</code><br>•
+<code>xk</code>：当前参数向量<br>每次迭代时的回调函数，通常用于调试或跟踪优化进度，一般不需要。</td>
+<td style="text-align: center;"><code>None</code></td>
+</tr>
+<tr>
+<td
+style="text-align: center;"><strong><code>options</code></strong></td>
+<td style="text-align: center;">算法选项</td>
+<td
+style="text-align: center;"><br>用于设置各种与算法相关的额外选项，比如以下字典：<br>•
+<code>'maxiter'</code>：最大迭代次数<br>•
+<code>'disp'</code>：显示信息<br>• <code>'gtol'</code>：梯度容差<br>•
+<code>'eps'</code>：有限差分步长</td>
+<td style="text-align: center;"><code>None</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="优化算法">优化算法</h3>
+<table>
+<thead>
+<tr>
+<th><strong>算法</strong></th>
+<th><strong>描述</strong></th>
+<th><strong>边界支持</strong></th>
+<th><strong>约束支持</strong></th>
+<th><strong>梯度需求</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>'Nelder-Mead'</code></td>
+<td>单纯形法</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>'Powell'</code></td>
+<td>改进Powell法</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>'CG'</code></td>
+<td>共轭梯度法</td>
+<td>❌</td>
+<td>❌</td>
+<td>可选</td>
+</tr>
+<tr>
+<td><code>'BFGS'</code></td>
+<td>拟牛顿法</td>
+<td>❌</td>
+<td>❌</td>
+<td>可选</td>
+</tr>
+<tr>
+<td><code>'Newton-CG'</code></td>
+<td>牛顿共轭梯度法</td>
+<td>❌</td>
+<td>❌</td>
+<td>必需</td>
+</tr>
+<tr>
+<td><code>'L-BFGS-B'</code></td>
+<td>有限内存BFGS</td>
+<td>✔️</td>
+<td>❌</td>
+<td>可选</td>
+</tr>
+<tr>
+<td><code>'TNC'</code></td>
+<td>截断牛顿法</td>
+<td>✔️</td>
+<td>❌</td>
+<td>可选</td>
+</tr>
+<tr>
+<td><code>'COBYLA'</code></td>
+<td>约束线性逼近</td>
+<td>❌</td>
+<td>✔️</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>'SLSQP'</code></td>
+<td>序列最小二乘</td>
+<td>✔️</td>
+<td>✔️</td>
+<td>可选</td>
+</tr>
+<tr>
+<td><code>'trust-constr'</code></td>
+<td>信赖域约束法</td>
+<td>✔️</td>
+<td>✔️</td>
+<td>可选</td>
+</tr>
+</tbody>
+</table>
+<h3 id="返回值">返回值</h3>
+<p>返回 <code>OptimizeResult</code> 对象，包含以下属性：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">属性</th>
+<th style="text-align: center;">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><code>x</code></td>
+<td style="text-align: center;">最优解数组</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>success</code></td>
+<td style="text-align: center;">是否成功收敛 (布尔值)</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>status</code></td>
+<td style="text-align: center;">终止状态代码</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>message</code></td>
+<td style="text-align: center;">终止状态描述</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>fun</code></td>
+<td style="text-align: center;">最优解处的函数值</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>jac</code></td>
+<td style="text-align: center;">最优解处的梯度</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>hess</code></td>
+<td style="text-align: center;">最优解处的Hessian矩阵</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>nfev</code></td>
+<td style="text-align: center;">函数调用次数</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>njev</code></td>
+<td style="text-align: center;">梯度调用次数</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>nhev</code></td>
+<td style="text-align: center;">Hessian调用次数</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>nit</code></td>
+<td style="text-align: center;">迭代次数</td>
+</tr>
+</tbody>
+</table>
+<h1 id="非线性规划典型例题">非线性规划——典型例题</h1>
+<h2 id="选址问题">选址问题</h2>
+<ul>
+<li>临时料场：<span
+class="math inline">\(A(5,1)，B(2,7)\)</span>；日储量各20吨。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">工地位置坐标及日需求量</th>
+<th style="text-align: center;">I    </th>
+<th style="text-align: center;">II  </th>
+<th style="text-align: center;">III  </th>
+<th style="text-align: center;">IV  </th>
+<th style="text-align: center;">V    </th>
+<th style="text-align: center;">VI  </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">横坐标                </td>
+<td style="text-align: center;">1.25</td>
+<td style="text-align: center;">8.75</td>
+<td style="text-align: center;">0.5  </td>
+<td style="text-align: center;">5.75</td>
+<td style="text-align: center;">3    </td>
+<td style="text-align: center;">7.25</td>
+</tr>
+<tr>
+<td style="text-align: center;">纵坐标                </td>
+<td style="text-align: center;">1.25</td>
+<td style="text-align: center;">0.75</td>
+<td style="text-align: center;">4.75</td>
+<td style="text-align: center;">5    </td>
+<td style="text-align: center;">6.5  </td>
+<td style="text-align: center;">7.75</td>
+</tr>
+<tr>
+<td style="text-align: center;">日需求量              </td>
+<td style="text-align: center;">3    </td>
+<td style="text-align: center;">5    </td>
+<td style="text-align: center;">4    </td>
+<td style="text-align: center;">7    </td>
+<td style="text-align: center;">6    </td>
+<td style="text-align: center;">11  </td>
+</tr>
+</tbody>
+</table>
+<p>（1）试制定每天的供应计划，即从两料场分别向各工地运送多少吨水泥，使总的吨千米数最小？</p>
+<p>（2）为了进一步减少吨千米数，打算舍弃两个临时料场，改建两个新的，日储量各为20吨，问应建在何处，节省的吨千米数为多大？</p>
+<h2 id="建立模型">建立模型</h2>
+<h3 id="确定决策变量"><strong>确定决策变量</strong>  </h3>
+<p>  设第<span class="math inline">\(i\)</span>个工地的坐标 <span
+class="math inline">\((a_i,b_i)\)</span>，水泥日用量 <span
+class="math inline">\(d_i\)</span>，<span class="math inline">\(i = 1,
+2, ..., 6\)</span>；料场位置 <span
+class="math inline">\((x_j,y_j)\)</span>，日储量 <span
+class="math inline">\(e_j\)</span>，<span class="math inline">\(j = 1,
+2\)</span>；从料场向工地的运送量为 <span
+class="math inline">\(x_{ij}\)</span> （从第 <span
+class="math inline">\(j\)</span> 个料场运往第 <span
+class="math inline">\(i\)</span> 个工地）</p>
+<h3 id="确定约束条件"><strong>确定约束条件</strong>  </h3>
+<p>  料场水泥运输总量不超过其日储量：<span
+class="math inline">\(\sum\limits_{i=1}^6 x_{ij} \leqslant e_j, j = 1,
+2\)</span>  </p>
+<p>  两个料场向某工地运输量之和等于该工地水泥日用量：<span
+class="math inline">\(\sum\limits_{j=1}^2 x_{ij} = d_i, i = 1, 2, ...,
+6\)</span>  </p>
+<h3 id="确定目标函数"><strong>确定目标函数</strong>  </h3>
+<p>  求总吨千米数最小，即运送量乘运送距离求和最小 <span
+class="math inline">\(\min f = \sum\limits_{j=1}^2\sum\limits_{i=1}^6
+x_{ij}\sqrt{(x_j-a_i)^2+(y_j-b_i)^2}\)</span>  </p>
+<h3 id="建立模型-1"><strong>建立模型</strong>  </h3>
+<p><span class="math display">\[\begin{aligned}
+   &amp;\min~f=\sum_{j=1}^2 \sum_{i=1}^6 x_{ij} \sqrt{(x_j - a_i)^2 +
+(y_j - b_i)^2}\\
+   &amp;\text{s.t.} \begin{cases}
+    \sum\limits_{i=1}^6 x_{ij} \leqslant e_j, j = 1, 2
+~~~(x_{11}+x_{21}+\cdots+x_{61}\leqslant
+e_1,x_{12}+x_{22}+\cdots+x_{62}\leqslant e_2)\\
+    \sum\limits_{j=1}^2 x_{ij} = d_i, i = 1, 2, ...,
+6~~~(x_{11}+x_{12}=d_{1},x_{21}+x_{22}=d_2,\cdots,x_{61}+x_{62}=d_{6})\\
+    x_{ij} \geqslant 0, i = 1, 2, ..., 6; j = 1, 2
+    \end{cases}
+\end{aligned}\]</span></p>
+<ul>
+<li>对于第一问：因料场位置已知，故决策变量仅为 $ x_{ij}
+$，为线性规划模型  </li>
+<li>对于第二问：新料场位置未知，所以 $ x_j $ 和 $ y_j $
+均为变量，故为非线性规划模型  </li>
+<li>共有8个约束，注意，在 Matlab
+里这些双角标的变量要改为单角标的变量，如 $x_{11}x_1, x_{21} x_2, ,
+x_{62} x_{12} $</li>
+</ul>
+<h1 id="示例代码求解">示例代码求解</h1>
+<p><span class="math display">\[\begin{aligned}
+&amp;\max~y = x_1^2 + x_2^2 - x_1x_2 - 2x_1 - 5x_2, \\
+&amp;\text{s.t.}
+\begin{cases}
+-(x_1 - 1)^2 + x_2 \geqslant 0, \\
+2x_1 - 3x_2 + 6 \geqslant 0
+\end{cases}
+\end{aligned}\]</span></p>
+<h2 id="matlab代码求解">matlab代码求解</h2>
+<p>fun1.m的文件内容如下： <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span> = <span class="title">fun1</span><span class="params">(x)</span></span></span><br><span class="line">    <span class="comment">% 注意：这里的f实际上就是目标函数，函数的返回值也是f</span></span><br><span class="line">    <span class="comment">% 输入值x实际上就是决策变量，由x1和x2组成的向量</span></span><br><span class="line">    <span class="comment">% fun1是函数名称，到时候会被fmincon函数调用, 可以任意取名</span></span><br><span class="line">    <span class="comment">% 保存的m文件和函数名称得一致，也要为fun1.m</span></span><br><span class="line">    <span class="comment">% max f(x) = x1^2 +x2^2 -x1*x2 -2x1 -5x2</span></span><br><span class="line">    f = -x(<span class="number">1</span>)^<span class="number">2</span>-x(<span class="number">2</span>)^<span class="number">2</span> +x(<span class="number">1</span>)*x(<span class="number">2</span>)+<span class="number">2</span>*x(<span class="number">1</span>)+<span class="number">5</span>*x(<span class="number">2</span>) ; </span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure> nonfun1.m的文件内容如下：
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[c,ceq]</span> = <span class="title">nonlfun1</span><span class="params">(x)</span></span></span><br><span class="line">    <span class="comment">% 注意：这里的c实际上就是非线性不等式约束，ceq实际上就是非线性等式约束</span></span><br><span class="line">    <span class="comment">% 输入值x实际上就是决策变量，由x1和x2组成的一个向量</span></span><br><span class="line">    <span class="comment">% 返回值有两个，一个是非线性不等式约束c，一个是非线性等式约束ceq</span></span><br><span class="line">    <span class="comment">% nonlfun1是函数名称，到时候会被fmincon函数调用, 可以任意取名，但不能和目标函数fun1重名</span></span><br><span class="line">    <span class="comment">% 保存的m文件和函数名称得一致，也要为nonlfun1.m</span></span><br><span class="line">    <span class="comment">% -(x1-1)^2 +x2 &gt;= 0</span></span><br><span class="line">   c = [(x(<span class="number">1</span>)<span class="number">-1</span>)^<span class="number">2</span>-x(<span class="number">2</span>)];   <span class="comment">% 千万別写成了: (x1-1)^2 -x2</span></span><br><span class="line">   ceq = [];  <span class="comment">% 不存在非线性等式约束，所以用[]表示</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="使用默认算法">使用默认算法</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">%% 非线性规划的函数</span></span><br><span class="line"><span class="comment">% [x,fval] = fmincon(fun,x0,A,b,Aeq,beq,lb,ub,nonlfun,option)</span></span><br><span class="line"><span class="comment">% x0表示给定的初始值（用行向量或者列向量表示），必须得写</span></span><br><span class="line"><span class="comment">% A b表示线性不等式约束</span></span><br><span class="line"><span class="comment">% Aeq beq 表示线性等式约束</span></span><br><span class="line"><span class="comment">% lb ub 表示上下界约束</span></span><br><span class="line"><span class="comment">% fun表示目标函数</span></span><br><span class="line"><span class="comment">% nonlfun表示非线性约束的函数</span></span><br><span class="line"><span class="comment">% option 表示求解非线性规划使用的方法</span></span><br><span class="line">clc;clear all;close all</span><br><span class="line">format long g   <span class="comment">%可以将Matlab的计算结果显示为一般的长数字格式（默认会保留四位小数，或使用科学计数法）</span></span><br><span class="line"></span><br><span class="line"><span class="comment">% max f(x) = x1^2 +x2^2 -x1*x2 -2x1 -5x2</span></span><br><span class="line"><span class="comment">% s.t. -(x1-1)^2 +x2 &gt;= 0 ;  2x1-3x2+6 &gt;= 0</span></span><br><span class="line">x0 = [<span class="number">0</span> <span class="number">0</span>];  <span class="comment">%任意给定一个初始值 </span></span><br><span class="line">A = [<span class="number">-2</span> <span class="number">3</span>]; b = <span class="number">6</span>;</span><br><span class="line">[x,fval] = fmincon(@fun1,x0,A,b,[],[],[],[],@nonlfun1)  <span class="comment">% 注意 fun1.m文件和nonlfun1.m文件都必须在当前文件夹目录下</span></span><br><span class="line">fval = -fval</span><br></pre></td></tr></table></figure>
+<h3 id="使用interior-point算法">使用interior point算法</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">clc;clear all;close all</span><br><span class="line">format long g</span><br><span class="line">x0 = [<span class="number">0</span> <span class="number">0</span>];  <span class="comment">%任意给定一个初始值 </span></span><br><span class="line">A = [<span class="number">-2</span> <span class="number">3</span>]; b = <span class="number">6</span>;</span><br><span class="line">option = optimoptions(<span class="string">&#x27;fmincon&#x27;</span>,<span class="string">&#x27;Algorithm&#x27;</span>,<span class="string">&#x27;interior-point&#x27;</span>)  </span><br><span class="line">[x,fval] = fmincon(@fun1,x0,A,b,[],[],[],[],@nonlfun1,option)  </span><br><span class="line">fval = -fval  </span><br></pre></td></tr></table></figure>
+<h3 id="使用sqp算法序列二次规划法">使用SQP算法（序列二次规划法）</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">clc;clear all;close all</span><br><span class="line">format long g</span><br><span class="line">x0 = [<span class="number">0</span> <span class="number">0</span>];  <span class="comment">%任意给定一个初始值 </span></span><br><span class="line">A = [<span class="number">-2</span> <span class="number">3</span>]; b = <span class="number">6</span>;  </span><br><span class="line">option = optimoptions(<span class="string">&#x27;fmincon&#x27;</span>,<span class="string">&#x27;Algorithm&#x27;</span>,<span class="string">&#x27;sqp&#x27;</span>)  </span><br><span class="line">[x,fval] = fmincon(@fun1,x0,A,b,[],[],[],[],@nonlfun1,option)  </span><br><span class="line">fval = -fval <span class="comment">%得到-4.358，远远小于内点法得到的-1，猜想是初始值的影响  </span></span><br></pre></td></tr></table></figure>
+<h3 id="尝试改变初始值">尝试改变初始值</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">clc;clear all;close all</span><br><span class="line">format long g</span><br><span class="line">x0 = [<span class="number">1</span> <span class="number">1</span>];  <span class="comment">%任意给定一个初始值 </span></span><br><span class="line">A = [<span class="number">-2</span> <span class="number">3</span>]; b = <span class="number">6</span>;  </span><br><span class="line">option = optimoptions(<span class="string">&#x27;fmincon&#x27;</span>,<span class="string">&#x27;Algorithm&#x27;</span>,<span class="string">&#x27;sqp&#x27;</span>)  </span><br><span class="line">[x,fval] = fmincon(@fun1,x0,A,b,[],[],[],[],@nonlfun1,option)  </span><br><span class="line">fval = -fval <span class="comment">%% 最小值为-1，和内点法相同（这说明内点法的适应性比较好）  </span></span><br></pre></td></tr></table></figure>
+<h3
+id="使用蒙特卡罗的方法来求初始值推荐">使用蒙特卡罗的方法来求初始值（推荐）</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">clc;clear all;close all</span><br><span class="line">n=<span class="number">10000000</span>; <span class="comment">%生成的随机数组数</span></span><br><span class="line">x1=unifrnd(<span class="number">-100</span>,<span class="number">100</span>,n,<span class="number">1</span>); <span class="comment">%生成在[-100,100]之间均匀分布的随机数组</span></span><br><span class="line">x2=unifrnd(<span class="number">-100</span>,<span class="number">100</span>,n,<span class="number">1</span>);</span><br><span class="line">fmin=+<span class="built_in">inf</span>; <span class="comment">%初始化函数的最小值为正无穷</span></span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>:n</span><br><span class="line">    x = [x1(<span class="built_in">i</span>), x2(<span class="built_in">i</span>)]; </span><br><span class="line">    <span class="keyword">if</span> ((x(<span class="number">1</span>)<span class="number">-1</span>)^<span class="number">2</span>-x(<span class="number">2</span>)&lt;=<span class="number">0</span>)  &amp; (<span class="number">-2</span>*x(<span class="number">1</span>)+<span class="number">3</span>*x(<span class="number">2</span>)<span class="number">-6</span> &lt;= <span class="number">0</span>) <span class="comment">%判断是否满足条件</span></span><br><span class="line">        result = -x(<span class="number">1</span>)^<span class="number">2</span>-x(<span class="number">2</span>)^<span class="number">2</span> +x(<span class="number">1</span>)*x(<span class="number">2</span>)+<span class="number">2</span>*x(<span class="number">1</span>)+<span class="number">5</span>*x(<span class="number">2</span>); </span><br><span class="line">        <span class="keyword">if</span> result &lt; fmin </span><br><span class="line">            fmin = result; </span><br><span class="line">            x0 = x; </span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;蒙特卡罗选取的初始值为: &#x27;</span>); <span class="built_in">disp</span>(x0)</span><br><span class="line">A = [<span class="number">-2</span> <span class="number">3</span>]; b = <span class="number">6</span>;</span><br><span class="line">[x, fval] = fmincon(@fun1,x0,A,b,[],[],[],[],@non1fun1)</span><br><span class="line">fval = -fval</span><br></pre></td></tr></table></figure>
+<h2 id="python代码求解">python代码求解</h2>
+<h3 id="使用默认算法-1">使用默认算法</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> minimize</span><br><span class="line"></span><br><span class="line"><span class="comment"># 目标函数，接受一个长度为2的一维数组x（代表两个变量x1和x2），计算并返回目标函数值</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fun1</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> x[<span class="number">0</span>] ** <span class="number">2</span> + x[<span class="number">1</span>] ** <span class="number">2</span> - x[<span class="number">0</span>] * x[<span class="number">1</span>] - <span class="number">2</span> * x[<span class="number">0</span>] - <span class="number">5</span> * x[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第一个非线性约束条件函数，接受变量x，返回对应的某条件的值</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">nonlcon1</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> -(x[<span class="number">0</span>] - <span class="number">1</span>) ** <span class="number">2</span> + x[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第二个非线性约束条件函数，接受变量x，返回对应的某条件的值</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">nonlcon2</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="number">2</span> * x[<span class="number">0</span>] - <span class="number">3</span> * x[<span class="number">1</span>] + <span class="number">6</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始值设定，设置为一个二维的numpy数组，初始值为[0, 0]</span></span><br><span class="line">x0 = np.array([<span class="number">0</span>, <span class="number">0</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用默认解法（内点法类似的算法，在scipy中会根据情况选择合适的）求解</span></span><br><span class="line">res = minimize(fun1, x0,</span><br><span class="line">               constraints=(&#123;<span class="string">&#x27;type&#x27;</span>: <span class="string">&#x27;ineq&#x27;</span>, <span class="string">&#x27;fun&#x27;</span>: nonlcon1&#125;,</span><br><span class="line">                            &#123;<span class="string">&#x27;type&#x27;</span>: <span class="string">&#x27;ineq&#x27;</span>, <span class="string">&#x27;fun&#x27;</span>: nonlcon2&#125;),</span><br><span class="line">               bounds=<span class="literal">None</span>, tol=<span class="literal">None</span>, options=<span class="literal">None</span>, args=())</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">或res = minimize(fun1, x0, args=(), </span></span><br><span class="line"><span class="string">               constraints=(&#123;&#x27;type&#x27;: &#x27;ineq&#x27;, &#x27;fun&#x27;: nonlcon1&#125;,</span></span><br><span class="line"><span class="string">                            &#123;&#x27;type&#x27;: &#x27;ineq&#x27;, &#x27;fun&#x27;: nonlcon2&#125;),</span></span><br><span class="line"><span class="string">               bounds=None, tol=None, options=None)</span></span><br><span class="line"><span class="string">或res = minimize(fun1, x0,</span></span><br><span class="line"><span class="string">               constraints=(&#123;&#x27;type&#x27;: &#x27;ineq&#x27;, &#x27;fun&#x27;: nonlcon1&#125;,</span></span><br><span class="line"><span class="string">                            &#123;&#x27;type&#x27;: &#x27;ineq&#x27;, &#x27;fun&#x27;: nonlcon2&#125;))</span></span><br><span class="line"><span class="string">或con=(&#123;&#x27;type&#x27;: &#x27;ineq&#x27;, &#x27;fun&#x27;: nonlcon1&#125;,</span></span><br><span class="line"><span class="string">       &#123;&#x27;type&#x27;: &#x27;ineq&#x27;, &#x27;fun&#x27;: nonlcon2&#125;)</span></span><br><span class="line"><span class="string">res = minimize(fun1, x0, constraints=con)</span></span><br><span class="line"><span class="string">或con=(&#123;&#x27;type&#x27;: &#x27;ineq&#x27;, &#x27;fun&#x27;: nonlcon1&#125;,</span></span><br><span class="line"><span class="string">       &#123;&#x27;type&#x27;: &#x27;ineq&#x27;, &#x27;fun&#x27;: nonlcon2&#125;)</span></span><br><span class="line"><span class="string">res = minimize(fun=fun1, x0=x0, constraints=con)</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;默认算法（类似内点法等情况）求解结果：&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最优解：&quot;</span>, res.x)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最优值：&quot;</span>, res.fun)</span><br></pre></td></tr></table></figure>
+<h3
+id="使用slsqp算法序列二次规划法求解"> 使用SLSQP算法（序列二次规划法）求解</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> minimize</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fun1</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> x[<span class="number">0</span>] ** <span class="number">2</span> + x[<span class="number">1</span>] ** <span class="number">2</span> - x[<span class="number">0</span>] * x[<span class="number">1</span>] - <span class="number">2</span> * x[<span class="number">0</span>] - <span class="number">5</span> * x[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">nonlcon1</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> -(x[<span class="number">0</span>] - <span class="number">1</span>) ** <span class="number">2</span> + x[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">nonlcon2</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="number">2</span> * x[<span class="number">0</span>] - <span class="number">3</span> * x[<span class="number">1</span>] + <span class="number">6</span></span><br><span class="line"></span><br><span class="line">x0 = np.array([<span class="number">0</span>, <span class="number">0</span>])</span><br><span class="line">res_sqp = minimize(fun1, x0=x0, method=<span class="string">&#x27;SLSQP&#x27;</span>,</span><br><span class="line">                   constraints=(&#123;<span class="string">&#x27;type&#x27;</span>: <span class="string">&#x27;ineq&#x27;</span>, <span class="string">&#x27;fun&#x27;</span>: nonlcon1&#125;,</span><br><span class="line">                                &#123;<span class="string">&#x27;type&#x27;</span>: <span class="string">&#x27;ineq&#x27;</span>, <span class="string">&#x27;fun&#x27;</span>: nonlcon2&#125;),</span><br><span class="line">                   bounds=<span class="literal">None</span>, tol=<span class="literal">None</span>, options=<span class="literal">None</span>, args=())</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;SQP算法（序列二次规划法）求解结果：&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最优解：&quot;</span>, res_sqp.x)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最优值：&quot;</span>, res_sqp.fun)</span><br></pre></td></tr></table></figure>
+<h3
+id="使用蒙特卡罗的方法来找初始值推荐">使用蒙特卡罗的方法来找初始值(推荐)</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> minimize</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fun1</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> x[<span class="number">0</span>] ** <span class="number">2</span> + x[<span class="number">1</span>] ** <span class="number">2</span> - x[<span class="number">0</span>] * x[<span class="number">1</span>] - <span class="number">2</span> * x[<span class="number">0</span>] - <span class="number">5</span> * x[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">nonlcon1</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> -(x[<span class="number">0</span>] - <span class="number">1</span>) ** <span class="number">2</span> + x[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">nonlcon2</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="number">2</span> * x[<span class="number">0</span>] - <span class="number">3</span> * x[<span class="number">1</span>] + <span class="number">6</span></span><br><span class="line"></span><br><span class="line">n = <span class="number">10000000</span></span><br><span class="line"><span class="comment"># np.random.uniform 是 NumPy 库中用于生成在指定区间内均匀分布的随机数（或随机数组）的函数。</span></span><br><span class="line"><span class="comment"># 用法同 np.random.randint，不过这里生成的是随机数，不是整数</span></span><br><span class="line">x1 = np.random.uniform(-<span class="number">100</span>, <span class="number">100</span>, size=n)</span><br><span class="line">x2 = np.random.uniform(-<span class="number">100</span>, <span class="number">100</span>, size=n)</span><br><span class="line">fmin = <span class="number">100000000</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">    x = np.array([x1[i], x2[i]])</span><br><span class="line">    <span class="comment"># 后续的约束条件判断和结果处理逻辑保持不变</span></span><br><span class="line">    <span class="keyword">if</span> nonlcon1(x) &gt;= <span class="number">0</span> <span class="keyword">and</span> nonlcon2(x) &gt;= <span class="number">0</span>:</span><br><span class="line">        result = fun1(x)</span><br><span class="line">        <span class="keyword">if</span> result &lt; fmin:</span><br><span class="line">            fmin = result</span><br><span class="line">            x0 = x</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;蒙特卡罗选取的初始值为：&quot;</span>, x0)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用找到的初始值再次进行优化求解</span></span><br><span class="line">res_final = minimize(fun1, x0,</span><br><span class="line">                    constraints=(&#123;<span class="string">&#x27;type&#x27;</span>: <span class="string">&#x27;ineq&#x27;</span>, <span class="string">&#x27;fun&#x27;</span>: nonlcon1&#125;,</span><br><span class="line">                                 &#123;<span class="string">&#x27;type&#x27;</span>: <span class="string">&#x27;ineq&#x27;</span>, <span class="string">&#x27;fun&#x27;</span>: nonlcon2&#125;),</span><br><span class="line">                    bounds=<span class="literal">None</span>, tol=<span class="literal">None</span>, options=<span class="literal">None</span>, args=())</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;基于蒙特卡罗初始值的最终求解结果：&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最优解：&quot;</span>, res_final.x)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最优值：&quot;</span>, res_final.fun)</span><br></pre></td></tr></table></figure>
+<h1 id="选址问题代码求解">选址问题代码求解</h1>
+<h2 id="matlab代码求解-1">matlab代码求解</h2>
+<h3 id="第一问代码线性规划">第一问代码（线性规划）</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">clear;clc;</span><br><span class="line"><span class="comment">% 6个工地坐标</span></span><br><span class="line">a=[<span class="number">1.25</span> <span class="number">8.75</span> <span class="number">0.5</span> <span class="number">5.75</span> <span class="number">3</span> <span class="number">7.25</span>];</span><br><span class="line">b=[<span class="number">1.25</span> <span class="number">0.75</span> <span class="number">4.75</span> <span class="number">5</span> <span class="number">6.5</span> <span class="number">7.75</span>];</span><br><span class="line"><span class="comment">% 临时料场位置</span></span><br><span class="line">x=[<span class="number">5</span> <span class="number">2</span>];</span><br><span class="line">y=[<span class="number">1</span> <span class="number">7</span>];</span><br><span class="line"><span class="comment">% 6个工地水泥日用量</span></span><br><span class="line">d=[<span class="number">3</span> <span class="number">5</span> <span class="number">4</span> <span class="number">7</span> <span class="number">6</span> <span class="number">11</span>];</span><br><span class="line"><span class="comment">% 计算目标函数系数，即6工地与两个料场的距离，总共12个值</span></span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>:<span class="number">6</span>   <span class="comment">% 对于6个工地</span></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">j</span>=<span class="number">1</span>:<span class="number">2</span>       <span class="comment">% 接收两个料场的供用</span></span><br><span class="line">        l(<span class="built_in">i</span>,<span class="built_in">j</span>)=<span class="built_in">sqrt</span>((x(<span class="built_in">j</span>)-a(<span class="built_in">i</span>))^<span class="number">2</span>+(y(<span class="built_in">j</span>)-b(<span class="built_in">i</span>))^<span class="number">2</span>);   <span class="comment">% 距离</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">f = [l(:,<span class="number">1</span>);l(:,<span class="number">2</span>)];    <span class="comment">% 目标函数系数向量，总共12个值</span></span><br><span class="line"></span><br><span class="line"><span class="comment">% 不等式约束条件的变量系数和常数项</span></span><br><span class="line"><span class="comment">% 双下标转换成单下标：x11=x1，x21=x2，x31=x3，x41=x4，x51=x5, x61=x6</span></span><br><span class="line"><span class="comment">% 双下标转换成单下标：x12=x7, x22=x8, x32=x9, x42=x10, x52=x11, x62=x12</span></span><br><span class="line">A = [<span class="number">1</span> <span class="number">1</span> <span class="number">1</span> <span class="number">1</span> <span class="number">1</span> <span class="number">1</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span></span><br><span class="line">     <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">1</span> <span class="number">1</span> <span class="number">1</span> <span class="number">1</span> <span class="number">1</span> <span class="number">1</span>];</span><br><span class="line"><span class="comment">% 两个临时料场日储量</span></span><br><span class="line">b = [<span class="number">20</span>;<span class="number">20</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">% 矩阵的行数是约束条件个数，列数是变量个数</span></span><br><span class="line"><span class="comment">% 等式约束的变量系数和常数项</span></span><br><span class="line">Aeq = [<span class="built_in">eye</span>(<span class="number">6</span>),<span class="built_in">eye</span>(<span class="number">6</span>)];    <span class="comment">% 两个单位矩阵横向拼成</span></span><br><span class="line">beq=[d(<span class="number">1</span>);d(<span class="number">2</span>);d(<span class="number">3</span>);d(<span class="number">4</span>);d(<span class="number">5</span>);d(<span class="number">6</span>)];</span><br><span class="line"><span class="comment">% 所有变量下限全是0</span></span><br><span class="line">Vlb=[<span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span>]; </span><br><span class="line">[x,fval]=linprog(f,A,b,Aeq,beq,Vlb);</span><br><span class="line">x,fval</span><br></pre></td></tr></table></figure>
+<h3 id="第二问代码非线性规划">第二问代码（非线性规划）</h3>
+<p>fun2.m的文件内容为： <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">ff</span> = <span class="title">fun2</span><span class="params">(x)</span></span></span><br><span class="line"><span class="comment">% 6个工地坐标</span></span><br><span class="line">a1 = [<span class="number">1.25</span> <span class="number">8.75</span> <span class="number">0.5</span> <span class="number">5.75</span> <span class="number">3</span> <span class="number">7.25</span>];</span><br><span class="line">b1 = [<span class="number">1.25</span> <span class="number">0.75</span> <span class="number">4.75</span> <span class="number">5</span> <span class="number">6.5</span> <span class="number">7.75</span>];</span><br><span class="line"></span><br><span class="line">f1=<span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">% x(13)是第一个新料场的横坐标，x(14)是其纵坐标；</span></span><br><span class="line"><span class="comment">% x(15)是第二个新料场的横坐标，x(16)是其纵坐标；</span></span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>:<span class="number">6</span></span><br><span class="line">    s(<span class="built_in">i</span>)=<span class="built_in">sqrt</span>((x(<span class="number">13</span>)-a1(<span class="built_in">i</span>))^<span class="number">2</span>+(x(<span class="number">14</span>)-b1(<span class="built_in">i</span>))^<span class="number">2</span>); <span class="comment">% 第一个料场到各工地的距离</span></span><br><span class="line">    f1=s(<span class="built_in">i</span>)*x(<span class="built_in">i</span>)+f1;  <span class="comment">% 第一个料场给各工地的吨千米数</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">f2=<span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">7</span>:<span class="number">12</span></span><br><span class="line">    s(<span class="built_in">i</span>)=<span class="built_in">sqrt</span>((x(<span class="number">15</span>)-a1(<span class="built_in">i</span><span class="number">-6</span>))^<span class="number">2</span>+(x(<span class="number">16</span>)-b1(<span class="built_in">i</span><span class="number">-6</span>))^<span class="number">2</span>);  <span class="comment">% 第二个料场到各工地的距离</span></span><br><span class="line">    f2=s(<span class="built_in">i</span>)*x(<span class="built_in">i</span>)+f2;  <span class="comment">% 第二个料场给各工地的吨千米数</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="comment">% 总运输量（吨千米数）</span></span><br><span class="line">ff=f1+f2;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<h4
+id="设置初始值为已知条件和第一问的值">设置初始值为已知条件和第一问的值</h4>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">clc; clear all; close all</span><br><span class="line"><span class="comment">% 注意！第二问中求新料场位置，所以两个料场的横纵坐标也是变量，所以多了4个变量</span></span><br><span class="line"><span class="comment">% 对新坐标没有不等式约束，所以其不等式约束条件里的系数为0</span></span><br><span class="line">A2 = [<span class="number">1</span> <span class="number">1</span> <span class="number">1</span> <span class="number">1</span> <span class="number">1</span> <span class="number">1</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span></span><br><span class="line">      <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">1</span> <span class="number">1</span> <span class="number">1</span> <span class="number">1</span> <span class="number">1</span> <span class="number">1</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span>];</span><br><span class="line">B2 = [<span class="number">20</span>;<span class="number">20</span>];</span><br><span class="line"><span class="comment">% 对新坐标也没有等式约束，所以相应项也为0</span></span><br><span class="line">Aeq2 = [<span class="built_in">eye</span>(<span class="number">6</span>),<span class="built_in">eye</span>(<span class="number">6</span>),<span class="built_in">zeros</span>(<span class="number">6</span>,<span class="number">4</span>)];    <span class="comment">% 两个单位矩阵和一个全0矩阵拼成</span></span><br><span class="line">beq2=[<span class="number">3</span> <span class="number">5</span> <span class="number">4</span> <span class="number">7</span> <span class="number">6</span> <span class="number">11</span>]&#x27;;</span><br><span class="line">Vlb2=[<span class="built_in">zeros</span>(<span class="number">12</span>,<span class="number">1</span>);-<span class="built_in">inf</span>;-<span class="built_in">inf</span>;-<span class="built_in">inf</span>;-<span class="built_in">inf</span>];</span><br><span class="line"><span class="comment">% 非线性规划必须赋初值，可以基于问题情况来设，或设置rand()随机数等等；</span></span><br><span class="line"><span class="comment">% 初始值设为线性规划的计算结果，即临时料场的坐标</span></span><br><span class="line"><span class="comment">% 设置初始值x0，此处可直接使用第一问的值作为初始值；</span></span><br><span class="line">x0=[<span class="number">3</span> <span class="number">5</span> <span class="number">0</span> <span class="number">7</span> <span class="number">0</span> <span class="number">1</span> <span class="number">0</span> <span class="number">0</span> <span class="number">4</span> <span class="number">0</span> <span class="number">6</span> <span class="number">10</span> <span class="number">5</span> <span class="number">1</span> <span class="number">2</span> <span class="number">7</span>]&#x27;;  </span><br><span class="line">[x2,fval2]=fmincon(@fun2,x0,A2,B2,Aeq2,beq2,Vlb2)</span><br><span class="line"><span class="comment">% 若约束条件里有非线性函数，可使用在fmincon里使用nonlcon 项</span></span><br></pre></td></tr></table></figure>
+<h4
+id="使用蒙特卡罗法求一个近似解作为初始值">使用蒙特卡罗法求一个近似解作为初始值</h4>
+<p>constraint.m 的文件内容为： <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[g,k]</span> = <span class="title">constraint</span><span class="params">(x)</span></span></span><br><span class="line"><span class="comment">% 不等式约束条件</span></span><br><span class="line"><span class="comment">% sum(x(:,1:6),2)是对矩阵前6列按行求和，即对前6个元素求和，</span></span><br><span class="line"><span class="comment">% 对应6个工地接收第一个料场的总量。再减去20，即把不等式右边常数项移到左边</span></span><br><span class="line">g = [sum(x(:,<span class="number">1</span>:<span class="number">6</span>),<span class="number">2</span>)<span class="number">-20</span>    </span><br><span class="line">     sum(x(:,<span class="number">7</span>:<span class="number">12</span>),<span class="number">2</span>)<span class="number">-20</span></span><br><span class="line">    ];</span><br><span class="line"><span class="comment">% 等式约束条件,6个工地从两个料场收到的总量分别为3,5,4,7,6,11</span></span><br><span class="line">k = [x(<span class="number">1</span>)+x(<span class="number">7</span>)<span class="number">-3</span></span><br><span class="line">     x(<span class="number">2</span>)+x(<span class="number">8</span>)<span class="number">-5</span></span><br><span class="line">     x(<span class="number">3</span>)+x(<span class="number">9</span>)<span class="number">-4</span></span><br><span class="line">     x(<span class="number">4</span>)+x(<span class="number">10</span>)<span class="number">-7</span></span><br><span class="line">     x(<span class="number">5</span>)+x(<span class="number">11</span>)<span class="number">-6</span></span><br><span class="line">     x(<span class="number">6</span>)+x(<span class="number">12</span>)<span class="number">-11</span></span><br><span class="line">    ];</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure> 主程序为：
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">clc; clear all; close all</span><br><span class="line"><span class="comment">% 1、因为第2问模型中有16个变量，所以要给16个变量分别生成随机值，作为当前解；</span></span><br><span class="line"><span class="comment">% 2、判断这些当前解是否满足模型的约束条件</span></span><br><span class="line"><span class="comment">% 3、若满足，代入目标函数，求当前目标函数值</span></span><br><span class="line"><span class="comment">% 4、判断当前目标函数值是否比已求的较优函数值更好，若是，则替换掉较优函数值和对应的较优解</span></span><br><span class="line"><span class="comment">% 5、不断重复前5步，构成统计意义，求得较优解。</span></span><br><span class="line">p0 = <span class="number">10000</span>; n = <span class="number">10</span>^<span class="number">6</span>; tic</span><br><span class="line">x_m0 = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:n</span><br><span class="line">    <span class="comment">% 前12个数是6个工地从两个料场接收的量，6个工地分别需要3,5,4,7,6,11吨水泥</span></span><br><span class="line">    <span class="comment">% 所以前12个变量分别需要取0到3，0到5，……，0到11的随机数</span></span><br><span class="line">    <span class="comment">% 为加速求近似，取前12个变量（工地从料场接受的量）为随机整数</span></span><br><span class="line">    <span class="comment">% randi(n)为随机取1到n之间的一个整数，则randi(n+1)-1为取0到n间随机整数</span></span><br><span class="line">    <span class="comment">% 后4个变量是两个料场的横纵坐标，取一定范围内的随机数（根据题目，工地坐标都在0到9，所以此处取0到9）</span></span><br><span class="line">    x_m = [randi(<span class="number">4</span>)<span class="number">-1</span>,randi(<span class="number">6</span>)<span class="number">-1</span>,randi(<span class="number">5</span>)<span class="number">-1</span>,randi(<span class="number">8</span>)<span class="number">-1</span>,randi(<span class="number">7</span>)<span class="number">-1</span>,randi(<span class="number">12</span>)<span class="number">-1</span>,...</span><br><span class="line">        randi(<span class="number">4</span>)<span class="number">-1</span>,randi(<span class="number">6</span>)<span class="number">-1</span>,randi(<span class="number">5</span>)<span class="number">-1</span>,randi(<span class="number">8</span>)<span class="number">-1</span>,randi(<span class="number">7</span>)<span class="number">-1</span>,randi(<span class="number">12</span>)<span class="number">-1</span>,...</span><br><span class="line">        <span class="number">9</span>*<span class="built_in">rand</span>(<span class="number">1</span>,<span class="number">4</span>)];</span><br><span class="line">    </span><br><span class="line">    [g,k] = constraint(x_m);        <span class="comment">% 约束条件</span></span><br><span class="line">    <span class="keyword">if</span> all(g&lt;=<span class="number">0</span>)   <span class="comment">% 等式约束难以严格满足，所以此处相差不大即可算近似</span></span><br><span class="line">        <span class="keyword">if</span> all(<span class="built_in">abs</span>(k)&lt;=<span class="number">1</span>)</span><br><span class="line">            ff = fun2(x_m);     <span class="comment">% 目标函数</span></span><br><span class="line">            <span class="keyword">if</span> ff&lt;p0</span><br><span class="line">                x_m0 = x_m; p0 = ff;</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  </span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">x_m0,p0,toc</span><br><span class="line"><span class="comment">% 以采样10^6次的蒙特卡罗法求得的近似值作为初始值，调用fmincon</span></span><br><span class="line">[x3,fval3]=fmincon(@fun2,x_m0,A2,B2,Aeq2,beq2,Vlb2)</span><br><span class="line"><span class="comment">% 此时最终求得的结果fval3 = 85.4054，</span></span><br><span class="line"><span class="comment">% 优于前面以第一问线性规划结果为初始值时求得的90.4920</span></span><br><span class="line"><span class="comment">% 注意！！！非线性规划每次求解的结果都不一样！！！</span></span><br><span class="line"><span class="comment">% 多次运行相同代码，得出的结果不相同是正常的！！！</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="python代码求解-1">python代码求解</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linprog, minimize</span><br><span class="line"></span><br><span class="line"><span class="comment"># 工地坐标与水泥需求</span></span><br><span class="line"><span class="comment"># 工地横坐标列表</span></span><br><span class="line">a = [<span class="number">1.25</span>, <span class="number">8.75</span>, <span class="number">0.5</span>, <span class="number">5.75</span>, <span class="number">3</span>, <span class="number">7.25</span>]</span><br><span class="line"><span class="comment"># 工地纵坐标列表</span></span><br><span class="line">b = [<span class="number">1.25</span>, <span class="number">0.75</span>, <span class="number">4.75</span>, <span class="number">5</span>, <span class="number">6.5</span>, <span class="number">7.75</span>]</span><br><span class="line"><span class="comment"># 水泥日需求列表</span></span><br><span class="line">d = [<span class="number">3</span>, <span class="number">5</span>, <span class="number">4</span>, <span class="number">7</span>, <span class="number">6</span>, <span class="number">11</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第一问：线性规划</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义两个料场的坐标（这里简单示例了坐标值，实际可能对应具体位置）</span></span><br><span class="line"><span class="comment"># 料场1的横坐标、纵坐标</span></span><br><span class="line">x1_coord, y1_coord = <span class="number">5</span>, <span class="number">1</span></span><br><span class="line"><span class="comment"># 料场2的横坐标、纵坐标</span></span><br><span class="line">x2_coord, y2_coord = <span class="number">2</span>, <span class="number">7</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算每个工地到料场1的距离</span></span><br><span class="line">distances_to_x1 = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(a)):</span><br><span class="line">    distance = np.sqrt((x1_coord - a[i]) ** <span class="number">2</span> + (y1_coord - b[i]) ** <span class="number">2</span>)</span><br><span class="line">    distances_to_x1.append(distance)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算每个工地到料场2的距离</span></span><br><span class="line">distances_to_x2 = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(a)):</span><br><span class="line">    distance = np.sqrt((x2_coord - a[i]) ** <span class="number">2</span> + (y2_coord - b[i]) ** <span class="number">2</span>)</span><br><span class="line">    distances_to_x2.append(distance)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将两个料场到各工地的距离合并到一个列表中，形成距离向量（对应目标函数的系数向量）</span></span><br><span class="line">f = distances_to_x1 + distances_to_x2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构造不等式约束的系数矩阵A</span></span><br><span class="line"><span class="comment"># 先初始化一个空列表用于构建A</span></span><br><span class="line">A = []</span><br><span class="line"><span class="comment"># 构建对应第一个料场供应各工地水泥量系数的行（每行6个1，后面6个0）</span></span><br><span class="line">row_1 = [<span class="number">1</span>] * <span class="number">6</span> + [<span class="number">0</span>] * <span class="number">6</span></span><br><span class="line">A.append(row_1)</span><br><span class="line"><span class="comment"># 构建对应第二个料场供应各工地水泥量系数的行（每行6个0，前面6个1）</span></span><br><span class="line">row_2 = [<span class="number">0</span>] * <span class="number">6</span> + [<span class="number">1</span>] * <span class="number">6</span></span><br><span class="line">A.append(row_2)</span><br><span class="line">A = np.array(A)</span><br><span class="line"></span><br><span class="line"><span class="comment"># A=[[1 1 1 1 1 1 0 0 0 0 0 0]</span></span><br><span class="line"><span class="comment">#    [0 0 0 0 0 0 1 1 1 1 1 1]]</span></span><br><span class="line"><span class="comment"># 不等式约束的右侧常数向量（对应两个料场的水泥供应量上限）</span></span><br><span class="line">b_constraints = [<span class="number">20</span>, <span class="number">20</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构造等式约束的系数矩阵A_eq，表示每个工地从两个料场获得的水泥量之和等于该工地的需求</span></span><br><span class="line"><span class="comment"># 先创建两个6阶单位矩阵</span></span><br><span class="line">eye_matrix_1 = np.eye(<span class="number">6</span>)</span><br><span class="line">eye_matrix_2 = np.eye(<span class="number">6</span>)</span><br><span class="line"><span class="comment"># 横向拼接两个单位矩阵</span></span><br><span class="line">A_eq = np.hstack((eye_matrix_1, eye_matrix_2))</span><br><span class="line"></span><br><span class="line"><span class="comment"># A_eq=[[1. 0. 0. 0. 0. 0. 1. 0. 0. 0. 0. 0.]</span></span><br><span class="line"><span class="comment">#       [0. 1. 0. 0. 0. 0. 0. 1. 0. 0. 0. 0.]</span></span><br><span class="line"><span class="comment">#       [0. 0. 1. 0. 0. 0. 0. 0. 1. 0. 0. 0.]</span></span><br><span class="line"><span class="comment">#       [0. 0. 0. 1. 0. 0. 0. 0. 0. 1. 0. 0.]</span></span><br><span class="line"><span class="comment">#       [0. 0. 0. 0. 1. 0. 0. 0. 0. 0. 1. 0.]</span></span><br><span class="line"><span class="comment">#       [0. 0. 0. 0. 0. 1. 0. 0. 0. 0. 0. 1.]]</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 等式约束的右侧常数向量（各工地的水泥日需求）</span></span><br><span class="line">b_eq = np.array(d)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置变量的边界，每个变量（水泥分配量）下限为0，上限无限制</span></span><br><span class="line">bounds = [(<span class="number">0</span>, <span class="literal">None</span>)] * <span class="number">12</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 调用线性规划函数linprog求解</span></span><br><span class="line"><span class="comment"># f是目标函数的系数向量，目标是最小化运输距离总和（通过分配水泥量来实现）</span></span><br><span class="line"><span class="comment"># A_ub是不等式约束的系数矩阵，b_ub是不等式约束的右侧常数向量</span></span><br><span class="line"><span class="comment"># A_eq是等式约束的系数矩阵，b_eq是等式约束的右侧常数向量</span></span><br><span class="line"><span class="comment"># bounds是变量的边界约束</span></span><br><span class="line">result = linprog(f, A_ub=A, b_ub=b_constraints, A_eq=A_eq, b_eq=b_eq, bounds=bounds)</span><br><span class="line">x1, fval1 = result.x, result.fun</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;第一问解：&quot;</span>, x1)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;第一问目标值：&quot;</span>, fval1)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第二问：非线性规划</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">objective</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="comment"># 定义目标函数，计算总的运输成本（这里基于距离和水泥分配量）</span></span><br><span class="line">    <span class="comment"># x是包含水泥分配量和料场坐标的变量向量</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 计算第一个料场到各工地的运输成本总和</span></span><br><span class="line">    f1 = <span class="built_in">sum</span>(np.sqrt((x[<span class="number">12</span>] - a) ** <span class="number">2</span> + (x[<span class="number">13</span>] - b) ** <span class="number">2</span>) * x[:<span class="number">6</span>])</span><br><span class="line">    <span class="comment"># 计算第二个料场到各工地的运输成本总和</span></span><br><span class="line">    f2 = <span class="built_in">sum</span>(np.sqrt((x[<span class="number">14</span>] - a) ** <span class="number">2</span> + (x[<span class="number">15</span>] - b) ** <span class="number">2</span>) * x[<span class="number">6</span>:<span class="number">12</span>])</span><br><span class="line">    <span class="keyword">return</span> f1 + f2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 直接定义不等式约束条件对应的计算函数（这里不再通过多层函数调用）</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">inequality_constraints_direct</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="comment"># 直接定义不等式约束条件，要求两个料场分配的水泥总量不超过各自上限（这里设上限为20）。</span></span><br><span class="line">    <span class="keyword">return</span> np.array([<span class="number">20</span> - <span class="built_in">sum</span>(x[:<span class="number">6</span>]), <span class="number">20</span> - <span class="built_in">sum</span>(x[<span class="number">6</span>:<span class="number">12</span>])])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 直接定义等式约束条件对应的计算函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">equality_constraints_direct</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="comment"># 直接定义等式约束条件，各工地从两个料场获得的水泥量要满足工地需求。</span></span><br><span class="line">    <span class="keyword">return</span> np.array([x[<span class="number">0</span>] + x[<span class="number">6</span>] - <span class="number">3</span>, x[<span class="number">1</span>] + x[<span class="number">7</span>] - <span class="number">5</span>, x[<span class="number">2</span>] + x[<span class="number">8</span>] - <span class="number">4</span>,</span><br><span class="line">                    x[<span class="number">3</span>] + x[<span class="number">9</span>] - <span class="number">7</span>, x[<span class="number">4</span>] + x[<span class="number">10</span>] - <span class="number">6</span>, x[<span class="number">5</span>] + x[<span class="number">11</span>] - <span class="number">11</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建约束条件的字典列表，用于传递给优化函数，包含不等式和等式约束</span></span><br><span class="line">cons = [</span><br><span class="line">    &#123;<span class="string">&quot;type&quot;</span>: <span class="string">&quot;ineq&quot;</span>, <span class="string">&quot;fun&quot;</span>: inequality_constraints_direct&#125;,  <span class="comment"># 不等式约束</span></span><br><span class="line">    &#123;<span class="string">&quot;type&quot;</span>: <span class="string">&quot;eq&quot;</span>, <span class="string">&quot;fun&quot;</span>: equality_constraints_direct&#125;       <span class="comment"># 等式约束</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 变量边界定义（和原代码保持一致，假设原代码中的 bounds2 定义合适）</span></span><br><span class="line">bounds2 = [(<span class="number">0</span>, <span class="literal">None</span>)] * <span class="number">12</span> + [(-np.inf, np.inf)] * <span class="number">4</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># np.hstack函数用于沿水平方向（也就是列方向）堆叠数组序列，即将多个数组按顺序在水平方向拼接成一个新的数组</span></span><br><span class="line"><span class="comment"># 它要求输入的数组在除了拼接方向（列方向）外的其他维度大小要一致，这样才能正确拼接。</span></span><br><span class="line"><span class="comment"># 例如，有两个一维数组，我们可以使用np.hstack将它们拼接成一个一维数组，其中每行对应原来的一个一维数组。</span></span><br><span class="line"><span class="comment"># 以下是示例代码（此处仅为注释说明，可自行取消注释查看实际结果）：</span></span><br><span class="line"><span class="comment"># arr1 = np.array([1, 2, 3])</span></span><br><span class="line"><span class="comment"># arr2 = np.array([4, 5, 6])</span></span><br><span class="line"><span class="comment"># example_hstack = np.hstack([arr1, arr2])</span></span><br><span class="line"><span class="comment"># 拼接后得到的数组为：[1, 2, 3, 4, 5, 6]</span></span><br><span class="line"><span class="comment"># 如果是多个二维数组，比如有两个形状为(2, 3)的二维数组，使用np.hstack可以将它们拼接成一个形状为(2, 6)的二维数组，示例如下（此处仅为注释说明，可自行取消注释查看实际结果）：</span></span><br><span class="line"><span class="comment"># arr3 = np.array([[1, 2, 3], [4, 5, 6]])</span></span><br><span class="line"><span class="comment"># arr4 = np.array([[7, 8, 9], [10, 11, 12]])</span></span><br><span class="line"><span class="comment"># example_hstack_2d = np.hstack([arr3, arr4])</span></span><br><span class="line"><span class="comment"># 拼接后得到的二维数组如下：</span></span><br><span class="line"><span class="comment"># [[1, 2, 3, 7, 8, 9],</span></span><br><span class="line"><span class="comment">#  [4, 5, 6, 10, 11, 12]]</span></span><br><span class="line"></span><br><span class="line">x0_Lp = np.hstack([x1, [<span class="number">5</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">7</span>]])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用scipy.minimize函数进行非线性规划求解，传入目标函数、初始值、约束条件和变量边界</span></span><br><span class="line">result2_Lp = minimize(fun=objective, x0=x0_Lp, constraints=cons, bounds=bounds2)</span><br><span class="line">x2_Lp, fval2_Lp = result2_Lp.x, result2_Lp.fun</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;用线性规划结果作为初值：&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;解：&quot;</span>, x2_Lp)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;目标值：&quot;</span>, fval2_Lp)</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/05/29/MonteCarloMethod/" rel="prev" title="Monte Carlo Method">
+                  <i class="fa fa-angle-left"></i> Monte Carlo Method
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/09/19/AdvancedMathematics1/" rel="next" title="高等数学（上）知识点总结">
+                  高等数学（上）知识点总结 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

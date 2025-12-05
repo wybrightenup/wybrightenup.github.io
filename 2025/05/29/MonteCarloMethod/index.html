@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="蒙特卡罗法——模型引出 我们都知道，圆周率π是个无理数，那么有什么方法可以去算圆周率吗？  圆的面积\(&#x3D;\pi\times r^2\)，那如果我们能求得面积的值，自然也就能求得\(\pi\)的近似值 那么该怎么求圆的面积呢？ 一个半径为1的圆，其外切正方形面积易知为4   若在正方形内随机撒大量的点，有些落在圆内，有些落在圆外  统计意义上 \[\frac{\text{圆内点数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Monte Carlo Method">
+<meta property="og:url" content="http://example.com/2025/05/29/MonteCarloMethod/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="蒙特卡罗法——模型引出 我们都知道，圆周率π是个无理数，那么有什么方法可以去算圆周率吗？  圆的面积\(&#x3D;\pi\times r^2\)，那如果我们能求得面积的值，自然也就能求得\(\pi\)的近似值 那么该怎么求圆的面积呢？ 一个半径为1的圆，其外切正方形面积易知为4   若在正方形内随机撒大量的点，有些落在圆内，有些落在圆外  统计意义上 \[\frac{\text{圆内点数">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/MonteCarlo/1.jpg">
+<meta property="og:image" content="http://example.com/images/MonteCarlo/2.jpg">
+<meta property="article:published_time" content="2025-05-29T08:28:19.000Z">
+<meta property="article:modified_time" content="2025-06-14T10:23:55.001Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/MonteCarlo/1.jpg">
+
+
+<link rel="canonical" href="http://example.com/2025/05/29/MonteCarloMethod/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2025/05/29/MonteCarloMethod/","path":"2025/05/29/MonteCarloMethod/","title":"Monte Carlo Method"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Monte Carlo Method | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%92%99%E7%89%B9%E5%8D%A1%E7%BD%97%E6%B3%95%E6%A8%A1%E5%9E%8B%E5%BC%95%E5%87%BA"><span class="nav-number">1.</span> <span class="nav-text">蒙特卡罗法——模型引出</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%88%91%E4%BB%AC%E9%83%BD%E7%9F%A5%E9%81%93%E5%9C%86%E5%91%A8%E7%8E%87%CF%80%E6%98%AF%E4%B8%AA%E6%97%A0%E7%90%86%E6%95%B0%E9%82%A3%E4%B9%88%E6%9C%89%E4%BB%80%E4%B9%88%E6%96%B9%E6%B3%95%E5%8F%AF%E4%BB%A5%E5%8E%BB%E7%AE%97%E5%9C%86%E5%91%A8%E7%8E%87%E5%90%97"><span class="nav-number">1.1.</span> <span class="nav-text">我们都知道，圆周率π是个无理数，那么有什么方法可以去算圆周率吗？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%9F%E8%AE%A1%E6%84%8F%E4%B9%89%E4%B8%8A"><span class="nav-number">1.1.1.</span> <span class="nav-text">统计意义上</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%92%99%E7%89%B9%E5%8D%A1%E7%BD%97%E6%B3%95%E6%A8%A1%E5%9E%8B%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">蒙特卡罗法——模型原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%92%99%E7%89%B9%E5%8D%A1%E7%BD%97%E6%B3%95%E4%BE%8B%E9%A2%98%E5%8F%8Amatlab%E4%BB%A3%E7%A0%81%E8%AE%B2%E8%A7%A3"><span class="nav-number">3.</span> <span class="nav-text">蒙特卡罗法——例题及matlab代码讲解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%86%E5%91%A8%E7%8E%87%E9%97%AE%E9%A2%98"><span class="nav-number">3.1.</span> <span class="nav-text">圆周率问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E9%97%A8%E9%97%AE%E9%A2%98"><span class="nav-number">3.2.</span> <span class="nav-text">三门问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E9%97%A8%E9%97%AE%E9%A2%98matlab%E4%BB%A3%E7%A0%81%E5%9C%A8%E6%88%90%E5%8A%9F%E7%9A%84%E6%9D%A1%E4%BB%B6%E4%B8%8B%E7%9A%84%E6%A6%82%E7%8E%87"><span class="nav-number">3.2.1.</span> <span class="nav-text">三门问题matlab代码——在成功的条件下的概率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E9%97%A8%E9%97%AE%E9%A2%98%E4%BB%A3%E7%A0%81%E8%80%83%E8%99%91%E5%A4%B1%E8%B4%A5%E6%83%85%E5%86%B5%E7%9A%84%E4%BB%A3%E7%A0%81%E6%97%A0%E6%9D%A1%E4%BB%B6%E6%A6%82%E7%8E%87"><span class="nav-number">3.2.2.</span> <span class="nav-text">三门问题代码——考虑失败情况的代码(无条件概率)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%92%99%E7%89%B9%E5%8D%A1%E7%BD%97%E6%B3%95%E4%BE%8B%E9%A2%98%E5%8F%8Apython%E4%BB%A3%E7%A0%81%E8%AE%B2%E8%A7%A3"><span class="nav-number">4.</span> <span class="nav-text">蒙特卡罗法——例题及python代码讲解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%86%E5%91%A8%E7%8E%87%E9%97%AE%E9%A2%98-1"><span class="nav-number">4.1.</span> <span class="nav-text">圆周率问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E9%97%A8%E9%97%AE%E9%A2%98-1"><span class="nav-number">4.2.</span> <span class="nav-text">三门问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E9%97%A8%E9%97%AE%E9%A2%98python%E4%BB%A3%E7%A0%81%E5%9C%A8%E6%88%90%E5%8A%9F%E7%9A%84%E6%9D%A1%E4%BB%B6%E4%B8%8B%E7%9A%84%E6%A6%82%E7%8E%87"><span class="nav-number">4.2.1.</span> <span class="nav-text">三门问题python代码——在成功的条件下的概率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E9%97%A8%E9%97%AE%E9%A2%98python%E4%BB%A3%E7%A0%81%E8%80%83%E8%99%91%E5%A4%B1%E8%B4%A5%E6%83%85%E5%86%B5%E7%9A%84%E4%BB%A3%E7%A0%81%E6%97%A0%E6%9D%A1%E4%BB%B6%E6%A6%82%E7%8E%87"><span class="nav-number">4.2.2.</span> <span class="nav-text">三门问题python代码——考虑失败情况的代码(无条件概率)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%99%84%E4%B8%89%E9%97%A8%E9%97%AE%E9%A2%98%E6%A6%82%E7%8E%87%E8%AE%BA%E5%88%86%E6%9E%90"><span class="nav-number">5.</span> <span class="nav-text">附：三门问题概率论分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-number">5.1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B4%E8%A7%82%E8%AF%AF%E8%A7%A3"><span class="nav-number">5.2.</span> <span class="nav-text">直观误解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E6%A6%82%E7%8E%87%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%AE%9A%E7%90%86"><span class="nav-number">5.3.</span> <span class="nav-text">条件概率（贝叶斯定理）</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/05/29/MonteCarloMethod/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Monte Carlo Method | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Monte Carlo Method
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-05-29 16:28:19" itemprop="dateCreated datePublished" datetime="2025-05-29T16:28:19+08:00">2025-05-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-06-14 18:23:55" itemprop="dateModified" datetime="2025-06-14T18:23:55+08:00">2025-06-14</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="蒙特卡罗法模型引出">蒙特卡罗法——模型引出</h1>
+<h2
+id="我们都知道圆周率π是个无理数那么有什么方法可以去算圆周率吗">我们都知道，圆周率π是个无理数，那么有什么方法可以去算圆周率吗？</h2>
+<ul>
+<li>圆的面积<span class="math inline">\(=\pi\times
+r^2\)</span>，那如果我们能求得面积的值，自然也就能求得<span
+class="math inline">\(\pi\)</span>的近似值</li>
+<li>那么该怎么求圆的面积呢？ 一个半径为1的圆，其外切正方形面积易知为4  
+若在正方形内随机撒大量的点，有些落在圆内，有些落在圆外</li>
+</ul>
+<h3 id="统计意义上">统计意义上</h3>
+<p><span
+class="math display">\[\frac{\text{圆内点数}}{\text{总点数}}=\frac{\text{圆面积}}{\text{正方形面积}}=\frac{\pi}{4}
+~\Rightarrow~\pi =
+4\times\frac{\text{圆内点数}}{\text{总点数}}\]</span></p>
+<div style="display: flex; justify-content: space-between;">
+<p> 
+<img src="/images/MonteCarlo/1.jpg" alt="图片1" style="width: 50%;">  
+<img src="/images/MonteCarlo/2.jpg" alt="图片2" style="width: 50%;"></p>
+</div>
+<h1 id="蒙特卡罗法模型原理">蒙特卡罗法——模型原理</h1>
+<p><strong>提出背景：</strong>
+蒙特卡罗方法诞生于20世纪40年代，由参与美国第二次世界大战“曼哈顿计划”的成员——S.M.乌拉姆和约翰·冯·诺依曼首次系统提出。冯·诺依曼以著名的赌城摩纳哥（Monte
+Carlo）为这一方法命名，赋予其一种神秘而富有象征意义的色彩。事实上，早在此之前，类似思想已经存在。早在1777年，法国数学家布丰（Buffon）就提出了通过投针实验来估算圆周率的方法，这被认为是蒙特卡罗方法的雏形。</p>
+<p><strong>定义：</strong>
+蒙特卡罗方法，又称统计模拟法，是一种基于概率论与数理统计的计算方法。其核心思想是通过随机数（通常为伪随机数）来模拟问题的随机过程，将原问题与一个概率模型建立联系，并利用计算机进行大量的随机试验，从而获得问题的近似解。为突出其概率统计特征，方法名称借用了以博彩闻名的城市——蒙特卡罗。</p>
+<p><strong>基本原理：</strong>
+根据大数定律，当样本数量足够大时，某一事件的发生频率将趋近于其真实概率。这一统计规律正是蒙特卡罗方法得以成立的理论基础。</p>
+<p><strong>注意事项：</strong>
+需要强调的是，蒙特卡罗方法并非一种具体的算法，更准确地说，它是一种思想或方法论。只要所研究的问题能够与概率模型建立联系，就可以采用蒙特卡罗方法加以求解。因此，从数学建模的角度来看，蒙特卡罗方法并没有通用的实现代码，不同的问题需要构建相应的模型与模拟程序。</p>
+<h1
+id="蒙特卡罗法例题及matlab代码讲解">蒙特卡罗法——例题及matlab代码讲解</h1>
+<h2 id="圆周率问题">圆周率问题</h2>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">clc</span><br><span class="line">clear all</span><br><span class="line">close all</span><br><span class="line"><span class="comment">%参数初始化：投放10000个点，圆半径为1，圆心坐标(1, 1)</span></span><br><span class="line"><span class="comment">%初始时还未投放点，有0个点在圆内  </span></span><br><span class="line">  p = <span class="number">10000</span>; r = <span class="number">1</span>; x0 = <span class="number">1</span>; y0 = <span class="number">1</span>; n = <span class="number">0</span>;  </span><br><span class="line">  <span class="built_in">hold</span> on <span class="comment">% 保持绘图窗口，多次绘图</span></span><br><span class="line">  <span class="comment">% rand函数产生在(0, 1)之间的随机数；rand函数还有其他多种形式</span></span><br><span class="line">  <span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:p <span class="comment">% 对于要投放的总共p个点  </span></span><br><span class="line">      px = <span class="built_in">rand</span>*<span class="number">2</span>; <span class="comment">% 随机生成该点的横坐标  </span></span><br><span class="line">      py = <span class="built_in">rand</span>*<span class="number">2</span>; <span class="comment">% 随机生成该点的纵坐标  </span></span><br><span class="line">      <span class="comment">% 若该点在圆内，则颜色设为蓝色，变量n加1；在圆外则设为红色</span></span><br><span class="line">      <span class="keyword">if</span> (px<span class="number">-1</span>)^<span class="number">2</span> + (py<span class="number">-1</span>)^<span class="number">2</span> &lt; <span class="number">1</span> <span class="comment">% 横坐标的平方和小于半径，则在圆内</span></span><br><span class="line">          <span class="built_in">plot</span>(px, py, <span class="string">&#x27;.&#x27;</span>, <span class="string">&#x27;Color&#x27;</span>, <span class="string">&#x27;b&#x27;</span>);</span><br><span class="line">          n = n+<span class="number">1</span>;</span><br><span class="line">      <span class="keyword">else</span></span><br><span class="line">          <span class="built_in">plot</span>(px, py, <span class="string">&#x27;.&#x27;</span>, <span class="string">&#x27;Color&#x27;</span>, <span class="string">&#x27;r&#x27;</span>);</span><br><span class="line">      <span class="keyword">end</span>  </span><br><span class="line">  <span class="keyword">end</span>  </span><br><span class="line">  axis equal <span class="comment">% 绘图时横纵坐标单位长度相同，便于观察圆  </span></span><br><span class="line">  s = (n/p)*<span class="number">4</span>;  </span><br><span class="line">  pi0 = s</span><br></pre></td></tr></table></figure>
+<h2 id="三门问题">三门问题</h2>
+<p>你参加一档电视节目，节目组提供了A、B、C三扇门，主持人告诉你，其中一扇门后边有辆汽车，其他两扇门后面是一头山羊，你可以选择一扇门打开获得门后的东西。</p>
+<p>假如你选择了B门，这时，主持人打开了C门，让你看到C门后是只山羊，然后问你要不要改选A门？（你想要汽车）</p>
+<ul>
+<li>一般人的直觉：    
+在三个门，参赛者选一个，主持人排除掉一个错误的，还剩一个。那么此时的命题变为：
+ 
+<ul>
+<li>条件：两个门里，一个是汽车，一个是山羊，任选一个。  </li>
+<li>问题：交换选择是否能提高胜率？  </li>
+<li>答案：不能，二选一的问题，选哪个门都是50%的胜率。  </li>
+</ul></li>
+<li>那真的是这样吗？我们可以用蒙特卡洛方法试一下。  </li>
+</ul>
+<h3
+id="三门问题matlab代码在成功的条件下的概率">三门问题matlab代码——在成功的条件下的概率</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">clc</span><br><span class="line">clear all</span><br><span class="line">close all</span><br><span class="line"><span class="comment">%%  </span></span><br><span class="line">n = <span class="number">100000</span>; <span class="comment">% n代表蒙特卡罗模拟重复次数  </span></span><br><span class="line">a = <span class="number">0</span>; <span class="comment">% a表示不改变主意时能赢得汽车的次数  </span></span><br><span class="line">b = <span class="number">0</span>; <span class="comment">% b表示改变主意时能赢得汽车的次数  </span></span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>: n <span class="comment">% 开始模拟n次  </span></span><br><span class="line">    x = randi([<span class="number">1</span>,<span class="number">3</span>]); <span class="comment">% 随机生成一个1-3之间的整数x表示汽车出现在第x扇门后</span></span><br><span class="line">    y = randi([<span class="number">1</span>,<span class="number">3</span>]); <span class="comment">% 随机生成一个1-3之间的整数y表示自己选的门</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">% 下面分为两种情况讨论：x=y和x≠y</span></span><br><span class="line">    <span class="keyword">if</span> x == y <span class="comment">% 如果x和y相同，那么我们只有不改变主意时才能赢</span></span><br><span class="line">        a = a + <span class="number">1</span>; b = b + <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="comment">% x ≠ y , 如果x和y不同，那么我们只有改变主意时才能赢</span></span><br><span class="line">        a = a + <span class="number">0</span>; b = b +<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span>  </span><br><span class="line"><span class="built_in">disp</span>([<span class="string">&#x27;蒙特卡罗方法得到的不改变主意时的获奖概率为: &#x27;</span>, num2str(a/n)]); </span><br><span class="line"><span class="built_in">disp</span>([<span class="string">&#x27;蒙特卡罗方法得到的改变主意时的获奖概率为: &#x27;</span>, num2str(b/n)]); </span><br></pre></td></tr></table></figure>
+<h3
+id="三门问题代码考虑失败情况的代码无条件概率">三门问题代码——考虑失败情况的代码(无条件概率)</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">clc</span><br><span class="line">clear all</span><br><span class="line">close all</span><br><span class="line">n = <span class="number">100000</span>; <span class="comment">% n代表蒙特卡罗模拟重复次数  </span></span><br><span class="line">a = <span class="number">0</span>; <span class="comment">% a表示不改变主意时能赢得汽车的次数  </span></span><br><span class="line">b = <span class="number">0</span>; <span class="comment">% b表示改变主意时能赢得汽车的次数  </span></span><br><span class="line">c = <span class="number">0</span>; <span class="comment">% c表示没有获奖的次数  </span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>: n <span class="comment">% 开始模拟n次  </span></span><br><span class="line">    x = randi([<span class="number">1</span>,<span class="number">3</span>]); <span class="comment">% 随机生成一个1-3之间的整数x表示汽车出现在第x扇门后</span></span><br><span class="line">    y = randi([<span class="number">1</span>,<span class="number">3</span>]); <span class="comment">% 随机生成一个1-3之间的整数y表示自己选的门</span></span><br><span class="line">    change = randi([<span class="number">0</span>, <span class="number">1</span>]); <span class="comment">% change = 0 不改变主意, change = 1 改变主意</span></span><br><span class="line">    <span class="keyword">if</span> x == y <span class="comment">% 如果x和y相同，那么我们只有不改变主意时才能赢</span></span><br><span class="line">        <span class="keyword">if</span> change == <span class="number">0</span> <span class="comment">% 不改变主意</span></span><br><span class="line">            a = a + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">else</span> <span class="comment">% 改变了主意</span></span><br><span class="line">            c = c+<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">else</span> <span class="comment">% x ≠ y , 如果x和y不同，那么我们只有改变主意时才能赢</span></span><br><span class="line">        <span class="keyword">if</span> change == <span class="number">0</span> <span class="comment">% 不改变主意</span></span><br><span class="line">            c = c + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">else</span> <span class="comment">% 改变了主意</span></span><br><span class="line">            b = b + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span>  </span><br><span class="line"></span><br><span class="line"><span class="built_in">disp</span>([<span class="string">&#x27;蒙特卡罗方法得到的不改变主意时的获奖概率为: &#x27;</span>, num2str(a/n)]); </span><br><span class="line"><span class="built_in">disp</span>([<span class="string">&#x27;蒙特卡罗方法得到的的改变主意时的获奖概率为: &#x27;</span>, num2str(b/n)]); </span><br><span class="line"><span class="built_in">disp</span>([<span class="string">&#x27;蒙特卡罗方法得到的没有获奖的概率为: &#x27;</span>, num2str(c/n)]);  </span><br></pre></td></tr></table></figure>
+<h1
+id="蒙特卡罗法例题及python代码讲解">蒙特卡罗法——例题及python代码讲解</h1>
+<h2 id="圆周率问题-1">圆周率问题</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="comment"># 参数初始化: 投放10000个点, 圆半径为1, 圆心坐标(1,1)</span></span><br><span class="line">p = <span class="number">10000</span>  <span class="comment"># 总共要投放的点数</span></span><br><span class="line">r = <span class="number">1</span>  <span class="comment"># 圆的半径</span></span><br><span class="line">x0, y0 = <span class="number">1</span>, <span class="number">1</span>  <span class="comment"># 圆心的坐标</span></span><br><span class="line">n = <span class="number">0</span>  <span class="comment"># 初始时还未投放点, 有0个点在圆内</span></span><br><span class="line"><span class="comment"># 设置绘图窗口</span></span><br><span class="line">plt.figure()</span><br><span class="line">plt.title(<span class="string">&#x27;Monte Carlo Simulation for Estimating Pi&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;x&#x27;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&#x27;y&#x27;</span>)</span><br><span class="line"><span class="comment"># 保持绘图窗口, 多次绘图</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(p):  <span class="comment"># 对于要投放的总共p个点</span></span><br><span class="line">    <span class="comment"># np.random.rand()函数产生在(0, 1)之间的随机数</span></span><br><span class="line">    px = np.random.rand() * <span class="number">2</span>  <span class="comment"># 随机生成该点的横坐标</span></span><br><span class="line">    py = np.random.rand() * <span class="number">2</span>  <span class="comment"># 随机生成该点的纵坐标</span></span><br><span class="line">    <span class="comment"># 判断点是否在圆内</span></span><br><span class="line">    <span class="keyword">if</span> (px - x0) ** <span class="number">2</span> + (py - y0) ** <span class="number">2</span> &lt; r ** <span class="number">2</span>:  <span class="comment"># 横纵坐标的平方和小于半径, 则在圆内</span></span><br><span class="line">        plt.plot(px, py, <span class="string">&#x27;.&#x27;</span>, color=<span class="string">&#x27;b&#x27;</span>)  <span class="comment"># 圆内点用蓝色表示</span></span><br><span class="line">        n += <span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        plt.plot(px, py, <span class="string">&#x27;.&#x27;</span>, color=<span class="string">&#x27;r&#x27;</span>)  <span class="comment"># 圆外点用红色表示</span></span><br><span class="line">plt.axis(<span class="string">&#x27;equal&#x27;</span>)  <span class="comment"># 绘图时横纵坐标单位长度相同, 便于观察圆</span></span><br><span class="line">plt.show()</span><br><span class="line"><span class="comment"># 计算π的估计值</span></span><br><span class="line">s = (n / p) * <span class="number">4</span>  <span class="comment"># 计算圆面积占正方形面积的比例</span></span><br><span class="line">pi_estimate = s</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Estimated value of π: &quot;</span>, pi_estimate)</span><br></pre></td></tr></table></figure>
+<h2 id="三门问题-1">三门问题</h2>
+<h3
+id="三门问题python代码在成功的条件下的概率">三门问题python代码——在成功的条件下的概率</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">n = <span class="number">100000</span>  <span class="comment"># n代表蒙特卡罗模拟重复次数</span></span><br><span class="line">a = <span class="number">0</span>  <span class="comment"># a表示不改变主意时能赢得汽车的次数</span></span><br><span class="line">b = <span class="number">0</span>  <span class="comment"># b表示改变主意时能赢得汽车的次数</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):  <span class="comment"># 开始模拟n次</span></span><br><span class="line">    x = np.random.randint(low=<span class="number">1</span>, high=<span class="number">4</span>)  <span class="comment"># 随机生成一个1-3之间的整数x表示汽车出现在第x扇门后</span></span><br><span class="line">    y = np.random.randint(low=<span class="number">1</span>, high=<span class="number">4</span>)  <span class="comment"># 随机生成一个1-3之间的整数y表示自己选的门</span></span><br><span class="line">    <span class="comment"># 下面分为两种情况讨论：x=y和x!=y</span></span><br><span class="line">    <span class="keyword">if</span> x == y:  <span class="comment"># 如果x和y相同，那么我们只有不改变主意时才能赢</span></span><br><span class="line">        a += <span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span>:  <span class="comment"># x != y，如果x和y不同，那么我们只有改变主意时才能赢</span></span><br><span class="line">        b += <span class="number">1</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;蒙特卡罗方法得到的不改变主意时的获奖概率为：&#x27;</span>, a/n)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;蒙特卡罗方法得到的改变主意时的获奖概率为：&#x27;</span>, b/n)</span><br></pre></td></tr></table></figure>
+<h3
+id="三门问题python代码考虑失败情况的代码无条件概率">三门问题python代码——考虑失败情况的代码(无条件概率)</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">n = <span class="number">100000</span>  <span class="comment"># n代表蒙特卡罗模拟重复次数</span></span><br><span class="line">a = <span class="number">0</span>  <span class="comment"># a表示不改变主意时能赢得汽车的次数</span></span><br><span class="line">b = <span class="number">0</span>  <span class="comment"># b表示改变主意时能赢得汽车的次数</span></span><br><span class="line">c = <span class="number">0</span>  <span class="comment"># c表示没有获奖的次数</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):  <span class="comment"># 开始模拟n次</span></span><br><span class="line">    x = np.random.randint(low=<span class="number">1</span>, high=<span class="number">4</span>)  <span class="comment"># 随机生成一个1-3之间的整数x表示汽车出现在第x扇门后</span></span><br><span class="line">    y = np.random.randint(low=<span class="number">1</span>, high=<span class="number">4</span>)  <span class="comment"># 随机生成一个1-3之间的整数y表示自己选的门</span></span><br><span class="line">    change = np.random.randint(low=<span class="number">0</span>, high=<span class="number">2</span>)  <span class="comment"># change =0 不改变主意，change = 1 改变主意</span></span><br><span class="line">    <span class="comment"># 下面分为两种情况讨论：x=y和x!=y</span></span><br><span class="line">    <span class="keyword">if</span> x == y:  <span class="comment"># 如果x和y相同，那么我们只有不改变主意时才能赢</span></span><br><span class="line">        <span class="keyword">if</span> change == <span class="number">0</span>:  <span class="comment"># 不改变主意</span></span><br><span class="line">            a = a + <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            c = c + <span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span>: <span class="comment"># 改变了主意</span></span><br><span class="line">        <span class="keyword">if</span> change == <span class="number">0</span>:  <span class="comment"># 不改变主意</span></span><br><span class="line">            c = c + <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            b = b + <span class="number">1</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;蒙特卡罗方法得到的不改变主意时的获奖概率为: &#x27;</span>, a/n)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;蒙特卡罗方法得到的的改变主意时的获奖概率为: &#x27;</span>,b/n)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;蒙特卡罗方法得到的没有获奖的概率为: &#x27;</span>,c/n)</span><br></pre></td></tr></table></figure>
+<h1 id="附三门问题概率论分析">附：三门问题概率论分析</h1>
+<p>三门问题（Monty Hall
+problem）是一个经典的概率悖论，源自美国电视游戏节目《Let's Make a
+Deal》。该问题涉及概率、信息更新和决策，常被用于教学概率论的基本概念。以下是详细分析，包括问题描述、直观误解、数学证明、关键点解释和扩展讨论。</p>
+<h2 id="问题描述">问题描述</h2>
+<ul>
+<li>场景：有三扇关闭的门（门1、门2、门3）。一扇门后面有一辆汽车（奖品），另外两扇门后面是山羊（无奖）。</li>
+<li>步骤：
+<ul>
+<li>参赛者随机选择一扇门（假设选择门1）。</li>
+<li>主持人（蒙提霍尔）知道汽车的位置，会打开一扇<strong>没有汽车</strong>的门（露出山羊），且不能打开参赛者选择的门。例如，如果参赛者选择门1，主持人可能打开门3（假设门3后有山羊）。</li>
+<li>主持人给参赛者一个选择：坚持原选择（门1）或换到剩下的那扇未打开的门（门2）。</li>
+</ul></li>
+<li><strong>核心问题</strong>：参赛者应该换门还是不换门？哪种策略获得汽车的概率更高？</li>
+</ul>
+<h2 id="直观误解">直观误解</h2>
+<p>许多人（包括数学家和公众）的直觉是：</p>
+<ul>
+<li>主持人打开一扇山羊门后，剩下两扇门（原选门和另一扇未开门），汽车在任一扇门后的概率似乎都是50%。</li>
+<li>因此，换门和不换门的获胜概率似乎相同（各50%）。</li>
+</ul>
+<p>然而，这个直觉是<strong>错误的</strong>。数学证明显示：</p>
+<p>这种误解源于忽略了主持人的行为提供的新信息：</p>
+<ul>
+<li>主持人不是随机开门：他必须打开一扇山羊门，且不能打开参赛者选择的门。这相当于“过滤”了信息，增加了初始选择错误的可能性。</li>
+<li>简单说：参赛者的初始选择只有1/3概率正确，而换门策略利用了主持人“揭示错误”的信息，将初始错误转化为优势。</li>
+</ul>
+<h2 id="条件概率贝叶斯定理">条件概率（贝叶斯定理）</h2>
+<p>使用概率公式更严谨地计算。设：</p>
+<ul>
+<li><span class="math inline">\(C_i\)</span>: 汽车在门i后的事件（<span
+class="math inline">\(i=1,2,3\)</span>），<span
+class="math inline">\(P(C_i)=1/3\)</span>。</li>
+<li><span class="math inline">\(S_1\)</span>: 参赛者初始选择门1。</li>
+<li><span class="math inline">\(H_3\)</span>:
+主持人打开门3（露出山羊），且门3 ≠ 参赛者选择。</li>
+</ul>
+<p>我们计算在主持人打开门3后，汽车在门1后的概率 <span
+class="math inline">\(P(C_1|H_3)\)</span> 和在门2后的概率 <span
+class="math inline">\(P(C_2|H_3)\)</span>。  
+参赛者原选门1，如果坚持不换，获胜概率是 <span
+class="math inline">\(P(C_1|H_3)\)</span>; 如果换到门2，获胜概率是 <span
+class="math inline">\(P(C_2|H_3)\)</span>.</p>
+<p>使用贝叶斯定理： <span
+class="math display">\[P(C_i|H_3)=\frac{P(H_3|C_i)\cdot
+P(C_i)}{P(H_3)}\]</span></p>
+<ul>
+<li><p><strong>计算 <span
+class="math inline">\(P(H_3)\)</span>（主持人打开门3的总概率）</strong>：</p>
+<ul>
+<li>如果汽车在门1（<span
+class="math inline">\(C_1\)</span>）：主持人可以打开门2或门3（各1/2概率），所以
+<span class="math inline">\(P(H_3|C_1)=1/2\)</span>。</li>
+<li>如果汽车在门2（$ C_2
+$）：主持人必须打开门3（不能打开门2，有汽车），所以 <span
+class="math inline">\(P(H_3|C_2)=1\)</span>。</li>
+<li>如果汽车在门3（<span
+class="math inline">\(C_3\)</span>）：主持人不能打开门3（有汽车），所以
+<span class="math inline">\(P(H_3|C_3)=0\)</span>。</li>
+<li>因此：     <span class="math display">\[\begin{aligned}
+    P(H_3) &amp;= P(H_3 | C_1) P(C_1) + P(H_3 | C_2) P(C_2) + P(H_3 |
+C_3) P(C_3)\\
+    &amp;= \left(\frac{1}{2} \times \frac{1}{3}\right) + \left(1 \times
+\frac{1}{3}\right) + \left(0 \times \frac{1}{3}\right) =\frac{1}{2}
+    \end{aligned}
+    \]</span></li>
+</ul></li>
+<li><p><strong>计算 $ P(C_1 | H_3)
+$（汽车在门1后的条件概率，即不换门获胜概率）</strong>：   <span
+class="math display">\[
+  P(C_1 | H_3) = \frac{P(H_3 | C_1) \cdot P(C_1)}{P(H_3)} =
+\frac{\frac{1}{2} \times \frac{1}{3}}{\frac{1}{2}} =
+\frac{\frac{1}{6}}{\frac{1}{2}} = \frac{1}{6} \times 2 = \frac{1}{3}
+  \]</span></p></li>
+<li><p><strong>计算 $ P(C_2 | H_3)
+$（汽车在门2后的条件概率，即换门获胜概率）</strong>：   <span
+class="math display">\[
+  P(C_2 | H_3) = \frac{P(H_3 | C_2) \cdot P(C_2)}{P(H_3)} = \frac{1
+\times \frac{1}{3}}{\frac{1}{2}} = \frac{\frac{1}{3}}{\frac{1}{2}} =
+\frac{1}{3} \times 2 = \frac{2}{3}
+  \]</span></p></li>
+</ul>
+<p>结果：在主持人打开门3后，不换门获胜概率为1/3，换门获胜概率为2/3。这证明换门更优。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/05/23/mandelbrot/" rel="prev" title="绘制mandelbrot集时所用到函数逐个解析">
+                  <i class="fa fa-angle-left"></i> 绘制mandelbrot集时所用到函数逐个解析
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/05/30/NonlinearProgramming/" rel="next" title="NonlinearProgramming">
+                  NonlinearProgramming <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

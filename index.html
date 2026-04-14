@@ -134,7 +134,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -152,6 +152,524 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2026/04/14/MinimaxProgramming/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/04/14/MinimaxProgramming/" class="post-title-link" itemprop="url">最大最小化规划模型</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2026-04-14 16:47:22 / Modified: 16:49:00" itemprop="dateCreated datePublished" datetime="2026-04-14T16:47:22+08:00">2026-04-14</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="最大最小化规划模型">最大最小化规划模型</h1>
+<p>在数学建模与优化决策领域，最大最小化（Minimax/Maximin）规划模型是一类经典的保守决策模型，广泛应用于选址规划、投资风险管理、博弈论策略制定等场景。本文将从模型原理、典型例题到代码实现，全方位解析最大最小化规划模型的应用方法。</p>
+<h2 id="最大最小化规划模型原理">1. 最大最小化规划模型原理</h2>
+<h3 id="核心思想">1.1 核心思想</h3>
+<p>最大最小化策略（Minimax
+strategy）由博弈论奠基人约翰·冯·诺伊曼于1928年提出，核心是<strong>使决策者的最小收益最大化（或最大损失最小化）</strong>，是一种保守且稳健的决策思路。
+在实际问题中，最大最小化模型常用于： -
+应急中心选址：最小化到所有地点的最大距离； - 投资规划：最小化最大风险；
+- 博弈论：最小化对手的最大收益。</p>
+<h3 id="数学模型">1.2 数学模型</h3>
+<p>对决策变量<span class="math inline">\(x\in
+R^n\)</span>，先求各目标函数<span
+class="math inline">\(f_i(x)\)</span>的最大值，再求该最大值的最小值，通用数学模型如下：
+<span
+class="math display">\[\min_{x}\left\{\max\left[f_1(x),f_2(x),\ldots,f_m(x)\right]\right\}\]</span>
+约束条件： <span class="math display">\[s.t.\begin{cases}Ax\leq
+b\\Aeq\times x=beq\\C(x)\leq 0\\Ceq(x)=0\\VLB\leq X\leq
+VUB\end{cases}\]</span></p>
+<h2 id="典型例题城市供应中心选址问题">2.
+典型例题：城市供应中心选址问题</h2>
+<h3 id="问题描述">2.1 问题描述</h3>
+<p>某城市有10个物品需求点，每个需求点<span
+class="math inline">\(P_i\)</span>的坐标为<span
+class="math inline">\((a_i,b_i)\)</span>（道路网与坐标轴正交，距离按“曼哈顿距离”计算：<span
+class="math inline">\(|x-a_i|+|y-b_i|\)</span>）。需在<span
+class="math inline">\(x\in[3,8]\)</span>、<span
+class="math inline">\(y\in[4,10]\)</span>范围内建设供应中心，要求中心到最远需求点的距离尽可能小。</p>
+<h3 id="需求点坐标">2.2 需求点坐标</h3>
+<table>
+<thead>
+<tr>
+<th><span class="math inline">\(a_i\)</span></th>
+<th>1</th>
+<th>4</th>
+<th>3</th>
+<th>5</th>
+<th>9</th>
+<th>12</th>
+<th>6</th>
+<th>20</th>
+<th>17</th>
+<th>8</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="math inline">\(b_i\)</span></td>
+<td>2</td>
+<td>10</td>
+<td>8</td>
+<td>18</td>
+<td>1</td>
+<td>4</td>
+<td>5</td>
+<td>10</td>
+<td>8</td>
+<td>9</td>
+</tr>
+</tbody>
+</table>
+<h3 id="数学模型构建">2.3 数学模型构建</h3>
+设供应中心坐标为<span class="math inline">\((x,y)\)</span>，模型如下： [
+<span class="math display">\[\begin{aligned}
+\min_{(x,y)}&amp;\quad\left\{\max_{i}\bigl[|x-a_i|+|y-b_i|\bigr]\right\}\\
+\text{s.t.}&amp;\quad\begin{cases}
+3\le x\le 8\\
+4\le y\le 10
+\end{cases}
+\end{aligned}\]</span>
+<p>]</p>
+<h2 id="代码求解实现">3. 代码求解实现</h2>
+<h3 id="matlab实现fminimax函数">3.1 Matlab实现（fminimax函数）</h3>
+<p>Matlab的<code>fminimax</code>函数专为最大最小化问题设计，语法与非线性规划函数一致，核心是将目标函数表示为<strong>函数向量</strong>。</p>
+<h4 id="函数语法">3.1.1 函数语法</h4>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[x,fval]=fminimax(fun,x0,A,b,Aeq,beq,lb,ub,nonlcon,option)</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>fun</code>：目标函数（需定义为函数向量）；</li>
+<li><code>x0</code>：初始值；</li>
+<li><code>lb/ub</code>：决策变量上下界；</li>
+<li>其余参数与非线性规划一致。</li>
+</ul>
+<h4 id="例题求解代码">3.1.2 例题求解代码</h4>
+<p><strong>主程序</strong>： <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">%% 最大最小化模型求解：min&#123;max[f1,f2,···,fm]&#125;</span></span><br><span class="line">clear;clc;<span class="comment">% 清理环境变量</span></span><br><span class="line"><span class="comment">% 1. 定义初始值与边界</span></span><br><span class="line">x0=[<span class="number">6</span>,<span class="number">6</span>];<span class="comment">% 决策变量初始值（x,y）</span></span><br><span class="line">lb=[<span class="number">3</span>,<span class="number">4</span>];<span class="comment">% 决策变量下界 [x_min,y_min]</span></span><br><span class="line">ub=[<span class="number">8</span>,<span class="number">10</span>];<span class="comment">% 决策变量上界 [x_max,y_max]</span></span><br><span class="line"><span class="comment">% 2. 调用fminimax求解</span></span><br><span class="line">[x,feval]=fminimax(@Fun,x0,[],[],[],[],lb,ub);</span><br><span class="line"><span class="comment">% 3. 输出结果</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;最优供应中心坐标：&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>(x);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;各需求点到中心的距离：&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>(feval);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;最小化后的最大距离：&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="built_in">max</span>(feval));</span><br></pre></td></tr></table></figure></p>
+<p><strong>目标函数（Fun.m）</strong>： <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>=<span class="title">Fun</span><span class="params">(x)</span></span></span><br><span class="line">    <span class="comment">% 需求点坐标</span></span><br><span class="line">    a=[<span class="number">1</span> <span class="number">4</span> <span class="number">3</span> <span class="number">5</span> <span class="number">9</span> <span class="number">12</span> <span class="number">6</span> <span class="number">20</span> <span class="number">17</span> <span class="number">8</span>];</span><br><span class="line">    b=[<span class="number">2</span> <span class="number">10</span> <span class="number">8</span> <span class="number">18</span> <span class="number">1</span> <span class="number">4</span> <span class="number">5</span> <span class="number">10</span> <span class="number">8</span> <span class="number">9</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">% 构造函数向量（10个需求点的曼哈顿距离）</span></span><br><span class="line">    f=<span class="built_in">zeros</span>(<span class="number">10</span>,<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>:<span class="number">10</span></span><br><span class="line">        f(<span class="built_in">i</span>)=<span class="built_in">abs</span>(x(<span class="number">1</span>)-a(<span class="built_in">i</span>))+<span class="built_in">abs</span>(x(<span class="number">2</span>)-b(<span class="built_in">i</span>));</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="运行结果">3.1.3 运行结果</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">最优供应中心坐标：</span><br><span class="line">    8.0000    8.5000</span><br><span class="line">各需求点到中心的距离：</span><br><span class="line">   13.5000    5.5000    5.5000   12.5000    8.5000    8.5000    5.5000   13.5000    9.5000    0.5000</span><br><span class="line">最小化后的最大距离：</span><br><span class="line">   13.5000</span><br></pre></td></tr></table></figure>
+<p><strong>结论</strong>：在坐标<span
+class="math inline">\((8,8.5)\)</span>处建供应中心，可使到各需求点的最大距离最小（13.5单位）。</p>
+<h3 id="python实现多场景案例">3.2 Python实现（多场景案例）</h3>
+<p>Python通过<code>scipy.optimize</code>模块的<code>linprog</code>（线性）和<code>minimize</code>（非线性）函数实现最大最小化求解，以下是4类典型场景的完整实现。</p>
+<h4 id="环境准备">3.2.1 环境准备</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linprog,minimize</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br></pre></td></tr></table></figure>
+<h4 id="案例1线性最大最小化投资组合优化">3.2.2
+案例1：线性最大最小化（投资组合优化）</h4>
+<p><strong>场景</strong>：最大化投资组合的最小收益率（经济繁荣/一般/衰退3种情景）。
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">maximin_linear_example</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    投资组合选择：最大化最差情景下的收益率</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 3种投资项目在不同情景下的收益率（行：项目，列：情景）</span></span><br><span class="line">    returns=np.array([</span><br><span class="line">        [<span class="number">0.15</span>,<span class="number">0.08</span>,-<span class="number">0.05</span>],<span class="comment"># 项目A：繁荣/一般/衰退</span></span><br><span class="line">        [<span class="number">0.10</span>,<span class="number">0.06</span>,<span class="number">0.02</span>],<span class="comment"># 项目B</span></span><br><span class="line">        [<span class="number">0.05</span>,<span class="number">0.04</span>,<span class="number">0.03</span>]<span class="comment"># 项目C</span></span><br><span class="line">    ])</span><br><span class="line">    </span><br><span class="line">    n_projects=returns.shape[<span class="number">0</span>]</span><br><span class="line">    n_scenarios=returns.shape[<span class="number">1</span>]</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 决策变量：[x0,x1,x2,t]，x为投资比例，t为最小收益率（目标：最大化t）</span></span><br><span class="line">    c=np.zeros(n_projects+<span class="number">1</span>)</span><br><span class="line">    c[-<span class="number">1</span>]=-<span class="number">1</span><span class="comment"># 最大化t等价于最小化-t</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 不等式约束：各情景下收益 ≥ t → -∑(return_ij*x_i)+t ≤ 0</span></span><br><span class="line">    A_ub=[]</span><br><span class="line">    b_ub=[]</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(n_scenarios):</span><br><span class="line">        row=np.zeros(n_projects+<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n_projects):</span><br><span class="line">            row[i]=-returns[i,j]</span><br><span class="line">        row[-<span class="number">1</span>]=<span class="number">1</span></span><br><span class="line">        A_ub.append(row)</span><br><span class="line">        b_ub.append(<span class="number">0</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 等式约束：投资比例和为1</span></span><br><span class="line">    A_eq=[np.ones(n_projects+<span class="number">1</span>)]</span><br><span class="line">    A_eq[<span class="number">0</span>][-<span class="number">1</span>]=<span class="number">0</span><span class="comment"># t的系数为0</span></span><br><span class="line">    b_eq=[<span class="number">1</span>]</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 变量边界：投资比例非负，t无限制</span></span><br><span class="line">    bounds=[(<span class="number">0</span>,<span class="literal">None</span>)]*n_projects+[(<span class="literal">None</span>,<span class="literal">None</span>)]</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 求解线性规划</span></span><br><span class="line">    result=linprog(c,A_ub=A_ub,b_ub=b_ub,A_eq=A_eq,b_eq=b_eq,bounds=bounds)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> result.success:</span><br><span class="line">        investments=result.x[:-<span class="number">1</span>]</span><br><span class="line">        min_return=result.x[-<span class="number">1</span>]</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;=&quot;</span>*<span class="number">50</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;【案例1】投资组合最大最小化结果&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;=&quot;</span>*<span class="number">50</span>)</span><br><span class="line">        <span class="keyword">for</span> i,inv <span class="keyword">in</span> <span class="built_in">enumerate</span>(investments):</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;  项目<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>投资比例：<span class="subst">&#123;inv:<span class="number">.2</span>%&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;  确保的最小收益率：<span class="subst">&#123;min_return:<span class="number">.2</span>%&#125;</span>&quot;</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 计算各情景实际收益率</span></span><br><span class="line">        scenario_returns=returns.T@investments</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;\n  各情景实际收益率：&quot;</span>)</span><br><span class="line">        <span class="keyword">for</span> j,ret <span class="keyword">in</span> <span class="built_in">enumerate</span>(scenario_returns):</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;  情景<span class="subst">&#123;j+<span class="number">1</span>&#125;</span>（经济<span class="subst">&#123;[<span class="string">&#x27;繁荣&#x27;</span>,<span class="string">&#x27;一般&#x27;</span>,<span class="string">&#x27;衰退&#x27;</span>][j]&#125;</span>）：<span class="subst">&#123;ret:<span class="number">.2</span>%&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> investments,min_return</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;优化失败：&quot;</span>,result.message)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span>,<span class="literal">None</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="案例2非线性最大最小化设施选址">3.2.3
+案例2：非线性最大最小化（设施选址）</h4>
+<p><strong>场景</strong>：最小化设施到所有客户的最大欧氏距离。
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">maximin_nonlinear_example</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    设施选址：最小化到所有客户的最大距离</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 客户坐标</span></span><br><span class="line">    customers=np.array([</span><br><span class="line">        [<span class="number">2</span>,<span class="number">8</span>],<span class="comment"># 客户1</span></span><br><span class="line">        [<span class="number">6</span>,<span class="number">4</span>],<span class="comment"># 客户2</span></span><br><span class="line">        [<span class="number">8</span>,<span class="number">7</span>],<span class="comment"># 客户3</span></span><br><span class="line">        [<span class="number">1</span>,<span class="number">2</span>],<span class="comment"># 客户4</span></span><br><span class="line">        [<span class="number">9</span>,<span class="number">1</span>]<span class="comment"># 客户5</span></span><br><span class="line">    ])</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">max_distance</span>(<span class="params">x</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;计算设施到所有客户的最大欧氏距离&quot;&quot;&quot;</span></span><br><span class="line">        facility=np.array([x[<span class="number">0</span>],x[<span class="number">1</span>]])</span><br><span class="line">        distances=np.sqrt(np.<span class="built_in">sum</span>((customers-facility)**<span class="number">2</span>,axis=<span class="number">1</span>))</span><br><span class="line">        <span class="keyword">return</span> np.<span class="built_in">max</span>(distances)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 初始猜测：客户坐标的均值</span></span><br><span class="line">    initial_guess=np.mean(customers,axis=<span class="number">0</span>)</span><br><span class="line">    <span class="comment"># 设施位置边界</span></span><br><span class="line">    bounds=[(<span class="number">0</span>,<span class="number">10</span>),(<span class="number">0</span>,<span class="number">10</span>)]</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 求解最小化最大距离</span></span><br><span class="line">    result=minimize(max_distance,initial_guess,bounds=bounds,method=<span class="string">&#x27;L-BFGS-B&#x27;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> result.success:</span><br><span class="line">        optimal_location=result.x</span><br><span class="line">        min_max_distance=result.fun</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;\n&quot;</span>+<span class="string">&quot;=&quot;</span>*<span class="number">50</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;【案例2】设施选址最小最大距离结果&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;=&quot;</span>*<span class="number">50</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;  最优设施位置：(<span class="subst">&#123;optimal_location[<span class="number">0</span>]:<span class="number">.2</span>f&#125;</span>,<span class="subst">&#123;optimal_location[<span class="number">1</span>]:<span class="number">.2</span>f&#125;</span>)&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;  最小化后的最大距离：<span class="subst">&#123;min_max_distance:<span class="number">.2</span>f&#125;</span>&quot;</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 可视化结果</span></span><br><span class="line">        plt.figure(figsize=(<span class="number">10</span>,<span class="number">6</span>))</span><br><span class="line">        <span class="comment"># 绘制客户点</span></span><br><span class="line">        plt.scatter(customers[:,<span class="number">0</span>],customers[:,<span class="number">1</span>],c=<span class="string">&#x27;blue&#x27;</span>,s=<span class="number">100</span>,label=<span class="string">&#x27;客户位置&#x27;</span>,zorder=<span class="number">5</span>)</span><br><span class="line">        <span class="keyword">for</span> i,(x,y) <span class="keyword">in</span> <span class="built_in">enumerate</span>(customers):</span><br><span class="line">            plt.text(x,y,<span class="string">f&#x27; C<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>&#x27;</span>,fontsize=<span class="number">9</span>,verticalalignment=<span class="string">&#x27;center&#x27;</span>)</span><br><span class="line">        <span class="comment"># 绘制设施位置</span></span><br><span class="line">        plt.scatter(optimal_location[<span class="number">0</span>],optimal_location[<span class="number">1</span>],c=<span class="string">&#x27;red&#x27;</span>,s=<span class="number">150</span>, </span><br><span class="line">                   marker=<span class="string">&#x27;*&#x27;</span>,label=<span class="string">&#x27;最优设施位置&#x27;</span>,zorder=<span class="number">10</span>)</span><br><span class="line">        plt.text(optimal_location[<span class="number">0</span>],optimal_location[<span class="number">1</span>],<span class="string">&#x27;  设施&#x27;</span>,fontsize=<span class="number">10</span>)</span><br><span class="line">        <span class="comment"># 绘制服务范围圆</span></span><br><span class="line">        circle=plt.Circle(optimal_location,min_max_distance,color=<span class="string">&#x27;red&#x27;</span>,alpha=<span class="number">0.1</span>,label=<span class="string">&#x27;服务范围&#x27;</span>)</span><br><span class="line">        plt.gca().add_patch(circle)</span><br><span class="line">        </span><br><span class="line">        plt.xlabel(<span class="string">&#x27;X坐标&#x27;</span>)</span><br><span class="line">        plt.ylabel(<span class="string">&#x27;Y坐标&#x27;</span>)</span><br><span class="line">        plt.title(<span class="string">&#x27;设施选址 - 最小最大距离模型&#x27;</span>)</span><br><span class="line">        plt.legend()</span><br><span class="line">        plt.grid(<span class="literal">True</span>,alpha=<span class="number">0.3</span>)</span><br><span class="line">        plt.axis(<span class="string">&#x27;equal&#x27;</span>)</span><br><span class="line">        plt.show()</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> optimal_location,min_max_distance</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;优化失败：&quot;</span>,result.message)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span>,<span class="literal">None</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="案例3通用最大最小化求解器">3.2.4
+案例3：通用最大最小化求解器</h4>
+<p><strong>场景</strong>：自定义多目标函数+约束的最大最小化问题。
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MaximinOptimizer</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    通用最大最小化优化器：求解 max_x &#123; min_i [f_i(x)] &#125;</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,objectives,constraints=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        参数：</span></span><br><span class="line"><span class="string">        - objectives: 目标函数列表 [f1(x),f2(x),...,fn(x)]</span></span><br><span class="line"><span class="string">        - constraints: 约束条件列表（scipy格式）</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="variable language_">self</span>.objectives=objectives</span><br><span class="line">        <span class="variable language_">self</span>.constraints=constraints <span class="keyword">if</span> constraints <span class="keyword">else</span> []</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">solve</span>(<span class="params">self,initial_guess,bounds=<span class="literal">None</span>,method=<span class="string">&#x27;SLSQP&#x27;</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        求解逻辑：引入辅助变量t，转化为 max(t) s.t. f_i(x) ≥ t</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        n_vars=<span class="built_in">len</span>(initial_guess)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 目标函数：最大化t → 最小化-t</span></span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">objective_func</span>(<span class="params"><span class="built_in">vars</span></span>):</span><br><span class="line">            <span class="keyword">return</span> -<span class="built_in">vars</span>[-<span class="number">1</span>]</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 约束：f_i(x)-t ≥ 0</span></span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">build_constraints</span>():</span><br><span class="line">            constraints_list=[]</span><br><span class="line">            <span class="comment"># 目标函数约束</span></span><br><span class="line">            <span class="keyword">for</span> i,obj_func <span class="keyword">in</span> <span class="built_in">enumerate</span>(<span class="variable language_">self</span>.objectives):</span><br><span class="line">                <span class="keyword">def</span> <span class="title function_">constraint</span>(<span class="params"><span class="built_in">vars</span>,idx=i</span>):</span><br><span class="line">                    x=<span class="built_in">vars</span>[:-<span class="number">1</span>]</span><br><span class="line">                    t=<span class="built_in">vars</span>[-<span class="number">1</span>]</span><br><span class="line">                    <span class="keyword">return</span> obj_func(x)-t</span><br><span class="line">                constraints_list.append(&#123;<span class="string">&#x27;type&#x27;</span>:<span class="string">&#x27;ineq&#x27;</span>,<span class="string">&#x27;fun&#x27;</span>:constraint&#125;)</span><br><span class="line">            <span class="comment"># 自定义约束</span></span><br><span class="line">            constraints_list.extend(<span class="variable language_">self</span>.constraints)</span><br><span class="line">            <span class="keyword">return</span> constraints_list</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 初始值：原始变量 + t（t初始为所有目标函数的最小值）</span></span><br><span class="line">        t_initial=<span class="built_in">min</span>([obj(initial_guess) <span class="keyword">for</span> obj <span class="keyword">in</span> <span class="variable language_">self</span>.objectives])</span><br><span class="line">        initial_vars=np.append(initial_guess,t_initial)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 变量边界</span></span><br><span class="line">        <span class="keyword">if</span> bounds:</span><br><span class="line">            var_bounds=bounds+[(<span class="literal">None</span>,<span class="literal">None</span>)]<span class="comment"># t无边界</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            var_bounds=[(<span class="literal">None</span>,<span class="literal">None</span>)]*(n_vars+<span class="number">1</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 求解</span></span><br><span class="line">        result=minimize(</span><br><span class="line">            objective_func,</span><br><span class="line">            initial_vars,</span><br><span class="line">            method=method,</span><br><span class="line">            bounds=var_bounds,</span><br><span class="line">            constraints=build_constraints()</span><br><span class="line">        )</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> result.success:</span><br><span class="line">            x_opt=result.x[:-<span class="number">1</span>]</span><br><span class="line">            t_opt=result.x[-<span class="number">1</span>]</span><br><span class="line">            </span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;\n&quot;</span>+<span class="string">&quot;=&quot;</span>*<span class="number">50</span>)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;【案例3】通用最大最小化求解结果&quot;</span>)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;=&quot;</span>*<span class="number">50</span>)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;  最优解 x：<span class="subst">&#123;np.<span class="built_in">round</span>(x_opt,<span class="number">4</span>)&#125;</span>&quot;</span>)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;  最小目标值的最大值 t：<span class="subst">&#123;t_opt:<span class="number">.6</span>f&#125;</span>&quot;</span>)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;\n  各目标函数在最优解处的值：&quot;</span>)</span><br><span class="line">            <span class="keyword">for</span> i,obj_func <span class="keyword">in</span> <span class="built_in">enumerate</span>(<span class="variable language_">self</span>.objectives):</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">f&quot;  f<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>(x)=<span class="subst">&#123;obj_func(x_opt):<span class="number">.6</span>f&#125;</span>&quot;</span>)</span><br><span class="line">            <span class="keyword">return</span> x_opt,t_opt</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;优化失败：&quot;</span>,result.message)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">None</span>,<span class="literal">None</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="案例4博弈论中的最大最小化零和博弈">3.2.5
+案例4：博弈论中的最大最小化（零和博弈）</h4>
+<p><strong>场景</strong>：行玩家在零和博弈中选择“最大化最小收益”的混合策略。
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">game_theory_maximin</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    零和博弈的最大最小化策略：行玩家最大化自己的最小收益</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 收益矩阵（行玩家收益，列玩家策略）</span></span><br><span class="line">    payoff_matrix=np.array([</span><br><span class="line">        [<span class="number">3</span>,-<span class="number">2</span>,<span class="number">1</span>],<span class="comment"># 行策略1</span></span><br><span class="line">        [<span class="number">0</span>,<span class="number">2</span>,-<span class="number">1</span>],<span class="comment"># 行策略2</span></span><br><span class="line">        [-<span class="number">1</span>,<span class="number">1</span>,<span class="number">3</span>]<span class="comment"># 行策略3</span></span><br><span class="line">    ])</span><br><span class="line">    </span><br><span class="line">    n_strategies=payoff_matrix.shape[<span class="number">0</span>]</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 决策变量：[p1,p2,p3,v]，p为策略概率，v为最小收益</span></span><br><span class="line">    c=np.zeros(n_strategies+<span class="number">1</span>)</span><br><span class="line">    c[-<span class="number">1</span>]=-<span class="number">1</span><span class="comment"># 最大化v</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 约束：对列玩家每个策略，行玩家期望收益 ≥ v</span></span><br><span class="line">    A_ub=[]</span><br><span class="line">    b_ub=[]</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(payoff_matrix.shape[<span class="number">1</span>]):</span><br><span class="line">        row=np.zeros(n_strategies+<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n_strategies):</span><br><span class="line">            row[i]=-payoff_matrix[i,j]</span><br><span class="line">        row[-<span class="number">1</span>]=<span class="number">1</span></span><br><span class="line">        A_ub.append(row)</span><br><span class="line">        b_ub.append(<span class="number">0</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 概率和为1</span></span><br><span class="line">    A_eq=[np.ones(n_strategies+<span class="number">1</span>)]</span><br><span class="line">    A_eq[<span class="number">0</span>][-<span class="number">1</span>]=<span class="number">0</span></span><br><span class="line">    b_eq=[<span class="number">1</span>]</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 非负约束</span></span><br><span class="line">    bounds=[(<span class="number">0</span>,<span class="number">1</span>)]*n_strategies+[(<span class="literal">None</span>,<span class="literal">None</span>)]</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 求解</span></span><br><span class="line">    result=linprog(c,A_ub=A_ub,b_ub=b_ub,A_eq=A_eq,b_eq=b_eq,bounds=bounds)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> result.success:</span><br><span class="line">        probabilities=result.x[:-<span class="number">1</span>]</span><br><span class="line">        game_value=result.x[-<span class="number">1</span>]</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;\n&quot;</span>+<span class="string">&quot;=&quot;</span>*<span class="number">50</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;【案例4】博弈论最大最小化策略&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;=&quot;</span>*<span class="number">50</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;  收益矩阵（行玩家vs列玩家）：&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(payoff_matrix)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;\n  行玩家最优混合策略：&quot;</span>)</span><br><span class="line">        <span class="keyword">for</span> i,prob <span class="keyword">in</span> <span class="built_in">enumerate</span>(probabilities):</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;  策略<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>概率：<span class="subst">&#123;prob:<span class="number">.2</span>%&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;  游戏值（最小保证收益）：<span class="subst">&#123;game_value:<span class="number">.3</span>f&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> probabilities,game_value</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;优化失败：&quot;</span>,result.message)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span>,<span class="literal">None</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="主程序运行">3.2.6 主程序运行</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__==<span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;=== 最大最小化规划模型Python实现合集 ===&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 运行案例1：投资组合</span></span><br><span class="line">    maximin_linear_example()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 运行案例2：设施选址</span></span><br><span class="line">    maximin_nonlinear_example()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 运行案例3：通用求解器</span></span><br><span class="line">    <span class="comment"># 定义目标函数</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">f1</span>(<span class="params">x</span>):<span class="keyword">return</span> <span class="number">3</span>*x[<span class="number">0</span>]+<span class="number">2</span>*x[<span class="number">1</span>]-x[<span class="number">2</span>]</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">f2</span>(<span class="params">x</span>):<span class="keyword">return</span> -x[<span class="number">0</span>]+<span class="number">4</span>*x[<span class="number">1</span>]+<span class="number">2</span>*x[<span class="number">2</span>]</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">f3</span>(<span class="params">x</span>):<span class="keyword">return</span> <span class="number">2</span>*x[<span class="number">0</span>]-x[<span class="number">1</span>]+<span class="number">3</span>*x[<span class="number">2</span>]</span><br><span class="line">    <span class="comment"># 定义约束</span></span><br><span class="line">    constraints=[</span><br><span class="line">        &#123;<span class="string">&#x27;type&#x27;</span>:<span class="string">&#x27;ineq&#x27;</span>,<span class="string">&#x27;fun&#x27;</span>:<span class="keyword">lambda</span> x:<span class="number">10</span>-np.<span class="built_in">sum</span>(x)&#125;,<span class="comment"># ∑x_i ≤ 10</span></span><br><span class="line">        &#123;<span class="string">&#x27;type&#x27;</span>:<span class="string">&#x27;ineq&#x27;</span>,<span class="string">&#x27;fun&#x27;</span>:<span class="keyword">lambda</span> x:x[<span class="number">0</span>]+<span class="number">2</span>*x[<span class="number">1</span>]-<span class="number">5</span>&#125;<span class="comment"># x1+2x2 ≥5</span></span><br><span class="line">    ]</span><br><span class="line">    <span class="comment"># 求解</span></span><br><span class="line">    optimizer=MaximinOptimizer(objectives=[f1,f2,f3],constraints=constraints)</span><br><span class="line">    optimizer.solve(initial_guess=np.array([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]),bounds=[(<span class="number">0</span>,<span class="number">5</span>),(<span class="number">0</span>,<span class="number">5</span>),(<span class="number">0</span>,<span class="number">5</span>)])</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 运行案例4：博弈论</span></span><br><span class="line">    game_theory_maximin()</span><br></pre></td></tr></table></figure>
+<h2 id="总结">4. 总结</h2>
+<p>最大最小化规划模型是保守决策的核心工具，其核心是“从最坏情况出发，追求最优结果”：
+- 理论层面：通过引入辅助变量可将“最大最小”转化为常规优化问题； -
+工具层面：Matlab的<code>fminimax</code>函数可直接求解，Python需通过<code>linprog/minimize</code>自定义转化；
+- 应用层面：适用于选址、投资、博弈等“风险规避型”决策场景。</p>
+<p>掌握该模型的原理与代码实现，可有效解决数学建模中各类“最小化最大值/最大化最小值”类问题。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2026/04/14/IntegerProgramming/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/04/14/IntegerProgramming/" class="post-title-link" itemprop="url">整数规划与0-1规划</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2026-04-14 15:37:30 / Modified: 16:37:30" itemprop="dateCreated datePublished" datetime="2026-04-14T15:37:30+08:00">2026-04-14</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>数学建模中，整数规划（尤其是0-1规划）是解决离散决策问题的核心方法，广泛应用于资源分配、任务指派、背包问题等场景。本文将从实际问题出发，拆解整数规划与0-1规划的原理，并结合Matlab和Python代码实现，手把手教你解决这类经典问题。</p>
+<h1
+id="模型引出从游戏升级问题理解整数规划">模型引出：从游戏升级问题理解整数规划</h1>
+<p>先从一个贴近生活的例子入手，理解整数规划的核心诉求：</p>
+<h2 id="问题背景">问题背景</h2>
+<p>游戏每天有100点体力，可通关A、B、C三张地图获取经验升级：</p>
+<ul>
+<li>通关A图：获20经验，耗4体力；</li>
+<li>通关B图：获30经验，耗8体力；</li>
+<li>通关C图：获40经验，耗10体力；</li>
+<li>三张地图每日总通关次数≤20次。</li>
+</ul>
+<p><strong>目标</strong>：如何组合通关次数，让单日经验最大化？</p>
+<h2 id="数学建模">数学建模</h2>
+<p>设 <span class="math inline">\(x_1\)</span>（A图次数）、<span
+class="math inline">\(x_2\)</span>（B图次数）、<span
+class="math inline">\(x_3\)</span>（C图次数）为决策变量，构建规划模型：
+<span class="math display">\[
+\begin{aligned}
+&amp;\max y=20x_1+30x_2+40x_3, \\
+&amp;\text{s.t.}\begin{cases}4x_1+8x_2+10x_3\leqslant100, \\
+x_1+x_2+x_3\leqslant20, \\
+x_1,x_2,x_3\geqslant0.
+\end{cases}
+\end{aligned}
+\]</span></p>
+<p>由于多数求解工具（如Matlab的<code>intlinprog</code>）仅支持<strong>最小化目标函数</strong>，因此将最大化问题转换为最小化：
+<span class="math display">\[
+\begin{align*}
+&amp;\min -y=-20x_1-30x_2-40x_3, \\
+&amp;\text{s.t.}\begin{cases}4x_1+8x_2+10x_3\leqslant100, \\
+x_1+x_2+x_3\leqslant20, \\
+x_1,x_2,x_3\geqslant0.
+\end{cases}
+\end{align*}
+\]</span></p>
+<h1
+id="模型原理整数规划与0-1规划的核心概念">模型原理：整数规划与0-1规划的核心概念</h1>
+<h2 id="整数规划的分类">1. 整数规划的分类</h2>
+<p>在规划问题中，若要求决策变量（全部/部分）为整数，则称为<strong>整数规划</strong>：</p>
+<ul>
+<li>纯整数规划：所有变量均为整数；</li>
+<li>混合整数规划：仅部分变量为整数；</li>
+<li>0-1规划：特殊的整数规划，变量仅取0或1（如“选/不选”“指派/不指派”）。</li>
+</ul>
+<h2 id="求解方法区分">2. 求解方法区分</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">规划类型</th>
+<th style="text-align: center;">求解方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">线性整数规划</td>
+<td style="text-align: center;">Matlab <code>intlinprog</code>
+直接求解</td>
+</tr>
+<tr>
+<td style="text-align: center;">非线性整数规划</td>
+<td style="text-align: center;">近似算法（蒙特卡罗、智能算法等）</td>
+</tr>
+<tr>
+<td style="text-align: center;">线性0-1规划</td>
+<td style="text-align: center;">Matlab
+<code>intlinprog</code>（限定变量范围）</td>
+</tr>
+<tr>
+<td style="text-align: center;">非线性0-1规划</td>
+<td style="text-align: center;">近似解（无通用精确算法）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="核心求解函数matlab">3. 核心求解函数（Matlab）</h2>
+<p>线性整数/0-1规划均使用 <code>intlinprog</code> 函数，语法如下：</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[x, fval] = intlinprog(f, intcon, A, b, Aeq, beq, lb, ub)</span><br></pre></td></tr></table></figure>
+<p>参数说明：</p>
+<ul>
+<li><code>f</code>：目标函数系数向量（需为<strong>最小化</strong>形式）；</li>
+<li><code>intcon</code>：需取整数的决策变量下标（如 <span
+class="math inline">\(x_1,x_3\)</span> 为整数则
+<code>intcon=[1,3]</code>）；</li>
+<li><code>A,b</code>：不等式约束 <span class="math inline">\(Ax\leqslant
+b\)</span> 的系数矩阵和常数项；</li>
+<li><code>Aeq,beq</code>：等式约束 <span class="math inline">\(Aeq\cdot
+x=beq\)</span> 的系数矩阵和常数项；</li>
+<li><code>lb,ub</code>：决策变量的上下界（0-1规划需设
+<code>lb=0</code>、<code>ub=1</code>）。</li>
+</ul>
+<h1
+id="典型例题整数规划与0-1规划的实战应用">典型例题：整数规划与0-1规划的实战应用</h1>
+<h2
+id="例题1背包问题0-1规划经典场景">例题1：背包问题（0-1规划经典场景）</h2>
+<h3 id="问题描述">问题描述</h3>
+<p>有10件货物需从甲地运往乙地，货车最大载重30吨，每件货物的重量和利润如下表：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">物品</th>
+<th style="text-align: center;">1</th>
+<th style="text-align: center;">2</th>
+<th style="text-align: center;">3</th>
+<th style="text-align: center;">4</th>
+<th style="text-align: center;">5</th>
+<th style="text-align: center;">6</th>
+<th style="text-align: center;">7</th>
+<th style="text-align: center;">8</th>
+<th style="text-align: center;">9</th>
+<th style="text-align: center;">10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">重量（吨）</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td style="text-align: center;">利润（元）</td>
+<td style="text-align: center;">540</td>
+<td style="text-align: center;">200</td>
+<td style="text-align: center;">180</td>
+<td style="text-align: center;">350</td>
+<td style="text-align: center;">60</td>
+<td style="text-align: center;">150</td>
+<td style="text-align: center;">280</td>
+<td style="text-align: center;">450</td>
+<td style="text-align: center;">320</td>
+<td style="text-align: center;">120</td>
+</tr>
+</tbody>
+</table>
+<p><strong>目标</strong>：选择部分货物，使总利润最大。</p>
+<h3 id="数学建模-1">数学建模</h3>
+<p>设 <span
+class="math inline">\(x_i\in\{0,1\}\)</span>（1表示选第i件，0表示不选），<span
+class="math inline">\(w_i\)</span> 为重量，<span
+class="math inline">\(p_i\)</span> 为利润： <span
+class="math display">\[
+\begin{aligned}
+&amp;\max\sum\limits_{i=1}^{10}p_i x_i, \\
+&amp;\text{s.t.}\begin{cases}\sum\limits_{i=1}^{10}w_i x_i\leqslant30 \\
+x_i\in\{0,1\}
+\end{cases}
+\end{aligned}
+\]</span> 转换为最小化形式： <span class="math display">\[
+\begin{align*}
+&amp;\min-\sum\limits_{i=1}^{10}p_i x_i, \\
+&amp;\text{s.t.}\begin{cases}\sum\limits_{i=1}^{10}w_i x_i\leqslant30 \\
+x_i\in\{0,1\}
+\end{cases}
+\end{align*}
+\]</span></p>
+<h3 id="代码实现">代码实现</h3>
+<h4 id="matlab版本">Matlab版本</h4>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">%% 背包问题求解</span></span><br><span class="line">clc, clear</span><br><span class="line"><span class="comment">% 目标函数系数（最大化转最小化，加负号）</span></span><br><span class="line">c = -[<span class="number">540</span> <span class="number">200</span> <span class="number">180</span> <span class="number">350</span> <span class="number">60</span> <span class="number">150</span> <span class="number">280</span> <span class="number">450</span> <span class="number">320</span> <span class="number">120</span>]; </span><br><span class="line"><span class="comment">% 10个决策变量均为0-1整数</span></span><br><span class="line">intcon = <span class="number">1</span>:<span class="number">10</span>; </span><br><span class="line"><span class="comment">% 重量约束：Ax ≤ b</span></span><br><span class="line">A = [<span class="number">6</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span> <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">5</span> <span class="number">4</span> <span class="number">2</span>]; </span><br><span class="line">b = <span class="number">30</span>; </span><br><span class="line"><span class="comment">% 无等式约束</span></span><br><span class="line">Aeq = []; beq = []; </span><br><span class="line"><span class="comment">% 0-1规划，上下界为0和1</span></span><br><span class="line">lb = <span class="built_in">zeros</span>(<span class="number">10</span>,<span class="number">1</span>); </span><br><span class="line">ub = <span class="built_in">ones</span>(<span class="number">10</span>,<span class="number">1</span>); </span><br><span class="line"></span><br><span class="line">[x, fval] = intlinprog(c, intcon, A, b, Aeq, beq, lb, ub);</span><br><span class="line"><span class="comment">% 转换为最大化的利润</span></span><br><span class="line">max_profit = -fval; </span><br><span class="line"></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;选中的物品（1表示选中，0表示未选）：&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="built_in">round</span>(x&#x27;)); <span class="comment">% 四舍五入确保0/1</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;最大总利润（元）：&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>(max_profit);</span><br></pre></td></tr></table></figure>
+<h4 id="python版本">Python版本</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pulp <span class="keyword">import</span> LpMaximize, LpProblem, LpVariable, lpSum, value</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 创建最大化问题</span></span><br><span class="line">problem = LpProblem(name=<span class="string">&quot;Knapsack_Problem&quot;</span>, sense=LpMaximize)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 定义参数</span></span><br><span class="line">profits = [<span class="number">540</span>, <span class="number">200</span>, <span class="number">180</span>, <span class="number">350</span>, <span class="number">60</span>, <span class="number">150</span>, <span class="number">280</span>, <span class="number">450</span>, <span class="number">320</span>, <span class="number">120</span>]  <span class="comment"># 利润列表</span></span><br><span class="line">weights = [<span class="number">6</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span> <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">5</span> <span class="number">4</span> <span class="number">2</span>]  <span class="comment"># 重量列表</span></span><br><span class="line">max_weight = <span class="number">30</span>  <span class="comment"># 最大载重</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 定义决策变量（0-1变量）</span></span><br><span class="line">x = [LpVariable(name=<span class="string">f&quot;x<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>&quot;</span>, cat=<span class="string">&quot;Binary&quot;</span>) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 定义目标函数（最大化总利润）</span></span><br><span class="line">problem += lpSum(profits[i] * x[i] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)), <span class="string">&quot;Total_Profit&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 5. 添加约束（总重量≤30）</span></span><br><span class="line">problem += lpSum(weights[i] * x[i] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)) &lt;= max_weight, <span class="string">&quot;Weight_Constraint&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 6. 求解</span></span><br><span class="line">problem.solve()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7. 输出结果</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;选中的物品（1表示选中，0表示未选）：&quot;</span>);</span><br><span class="line">selected_items = [<span class="built_in">int</span>(value(x[i])) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)];</span><br><span class="line"><span class="built_in">print</span>(selected_items);</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最大总利润（元）：&quot;</span>);</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">int</span>(value(problem.objective)));</span><br></pre></td></tr></table></figure>
+<h2
+id="例题2指派问题0-1规划任务分配">例题2：指派问题（0-1规划：任务分配）</h2>
+<h3 id="问题描述-1">问题描述</h3>
+<p>从5名游泳候选人中选拔4×100米混合泳接力队员，每人仅能参加一种泳姿，每种泳姿仅需1人，候选人百米成绩如下表：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"></th>
+<th style="text-align: center;">蝶泳</th>
+<th style="text-align: center;">仰泳</th>
+<th style="text-align: center;">蛙泳</th>
+<th style="text-align: center;">自由泳</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">甲</td>
+<td style="text-align: center;">66.8</td>
+<td style="text-align: center;">75.6</td>
+<td style="text-align: center;">87</td>
+<td style="text-align: center;">58.6</td>
+</tr>
+<tr>
+<td style="text-align: center;">乙</td>
+<td style="text-align: center;">57.2</td>
+<td style="text-align: center;">66</td>
+<td style="text-align: center;">66.4</td>
+<td style="text-align: center;">53</td>
+</tr>
+<tr>
+<td style="text-align: center;">丙</td>
+<td style="text-align: center;">78</td>
+<td style="text-align: center;">67.8</td>
+<td style="text-align: center;">84.6</td>
+<td style="text-align: center;">59.4</td>
+</tr>
+<tr>
+<td style="text-align: center;">丁</td>
+<td style="text-align: center;">70</td>
+<td style="text-align: center;">74.2</td>
+<td style="text-align: center;">69.6</td>
+<td style="text-align: center;">57.2</td>
+</tr>
+<tr>
+<td style="text-align: center;">戊</td>
+<td style="text-align: center;">67.4</td>
+<td style="text-align: center;">71</td>
+<td style="text-align: center;">83.8</td>
+<td style="text-align: center;">62.4</td>
+</tr>
+</tbody>
+</table>
+<p><strong>目标</strong>：分配泳姿，使接力总耗时最小。</p>
+<h3 id="数学建模-2">数学建模</h3>
+<p>设 <span
+class="math inline">\(x_{ij}\in\{0,1\}\)</span>（i为队员，j为泳姿，1表示指派，0表示不指派），<span
+class="math inline">\(t_{ij}\)</span> 为耗时： <span
+class="math display">\[
+\begin{align*}
+&amp;\min\sum\limits_{j=1}^4\sum\limits_{i=1}^5t_{ij}x_{ij} \\
+&amp;\text{s.t.}\begin{cases}
+\sum\limits_{j=1}^4x_{ij}\leqslant1\ (i=1,2,3,4,5) \quad
+\text{（每人仅参加1种泳姿）} \\
+\sum\limits_{i=1}^5x_{ij}=1\ (j=1,2,3,4) \quad
+\text{（每种泳姿仅1人参加）} \\
+x_{ij}\in\{0,1\}
+\end{cases}
+\end{align*}
+\]</span></p>
+<h3 id="代码实现-1">代码实现</h3>
+<h4 id="matlab版本-1">Matlab版本</h4>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">%% 指派问题求解</span></span><br><span class="line">clear; clc</span><br><span class="line"><span class="comment">% 目标函数系数（按x11,x12,x13,x14,x21,x22,x23,x24...x54顺序）</span></span><br><span class="line">c = [<span class="number">66.8</span> <span class="number">75.6</span> <span class="number">87</span> <span class="number">58.6</span> <span class="number">57.2</span> <span class="number">66</span> <span class="number">66.4</span> <span class="number">53</span> <span class="number">78</span> <span class="number">67.8</span> <span class="number">84.6</span> <span class="number">59.4</span> <span class="number">70</span> <span class="number">74.2</span> <span class="number">69.6</span> <span class="number">57.2</span> <span class="number">67.4</span> <span class="number">71</span> <span class="number">83.8</span> <span class="number">62.4</span>]&#x27;;</span><br><span class="line"><span class="comment">% 20个决策变量均为0-1整数</span></span><br><span class="line">intcon = <span class="number">1</span>:<span class="number">20</span>; </span><br><span class="line"></span><br><span class="line"><span class="comment">% 不等式约束：每人仅参加1种泳姿（5行约束）</span></span><br><span class="line">A = <span class="built_in">zeros</span>(<span class="number">5</span>,<span class="number">20</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="number">5</span></span><br><span class="line">    A(<span class="built_in">i</span>, (<span class="number">4</span>*<span class="built_in">i</span><span class="number">-3</span>): <span class="number">4</span>*<span class="built_in">i</span>) = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">b = <span class="built_in">ones</span>(<span class="number">5</span>,<span class="number">1</span>); </span><br><span class="line"></span><br><span class="line"><span class="comment">% 等式约束：每种泳姿仅1人参加（4行约束）</span></span><br><span class="line">Aeq = <span class="built_in">repmat</span>(<span class="built_in">eye</span>(<span class="number">4</span>), <span class="number">1</span>, <span class="number">5</span>); <span class="comment">% 等价于[eye(4),eye(4),eye(4),eye(4),eye(4)]</span></span><br><span class="line">beq = <span class="built_in">ones</span>(<span class="number">4</span>,<span class="number">1</span>); </span><br><span class="line"></span><br><span class="line"><span class="comment">% 0-1规划上下界</span></span><br><span class="line">lb = <span class="built_in">zeros</span>(<span class="number">20</span>,<span class="number">1</span>); </span><br><span class="line">ub = <span class="built_in">ones</span>(<span class="number">20</span>,<span class="number">1</span>); </span><br><span class="line"></span><br><span class="line"><span class="comment">% 求解</span></span><br><span class="line">[x, fval] = intlinprog(c, intcon, A, b, Aeq, beq, lb, ub);</span><br><span class="line"></span><br><span class="line"><span class="comment">% 结果重塑为4行5列（泳姿×队员）</span></span><br><span class="line">assignment_matrix = <span class="built_in">reshape</span>(x, <span class="number">4</span>, <span class="number">5</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;泳姿-队员分配矩阵（行：蝶/仰/蛙/自由泳；列：甲/乙/丙/丁/戊，1表示指派）：&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="built_in">round</span>(assignment_matrix));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;最小总耗时（秒）：&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>(fval);</span><br></pre></td></tr></table></figure>
+<h4 id="python版本-1">Python版本</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pulp <span class="keyword">import</span> LpMinimize, LpProblem, LpVariable, lpSum, value</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 创建最小化问题</span></span><br><span class="line">problem = LpProblem(name=<span class="string">&quot;Assignment_Problem&quot;</span>, sense=LpMinimize)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 定义参数（泳姿耗时：按x11,x12,x13,x14,x21...x54顺序）</span></span><br><span class="line">time_cost = [<span class="number">66.8</span>, <span class="number">75.6</span>, <span class="number">87</span>, <span class="number">58.6</span>, <span class="number">57.2</span>, <span class="number">66</span>, <span class="number">66.4</span>, <span class="number">53</span>, <span class="number">78</span>, <span class="number">67.8</span>, <span class="number">84.6</span>, <span class="number">59.4</span>,</span><br><span class="line">             <span class="number">70</span>, <span class="number">74.2</span>, <span class="number">69.6</span>, <span class="number">57.2</span>, <span class="number">67.4</span>, <span class="number">71</span>, <span class="number">83.8</span>, <span class="number">62.4</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 定义决策变量（20个0-1变量）</span></span><br><span class="line">x = [LpVariable(name=<span class="string">f&quot;x<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>&quot;</span>, cat=<span class="string">&quot;Binary&quot;</span>) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">20</span>)]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 目标函数：最小化总耗时</span></span><br><span class="line">problem += lpSum(time_cost[i] * x[i] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">20</span>)), <span class="string">&quot;Total_Time&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 5. 约束1：每人仅参加1种泳姿（5个不等式约束）</span></span><br><span class="line">A = [</span><br><span class="line">    [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>],</span><br><span class="line">    [<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>],</span><br><span class="line">    [<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>],</span><br><span class="line">    [<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>],</span><br><span class="line">    [<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>],</span><br><span class="line">]</span><br><span class="line">b = [<span class="number">1</span>]*<span class="number">5</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(A)):</span><br><span class="line">    problem += lpSum(A[i][j] * x[j] <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">20</span>)) &lt;= b[i], <span class="string">f&quot;Person_Constraint_<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 6. 约束2：每种泳姿仅1人参加（4个等式约束）</span></span><br><span class="line">Aeq = [</span><br><span class="line">    [<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>],  <span class="comment"># 蝶泳</span></span><br><span class="line">    [<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>],  <span class="comment"># 仰泳</span></span><br><span class="line">    [<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>],  <span class="comment"># 蛙泳</span></span><br><span class="line">    [<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>],  <span class="comment"># 自由泳</span></span><br><span class="line">]</span><br><span class="line">beq = [<span class="number">1</span>]*<span class="number">4</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(Aeq)):</span><br><span class="line">    problem += lpSum(Aeq[i][j] * x[j] <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">20</span>)) == beq[i], <span class="string">f&quot;Style_Constraint_<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 7. 求解</span></span><br><span class="line">problem.solve()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 8. 输出结果</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;分配结果（0表示未指派，1表示指派）：&quot;</span>);</span><br><span class="line">assignments = [<span class="built_in">int</span>(value(x[i])) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">20</span>)];</span><br><span class="line"><span class="built_in">print</span>(assignments);</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最小总耗时（秒）：&quot;</span>);</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">round</span>(value(problem.objective), <span class="number">1</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重塑为4x5矩阵（泳姿×队员）</span></span><br><span class="line">assignment_matrix = np.array(assignments).reshape(<span class="number">4</span>, <span class="number">5</span>);</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;泳姿-队员分配矩阵（行：蝶/仰/蛙/自由泳；列：甲/乙/丙/丁/戊）：&quot;</span>);</span><br><span class="line"><span class="built_in">print</span>(assignment_matrix);</span><br></pre></td></tr></table></figure>
+<h1
+id="四基础例题回顾游戏升级问题的代码实现">四、基础例题回顾：游戏升级问题的代码实现</h1>
+<p>回到开篇的游戏升级问题，完整实现求解代码：</p>
+<h2 id="matlab版本-2">Matlab版本</h2>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">clc, clear  </span><br><span class="line"><span class="comment">% 目标函数系数（最小化形式）</span></span><br><span class="line">f = [<span class="number">-20</span>; <span class="number">-30</span>; <span class="number">-40</span>];  </span><br><span class="line"><span class="comment">% 3个决策变量均为整数</span></span><br><span class="line">intcon = [<span class="number">1</span>; <span class="number">2</span>; <span class="number">3</span>];  </span><br><span class="line"><span class="comment">% 不等式约束：体力约束+次数约束</span></span><br><span class="line">A = [<span class="number">4</span>, <span class="number">8</span>, <span class="number">10</span>; <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>];  </span><br><span class="line">b = [<span class="number">100</span>; <span class="number">20</span>];  </span><br><span class="line"><span class="comment">% 决策变量下界（非负）</span></span><br><span class="line">lb = <span class="built_in">zeros</span>(<span class="number">3</span>, <span class="number">1</span>);  </span><br><span class="line"><span class="comment">% 无等式约束、上界默认无穷</span></span><br><span class="line">[x, fval] = intlinprog(f, intcon, A, b, [], [], lb);  </span><br><span class="line"></span><br><span class="line"><span class="comment">% 转换为最大化的经验值</span></span><br><span class="line">max_exp = -fval;  </span><br><span class="line"></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;A、B、C三图分别通关的次数为：&#x27;</span>)  </span><br><span class="line"><span class="built_in">disp</span>(<span class="built_in">round</span>(x&#x27;)); <span class="comment">% 取整确保整数解</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;最终获得的经验为：&#x27;</span>)  </span><br><span class="line"><span class="built_in">disp</span>(max_exp);</span><br></pre></td></tr></table></figure>
+<h2 id="python版本-2">Python版本</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pulp <span class="keyword">import</span> LpMaximize, LpProblem, LpVariable, lpSum, value</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 创建最大化问题</span></span><br><span class="line">problem = LpProblem(name=<span class="string">&quot;Maximize_Experience&quot;</span>, sense=LpMaximize)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 定义决策变量（非负整数）</span></span><br><span class="line">x1 = LpVariable(name=<span class="string">&quot;x1&quot;</span>, lowBound=<span class="number">0</span>, cat=<span class="string">&quot;Integer&quot;</span>)  <span class="comment"># A图次数</span></span><br><span class="line">x2 = LpVariable(name=<span class="string">&quot;x2&quot;</span>, lowBound=<span class="number">0</span>, cat=<span class="string">&quot;Integer&quot;</span>)  <span class="comment"># B图次数</span></span><br><span class="line">x3 = LpVariable(name=<span class="string">&quot;x3&quot;</span>, lowBound=<span class="number">0</span>, cat=<span class="string">&quot;Integer&quot;</span>)  <span class="comment"># C图次数</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 目标函数：最大化经验</span></span><br><span class="line">problem += <span class="number">20</span>*x1 + <span class="number">30</span>*x2 + <span class="number">40</span>*x3, <span class="string">&quot;Total_Experience&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 添加约束</span></span><br><span class="line">problem += <span class="number">4</span>*x1 + <span class="number">8</span>*x2 + <span class="number">10</span>*x3 &lt;= <span class="number">100</span>, <span class="string">&quot;Energy_Constraint&quot;</span>  <span class="comment"># 体力约束</span></span><br><span class="line">problem += x1 + x2 + x3 &lt;= <span class="number">20</span>, <span class="string">&quot;Times_Constraint&quot;</span>            <span class="comment"># 次数约束</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 5. 求解</span></span><br><span class="line">problem.solve()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6. 输出结果</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;A、B、C三图分别通关的次数为：&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">int</span>(value(x1)), <span class="built_in">int</span>(value(x2)), <span class="built_in">int</span>(value(x3)))</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最终获得的经验为：&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">int</span>(value(problem.objective)))</span><br></pre></td></tr></table></figure>
+<h1 id="总结">总结</h1>
+<ol type="1">
+<li>整数规划的核心是<strong>决策变量的整数约束</strong>，0-1规划是其特殊形式（变量仅0/1）；</li>
+<li>Matlab的<code>intlinprog</code>仅支持线性整数/0-1规划，非线性问题需用近似算法；</li>
+<li>求解时需将<strong>最大化问题转换为最小化</strong>，约束需统一为
+<span class="math inline">\(\leqslant\)</span> 形式；</li>
+<li>Python的Pulp库是求解整数规划的便捷工具，无需手动转换目标函数方向，更贴近业务逻辑。</li>
+</ol>
+<p>掌握整数规划与0-1规划的建模思路和代码实现，能高效解决数学建模中各类离散决策问题！</p>
+<p align="right">
+<strong>内容编辑：范思媛，马鑫蕊，张婕</strong>
+</p>
+<p align="right">
+<strong>内容审核：王颖</strong><span
+class="math inline">\(\qquad\qquad\qquad\quad\)</span>
+</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -5728,1295 +6246,6 @@ class="math display">\[
   \]</span></p></li>
 </ul>
 <p>结果：在主持人打开门3后，不换门获胜概率为1/3，换门获胜概率为2/3。这证明换门更优。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/05/22/LinearProgramming/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/22/LinearProgramming/" class="post-title-link" itemprop="url">线性规划</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2025-05-22 09:32:43" itemprop="dateCreated datePublished" datetime="2025-05-22T09:32:43+08:00">2025-05-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-05-28 15:53:51" itemprop="dateModified" datetime="2025-05-28T15:53:51+08:00">2025-05-28</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="线性规划模型引出">线性规划——模型引出</h1>
-<h2
-id="在总量有限的条件下如何合理分配以实现最大化最小化或最优化目标">在总量有限的条件下，如何合理分配以实现最大化、最小化或最优化目标？</h2>
-<ul>
-<li><p><strong>生产优化</strong>：某工厂计划生产两种机床，每种机床的单位利润不同，且在生产过程中会消耗不同数量的资源，如电力、工时和材料。<strong>如何安排生产数量，以使总利润最大？</strong></p></li>
-<li><p><strong>资产配置</strong>：总资产为 <span
-class="math inline">\(A\)</span>，可投资于 <span
-class="math inline">\(n\)</span>
-种不同的金融资产。每种资产具有不同的平均收益率、风险损失率和手续费。<strong>如何分配投资比例，才能在控制风险的同时，实现收益最大化？</strong></p></li>
-<li><p><strong>物流调度</strong>：某商品从 <span
-class="math inline">\(n\)</span> 个产地运输至 <span
-class="math inline">\(p\)</span>
-个销售地。各产地的产量已知，销售地的需求量也已确定。不同产地到销售地的运输成本不同。<strong>如何安排运输计划，才能在满足供需的前提下，使总运营成本最小？</strong></p></li>
-<li><p><strong>车辆调度</strong>：不同类型车辆的承载能力不同。工地之间需安排车辆进行运输作业，多个线路需满足各自的运输需求。<strong>如何调配车辆，使车次安排最合理、资源利用率最高？</strong></p></li>
-</ul>
-<p>以上列举的是一些常见的<strong>运筹优化问题</strong>，也是数学建模竞赛中经常出现的题型。本质上，它们都是在特定约束条件下，寻求某个目标的极大或极小值，也就是典型的<strong>极值</strong>问题。在这类问题中，线性规划是最常用、也最有效的建模与求解工具之一。</p>
-<h2
-id="某同学特别喜欢玩一款游戏想找到最快升级到满级的方法">某同学特别喜欢玩一款游戏，想找到最快升级到满级的方法</h2>
-<ul>
-<li>游戏中每天有 <strong>100 点体力</strong>可用，玩家可以通过反复挑战
-<strong>A、B、C 三张地图</strong>来获取经验值升级。</li>
-<li>每次通关可获得的经验分别为：A 图 <strong>20 点</strong>、B 图
-<strong>30 点</strong>、C 图 <strong>45 点</strong>。</li>
-<li>每次通关所需体力分别为：A 图 <strong>4 点</strong>、B 图 <strong>8
-点</strong>、C 图 <strong>15 点</strong>。</li>
-<li>每天通关的总次数上限为 <strong>20 次</strong>（A、B、C
-图加起来不超过 20 次）。</li>
-</ul>
-<p><strong>问题</strong>：这位同学应该如何分配通关 A、B、C
-三张地图的次数，才能在今天<strong>获得最多的经验值</strong>？</p>
-<h2 id="线性规划">线性规划</h2>
-<ul>
-<li><p><strong>线性规划</strong>（Linear Programming，简称
-LP）是运筹学中最早研究、发展最快、应用最广泛的方法之一。它是一种数学工具，主要用于研究<strong>在线性约束条件下，如何使线性目标函数达到极值</strong>的问题，常用于辅助人们进行科学决策与管理。</p></li>
-<li><p>作为运筹学的重要分支，线性规划在<strong>军事、经济、管理、工程</strong>等领域具有广泛应用。它为在资源有限的情况下，如何做出最优配置与决策，提供了科学依据和有效手段。</p></li>
-</ul>
-<h1 id="线性规划模型原理">线性规划——模型原理</h1>
-<h2 id="线性规划模型的三要素">线性规划模型的三要素</h2>
-<ul>
-<li><strong>决策变量</strong>:
-问题中要确定的未知量，用于表明规划问题中的用数量表示的方案、措施等，可由决策者决定和控制；<br />
-</li>
-<li><strong>目标函数</strong>:
-决策变量的函数，优化目标通常是求该函数的最大值或最小值；<br />
-</li>
-<li><strong>约束条件</strong>:
-决策变量的取值所受到的约束和限制条件，通常用含有决策变量的等式或不等式表示。</li>
-</ul>
-<h2 id="线性规划模型建立步骤">线性规划模型建立步骤</h2>
-<ul>
-<li>从实际问题中建立数学模型一般有以下三个步骤：
-<ol type="1">
-<li>根据影响所要达到目的的因素找到决策变量<br />
-</li>
-<li>由决策变量和所在达到目的之间的函数关系确定目标函数<br />
-</li>
-<li>由决策变量所受的限制条件确定决策变量所要满足的约束条件</li>
-</ol></li>
-</ul>
-<h3
-id="某同学特别喜欢玩一款游戏想找到最快升级到满级的方法-1">某同学特别喜欢玩一款游戏，想找到最快升级到满级的方法</h3>
-<ul>
-<li><strong>决策变量</strong>：三个地图通关次数。设A、B、C三个地图通关的次数分别为<span
-class="math inline">\(x_1, x_2, x_3\)</span></li>
-<li><strong>目标函数</strong>：获得的经验最高。设经验为<span
-class="math inline">\(y\)</span>，<span class="math inline">\(\max y =
-20x_1 + 30x_2 + 45x_3\)</span></li>
-<li><strong>约束条件</strong>：
-<ul>
-<li>消耗体力不能超过100：<span class="math inline">\(4x_1 + 8x_2 + 15x_3
-\leqslant 100\)</span></li>
-<li>三个地图最多通关20次：<span class="math inline">\(x_1 + x_2 + x_3
-\leqslant 20\)</span></li>
-<li>隐藏约束条件：<span class="math inline">\(x_1, x_2, x_3 \geqslant
-0\)</span></li>
-</ul></li>
-</ul>
-<h2 id="线性规划的表现形式">线性规划的表现形式</h2>
-<ul>
-<li><p>一般形式/代数形式<br />
-<span class="math display">\[\begin{aligned}
-&amp;\max(\text{求}\min)~z=c_1x_1+c_2x_2+\cdots+c_nx_n,\\
-&amp;\mathrm{s.t.}\begin{cases}  
-a_{11}x_1+a_{12}x_2+\cdots+a_{1n}x_n\leqslant(\text{或}=,\geqslant)b_1,\\
-a_{21}x_1+a_{22}x_2+\cdots+a_{2n}x_n\leqslant(\text{或}=,\geqslant)b_2,\\
-\vdots\\
-a_{m1}x_1+a_{m2}x_2+\cdots+a_{mn}x_n\leqslant(\text{或}=,\geqslant)b_m,\\
-x_1,x_2,\cdots,x_n\geqslant 0.
-\end{cases}
-\end{aligned}\Rightarrow\begin{aligned}
-&amp;\max~y=20x_1+30x_2+45x_3,\\
-&amp;\mathrm{s.t.}\begin{cases}  
-4x_1+8x_2+15x_3\leqslant 100,\\
-x_1+x_2+x_3\leqslant 20,\\
-x_1, x_2, x_3\geqslant 0.  
-\end{cases}
-\end{aligned}\]</span></p></li>
-<li><p>简写形式： <span class="math display">\[\begin{aligned}
-&amp;\max(\text{或}\min)~z=\sum\limits_{j=1}^{n}c_j x_j\\
-&amp;\mathrm{s.t.}\begin{cases}   
-\sum\limits_{j=1}^{n} a_{ij}x_j\leqslant(\text{或}=,\geqslant)
-b_i,&amp;i=1,2,\cdots,m,\\   
-x_j\geqslant 0,&amp;j=1,2,\cdots,n.  
-\end{cases}
-\end{aligned}\]</span></p></li>
-<li><p>矩阵表现形式：</p></li>
-</ul>
-<p><span class="math display">\[\begin{aligned}
-&amp;\max(\text{式}\min)~z = c^T x,\\
-&amp;\mathrm{s.t.}\begin{cases}   
-Ax\leqslant(\text{或}=,\geqslant)b,\\   
-x\geqslant0.  
-\end{cases}\\
-&amp;c=[c_1, c_2, \cdots,
-c_n]^T\text{——目标函数的系数向量，即价值向量；}\\
-&amp;x=[x_1, x_2, \cdots, x_n]^T\text{——决策向量；}\\
-&amp;A=(a_{ij})_{m\times n}\text{——约束方程组的系数矩阵；}\\
-&amp;b=[b_1, b_2, \cdots, b_m]^T\text{——约束方程组的常数向量。}
-\end{aligned}\Rightarrow\begin{aligned}
-&amp;\max~y=c^T x,\\
-&amp;\mathrm{s.t.}   
-\begin{cases}   
-Ax\leqslant b,\\   
-x\geqslant0.  
-\end{cases}\\
-&amp;c=[20, 30, 45]^T\\  
-&amp;x=[x_1, x_2, x_3]^T\\  
-&amp;A=\begin{bmatrix}  
-4&amp;8&amp;15\\  
-1&amp;1&amp;1  
-\end{bmatrix},\\
-&amp;b = [100, 20]^T
-\end{aligned}\]</span></p>
-<h2 id="线性规划模型特点">线性规划模型特点</h2>
-<ul>
-<li>要解决的问题是优化类的（即在有限的资源条件下，获取最大的收益）。<br />
-</li>
-<li>目标函数和约束条件都是决策变量的线性函数，即不存在 <span
-class="math inline">\(x^2,e^x,\frac{1}{x},\sin x,\log_2 x\)</span>
-等。<br />
-</li>
-<li>线性规划模型：在一组线性约束条件下，求线性目标函数的最大值或最小值。</li>
-</ul>
-<p>数学建模的过程，就是把题目“翻译”成数学语言的过程一组公式，加上对这组公式含义的解释，就是一个数学模型。</p>
-<h2 id="线型规划模型求解">线型规划模型求解</h2>
-<ul>
-<li>线性规划求解可采用单纯形法，证明比较复杂，有兴趣可以自行学习。<br />
-</li>
-<li>推荐采用 matlab、python 的相关函数进行求解。</li>
-</ul>
-<h1 id="线性规划典型例题">线性规划——典型例题</h1>
-<h2 id="例题1998年国赛a题">例题（1998年国赛A题）</h2>
-<ul>
-<li>市场上有<span
-class="math inline">\(n\)</span>种资产（如股票、债券、……）<span
-class="math inline">\(s_i\)</span>（<span class="math inline">\(i =
-1,2,\cdots,n\)</span>）供投资者选择，某公司有数额为 <span
-class="math inline">\(M\)</span>
-的一笔相当大的资金可用作一个时期的投资。公司财务分析人员对这 <span
-class="math inline">\(n\)</span>
-种资产进行了评估，估算出在这一时期内购买资产的平均收益率为 <span
-class="math inline">\(r_i\)</span>，并预测出购买 <span
-class="math inline">\(s_i\)</span> 的风险损失率为 <span
-class="math inline">\(q_i\)</span>。考虑到投资越分散，总的风险越小，公司确定，当用这笔资金购买若干种资产时，总体风险可用所投资的
-<span class="math inline">\(s_i\)</span> 中最大的一个风险来度量。<br />
-</li>
-<li>购买 <span class="math inline">\(s_i\)</span> 要付交易费，费率为
-<span class="math inline">\(p_i\)</span>，并且当购买额不超过给定值 <span
-class="math inline">\(u_i\)</span> 时，交易费按购买 <span
-class="math inline">\(u_i\)</span>
-计算（不买当然无须付费）。另外，假定同期银行存款利率是 <span
-class="math inline">\(r_0\)</span>（<span
-class="math inline">\(r_0=5\%\)</span>），且既无交易费又无风险。<br />
-</li>
-<li>已知 <span class="math inline">\(n=4\)</span>
-时的相关数据如表所示。</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">$ s_i $</th>
-<th style="text-align: center;"><span
-class="math inline">\(r_i(\%)\)</span></th>
-<th style="text-align: center;"><span
-class="math inline">\(q_i(\%)\)</span></th>
-<th style="text-align: center;"><span
-class="math inline">\(p_i(\%)\)</span></th>
-<th style="text-align: center;"><span
-class="math inline">\(u_i(\text{元})\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">$ s_1 $</td>
-<td style="text-align: center;">28</td>
-<td style="text-align: center;">2.5</td>
-<td style="text-align: center;">1</td>
-<td style="text-align: center;">103</td>
-</tr>
-<tr>
-<td style="text-align: center;">$ s_2 $</td>
-<td style="text-align: center;">21</td>
-<td style="text-align: center;">1.5</td>
-<td style="text-align: center;">2</td>
-<td style="text-align: center;">198</td>
-</tr>
-<tr>
-<td style="text-align: center;">$ s_3 $</td>
-<td style="text-align: center;">23</td>
-<td style="text-align: center;">5.5</td>
-<td style="text-align: center;">4.5</td>
-<td style="text-align: center;">52</td>
-</tr>
-<tr>
-<td style="text-align: center;">$ s_4 $</td>
-<td style="text-align: center;">25</td>
-<td style="text-align: center;">2.6</td>
-<td style="text-align: center;">6.5</td>
-<td style="text-align: center;">40</td>
-</tr>
-</tbody>
-</table>
-<h3 id="投资收益问题">投资收益问题</h3>
-<ul>
-<li>投资收益问题：给上述公司设计投资组合方案，用给定资金 <span
-class="math inline">\(M\)</span>
-，有选择地购买若干种资产或存银行生息，使净收益尽可能大，总体风险尽可能小。</li>
-</ul>
-<h3 id="问题分析">问题分析</h3>
-<ul>
-<li>决策变量：投资不同项目 <span class="math inline">\(s_i\)</span> 的为
-<span class="math inline">\(x_i\)</span> (<span class="math inline">\(i
-= 1,2,\cdots,n\)</span>) ；</li>
-<li>目标函数：净收益 <span class="math inline">\(Q\)</span>
-尽可能大、总风险尽可能小；<br />
-</li>
-<li>约束条件：总资金 <span class="math inline">\(M\)</span>
-有限，每一笔投资都是非负数；<br />
-</li>
-<li>且已知，目标函数和约束条件都是决策变量的线性函数。</li>
-</ul>
-<h3 id="模型假设">模型假设</h3>
-<ul>
-<li>可供投资的资金数额 <span class="math inline">\(M\)</span>
-相当大；<br />
-</li>
-<li>投资越分散，总的风险越小，总体风险可用所投资的 <span
-class="math inline">\(s_i\)</span> 中最大的一个风险来度量；</li>
-<li>可供选择的 <span class="math inline">\(n+1\)</span>
-种资产（含银行存款）之间是相互独立的；</li>
-<li>每种资产可购买的数量为任意值；</li>
-<li>在当前投资周期内，<span
-class="math inline">\(r_i,q_i,p_i,u_i\)</span>（<span
-class="math inline">\(i=0,1,\cdots,n\)</span>）固定不变；</li>
-<li>不考虑在资产交易过程中产生的其他费用，如股票交易和花税等；</li>
-<li>由于投资数额 <span class="math inline">\(M\)</span>
-相当大，而题目设定的定额 <span class="math inline">\(u_i\)</span> 相对
-<span class="math inline">\(M\)</span> 很小，<span
-class="math inline">\(p_i\)</span> 更小，因此假设每一笔交易 <span
-class="math inline">\(x_i\)</span> 都大于对应定额 <span
-class="math inline">\(u_i\)</span>.</li>
-</ul>
-<h3 id="模型建立">模型建立</h3>
-<ul>
-<li>总体风险用所投资的 <span class="math inline">\(s_i\)</span>
-中最大的一个风险来衡量，即 <span class="math inline">\(\max\{q_i
-x_i|i=1,2,\cdots,n\}\)</span>。<br />
-</li>
-<li>购买 <span class="math inline">\(s_i\)</span>（<span
-class="math inline">\(i=1,2,\cdots,n\)</span>）所付交易费本来是一个分段函数，但假设中已经假设每一笔交易
-<span class="math inline">\(x_i\)</span> 都大于对应定额 <span
-class="math inline">\(u_i\)</span>，所以交易费 <span
-class="math inline">\(=p_i x_i\)</span>。这样购买 <span
-class="math inline">\(s_i\)</span> 的净收益可以简化为 <span
-class="math inline">\((r_i-p_i)x_i\)</span> 。<br />
-</li>
-<li><span class="math inline">\(\text{目标函数为}\begin{cases}
-\max\sum\limits_{i=0}^n (r_i - p_i)x_i, \\
-\min\{\max\limits_{1 \leqslant i \leqslant n} \{q_ix_i\}\}
-\end{cases}\text{，约束条件为}\begin{cases}
-\sum\limits_{i=0}^n (1 + p_i)x_i = M, \\
-x_i \geqslant 0, i = 0,1,\cdots,n.
-\end{cases}\)</span><br />
-</li>
-<li>这是一个多目标规划模型！</li>
-</ul>
-<h3 id="模型的简化">模型的简化</h3>
-<ul>
-<li><p>在实际投资中，投资者承受风险的程度不一样，若给定风险一个界限
-<span class="math inline">\(a\)</span>，使最大的一个风险 <span
-class="math inline">\(\frac{q_ix_i}{M} \leqslant
-a\)</span>，可找到相应的投资方案。这样把多目标规划变成一个目标的线性规划。</p></li>
-<li><p>这里将目标函数 <span
-class="math inline">\(\min\{\max\limits_{1\leqslant i\leqslant
-n}\{q_ix_i\}\}\)</span> 转化为约束条件：<span
-class="math inline">\(\frac{q_i x_i}{M}\leqslant
-a\)</span>（总体风险小于某个常数）</p></li>
-</ul>
-<p><span class="math inline">\(\begin{aligned}
-&amp;\max\sum_{i=0}^n (r_i - p_i)x_i\quad\text{目标函数：总收益最大}\\
-&amp;\text{s.t.}\begin{cases}
-\frac{q_ix_i}{M}\leqslant
-a,i=1,2,\cdots,n,&amp;\text{风险率不超过某定值}\\
-\sum_{i=0}^n(1+p_i)x_i=M,&amp;\text{投资所有项目的总金额加起来等于总资产}\\
-x_i\geqslant0,i=0,1,\cdots,n.&amp;\text{投资的金额都是非负数}
-\end{cases}
-\end{aligned}\)</span></p>
-<h1 id="线性规划matlab代码求解">线性规划——matlab代码求解</h1>
-<h2 id="matlab-linprog函数">Matlab linprog函数</h2>
-<p><span class="math display">\[[x, fval]=\text{linprog}(f, A, b, Aeq,
-beq, lb, ub)\]</span></p>
-<p><span class="math display">\[\begin{aligned}  
-&amp;\min_{x}f^T x,\\  
-&amp;\text{s.t.} \begin{cases}
-A\cdot x\leqslant b,\\  
-Aeq\cdot x=beq,\\  
-lb\leqslant x\leqslant ub.
-\end{cases}
-\end{aligned}\]</span></p>
-<ul>
-<li><span class="math inline">\(f\)</span>
-——目标函数的系数向量（必须是求最小值形式下的）<br />
-</li>
-<li><span class="math inline">\(A, b\)</span>
-——不等式约束条件的变量系数矩阵和常数项矩阵（必须是<span
-class="math inline">\(\leqslant\)</span>形式）<br />
-</li>
-<li><span class="math inline">\(Aeq, beq\)</span>
-——等式约束条件的系数矩阵和常数项矩阵<br />
-</li>
-<li><span class="math inline">\(lb, ub\)</span>
-——决策变量的最小取值和最大取值<br />
-</li>
-<li><span class="math inline">\(x\)</span>
-是返回的最优解的变量取值，<span class="math inline">\(fval\)</span>
-返回目标函数的最优值</li>
-</ul>
-<p><strong>注意：</strong></p>
-<p>要调用 linprog
-函数，必须是标准形式，即目标函数是求最小值，约束条件都是小于等于号或等号.
-如果不满足标准形式，我们可以用同乘“-”变号来继续求解。</p>
-<h2 id="求解某同学游戏升级的问题">求解某同学游戏升级的问题</h2>
-<p><span class="math display">\[\begin{aligned}  
-&amp;\max~y = 20x_1 + 30x_2 + 45x_3, \\  
-&amp;\text{s.t.}\begin{cases}
-4x_1 + 8x_2 + 15x_3 \leqslant 100, \\  
-x_1 + x_2 + x_3 \leqslant 20, \\  
-x_1, x_2, x_3 \geqslant 0.
-\end{cases}
-\end{aligned}~\Rightarrow~\begin{aligned}  
-&amp;\min~-y=-20x_1-30x_2-45x_3,\\
-&amp;\text{s.t.}\begin{cases}
-4x_1+8x_2+15x_3\leqslant100,\\  
-\quad x_1 + x_2 + x_3 \leqslant 20, \\  
-x_1, x_2, x_3 \geqslant 0.
-\end{cases}
-\end{aligned}\]</span><br />
-<span class="math display">\[[x, fval]=\text{linprog}(f, A, b, Aeq, beq,
-lb, ub)\]</span><br />
-<span class="math display">\[\begin{aligned}
-&amp;\min~f^T x,\\
-&amp;\text{s.t.}\begin{cases}
-A\cdot x\leqslant b,\\
-Aeq\cdot x=beq,\\
-lb\leqslant x\leqslant ub.
-\end{cases}~\Rightarrow~
-\begin{cases}
-f=[-20, -30, -45]^T,\\
-A=\begin{bmatrix}4&amp;8&amp;15\\1&amp;1&amp;1\end{bmatrix},\\
-b=[100, 20]^T,\\
-lb=[0, 0, 0]^T.
-\end{cases}~\Rightarrow~
-\begin{cases}
-[x, fval]=\text{linprog}(f,A,b,[],[],lb)\\
-y=-fval.
-\end{cases}
-\end{aligned}\]</span></p>
-<ul>
-<li>Matlab代码<br />
-<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">clc</span><br><span class="line">clear all</span><br><span class="line">close all</span><br><span class="line">f = [<span class="number">-20</span>; <span class="number">-30</span>; <span class="number">-45</span>];  </span><br><span class="line">A = [<span class="number">4</span>, <span class="number">8</span>, <span class="number">15</span>; <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>];  </span><br><span class="line">b = [<span class="number">100</span>; <span class="number">20</span>];  </span><br><span class="line">lb = <span class="built_in">zeros</span>(<span class="number">3</span>, <span class="number">1</span>);  </span><br><span class="line">[x,fval]=linprog(f,A,b,[],[],lb)  <span class="comment">%没有等号约束 </span></span><br><span class="line">y = -fval<span class="comment">%目标函数为最大化  </span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;A、B、C三图分别通关的次数为：&#x27;</span>)  </span><br><span class="line"><span class="built_in">disp</span>(x)  </span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;最终获得的经验为：&#x27;</span>)  </span><br><span class="line"><span class="built_in">disp</span>(y)  </span><br></pre></td></tr></table></figure></li>
-</ul>
-<p>A、B、C三图分别通关的次数为：<br />
-15.0000<br />
-5.0000<br />
-0</p>
-<p>最终获得的经验为：<br />
-450</p>
-<p><strong>注意</strong>：这个题目其实是整数线性规划，并不适用这个函数，这里求出整数解是巧合！</p>
-<h2 id="求解投资收益问题">求解投资收益问题</h2>
-<p><span class="math display">\[\begin{aligned}
-&amp;\max\sum\limits_{i=0}^{n}(r_i-p_i)x_i\\  
-&amp;\text{s.t.}\begin{cases}  
-\frac{q_i x_i}{M}\leqslant a, i = 1,2,\cdots,n, \\  
-\sum_{i=0}^{n} (1 + p_i)x_i = M, \\  
-x_i \geqslant 0, i = 0,1,\cdots,n.  
-\end{cases}
-\end{aligned}~\Rightarrow~
-\begin{aligned}
-&amp;\min\sum\limits_{i=0}^{n}(p_i - r_i)x_i\\
-&amp;\text{s.t.}\begin{cases}  
-\frac{q_i x_i}{M}\leqslant a, i=1,2,\cdots,n, \\  
-\sum\limits_{i=0}^{n}(1 + p_i)x_i=M,\\  
-x_i\geqslant0,i=0,1,\cdots,n.  
-\end{cases}
-\end{aligned}\]</span></p>
-<ul>
-<li>目标函数同乘“-”号化为标准形式，约束条件满足标准形式，无需处理</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;"><span
-class="math inline">\(s_i\)</span></th>
-<th style="text-align: center;"><span
-class="math inline">\(r_i(\%)\)</span></th>
-<th style="text-align: center;"><span
-class="math inline">\(q_i(\%)\)</span></th>
-<th style="text-align: center;"><span
-class="math inline">\(p_i(\%)\)</span></th>
-<th style="text-align: center;"><span
-class="math inline">\(u_i\)</span>(元)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;"><span
-class="math inline">\(s_1\)</span></td>
-<td style="text-align: center;">28</td>
-<td style="text-align: center;">2.5</td>
-<td style="text-align: center;">1</td>
-<td style="text-align: center;">103</td>
-</tr>
-<tr>
-<td style="text-align: center;"><span
-class="math inline">\(s_2\)</span></td>
-<td style="text-align: center;">21</td>
-<td style="text-align: center;">1.5</td>
-<td style="text-align: center;">2</td>
-<td style="text-align: center;">198</td>
-</tr>
-<tr>
-<td style="text-align: center;"><span
-class="math inline">\(s_3\)</span></td>
-<td style="text-align: center;">23</td>
-<td style="text-align: center;">5.5</td>
-<td style="text-align: center;">4.5</td>
-<td style="text-align: center;">52</td>
-</tr>
-<tr>
-<td style="text-align: center;"><span
-class="math inline">\(s_4\)</span></td>
-<td style="text-align: center;">25</td>
-<td style="text-align: center;">2.6</td>
-<td style="text-align: center;">6.5</td>
-<td style="text-align: center;">40</td>
-</tr>
-</tbody>
-</table>
-<p><span class="math display">\[\begin{aligned}
-&amp;\min f = [-0.05, -0.27, -0.19, -0.185, -0.185] \cdot [x_0, x_1,
-x_2, x_3, x_4]^T\\
-&amp;\text{s.t.}\begin{cases}  
-x_0 + 1.01x_1 + 1.02x_2 + 1.045x_3 + 1.065x_4 = M, \\  
-0.025x_1 \leqslant aM, \\  
-0.015x_2 \leqslant aM, \\  
-0.055x_3 \leqslant aM, \\  
-0.026x_4 \leqslant aM, \\  
-x_i \geqslant 0 (i = 0,1,\cdots, 4).  
-\end{cases}
-\end{aligned}\]</span></p>
-<ul>
-<li>这里不妨取 <span class="math inline">\(M=1\)</span> 万元<br />
-</li>
-<li>由于 <span class="math inline">\(a\)</span>
-是任意给定的风险度，到底怎样没有一个准则，不同的投资者有不同的风险度。我们从
-<span class="math inline">\(a=0\)</span> 开始，以步长 <span
-class="math inline">\(\Delta a=0.001\)</span> 进行循环搜索，搜索至 <span
-class="math inline">\(a=5\%\)</span>（低风险者能够接受的风险）</li>
-<li>下面是代码详解<br />
-<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">clc</span><br><span class="line">clear all</span><br><span class="line">close all</span><br><span class="line"><span class="comment">% a矩阵的元素是不同风险率，从0到0.05等差取值，相邻两个数相差0.001  </span></span><br><span class="line">a = (<span class="number">0</span>:<span class="number">0.001</span>:<span class="number">0.05</span>);  </span><br><span class="line">f = [<span class="number">-0.05</span>,<span class="number">-0.27</span>,<span class="number">-0.19</span>,<span class="number">-0.185</span>,<span class="number">-0.185</span>]; <span class="comment">% 目标函数的系数向量  </span></span><br><span class="line"><span class="comment">% 用zeros(4,1)先构造4行一列的全是0的矩阵，也就是对x_0无约束；  </span></span><br><span class="line"><span class="comment">% 再构造对角矩阵diag([0.025, 0.015, 0.055, 0.026]), 对角线上元素为约束条件中变量的系数  </span></span><br><span class="line">A = [<span class="built_in">zeros</span>(<span class="number">4</span>,<span class="number">1</span>), <span class="built_in">diag</span>([<span class="number">0.025</span>, <span class="number">0.015</span>, <span class="number">0.055</span>, <span class="number">0.026</span>])];  </span><br><span class="line">Aeq = [<span class="number">1</span>,<span class="number">1.01</span>,<span class="number">1.02</span>,<span class="number">1.045</span>,<span class="number">1.065</span>]; <span class="comment">% 等式约束的系数矩阵，也就是所有资产投资  </span></span><br><span class="line">beq = <span class="number">1</span>;  </span><br><span class="line">lb = <span class="built_in">zeros</span>(<span class="number">5</span>,<span class="number">1</span>);  </span><br><span class="line">Q = <span class="built_in">zeros</span>(<span class="number">1</span>,<span class="built_in">length</span>(a)); <span class="comment">% 初始化保存最优解的矩阵0，因为现在还没求出最优解，元素全设为0  </span></span><br><span class="line">XX = []; <span class="comment">% 定义个空矩阵，用来表示不同风险率下的最优解  </span></span><br><span class="line"><span class="comment">% 利用矩阵0存储风险率a(i)下最大的收益；for循环中i在变化，风险率a(i)不同，求出对应的最优解存在矩阵0内  </span></span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="built_in">length</span>(a) <span class="comment">% length求出矩阵a的元素个数，有多少个元素，就循环多少次</span></span><br><span class="line">    b = a(<span class="built_in">i</span>)*<span class="built_in">ones</span>(<span class="number">4</span>,<span class="number">1</span>); <span class="comment">% b是约束条件的常数项矩阵,4行1列，每个元素值都是常数a(i) </span></span><br><span class="line">    [x,y] = linprog(f,A,b,Aeq,beq,lb); <span class="comment">% 调用linprog函数</span></span><br><span class="line">    Q(<span class="built_in">i</span>) = -y; <span class="comment">% 负负得正，就是所需求的最大值了</span></span><br><span class="line">    XX = [XX,x&#x27;]</span><br><span class="line"><span class="keyword">end</span>  </span><br><span class="line"><span class="built_in">plot</span>(a,Q,<span class="string">&#x27;*r&#x27;</span>); <span class="comment">% 以风险率为横轴，收益为纵轴，绘制不同风险率下的最优收益  </span></span><br><span class="line">xlabel(<span class="string">&#x27;风险率&#x27;</span>); <span class="comment">% x和y轴分别附上标签  </span></span><br><span class="line">ylabel(<span class="string">&#x27;最大收益&#x27;</span>);  </span><br></pre></td></tr></table></figure></li>
-</ul>
-<h2 id="结果分析">结果分析</h2>
-<ul>
-<li><p>风险 <span class="math inline">\(a\)</span> 与收益 <span
-class="math inline">\(Q\)</span> 之间的关系见图。从图中可以看出：</p>
-<p>1）风险不超过 2.5% 时，风险大，收益也大。</p>
-<p>2）在 <span class="math inline">\(a = 0.006\)</span>
-附近有一个转折点，在这一点左边，风险增加很小时，利润增长很快。在这一点右边，风险增加很大时，利润增长很缓慢，所以对于风险和收益没有特殊偏好的投资者来说，应该选择由线的转折点作为最优投资组合，大约是
-<span class="math inline">\(a=0.6\%\)</span>，<span
-class="math inline">\(Q = 2000\)</span>，所对应投资方案为：</p>
-<p>风险度 <span class="math inline">\(a = 0.006\)</span>，收益 <span
-class="math inline">\(Q=2019\)</span> 元；<span
-class="math inline">\(x_0=0\)</span> 元，<span
-class="math inline">\(x_1=2400\)</span> 元，<span
-class="math inline">\(x_2 = 4000\)</span> 元，<span
-class="math inline">\(x_3 = 1091\)</span> 元，<span
-class="math inline">\(x_4=2212\)</span> 元。</p></li>
-<li><p>本题中做了很多模型假设，理论上来说不做也可以求解，且考虑更全面，但数据比赛时间很紧张，合理的假设也很重要。<br />
-</p></li>
-<li><p>除了固定风险来简化模型，也可以固定收益，或者赋予风险收益相应的权重，来权衡二者的取舍。</p></li>
-</ul>
-<h1 id="线性规划python代码求解">线性规划——python代码求解</h1>
-<h2 id="python-linprog函数">python linprog函数</h2>
-<p><span class="math display">\[\begin{aligned}  
-&amp;\min_{x}c^T x,\\  
-&amp;\text{s.t.} \begin{cases}
-A_{ub}\cdot x\leqslant b_{ub},\\  
-A_{eq}\cdot x=b_{eq},\\  
-x\in bounds.
-\end{cases}
-\end{aligned}\]</span></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">scipy.optimize.linprog(</span><br><span class="line">    c, </span><br><span class="line">    A_ub=<span class="literal">None</span>, </span><br><span class="line">    b_ub=<span class="literal">None</span>, </span><br><span class="line">    A_eq=<span class="literal">None</span>, </span><br><span class="line">    b_eq=<span class="literal">None</span>, </span><br><span class="line">    bounds=<span class="literal">None</span>, </span><br><span class="line">    method=<span class="string">&#x27;highs&#x27;</span>, </span><br><span class="line">    options=<span class="literal">None</span>, </span><br><span class="line">    x0=<span class="literal">None</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<hr />
-<h3 id="参数详解"><strong>参数详解</strong></h3>
-<table>
-<colgroup>
-<col style="width: 23%" />
-<col style="width: 23%" />
-<col style="width: 23%" />
-<col style="width: 30%" />
-</colgroup>
-<thead>
-<tr>
-<th>参数</th>
-<th>类型</th>
-<th>描述</th>
-<th>默认值</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong><code>c</code></strong></td>
-<td>一维数组</td>
-<td>目标函数的系数向量（需最小化 ( c^T x )）</td>
-<td>必填</td>
-</tr>
-<tr>
-<td><strong><code>A_ub</code></strong></td>
-<td>二维数组</td>
-<td>不等式约束矩阵（( A_{ub} x b_{ub} )）</td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td><strong><code>b_ub</code></strong></td>
-<td>一维数组</td>
-<td>不等式约束右侧值（( b_{ub} )）</td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td><strong><code>A_eq</code></strong></td>
-<td>二维数组</td>
-<td>等式约束矩阵（( A_{eq} x = b_{eq} )）</td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td><strong><code>b_eq</code></strong></td>
-<td>一维数组</td>
-<td>等式约束右侧值（( b_{eq} )）</td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td><strong><code>bounds</code></strong></td>
-<td>元组列表</td>
-<td>变量边界（<code>(min, max)</code>，<code>None</code>表示无限制）</td>
-<td><code>(0, None)</code>（非负）</td>
-</tr>
-<tr>
-<td><strong><code>method</code></strong></td>
-<td>字符串</td>
-<td>求解算法：<br>- <code>'highs'</code>（推荐）<br>-
-<code>'interior-point'</code><br>- <code>'revised simplex'</code></td>
-<td><code>'highs'</code></td>
-</tr>
-<tr>
-<td><strong><code>options</code></strong></td>
-<td>字典</td>
-<td>求解器选项（如 <code>maxiter</code>, <code>tol</code> 等）</td>
-<td><code>None</code></td>
-</tr>
-<tr>
-<td><strong><code>x0</code></strong></td>
-<td>一维数组</td>
-<td>初始猜测解（仅部分方法支持）</td>
-<td><code>None</code></td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h3 id="返回值"><strong>返回值</strong></h3>
-<p>返回一个 <code>OptimizeResult</code> 对象，包含以下关键属性： -
-<strong><code>x</code></strong>：最优解向量（若存在）。 -
-<strong><code>fun</code></strong>：目标函数的最小值。 -
-<strong><code>success</code></strong>：布尔值，表示是否求解成功。 -
-<strong><code>status</code></strong>：状态码（<code>0</code>
-表示成功，其他值为错误类型）。 -
-<strong><code>message</code></strong>：求解状态的描述信息。 -
-<strong><code>slack</code></strong>：不等式约束的松弛变量（正值表示约束未激活）。
--
-<strong><code>con</code></strong>：等式约束的残差（接近0表示满足约束）。</p>
-<p><span class="math display">\[\begin{aligned}  
-&amp;\min_{x}c^T x,\\  
-&amp;\text{s.t.} \begin{cases}
-A\cdot x\leqslant b,\\  
-Aeq\cdot x=beq,\\  
-lb\leqslant x\leqslant ub.
-\end{cases}
-\end{aligned}\]</span></p>
-<p><strong>注意：</strong></p>
-<p>要调用 linprog
-函数，必须是标准形式，即目标函数是求最小值，约束条件都是小于等于号或等号.
-如果不满足标准形式，我们可以用同乘“-”变号来继续求解。</p>
-<h2 id="求解某同学游戏升级的问题-1">求解某同学游戏升级的问题</h2>
-<p><span class="math display">\[\begin{aligned}  
-&amp;\max~y = 20x_1 + 30x_2 + 45x_3, \\  
-&amp;\text{s.t.}\begin{cases}
-4x_1 + 8x_2 + 15x_3 \leqslant 100, \\  
-x_1 + x_2 + x_3 \leqslant 20, \\  
-x_1, x_2, x_3 \geqslant 0.
-\end{cases}
-\end{aligned}~\Rightarrow~\begin{aligned}  
-&amp;\min~-y=-20x_1-30x_2-45x_3,\\
-&amp;\text{s.t.}\begin{cases}
-4x_1+8x_2+15x_3\leqslant100,\\  
-\quad x_1 + x_2 + x_3 \leqslant 20, \\  
-x_1, x_2, x_3 \geqslant 0.
-\end{cases}
-\end{aligned}\]</span><br />
-result = linprog (c, A_ub, b_ub, A_eq, b_eq, bounds, method) <span
-class="math display">\[\begin{aligned}
-&amp;\min~c^T x,\\
-&amp;\text{s.t.}\begin{cases}
-A_{ub}\cdot x\leqslant b_{ub},\\
-A_{eq}\cdot x=b_{eq},\\
-x\in bounds.
-\end{cases}~\Rightarrow~
-\begin{cases}
-c=[-20, -30, -45]^T,\\
-A_{ub}=\begin{bmatrix}4&amp;8&amp;15\\1&amp;1&amp;1\end{bmatrix},\\
-b_{ub}=[100, 20]^T,\\
-x_1,x_2,x_3\in[0, +\infty）.
-\end{cases}
-\end{aligned}\]</span></p>
-<ul>
-<li>Python代码<br />
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linprog</span><br><span class="line">c = [-<span class="number">20</span>,-<span class="number">30</span>,-<span class="number">45</span>]</span><br><span class="line">A_ub = [[<span class="number">4</span>, <span class="number">8</span>, <span class="number">15</span>],</span><br><span class="line">        [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>]]</span><br><span class="line">b_ub = [<span class="number">100</span>,<span class="number">20</span>]</span><br><span class="line">bounds = [[<span class="number">0</span>,<span class="literal">None</span>],[<span class="number">0</span>,<span class="literal">None</span>],[<span class="number">0</span>,<span class="literal">None</span>]]</span><br><span class="line">result=linprog(c,A_ub,b_ub,bounds=bounds)  <span class="comment">#没有等号约束</span></span><br><span class="line"><span class="comment">#或写成result = linprog(c,A_ub=A_ub,b_ub=b_ub,bounds=bounds,method=&#x27;highs&#x27;)</span></span><br><span class="line">y = -result.fun  <span class="comment">#目标函数为最大化</span></span><br><span class="line"><span class="built_in">print</span>(result)    <span class="comment">#此行可以不要</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;A、B、C三图分别通关的次数为：&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(result.x)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;最终获得的经验为：&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(y)</span><br></pre></td></tr></table></figure></li>
-</ul>
-<p>A、B、C三图分别通关的次数为：<br />
-15.0000<br />
-5.0000<br />
-0</p>
-<p>最终获得的经验为：<br />
-450</p>
-<p><strong>注意</strong>：这个题目其实是整数线性规划，并不适用这个函数，这里求出整数解是巧合！</p>
-<h2 id="求解投资收益问题-1">求解投资收益问题</h2>
-<p><span class="math display">\[\begin{aligned}
-&amp;\max\sum\limits_{i=0}^{n}(r_i-p_i)x_i\\  
-&amp;\text{s.t.}\begin{cases}  
-\frac{q_i x_i}{M}\leqslant a, i = 1,2,\cdots,n, \\  
-\sum_{i=0}^{n} (1 + p_i)x_i = M, \\  
-x_i \geqslant 0, i = 0,1,\cdots,n.  
-\end{cases}
-\end{aligned}~\Rightarrow~
-\begin{aligned}
-&amp;\min\sum\limits_{i=0}^{n}(p_i - r_i)x_i\\
-&amp;\text{s.t.}\begin{cases}  
-\frac{q_i x_i}{M}\leqslant a, i=1,2,\cdots,n, \\  
-\sum\limits_{i=0}^{n}(1 + p_i)x_i=M,\\  
-x_i\geqslant0,i=0,1,\cdots,n.  
-\end{cases}
-\end{aligned}\]</span></p>
-<ul>
-<li>目标函数同乘“-”号化为标准形式，约束条件满足标准形式，无需处理</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;"><span
-class="math inline">\(s_i\)</span></th>
-<th style="text-align: center;"><span
-class="math inline">\(r_i(\%)\)</span></th>
-<th style="text-align: center;"><span
-class="math inline">\(q_i(\%)\)</span></th>
-<th style="text-align: center;"><span
-class="math inline">\(p_i(\%)\)</span></th>
-<th style="text-align: center;"><span
-class="math inline">\(u_i\)</span>(元)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;"><span
-class="math inline">\(s_1\)</span></td>
-<td style="text-align: center;">28</td>
-<td style="text-align: center;">2.5</td>
-<td style="text-align: center;">1</td>
-<td style="text-align: center;">103</td>
-</tr>
-<tr>
-<td style="text-align: center;"><span
-class="math inline">\(s_2\)</span></td>
-<td style="text-align: center;">21</td>
-<td style="text-align: center;">1.5</td>
-<td style="text-align: center;">2</td>
-<td style="text-align: center;">198</td>
-</tr>
-<tr>
-<td style="text-align: center;"><span
-class="math inline">\(s_3\)</span></td>
-<td style="text-align: center;">23</td>
-<td style="text-align: center;">5.5</td>
-<td style="text-align: center;">4.5</td>
-<td style="text-align: center;">52</td>
-</tr>
-<tr>
-<td style="text-align: center;"><span
-class="math inline">\(s_4\)</span></td>
-<td style="text-align: center;">25</td>
-<td style="text-align: center;">2.6</td>
-<td style="text-align: center;">6.5</td>
-<td style="text-align: center;">40</td>
-</tr>
-</tbody>
-</table>
-<p><span class="math display">\[\begin{aligned}
-&amp;\min f = [-0.05, -0.27, -0.19, -0.185, -0.185] \cdot [x_0, x_1,
-x_2, x_3, x_4]^T\\
-&amp;\text{s.t.}\begin{cases}  
-x_0 + 1.01x_1 + 1.02x_2 + 1.045x_3 + 1.065x_4 = M, \\  
-0.025x_1 \leqslant aM, \\  
-0.015x_2 \leqslant aM, \\  
-0.055x_3 \leqslant aM, \\  
-0.026x_4 \leqslant aM, \\  
-x_i \geqslant 0 (i = 0,1,\cdots, 4).  
-\end{cases}
-\end{aligned}\]</span></p>
-<ul>
-<li>这里不妨取 <span class="math inline">\(M=1\)</span> 万元<br />
-</li>
-<li>由于 <span class="math inline">\(a\)</span>
-是任意给定的风险度，到底怎样没有一个准则，不同的投资者有不同的风险度。我们从
-<span class="math inline">\(a=0\)</span> 开始，以步长 <span
-class="math inline">\(\Delta a=0.001\)</span> 进行循环搜索，搜索至 <span
-class="math inline">\(a=5\%\)</span>（低风险者能够接受的风险）</li>
-<li>下面是python代码详解<br />
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">## 导入必要的库</span></span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt <span class="comment"># 用于绘图</span></span><br><span class="line"><span class="keyword">from</span> numpy <span class="keyword">import</span> ones, diag, c_, zeros <span class="comment"># 用于创建和操作数组</span></span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linprog <span class="comment"># 用于执行线性规划</span></span><br><span class="line"><span class="comment"># 设置matplotlib的参数使其支持LaTeX文本和字体大小</span></span><br><span class="line">plt.rc(<span class="string">&#x27;text&#x27;</span>, usetex=<span class="literal">True</span>)</span><br><span class="line">plt.rc(<span class="string">&#x27;font&#x27;</span>, size=<span class="number">16</span>)</span><br><span class="line"><span class="comment"># 线性规划问题的目标函数系数</span></span><br><span class="line">c = [-<span class="number">0.05</span>, -<span class="number">0.27</span>, -<span class="number">0.19</span>, -<span class="number">0.185</span>, -<span class="number">0.185</span>]</span><br><span class="line"><span class="comment"># 线性不等式约束的系数矩阵（A * x &lt;= b）</span></span><br><span class="line"><span class="comment"># 使用c_来合并数组，zeros创建一个全0的数组作为第一列，</span></span><br><span class="line"><span class="comment"># diag创建一个对角阵</span></span><br><span class="line">A = c_[zeros(<span class="number">4</span>), diag([<span class="number">0.025</span>, <span class="number">0.015</span>, <span class="number">0.055</span>, <span class="number">0.026</span>])]</span><br><span class="line"><span class="comment"># 线性等式约束的系数矩阵和右侧的值（Acq * x = bcq）</span></span><br><span class="line">Aeq = [[<span class="number">1</span>, <span class="number">1.01</span>, <span class="number">1.02</span>, <span class="number">1.045</span>, <span class="number">1.065</span>]]</span><br><span class="line">beq = [<span class="number">1</span>]</span><br><span class="line"><span class="comment"># 初始化参数a，以及两个用于存储结果的空列表</span></span><br><span class="line">a = <span class="number">0</span></span><br><span class="line">aa = []</span><br><span class="line">ss = []</span><br><span class="line"><span class="comment"># 循环，a的值从0开始，以0.001的步长增加，直到0.05</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> a &lt; <span class="number">0.05</span>:</span><br><span class="line">    <span class="comment"># 创建线性不等式约束的右侧值（b）</span></span><br><span class="line">    b = ones(<span class="number">4</span>) * a</span><br><span class="line">    <span class="comment"># 执行线性规划，得到最优解</span></span><br><span class="line">    res = linprog(c, A, b, Aeq, beq,bounds=[(<span class="number">0</span>, <span class="literal">None</span>), (<span class="number">0</span>, <span class="literal">None</span>), (<span class="number">0</span>, <span class="literal">None</span>), (<span class="number">0</span>, <span class="literal">None</span>), (<span class="number">0</span>, <span class="literal">None</span>)])</span><br><span class="line">    <span class="comment"># 提取线性规划的解向量x和最优值Q</span></span><br><span class="line">    x = res.x</span><br><span class="line">    Q = -res.fun</span><br><span class="line">    <span class="comment"># 将当前的a值和对应的最优值Q存入列表</span></span><br><span class="line">    aa.append(a)</span><br><span class="line">    ss.append(Q)</span><br><span class="line">    <span class="comment"># a增加0.001</span></span><br><span class="line">    a = a + <span class="number">0.001</span></span><br><span class="line"><span class="comment"># 绘制结果，a值与最优值Q之间的关系图</span></span><br><span class="line">plt.plot(aa, ss, <span class="string">&#x27;r*&#x27;</span>) <span class="comment"># 使用红色星号标记数据点</span></span><br><span class="line"><span class="comment"># 设置坐标轴标签，其中a和Q将使用LaTeX格式显示</span></span><br><span class="line">plt.xlabel(<span class="string">&#x27;$a$&#x27;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&#x27;$Q$&#x27;</span>, rotation=<span class="number">90</span>)</span><br><span class="line"><span class="comment"># 保存绘制的图像到文件中，分辨率为500dpi</span></span><br><span class="line">plt.savefig(<span class="string">&#x27;figure-LP2.png&#x27;</span>, dpi=<span class="number">500</span>)</span><br><span class="line"><span class="comment"># 显示图形</span></span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/05/14/maze/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/14/maze/" class="post-title-link" itemprop="url">迷宫程序及其中用到的函数逐一解析</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2025-05-14 11:05:36" itemprop="dateCreated datePublished" datetime="2025-05-14T11:05:36+08:00">2025-05-14</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-05-15 10:59:01" itemprop="dateModified" datetime="2025-05-15T10:59:01+08:00">2025-05-15</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="bfs函数逐行详细解释">BFS函数逐行详细解释</h1>
-<p>这个函数实现了广度优先搜索(BFS)算法来寻找从起点到终点的路径。下面是逐行解释：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">BFS</span>(<span class="params">start, end, pixels</span>):</span><br></pre></td></tr></table></figure>
-<ul>
-<li>定义BFS函数，接收三个参数：
-<ul>
-<li><code>start</code>: 起点坐标 (x, y)</li>
-<li><code>end</code>: 终点坐标 (x, y)</li>
-<li><code>pixels</code>: 图像的像素数据，用于判断每个位置是否可通行</li>
-</ul></li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">came_from = &#123;start: start&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>初始化<code>came_from</code>字典，用于记录每个位置是从哪个位置访问来的</li>
-<li>初始时，起点的前驱位置是它自己（这是回溯路径时的终止条件）</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">queue = deque([start])</span><br></pre></td></tr></table></figure>
-<ul>
-<li>初始化双端队列，并将起点加入队列</li>
-<li>BFS使用队列来管理待探索的位置（先进先出）</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">visited = <span class="built_in">set</span>([start])</span><br></pre></td></tr></table></figure>
-<ul>
-<li>初始化已访问集合，记录已经探索过的位置</li>
-<li>初始时将起点标记为已访问，避免重复处理</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> <span class="built_in">len</span>(queue) &gt; <span class="number">0</span>:</span><br></pre></td></tr></table></figure>
-<ul>
-<li>开始BFS主循环，当队列不为空时继续搜索</li>
-<li>队列为空表示已经探索完所有可达位置</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cell = queue.popleft()</span><br></pre></td></tr></table></figure>
-<ul>
-<li>从队列左侧取出一个位置（先进先出）</li>
-<li>这是BFS的核心特性：先探索距离起点更近的位置</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> adjacent <span class="keyword">in</span> getadjacent(cell):</span><br></pre></td></tr></table></figure>
-<ul>
-<li>遍历当前单元格的四个相邻位置（上、下、左、右）</li>
-<li><code>getadjacent(cell)</code>返回这些相邻位置的坐标</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x, y = adjacent</span><br></pre></td></tr></table></figure>
-<ul>
-<li>解包相邻位置的坐标为x和y变量</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> adjacent <span class="keyword">not</span> <span class="keyword">in</span> visited <span class="keyword">and</span> iswhite(pixels[x, y]):</span><br></pre></td></tr></table></figure>
-<ul>
-<li>检查两个条件：
-<ul>
-<li>相邻位置未被访问过（不在visited集合中）</li>
-<li>相邻位置的像素是白色（可通行，由<code>iswhite</code>函数判断）</li>
-</ul></li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">came_from[adjacent] = cell</span><br></pre></td></tr></table></figure>
-<ul>
-<li>如果满足条件，记录这个相邻位置是从当前单元格访问来的</li>
-<li>这是为了之后能回溯出完整路径</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">queue.append(adjacent)</span><br></pre></td></tr></table></figure>
-<ul>
-<li>将这个相邻位置加入队列，等待后续探索</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">visited.add(adjacent)</span><br></pre></td></tr></table></figure>
-<ul>
-<li>将这个相邻位置标记为已访问</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">path = [end]</span><br></pre></td></tr></table></figure>
-<ul>
-<li>初始化路径列表，从终点开始回溯</li>
-<li>此时BFS已经完成，开始构建从终点到起点的路径</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">v = end</span><br></pre></td></tr></table></figure>
-<ul>
-<li>设置当前回溯位置v为终点</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> v != start:</span><br></pre></td></tr></table></figure>
-<ul>
-<li>开始回溯循环，直到回溯到起点为止</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">v = came_from[v]</span><br></pre></td></tr></table></figure>
-<ul>
-<li>将v设置为它的前驱位置（即从哪个位置来到v的）</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">path.append(v)</span><br></pre></td></tr></table></figure>
-<ul>
-<li>将前驱位置加入路径列表</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> path</span><br></pre></td></tr></table></figure>
-<ul>
-<li>返回找到的路径（注意这个路径是从终点到起点的顺序）</li>
-</ul>
-<h2 id="关键点说明">关键点说明</h2>
-<ol type="1">
-<li><p><strong>BFS特性</strong>：这个算法会先探索距离起点最近的所有位置，然后逐步向外扩展，因此找到的路径一定是最短路径之一。</p></li>
-<li><p><strong>路径回溯</strong>：使用<code>came_from</code>字典记录每个位置的来源，使得我们能在找到终点后反向追溯出完整路径。</p></li>
-<li><p><strong>访问控制</strong>：<code>visited</code>集合确保每个位置只被处理一次，防止无限循环。</p></li>
-<li><p><strong>可通行判断</strong>：<code>iswhite(pixels[x, y])</code>确保只走白色像素（迷宫中的通路）。</p></li>
-<li><p><strong>路径顺序</strong>：最终返回的路径是从终点到起点的顺序，如果需要起点到终点的顺序，可以反转这个列表。</p></li>
-</ol>
-<h1 id="came_from">came_from</h1>
-<p><code>came_from = &#123;start: start&#125;</code> 是 Python 中的
-<strong>字典（Dictionary）</strong> 初始化语法，表示创建一个字典并将键
-<code>start</code> 映射到值 <code>start</code>。</p>
-<h2 id="详细解释">详细解释：</h2>
-<ul>
-<li><strong>字典（Dictionary）</strong> 是 Python
-的一种数据结构，用于存储 <strong>键-值对（Key-Value
-Pairs）</strong>，格式为
-<code>&#123;key1: value1, key2: value2, ...&#125;</code>。</li>
-<li>在 <code>came_from = &#123;start: start&#125;</code> 中：
-<ul>
-<li><strong>第一个 <code>start</code></strong> 是
-<strong>键（Key）</strong>，表示某个位置的坐标（如
-<code>(400, 984)</code>）。</li>
-<li><strong>第二个 <code>start</code></strong> 是
-<strong>值（Value）</strong>，表示该位置是从哪个位置访问来的。</li>
-<li>这里初始化时，<code>start</code>
-的前驱（来源）是它自己，表示它是路径的起点。</li>
-</ul></li>
-</ul>
-<h2 id="为什么这样初始化">为什么这样初始化？</h2>
-<ul>
-<li><code>came_from</code> 的作用是
-<strong>记录每个位置是从哪个位置访问来的</strong>，用于后续回溯路径。</li>
-<li>初始时，<code>start</code>
-是路径的起点，没有前驱位置，所以它的前驱设为它自己（作为终止条件）。</li>
-<li>例如：</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">start = (<span class="number">400</span>, <span class="number">984</span>)</span><br><span class="line">came_from = &#123;start: start&#125;  <span class="comment"># &#123;(400, 984): (400, 984)&#125;</span></span><br></pre></td></tr></table></figure>
-<p>表示 <code>(400, 984)</code> 是从 <code>(400, 984)</code>
-来的（即它是起点）。</p>
-<h2 id="类似用法">类似用法：</h2>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 初始化时，每个位置的前驱设为 None（另一种常见写法）</span></span><br><span class="line">came_from = &#123;start: <span class="literal">None</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 回溯路径时，判断是否到达起点：</span></span><br><span class="line"><span class="keyword">while</span> v <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:  <span class="comment"># 而不是 while v != start:</span></span><br><span class="line">    v = came_from[v]</span><br></pre></td></tr></table></figure>
-<h2 id="总结">总结：</h2>
-<ul>
-<li><code>&#123;start: start&#125;</code> 是字典初始化，表示
-<strong><code>start</code> 的前驱是
-<code>start</code></strong>（即它是起点）。</li>
-<li>在 BFS 中，这样初始化是为了 <strong>方便回溯路径</strong>，当
-<code>v == came_from[v]</code> 时，说明回溯到了起点，终止循环。</li>
-</ul>
-<h1 id="python-中-deque-的用法详解">Python 中 <code>deque</code>
-的用法详解</h1>
-<p><code>deque</code>（双端队列，发音为"deck"）是 Python 标准库
-<code>collections</code>
-模块中的一个高效数据结构，特别适合用作队列（FIFO：First in, First
-out）或栈（LIFO：Last in, First out）。在 BFS 算法中，<code>deque</code>
-是最常用的队列实现方式。</p>
-<h2 id="基本用法">基本用法</h2>
-<h3 id="导入-deque">导入 deque</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> deque</span><br></pre></td></tr></table></figure>
-<h3 id="创建-deque">创建 deque</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">d = deque()  <span class="comment"># 创建空双端队列</span></span><br><span class="line">d = deque([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])  <span class="comment"># 从可迭代对象创建</span></span><br></pre></td></tr></table></figure>
-<h2 id="核心操作方法">核心操作方法</h2>
-<h3 id="作为队列使用fifo">作为队列使用（FIFO）</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 入队（添加到右端）</span></span><br><span class="line">d.append(<span class="number">4</span>)  <span class="comment"># deque([1, 2, 3, 4])</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 出队（从左端移除）</span></span><br><span class="line">item = d.popleft()  <span class="comment"># 返回1，deque变为([2, 3, 4])</span></span><br></pre></td></tr></table></figure>
-<h3 id="作为栈使用lifo">作为栈使用（LIFO）</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 压栈（添加到右端）</span></span><br><span class="line">d.append(<span class="number">5</span>)  <span class="comment"># deque([2, 3, 4, 5])</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 弹栈（从右端移除）</span></span><br><span class="line">item = d.pop()  <span class="comment"># 返回5，deque变为([2, 3, 4])</span></span><br></pre></td></tr></table></figure>
-<h3 id="双端操作">双端操作</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 从左端添加</span></span><br><span class="line">d.appendleft(<span class="number">0</span>)  <span class="comment"># deque([0, 2, 3, 4])</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 从右端移除</span></span><br><span class="line">item = d.pop()  <span class="comment"># 返回4，deque变为([0, 2, 3])</span></span><br></pre></td></tr></table></figure>
-<h2 id="为什么在-bfs-中使用-deque">为什么在 BFS 中使用 deque？</h2>
-<h3 id="高效性">高效性</h3>
-<ul>
-<li><p><code>popleft()</code> 和 <code>append()</code> 操作都是 O(1)
-时间复杂度</p></li>
-<li><p>相比列表的 <code>pop(0)</code> 是 O(n) 操作，<code>deque</code>
-更适合队列操作</p>
-<table>
-<thead>
-<tr>
-<th>操作</th>
-<th>list</th>
-<th>deque</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>append</td>
-<td>O(1)</td>
-<td>O(1)</td>
-</tr>
-<tr>
-<td>appendleft</td>
-<td>O(n)</td>
-<td>O(1)</td>
-</tr>
-<tr>
-<td>pop</td>
-<td>O(1)</td>
-<td>O(1)</td>
-</tr>
-<tr>
-<td>popleft</td>
-<td>O(n)</td>
-<td>O(1)</td>
-</tr>
-</tbody>
-</table></li>
-</ul>
-<h3 id="线程安全">线程安全</h3>
-<ul>
-<li><code>deque</code> 的 <code>append()</code> 和
-<code>popleft()</code> 是原子操作</li>
-</ul>
-<h3 id="灵活性">灵活性</h3>
-<ul>
-<li>可以方便地在两端进行操作</li>
-</ul>
-<h1 id="python-中-len-函数的用法详解">Python 中 <code>len()</code>
-函数的用法详解</h1>
-<p><code>len()</code> 是 Python
-内置函数，用于返回对象的长度（元素个数）。它是 Python
-中最基础和常用的函数之一。</p>
-<h2 id="基本语法">基本语法</h2>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">len</span>(<span class="built_in">object</span>)</span><br></pre></td></tr></table></figure>
-<ul>
-<li>参数
-<code>object</code>：可以是序列（如字符串、列表、元组等）或集合（如字典、集合等）</li>
-<li>返回值：对象的长度（整数）</li>
-</ul>
-<h2 id="支持的数据类型">支持的数据类型</h2>
-<h3 id="字符串string">字符串（String）</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s = <span class="string">&quot;Hello&quot;</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(s))  <span class="comment"># 输出：5（字符数）</span></span><br></pre></td></tr></table></figure>
-<h3 id="列表list">列表（List）</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lst = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(lst))  <span class="comment"># 输出：4（元素个数）</span></span><br></pre></td></tr></table></figure>
-<h3 id="元组tuple">元组（Tuple）</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">t = (<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(t))  <span class="comment"># 输出：3</span></span><br></pre></td></tr></table></figure>
-<h3 id="字典dictionary">字典（Dictionary）</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">d = &#123;<span class="string">&#x27;a&#x27;</span>: <span class="number">1</span>, <span class="string">&#x27;b&#x27;</span>: <span class="number">2</span>&#125;</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(d))  <span class="comment"># 输出：2（键值对数量）</span></span><br></pre></td></tr></table></figure>
-<h3 id="集合set">集合（Set）</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(s))  <span class="comment"># 输出：4</span></span><br></pre></td></tr></table></figure>
-<h3 id="其他可迭代对象">其他可迭代对象</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> deque</span><br><span class="line">d = deque([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(d))  <span class="comment"># 输出：3</span></span><br></pre></td></tr></table></figure>
-<h2 id="注意事项">注意事项</h2>
-<h3 id="不支持没有长度的对象">不支持没有长度的对象</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">len</span>(<span class="number">42</span>)  <span class="comment"># TypeError: object of type &#x27;int&#x27; has no len()</span></span><br></pre></td></tr></table></figure>
-<h3 id="计算的是顶层元素">计算的是顶层元素</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lst = [[<span class="number">1</span>,<span class="number">2</span>], [<span class="number">3</span>,<span class="number">4</span>]]</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(lst))  <span class="comment"># 输出2（不是4）</span></span><br></pre></td></tr></table></figure>
-<h1 id="python-中-set-的用法详解">Python 中 <code>set()</code>
-的用法详解</h1>
-<p><code>set()</code> 是 Python 的内置函数，用于创建
-<strong>集合(set)</strong>
-数据结构。集合是一种无序、不重复元素的容器，非常适合用于成员关系测试和去重操作。</p>
-<h2 id="基本用法-1">基本用法</h2>
-<h3 id="创建集合">创建集合</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建空集合（必须使用set()，不能用&#123;&#125;）</span></span><br><span class="line">empty_set = <span class="built_in">set</span>()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建带初始元素的集合</span></span><br><span class="line">fruits = &#123;<span class="string">&quot;apple&quot;</span>, <span class="string">&quot;banana&quot;</span>, <span class="string">&quot;cherry&quot;</span>&#125; <span class="comment"># 使用花括号</span></span><br><span class="line">numbers = <span class="built_in">set</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>])            <span class="comment"># 从列表转换</span></span><br><span class="line">chars = <span class="built_in">set</span>(<span class="string">&quot;hello&quot;</span>)                   <span class="comment"># 从字符串创建，结果为 &#123;&#x27;h&#x27;, &#x27;e&#x27;, &#x27;l&#x27;, &#x27;o&#x27;&#125;</span></span><br></pre></td></tr></table></figure>
-<h3 id="集合特性">集合特性</h3>
-<ul>
-<li><strong>无序</strong>：元素没有固定顺序</li>
-<li><strong>唯一</strong>：自动去除重复元素</li>
-<li><strong>可变</strong>：可以增删元素</li>
-<li><strong>可哈希（Hashable）</strong>：元素必须是不可变类型（数字、字符串、元组等）</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">unique_nums = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">3</span>&#125;  <span class="comment"># 自动去重，结果为 &#123;1, 2, 3&#125;</span></span><br></pre></td></tr></table></figure>
-<h2 id="常用操作">常用操作</h2>
-<h3 id="添加元素">添加元素</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">s = &#123;<span class="number">1</span>, <span class="number">2</span>&#125;</span><br><span class="line">s.add(<span class="number">3</span>)       <span class="comment"># 添加单个元素 → &#123;1, 2, 3&#125;</span></span><br><span class="line">s.update([<span class="number">4</span>, <span class="number">5</span>])  <span class="comment"># 添加多个元素 → &#123;1, 2, 3, 4, 5&#125;</span></span><br></pre></td></tr></table></figure>
-<h3 id="删除元素">删除元素</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">s = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;</span><br><span class="line">s.remove(<span class="number">3</span>)    <span class="comment"># 移除元素，不存在则报错 → &#123;1, 2, 4&#125;</span></span><br><span class="line">s.discard(<span class="number">2</span>)   <span class="comment"># 移除元素，不存在不报错 → &#123;1, 4&#125;</span></span><br><span class="line">s.pop()        <span class="comment"># 随机移除并返回一个元素</span></span><br><span class="line">s.clear()      <span class="comment"># 清空集合 → set()</span></span><br></pre></td></tr></table></figure>
-<h3 id="集合运算">集合运算</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">a = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">b = &#123;<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 并集</span></span><br><span class="line">a | b  <span class="comment"># 或 a.union(b) → &#123;1, 2, 3, 4&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 交集</span></span><br><span class="line">a &amp; b  <span class="comment"># 或 a.intersection(b) → &#123;2, 3&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 差集</span></span><br><span class="line">a - b  <span class="comment"># 或 a.difference(b) → &#123;1&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 对称差集（仅存在于一个集合中的元素）</span></span><br><span class="line">a ^ b  <span class="comment"># 或 a.symmetric_difference(b) → &#123;1, 4&#125;</span></span><br></pre></td></tr></table></figure>
-<h3 id="成员测试非常高效o1复杂度">成员测试（非常高效，O(1)复杂度）</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">s = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line"><span class="built_in">print</span>(<span class="number">2</span> <span class="keyword">in</span> s)    <span class="comment"># True</span></span><br><span class="line"><span class="built_in">print</span>(<span class="number">5</span> <span class="keyword">not</span> <span class="keyword">in</span> s) <span class="comment"># True</span></span><br></pre></td></tr></table></figure>
-<h2 id="在bfs算法中的应用">在BFS算法中的应用</h2>
-<p>在您提供的BFS代码中：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">visited = <span class="built_in">set</span>([start])</span><br></pre></td></tr></table></figure>
-<p>这样使用集合是因为：</p>
-<ol type="1">
-<li><strong>快速查找</strong>：检查节点是否已访问（<code>if adjacent not in visited</code>）非常高效</li>
-<li><strong>自动去重</strong>：防止同一节点被多次处理</li>
-<li><strong>内存效率</strong>：比列表更适合存储大量唯一元素</li>
-</ol>
-<h2 id="集合与列表的对比">集合与列表的对比</h2>
-<table>
-<thead>
-<tr>
-<th>操作</th>
-<th>列表(list)</th>
-<th>集合(set)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>查找元素是否存在</td>
-<td>O(n)</td>
-<td>O(1)</td>
-</tr>
-<tr>
-<td>插入元素</td>
-<td>O(1)</td>
-<td>O(1)</td>
-</tr>
-<tr>
-<td>删除元素</td>
-<td>O(n)</td>
-<td>O(1)</td>
-</tr>
-<tr>
-<td>内存占用</td>
-<td>较少</td>
-<td>较多</td>
-</tr>
-<tr>
-<td>保持顺序</td>
-<td>是</td>
-<td>否</td>
-</tr>
-</tbody>
-</table>
-<h2 id="使用场景建议">使用场景建议</h2>
-<p>使用 <code>set()</code> 当您需要：</p>
-<ul>
-<li>快速成员关系测试</li>
-<li>去除重复元素</li>
-<li>执行集合运算（并集、交集等）</li>
-</ul>
-<p>使用 <code>list</code> 当您需要：</p>
-<ul>
-<li>保持元素顺序</li>
-<li>允许重复元素</li>
-<li>通过索引访问元素</li>
-</ul>
-<h2 id="冻结集合不可变集合">冻结集合（不可变集合）</h2>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">frozen = <span class="built_in">frozenset</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])  <span class="comment"># 创建不可变集合</span></span><br><span class="line"><span class="comment"># 不能添加/删除元素，但可以用于集合运算</span></span><br></pre></td></tr></table></figure>
-<h1 id="附迷宫程序">附：迷宫程序</h1>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> deque</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line">start = (<span class="number">400</span>, <span class="number">984</span>)</span><br><span class="line">end = (<span class="number">398</span>, <span class="number">25</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">iswhite</span>(<span class="params">value</span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">all</span>(x &gt; <span class="number">200</span> <span class="keyword">for</span> x <span class="keyword">in</span> value):</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">getadjacent</span>(<span class="params">n</span>):</span><br><span class="line">    x, y = n</span><br><span class="line">    <span class="keyword">return</span> [(x - <span class="number">1</span>, y), (x, y - <span class="number">1</span>), (x + <span class="number">1</span>, y), (x, y + <span class="number">1</span>)]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">BFS</span>(<span class="params">start, end, pixels</span>):</span><br><span class="line">    came_from = &#123;start: start&#125;  </span><br><span class="line">    queue = deque([start])</span><br><span class="line">    visited = <span class="built_in">set</span>([start])</span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(queue) &gt; <span class="number">0</span>:</span><br><span class="line">        current = queue.popleft()</span><br><span class="line">        <span class="keyword">for</span> adjacent <span class="keyword">in</span> getadjacent(current):</span><br><span class="line">            x, y = adjacent</span><br><span class="line">            <span class="keyword">if</span> adjacent <span class="keyword">not</span> <span class="keyword">in</span> visited <span class="keyword">and</span> iswhite(pixels[x, y]):</span><br><span class="line">                came_from[adjacent] = current</span><br><span class="line">                queue.append(adjacent)</span><br><span class="line">                visited.add(adjacent)</span><br><span class="line"></span><br><span class="line">    path = [end]</span><br><span class="line">    v = end</span><br><span class="line">    <span class="keyword">while</span> v != start:</span><br><span class="line">        v = came_from[v]</span><br><span class="line">        path.append(v)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> path</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">img = Image.<span class="built_in">open</span>(<span class="string">&quot;maze.jpg&quot;</span>).convert(<span class="string">&quot;RGB&quot;</span>)</span><br><span class="line">pixels = img.load()</span><br><span class="line">path = BFS(start, end, pixels)</span><br><span class="line"><span class="keyword">for</span> position <span class="keyword">in</span> path:</span><br><span class="line">    x, y = position</span><br><span class="line">    pixels[x, y] = (<span class="number">255</span>, <span class="number">0</span>, <span class="number">0</span>)  <span class="comment"># red</span></span><br><span class="line"></span><br><span class="line">img.save(<span class="string">&quot;maze_path.jpg&quot;</span>)</span><br></pre></td></tr></table></figure>
-<h1 id="代码逐行解释">代码逐行解释</h1>
-<p>这段代码实现了一个广度优先搜索(BFS)算法来解决迷宫问题，并在找到路径后将路径标记为红色。下面是逐行解释：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> cllections <span class="keyword">import</span> deque</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br></pre></td></tr></table></figure>
-<ul>
-<li>导入双端队列(deque)数据结构，用于实现BFS算法</li>
-<li>导入PIL库的Image模块，用于处理图像</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">start = (<span class="number">400</span>, <span class="number">984</span>)</span><br><span class="line">end = (<span class="number">398</span>, <span class="number">25</span>)</span><br></pre></td></tr></table></figure>
-<ul>
-<li>定义迷宫的起点坐标(400, 984)</li>
-<li>定义迷宫的终点坐标(398, 25)</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">iswhite</span>(<span class="params">value</span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">all</span>(x &gt; <span class="number">200</span> <span class="keyword">for</span> x <span class="keyword">in</span> value):</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>定义判断像素是否为白色的函数</li>
-<li>如果RGB三个通道的值都大于200，则认为是白色(可通行区域)</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">getadjacent</span>(<span class="params">n</span>):</span><br><span class="line">    x, y = n</span><br><span class="line">    <span class="keyword">return</span> [(x - <span class="number">1</span>, y), (x, y - <span class="number">1</span>), (x + <span class="number">1</span>, y), (x, y + <span class="number">1</span>)]</span><br></pre></td></tr></table></figure>
-<ul>
-<li>定义获取相邻像素坐标的函数</li>
-<li>返回当前像素的上、下、左、右四个相邻像素的坐标</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">BFS</span>(<span class="params">start, end, pixels</span>):</span><br><span class="line">    came_from = &#123;start: start&#125;  </span><br><span class="line">    queue = deque([start])</span><br><span class="line">    visited = <span class="built_in">set</span>([start])</span><br></pre></td></tr></table></figure>
-<ul>
-<li>定义BFS函数，参数为起点、终点和像素数据</li>
-<li><code>came_from</code>字典记录每个位置是从哪个位置访问来的(用于回溯路径)</li>
-<li>初始化队列，加入起点</li>
-<li><code>visited</code>集合记录已访问过的位置</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> <span class="built_in">len</span>(queue) &gt; <span class="number">0</span>:</span><br><span class="line">    current = queue.popleft()</span><br><span class="line">    <span class="keyword">for</span> adjacent <span class="keyword">in</span> getadjacent(current):</span><br><span class="line">        x, y = adjacent</span><br><span class="line">        <span class="keyword">if</span> adjacent <span class="keyword">not</span> <span class="keyword">in</span> visited <span class="keyword">and</span> iswhite(pixels[x, y]):</span><br><span class="line">            came_from[adjacent] = current</span><br><span class="line">            queue.append(adjacent)</span><br><span class="line">            visited.add(adjacent)</span><br></pre></td></tr></table></figure>
-<ul>
-<li>BFS主循环，当队列不为空时继续</li>
-<li>从队列左侧取出一个位置</li>
-<li>遍历该位置的四个相邻位置</li>
-<li>检查相邻位置是否未被访问过且是白色(可通行)</li>
-<li>如果满足条件，记录该相邻位置的前驱位置，加入队列和已访问集合</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">path = [end]</span><br><span class="line">v = end</span><br><span class="line"><span class="keyword">while</span> v != start:</span><br><span class="line">    v = came_from[v]</span><br><span class="line">    path.append(v)</span><br></pre></td></tr></table></figure>
-<ul>
-<li>从终点开始回溯路径</li>
-<li>沿着<code>came_from</code>字典从终点回溯到起点</li>
-<li>将路径上的所有位置加入path列表</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> path</span><br></pre></td></tr></table></figure>
-<ul>
-<li>返回找到的路径(从终点到起点的顺序)</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">img = Image.<span class="built_in">open</span>(<span class="string">&quot;maze.jpg&quot;</span>).convert(<span class="string">&quot;RGB&quot;</span>)</span><br><span class="line">pixels = img.load()</span><br></pre></td></tr></table></figure>
-<ul>
-<li>打开名为"maze.jpg"的迷宫图像并转换为RGB模式</li>
-<li>加载像素数据以便访问和修改</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">path = BFS(start, end, pixels)</span><br></pre></td></tr></table></figure>
-<ul>
-<li>调用BFS函数寻找从起点到终点的路径</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> position <span class="keyword">in</span> path:</span><br><span class="line">    x, y = position</span><br><span class="line">    pixels[x, y] = (<span class="number">255</span>, <span class="number">0</span>, <span class="number">0</span>)  <span class="comment"># red</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>遍历路径上的所有位置</li>
-<li>将路径上的像素设为红色(RGB值为255,0,0)</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">img.save(<span class="string">&quot;maze_path.jpg&quot;</span>)</span><br></pre></td></tr></table></figure>
-<ul>
-<li>将修改后的图像(带有红色路径)保存为"maze_path.jpg"</li>
-</ul>
-<p>这段代码的核心是通过BFS算法在迷宫中寻找从起点到终点的路径，其中白色像素表示可通行的区域，其他颜色表示墙壁或障碍物。找到路径后，将路径标记为红色并保存图像。</p>
-<p><img src="/images/maze/maze_path.jpg" alt="图Koch3-xuehua" style="width: 100%;"></p>
 
       
     </div>

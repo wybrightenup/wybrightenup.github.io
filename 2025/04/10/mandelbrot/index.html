@@ -19,16 +19,16 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.23.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="一. range 函数 语法 123class range(object) |  range(stop) -&gt; range object |  range(start, stop[, step]) -&gt; range object 说明  range(start, stop[, step])：返回一个生成从 start（包含）到 stop（不包含）的整数序列的对象，步长为">
+    <meta name="description" content="很多人第一次看到 Mandelbrot 集时，都会被它的形状震住：  远看像一只黑色的“心形甲虫”； 近看边界卷曲、分叉、重复； 再继续放大，新的结构还会不断冒出来。  它看起来非常神秘，但如果我们站在“程序是怎么画出它的”这个角度去看，事情其实很清楚：  先在复平面上取很多点； 对每个点做同样的迭代； 根据这个点“逃逸得有多快”给它上色； 最后把结果保存成一张图片。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="绘制mandelbrot集时所用到函数逐个解析">
+<meta property="og:title" content="无尽边界：Mandelbrot 集之美">
 <meta property="og:url" content="http://example.com/2025/04/10/mandelbrot/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="一. range 函数 语法 123class range(object) |  range(stop) -&gt; range object |  range(start, stop[, step]) -&gt; range object 说明  range(start, stop[, step])：返回一个生成从 start（包含）到 stop（不包含）的整数序列的对象，步长为">
+<meta property="og:description" content="很多人第一次看到 Mandelbrot 集时，都会被它的形状震住：  远看像一只黑色的“心形甲虫”； 近看边界卷曲、分叉、重复； 再继续放大，新的结构还会不断冒出来。  它看起来非常神秘，但如果我们站在“程序是怎么画出它的”这个角度去看，事情其实很清楚：  先在复平面上取很多点； 对每个点做同样的迭代； 根据这个点“逃逸得有多快”给它上色； 最后把结果保存成一张图片。">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/images/mandelbrot/mandelbrot4.png">
 <meta property="article:published_time" content="2025-04-10T06:30:36.645Z">
-<meta property="article:modified_time" content="2025-05-14T02:42:25.157Z">
+<meta property="article:modified_time" content="2026-04-23T08:34:21.098Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/mandelbrot/mandelbrot4.png">
@@ -37,10 +37,10 @@
 <link rel="canonical" href="http://example.com/2025/04/10/mandelbrot/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2025/04/10/mandelbrot/","path":"2025/04/10/mandelbrot/","title":"绘制mandelbrot集时所用到函数逐个解析"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2025/04/10/mandelbrot/","path":"2025/04/10/mandelbrot/","title":"无尽边界：Mandelbrot 集之美"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>绘制mandelbrot集时所用到函数逐个解析 | Hexo</title>
+<title>无尽边界：Mandelbrot 集之美 | Hexo</title>
   
 
 
@@ -128,22 +128,43 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80.-range-%E5%87%BD%E6%95%B0"><span class="nav-number">1.</span> <span class="nav-text">一. range 函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AD%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">语法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E"><span class="nav-number">1.2.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.3.</span> <span class="nav-text">示例</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%96%B9%E6%B3%95-1%E8%BD%AC%E6%8D%A2%E4%B8%BA-list-%E6%98%BE%E7%A4%BA"><span class="nav-number">1.3.0.1.</span> <span class="nav-text">方法 1：转换为 list
-显示</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%96%B9%E6%B3%95-2%E4%BD%BF%E7%94%A8-for-%E5%BE%AA%E7%8E%AF%E6%89%93%E5%8D%B0"><span class="nav-number">1.3.0.2.</span> <span class="nav-text">方法 2：使用 for
-循环打印</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%96%B9%E6%B3%95-3%E8%A7%A3%E5%8C%85-range-%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.3.0.3.</span> <span class="nav-text">方法 3：解包 range 对象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%96%B9%E6%B3%95-4%E6%8B%BC%E6%8E%A5%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.3.0.4.</span> <span class="nav-text">方法 4：拼接字符串</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-range4-%E4%B8%8D%E7%9B%B4%E6%8E%A5%E6%98%BE%E7%A4%BA%E6%95%B0%E5%AD%97"><span class="nav-number">1.3.0.5.</span> <span class="nav-text">为什么 range(4)
-不直接显示数字？</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C.-real-%E5%92%8C-imag-%E5%B1%9E%E6%80%A7"><span class="nav-number">2.</span> <span class="nav-text">二. real 和
-imag 属性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E-1"><span class="nav-number">2.1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-1"><span class="nav-number">2.2.</span> <span class="nav-text">示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89.-ogrid-%E4%B8%8E-mgrid"><span class="nav-number">3.</span> <span class="nav-text">三. ogrid 与
-mgrid</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AD%E6%B3%95-1"><span class="nav-number">3.1.</span> <span class="nav-text">语法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E-2"><span class="nav-number">3.2.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-2"><span class="nav-number">3.3.</span> <span class="nav-text">示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B.-numpy.asarray-%E4%B8%8E-numpy.array"><span class="nav-number">4.</span> <span class="nav-text">四. numpy.asarray
-与 numpy.array</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AD%E6%B3%95-2"><span class="nav-number">4.1.</span> <span class="nav-text">语法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E-3"><span class="nav-number">4.2.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-3"><span class="nav-number">4.3.</span> <span class="nav-text">示例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B1%E5%B0%86%E5%88%97%E8%A1%A8%E8%BD%AC%E6%8D%A2%E4%B8%BA%E6%95%B0%E7%BB%84%E8%BE%93%E5%85%A5%E5%B7%B2%E7%BB%8F%E6%98%AF%E6%95%B0%E7%BB%84"><span class="nav-number">4.3.1.</span> <span class="nav-text">示例1：将列表转换为数组+输入已经是数组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-2%E6%8C%87%E5%AE%9A%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">4.3.2.</span> <span class="nav-text">示例 2：指定数据类型</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94.-numpy.frompyfunc"><span class="nav-number">5.</span> <span class="nav-text">五. numpy.frompyfunc</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AD%E6%B3%95-3"><span class="nav-number">5.1.</span> <span class="nav-text">语法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E-4"><span class="nav-number">5.2.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-4"><span class="nav-number">5.3.</span> <span class="nav-text">示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E-np.vectorize-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">5.4.</span> <span class="nav-text">与 np.vectorize 的区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD.-%E5%B9%BF%E6%92%AD%E6%9C%BA%E5%88%B6"><span class="nav-number">6.</span> <span class="nav-text">六. 广播机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E-5"><span class="nav-number">6.1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%BF%E6%92%AD%E8%A7%84%E5%88%99"><span class="nav-number">6.2.</span> <span class="nav-text">广播规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-5"><span class="nav-number">6.3.</span> <span class="nav-text">示例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-1%E6%A0%87%E9%87%8F%E4%B8%8E%E6%95%B0%E7%BB%84%E7%9A%84%E5%B9%BF%E6%92%AD"><span class="nav-number">6.3.1.</span> <span class="nav-text">示例 1：标量与数组的广播</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-2%E4%B8%8D%E5%90%8C%E5%BD%A2%E7%8A%B6%E6%95%B0%E7%BB%84%E7%9A%84%E5%B9%BF%E6%92%AD"><span class="nav-number">6.3.2.</span> <span class="nav-text">示例 2：不同形状数组的广播</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-3%E7%BB%B4%E5%BA%A6%E4%B8%8D%E8%B6%B3%E7%9A%84%E5%B9%BF%E6%92%AD"><span class="nav-number">6.3.3.</span> <span class="nav-text">示例 3：维度不足的广播</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%BF%E6%92%AD%E7%9A%84%E9%99%90%E5%88%B6"><span class="nav-number">6.4.</span> <span class="nav-text">广播的限制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83.-astype"><span class="nav-number">7.</span> <span class="nav-text">七. astype</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AD%E6%B3%95-4"><span class="nav-number">7.1.</span> <span class="nav-text">语法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E-6"><span class="nav-number">7.2.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-6"><span class="nav-number">7.3.</span> <span class="nav-text">示例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B1.-%E5%B0%86%E6%95%B4%E6%95%B0%E6%95%B0%E7%BB%84%E8%BD%AC%E6%8D%A2%E4%B8%BA%E6%B5%AE%E7%82%B9%E6%95%B0%E6%95%B0%E7%BB%84"><span class="nav-number">7.3.1.</span> <span class="nav-text">示例1.
-将整数数组转换为浮点数数组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B2.-%E5%B0%86%E6%B5%AE%E7%82%B9%E6%95%B0%E6%95%B0%E7%BB%84%E8%BD%AC%E6%8D%A2%E4%B8%BA%E6%95%B4%E6%95%B0%E6%95%B0%E7%BB%84"><span class="nav-number">7.3.2.</span> <span class="nav-text">示例2.
-将浮点数数组转换为整数数组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B3.-%E5%B0%86%E6%95%B0%E7%BB%84%E8%BD%AC%E6%8D%A2%E4%B8%BA%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%B1%BB%E5%9E%8B"><span class="nav-number">7.3.3.</span> <span class="nav-text">示例3.
-将数组转换为字符串类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B4.-%E6%8C%87%E5%AE%9A%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">7.3.4.</span> <span class="nav-text">示例4. 指定数据类型</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">7.4.</span> <span class="nav-text">注意事项</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB.-numpy.stack"><span class="nav-number">8.</span> <span class="nav-text">八. numpy.stack</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AD%E6%B3%95-5"><span class="nav-number">8.1.</span> <span class="nav-text">语法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-7"><span class="nav-number">8.2.</span> <span class="nav-text">示例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B1.-%E6%B2%BF%E6%96%B0%E8%BD%B4%E5%A0%86%E5%8F%A0%E4%B8%80%E7%BB%B4%E6%95%B0%E7%BB%84"><span class="nav-number">8.2.1.</span> <span class="nav-text">示例1. 沿新轴堆叠一维数组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B2.-%E6%B2%BF-axis1-%E5%A0%86%E5%8F%A0"><span class="nav-number">8.2.2.</span> <span class="nav-text">示例2. 沿 axis&#x3D;1 堆叠</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B3.-%E5%A0%86%E5%8F%A0%E4%BA%8C%E7%BB%B4%E6%95%B0%E7%BB%84"><span class="nav-number">8.2.3.</span> <span class="nav-text">示例3. 堆叠二维数组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B4.-%E6%B2%BF-axis2-%E5%A0%86%E5%8F%A0"><span class="nav-number">8.2.4.</span> <span class="nav-text">示例4. 沿 axis&#x3D;2 堆叠</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#numpy.stack-%E4%B8%8E-numpy.concatenate-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">8.3.</span> <span class="nav-text">numpy.stack 与
-numpy.concatenate 的区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D.-pil.image.fromarray"><span class="nav-number">9.</span> <span class="nav-text">九.
-PIL.Image.fromarray</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AD%E6%B3%95-6"><span class="nav-number">9.1.</span> <span class="nav-text">语法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E-7"><span class="nav-number">9.2.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-8"><span class="nav-number">9.3.</span> <span class="nav-text">示例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B1%E5%B0%86-numpy-%E6%95%B0%E7%BB%84%E8%BD%AC%E6%8D%A2%E4%B8%BA%E7%81%B0%E5%BA%A6%E5%9B%BE%E5%83%8F"><span class="nav-number">9.3.1.</span> <span class="nav-text">示例1：将 NumPy
-数组转换为灰度图像</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B2.-%E5%B0%86-numpy-%E6%95%B0%E7%BB%84%E8%BD%AC%E6%8D%A2%E4%B8%BA%E5%BD%A9%E8%89%B2%E5%9B%BE%E5%83%8F"><span class="nav-number">9.3.2.</span> <span class="nav-text">示例2. 将 NumPy
-数组转换为彩色图像</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B3%E5%B0%86%E6%B5%AE%E7%82%B9%E6%95%B0%E7%BB%84%E8%BD%AC%E6%8D%A2%E4%B8%BA%E5%9B%BE%E5%83%8F"><span class="nav-number">9.3.3.</span> <span class="nav-text">示例3：将浮点数组转换为图像</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81.-unit8%E5%87%BD%E6%95%B0"><span class="nav-number">10.</span> <span class="nav-text">十. unit8函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-9"><span class="nav-number">10.1.</span> <span class="nav-text">示例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B1-%E5%88%9B%E5%BB%BA-uint8-%E6%95%B0%E7%BB%84"><span class="nav-number">10.1.1.</span> <span class="nav-text">示例1 创建 uint8 数组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B2-%E5%88%9B%E5%BB%BA%E5%85%A8%E9%9B%B6%E6%88%96%E5%85%A8%E4%B8%80%E7%9A%84-uint8-%E6%95%B0%E7%BB%84"><span class="nav-number">10.1.2.</span> <span class="nav-text">示例2 创建全零或全一的
-uint8 数组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B3-%E5%88%9B%E5%BB%BA%E9%9A%8F%E6%9C%BA-uint8-%E6%95%B0%E7%BB%84"><span class="nav-number">10.1.3.</span> <span class="nav-text">示例3 创建随机 uint8
-数组</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#uint8-%E7%9A%84%E7%89%B9%E6%80%A7"><span class="nav-number">10.2.</span> <span class="nav-text">uint8 的特性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%96%E5%80%BC%E8%8C%83%E5%9B%B4"><span class="nav-number">10.2.1.</span> <span class="nav-text">取值范围</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2"><span class="nav-number">10.2.2.</span> <span class="nav-text">数据类型转换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8E%E5%85%B6%E4%BB%96%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%85%BC%E5%AE%B9%E6%80%A7"><span class="nav-number">10.2.3.</span> <span class="nav-text">与其他数据类型的兼容性</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%99%84-mandelbrot%E7%A8%8B%E5%BA%8F"><span class="nav-number"></span> <span class="nav-text">附: Mandelbrot程序</span></a></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E5%85%88%E7%9C%8B%E5%AE%8C%E6%95%B4%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.</span> <span class="nav-text">一、先看完整程序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8Cmandelbrot-%E9%9B%86%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">2.</span> <span class="nav-text">二、Mandelbrot 集到底是什么？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E7%A8%8B%E5%BA%8F%E6%95%B4%E4%BD%93%E5%88%B0%E5%BA%95%E5%9C%A8%E5%81%9A%E4%BB%80%E4%B9%88"><span class="nav-number">3.</span> <span class="nav-text">三、程序整体到底在做什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC-1-%E6%AD%A5%E7%A1%AE%E5%AE%9A%E4%BD%A0%E6%83%B3%E7%9C%8B%E5%A4%8D%E5%B9%B3%E9%9D%A2%E7%9A%84%E5%93%AA%E4%B8%80%E5%9D%97"><span class="nav-number">3.1.</span> <span class="nav-text">第 1
+步：确定你想看复平面的哪一块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC-2-%E6%AD%A5%E7%BB%99%E6%AF%8F%E4%B8%AA%E5%83%8F%E7%B4%A0%E5%88%86%E9%85%8D%E4%B8%80%E4%B8%AA%E5%A4%8D%E6%95%B0%E5%9D%90%E6%A0%87"><span class="nav-number">3.2.</span> <span class="nav-text">第 2
+步：给每个像素分配一个复数坐标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC-3-%E6%AD%A5%E5%AF%B9%E6%AF%8F%E4%B8%AA%E5%A4%8D%E6%95%B0%E7%82%B9%E5%81%9A%E8%BF%AD%E4%BB%A3"><span class="nav-number">3.3.</span> <span class="nav-text">第 3 步：对每个复数点做迭代</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC-4-%E6%AD%A5%E6%A0%B9%E6%8D%AE%E9%80%83%E9%80%B8%E6%83%85%E5%86%B5%E7%94%9F%E6%88%90%E9%A2%9C%E8%89%B2"><span class="nav-number">3.4.</span> <span class="nav-text">第 4 步：根据逃逸情况生成颜色</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC-5-%E6%AD%A5%E6%8A%8A%E9%A2%9C%E8%89%B2%E6%95%B0%E7%BB%84%E4%BF%9D%E5%AD%98%E6%88%90%E5%9B%BE%E5%83%8F"><span class="nav-number">3.5.</span> <span class="nav-text">第 5 步：把颜色数组保存成图像</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E6%9C%80%E5%85%B3%E9%94%AE%E7%9A%84%E4%B8%80%E6%AD%A5%E7%A8%8B%E5%BA%8F%E6%98%AF%E6%80%8E%E4%B9%88%E7%94%9F%E6%88%90%E5%A4%8D%E5%B9%B3%E9%9D%A2%E4%B8%AD%E7%9A%84%E7%82%B9%E7%9A%84"><span class="nav-number">4.</span> <span class="nav-text">四、最关键的一步：程序是怎么生成复平面中的点的？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E5%83%8F%E5%83%8F%E7%B4%A0%E5%92%8C%E5%A4%8D%E5%B9%B3%E9%9D%A2%E7%82%B9%E4%B9%8B%E9%97%B4%E7%9A%84%E5%AF%B9%E5%BA%94%E5%85%B3%E7%B3%BB"><span class="nav-number">4.1.</span> <span class="nav-text">4.1
+图像像素和复平面点之间的对应关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#np.ogrid-%E5%88%B0%E5%BA%95%E7%94%9F%E6%88%90%E4%BA%86%E4%BB%80%E4%B9%88"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 np.ogrid
+到底生成了什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ogrid-%E4%B8%8D%E6%98%AF%E5%9C%A8%E7%94%9F%E6%88%90%E5%AE%8C%E6%95%B4%E5%9D%90%E6%A0%87%E8%A1%A8%E8%80%8C%E6%98%AF%E5%9C%A8%E7%94%9F%E6%88%90%E8%A1%8C%E5%9D%90%E6%A0%87-%E5%88%97%E5%9D%90%E6%A0%87"><span class="nav-number">4.3.</span> <span class="nav-text">4.3
+ogrid 不是在生成“完整坐标表”，而是在生成“行坐标 +
+列坐标”</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#height-1j-%E5%92%8C-width-1j-%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88%E6%84%8F%E6%80%9D"><span class="nav-number">4.4.</span> <span class="nav-text">4.4
+height * 1j 和 width * 1j
+到底是什么意思？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-y-%E6%98%AF%E4%BB%8E-ymax-%E5%88%B0-ymin%E8%80%8C%E4%B8%8D%E6%98%AF%E4%BB%8E-ymin-%E5%88%B0-ymax"><span class="nav-number">4.5.</span> <span class="nav-text">4.5 为什么
+y 是从 ymax 到 ymin，而不是从
+ymin 到 ymax？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E5%B0%8F%E5%B0%BA%E5%AF%B8%E4%BE%8B%E5%AD%90%E5%BD%BB%E5%BA%95%E7%9C%8B%E6%87%82-ogrid"><span class="nav-number">4.6.</span> <span class="nav-text">4.6 一个小尺寸例子，彻底看懂
+ogrid</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#z-x-y-1j-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%B9%88%E4%BC%98%E9%9B%85"><span class="nav-number">4.7.</span> <span class="nav-text">4.7 z &#x3D; x + y * 1j
+为什么这么优雅？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%94%E5%B9%BF%E6%92%AD%E6%9C%BA%E5%88%B6%E4%B8%BA%E4%BB%80%E4%B9%88-x-y-1j-%E8%83%BD%E8%87%AA%E5%8A%A8%E5%8F%98%E6%88%90%E4%BA%8C%E7%BB%B4%E7%BD%91%E6%A0%BC"><span class="nav-number">5.</span> <span class="nav-text">五、广播机制：为什么
+x + y * 1j 能自动变成二维网格？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%AD%E6%AF%8F%E4%B8%AA%E7%82%B9%E6%8E%A5%E4%B8%8B%E6%9D%A5%E4%BC%9A%E7%BB%8F%E5%8E%86%E4%BB%80%E4%B9%88iteratec-%E9%80%90%E8%A1%8C%E8%AE%B2%E8%A7%A3"><span class="nav-number">6.</span> <span class="nav-text">六、每个点接下来会经历什么？iterate(c)
+逐行讲解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#z-0j"><span class="nav-number">6.1.</span> <span class="nav-text">6.1 z &#x3D; 0j</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#for-i-in-rangemaxiters"><span class="nav-number">6.2.</span> <span class="nav-text">6.2
+for i in range(MAXITERS)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8-z.real-%E5%92%8C-z.imag"><span class="nav-number">6.3.</span> <span class="nav-text">6.3 为什么用 z.real 和
+z.imag？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E9%87%8C%E4%B8%8D%E7%9B%B4%E6%8E%A5%E5%86%99-absz-%E6%9F%90%E4%B8%AA%E6%95%B0"><span class="nav-number">6.4.</span> <span class="nav-text">6.4 为什么这里不直接写
+abs(z) &gt; 某个数？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#radius-100-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%B9%88%E5%A4%A7"><span class="nav-number">6.5.</span> <span class="nav-text">6.5 RADIUS &#x3D; 100
+为什么这么大？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#z-z-z-c"><span class="nav-number">6.6.</span> <span class="nav-text">6.6 z &#x3D; z * z + c</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%9C%AA%E9%80%83%E9%80%B8%E7%82%B9%E8%BF%94%E5%9B%9E%E9%BB%91%E8%89%B2"><span class="nav-number">6.7.</span> <span class="nav-text">6.7 为什么未逃逸点返回黑色？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%83colorz-i%E9%A2%9C%E8%89%B2%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%B9%88%E5%B9%B3%E6%BB%91"><span class="nav-number">7.</span> <span class="nav-text">七、color(z, i)：颜色为什么这么平滑？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%AB%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AE%83%E8%83%BD%E4%B8%80%E6%AC%A1%E5%A4%84%E7%90%86%E6%95%B4%E5%BC%A0%E5%9B%BEfrompyfunc-%E8%AE%B2%E9%80%8F"><span class="nav-number">8.</span> <span class="nav-text">八、为什么它能一次处理整张图？frompyfunc
+讲透</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#iteratec-%E5%8E%9F%E6%9C%AC%E5%8F%AA%E8%83%BD%E7%AE%97%E4%B8%80%E4%B8%AA%E7%82%B9"><span class="nav-number">8.1.</span> <span class="nav-text">8.1 iterate(c)
+原本只能算一个点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#np.frompyfunciterate-1-3-%E5%9C%A8%E5%81%9A%E4%BB%80%E4%B9%88"><span class="nav-number">8.2.</span> <span class="nav-text">8.2
+np.frompyfunc(iterate, 1, 3) 在做什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%90%8E%E9%9D%A2%E8%A6%81%E6%8E%A5-np.asarray....astypefloat"><span class="nav-number">8.3.</span> <span class="nav-text">8.3 为什么后面要接
+np.asarray(...).astype(float)？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B9%9Dnumpy.asarray-%E5%92%8C-numpy.array-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB"><span class="nav-number">9.</span> <span class="nav-text">九、numpy.asarray
+和 numpy.array 有什么区别？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#np.asarray"><span class="nav-number">9.1.</span> <span class="nav-text">9.1 np.asarray</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#np.array"><span class="nav-number">9.2.</span> <span class="nav-text">9.2 np.array</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E9%87%8C%E6%9B%B4%E9%80%82%E5%90%88-asarray"><span class="nav-number">9.3.</span> <span class="nav-text">9.3 为什么这里更适合
+asarray？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%81astypefloat%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%98%E8%A6%81%E6%94%B9%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">10.</span> <span class="nav-text">十、astype(float)：为什么还要改数据类型？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%81%E4%B8%80np.stackr-g-b-axis2%E4%B8%89%E5%BC%A0%E4%BA%8C%E7%BB%B4%E8%A1%A8%E6%80%8E%E4%B9%88%E5%8F%98%E6%88%90%E4%B8%80%E5%BC%A0%E5%BD%A9%E8%89%B2%E5%9B%BE"><span class="nav-number">11.</span> <span class="nav-text">十一、np.stack((R, G, B), axis&#x3D;2)：三张二维表怎么变成一张彩色图？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%81%E4%BA%8Cuint8-%E5%92%8C-image.fromarray%E4%B8%BA%E4%BB%80%E4%B9%88%E6%9C%80%E5%90%8E%E4%B8%80%E5%AE%9A%E8%A6%81%E4%B9%98-255"><span class="nav-number">12.</span> <span class="nav-text">十二、uint8
+和 Image.fromarray：为什么最后一定要乘 255？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%9C%E8%89%B2%E5%87%BD%E6%95%B0%E8%BE%93%E5%87%BA%E7%9A%84%E6%98%AF-0-%E5%88%B0-1-%E9%99%84%E8%BF%91%E7%9A%84%E6%B5%AE%E7%82%B9%E6%95%B0"><span class="nav-number">12.1.</span> <span class="nav-text">12.1 颜色函数输出的是 0 到
+1 附近的浮点数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E5%83%8F%E5%83%8F%E7%B4%A0%E9%80%9A%E5%B8%B8%E8%A6%81%E7%94%A8-uint8"><span class="nav-number">12.2.</span> <span class="nav-text">12.2 图像像素通常要用
+uint8</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#image.fromarray-%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88"><span class="nav-number">12.3.</span> <span class="nav-text">12.3 Image.fromarray
+做了什么？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%81%E4%B8%89%E4%B8%BA%E4%BB%80%E4%B9%88%E7%A8%8B%E5%BA%8F%E9%87%8C%E7%94%A8%E4%BA%86-jit"><span class="nav-number">13.</span> <span class="nav-text">十三、为什么程序里用了
+@jit？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%81%E5%9B%9B%E6%8A%8A%E5%8E%9F%E6%96%87%E4%BB%B6%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E7%9F%A5%E8%AF%86%E7%82%B9%E6%94%BE%E5%9B%9E%E7%A8%8B%E5%BA%8F%E4%B8%8A%E4%B8%8B%E6%96%87%E9%87%8C%E9%87%8D%E6%96%B0%E7%90%86%E8%A7%A3"><span class="nav-number">14.</span> <span class="nav-text">十四、把原文件中的函数知识点，放回程序上下文里重新理解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#range"><span class="nav-number">14.1.</span> <span class="nav-text">14.1 range</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#real-%E5%92%8C-imag"><span class="nav-number">14.2.</span> <span class="nav-text">14.2 real 和 imag</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ogrid"><span class="nav-number">14.3.</span> <span class="nav-text">14.3 ogrid</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%BF%E6%92%AD%E6%9C%BA%E5%88%B6"><span class="nav-number">14.4.</span> <span class="nav-text">14.4 广播机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#frompyfunc"><span class="nav-number">14.5.</span> <span class="nav-text">14.5 frompyfunc</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#asarray"><span class="nav-number">14.6.</span> <span class="nav-text">14.6 asarray</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#astype"><span class="nav-number">14.7.</span> <span class="nav-text">14.7 astype</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#stack"><span class="nav-number">14.8.</span> <span class="nav-text">14.8 stack</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#image.fromarray"><span class="nav-number">14.9.</span> <span class="nav-text">14.9 Image.fromarray</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#uint8"><span class="nav-number">14.10.</span> <span class="nav-text">14.10 uint8</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%81%E4%BA%94%E5%A6%82%E6%9E%9C%E4%B8%8D%E7%94%A8-ogrid%E8%83%BD%E4%B8%8D%E8%83%BD%E5%86%99%E5%BD%93%E7%84%B6%E8%83%BD%E4%BD%86%E4%BC%9A%E7%AC%A8%E5%BE%88%E5%A4%9A"><span class="nav-number">15.</span> <span class="nav-text">十五、如果不用
+ogrid，能不能写？当然能，但会笨很多</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%81%E5%85%AD%E8%AF%BB%E8%BF%99%E6%AE%B5%E7%A8%8B%E5%BA%8F%E6%97%B6%E6%9C%80%E5%AE%B9%E6%98%93%E5%8D%A1%E4%BD%8F%E7%9A%84%E4%B8%89%E4%B8%AA%E5%9C%B0%E6%96%B9"><span class="nav-number">16.</span> <span class="nav-text">十六、读这段程序时最容易卡住的三个地方</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%A1%E7%82%B9%E4%B8%80%E4%B8%BA%E4%BB%80%E4%B9%88-height-1j-%E4%B8%8D%E6%98%AF%E8%99%9A%E6%95%B0%E6%AD%A5%E9%95%BF"><span class="nav-number">16.1.</span> <span class="nav-text">16.1 卡点一：为什么
+height * 1j 不是虚数步长？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%A1%E7%82%B9%E4%BA%8C%E4%B8%BA%E4%BB%80%E4%B9%88-x-%E5%92%8C-y-%E5%BD%A2%E7%8A%B6%E4%B8%8D%E4%B8%80%E6%A0%B7%E8%BF%98%E8%83%BD%E7%9B%B8%E5%8A%A0"><span class="nav-number">16.2.</span> <span class="nav-text">16.2 卡点二：为什么
+x 和 y 形状不一样还能相加？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%A1%E7%82%B9%E4%B8%89%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E4%B8%80%E4%B8%AA%E5%83%8F%E7%B4%A0%E4%B8%80%E4%B8%AA%E5%83%8F%E7%B4%A0%E5%9C%B0%E5%BE%AA%E7%8E%AF"><span class="nav-number">16.3.</span> <span class="nav-text">16.3
+卡点三：为什么不一个像素一个像素地循环？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%81%E4%B8%83%E4%BB%8E%E5%87%BD%E6%95%B0%E6%B8%85%E5%8D%95%E5%88%B0%E7%A8%8B%E5%BA%8F%E6%80%9D%E7%BB%B4%E8%BF%99%E6%AE%B5-mandelbrot-%E4%BB%A3%E7%A0%81%E7%9C%9F%E6%AD%A3%E6%95%99%E4%BC%9A%E6%88%91%E4%BB%AC%E7%9A%84%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">17.</span> <span class="nav-text">十七、从“函数清单”到“程序思维”：这段
+Mandelbrot 代码真正教会我们的是什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E6%8A%8A%E6%95%B0%E5%AD%A6%E5%AF%B9%E8%B1%A1%E7%A6%BB%E6%95%A3%E5%8C%96"><span class="nav-number">17.1.</span> <span class="nav-text">17.1 先把数学对象离散化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%8D%E6%8A%8A%E5%8D%95%E7%82%B9%E8%A7%84%E5%88%99%E6%8E%A8%E5%B9%BF%E6%88%90%E6%95%B4%E5%BC%A0%E7%BD%91%E6%A0%BC%E7%9A%84%E8%A7%84%E5%88%99"><span class="nav-number">17.2.</span> <span class="nav-text">17.2
+再把单点规则推广成整张网格的规则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E5%90%8E%E6%8A%8A%E6%8A%BD%E8%B1%A1%E7%BB%93%E6%9E%9C%E7%BF%BB%E8%AF%91%E6%88%90%E5%8F%AF%E8%A7%86%E5%8C%96%E7%BB%93%E6%9E%9C"><span class="nav-number">17.3.</span> <span class="nav-text">17.3
+最后把抽象结果翻译成可视化结果</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%81%E5%85%AB%E7%BB%99%E5%88%9D%E5%AD%A6%E8%80%85%E7%9A%84%E4%B8%80%E4%B8%AA%E6%9C%80%E7%AE%80%E7%90%86%E8%A7%A3%E7%89%88%E6%9C%AC"><span class="nav-number">18.</span> <span class="nav-text">十八、给初学者的一个最简理解版本</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%81%E4%B9%9D%E7%BB%93%E8%AF%AD"><span class="nav-number">19.</span> <span class="nav-text">十九、结语</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%99%84%E6%B3%A8%E9%87%8A%E7%89%88%E4%BB%A3%E7%A0%81"><span class="nav-number">20.</span> <span class="nav-text">附：注释版代码</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -197,12 +218,12 @@ uint8 数组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="绘制mandelbrot集时所用到函数逐个解析 | Hexo">
+      <meta itemprop="name" content="无尽边界：Mandelbrot 集之美 | Hexo">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          绘制mandelbrot集时所用到函数逐个解析
+          无尽边界：Mandelbrot 集之美
         </h1>
 
         <div class="post-meta-container">
@@ -220,7 +241,7 @@ uint8 数组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-05-14 10:42:25" itemprop="dateModified" datetime="2025-05-14T10:42:25+08:00">2025-05-14</time>
+      <time title="Modified: 2026-04-23 16:34:21" itemprop="dateModified" datetime="2026-04-23T16:34:21+08:00">2026-04-23</time>
     </span>
 
   
@@ -232,425 +253,822 @@ uint8 数组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link"
     
     
     
-    <div class="post-body" itemprop="articleBody"><h2 id="一.-range-函数">一. <code>range</code> 函数</h2>
-<h3 id="语法">语法</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">range</span>(<span class="title class_ inherited__">object</span>)</span><br><span class="line"> |  <span class="built_in">range</span>(stop) -&gt; <span class="built_in">range</span> <span class="built_in">object</span></span><br><span class="line"> |  <span class="built_in">range</span>(start, stop[, step]) -&gt; <span class="built_in">range</span> <span class="built_in">object</span></span><br></pre></td></tr></table></figure>
-<h3 id="说明">说明</h3>
+    <div class="post-body" itemprop="articleBody"><p><img src="/images/mandelbrot/mandelbrot4.png" alt="图Koch3-xuehua" style="width: 100%;"></p>
+<p>很多人第一次看到 Mandelbrot 集时，都会被它的形状震住：</p>
 <ul>
-<li><code>range(start, stop[, step])</code>：返回一个生成从
-<code>start</code>（包含）到
-<code>stop</code>（不包含）的整数序列的对象，步长为
-<code>step</code>。</li>
-<li><code>range(start, stop)</code>：生成从 <code>start</code> 到
-<code>stop-1</code> 的整数序列。</li>
-<li><code>range(stop)</code>：<code>start</code> 默认为
-0，<code>stop</code> 是必须指定的。生成从 0 到 <code>stop-1</code>
-的整数序列。</li>
-<li><code>step</code> 可以是正数（递增）或负数（递减）。</li>
+<li>远看像一只黑色的“心形甲虫”；</li>
+<li>近看边界卷曲、分叉、重复；</li>
+<li>再继续放大，新的结构还会不断冒出来。</li>
 </ul>
-<h3 id="示例">示例</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">range</span>(<span class="number">4</span>)  <span class="comment"># 生成 [0, 1, 2, 3]</span></span><br><span class="line"><span class="built_in">range</span>(<span class="number">1</span>, <span class="number">5</span>)  <span class="comment"># 生成 [1, 2, 3, 4]</span></span><br><span class="line"><span class="built_in">range</span>(<span class="number">1</span>, <span class="number">10</span>, <span class="number">2</span>)  <span class="comment"># 生成 [1, 3, 5, 7, 9]</span></span><br></pre></td></tr></table></figure>
-<p>在 Python 中，<code>range(4)</code> 返回的是一个 <strong>range
-对象</strong>（迭代器），而不是直接输出一个列表。如果你希望显示
-<code>range(4)</code>
-的内容，可以将其转换为列表或使用循环打印。以下是几种方法：</p>
-<h5 id="方法-1转换为-list-显示">方法 1：转换为 <code>list</code>
-显示</h5>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">4</span>)))   <span class="comment">#输出 [0, 1, 2, 3]</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li><code>list(range(4))</code> 将 <code>range(4)</code>
-转换为列表，显示所有元素。</li>
-</ul>
-<h5 id="方法-2使用-for-循环打印">方法 2：使用 <code>for</code>
-循环打印</h5>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> num <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>):</span><br><span class="line">    <span class="built_in">print</span>(num, end=<span class="string">&#x27; &#x27;</span>)  <span class="comment"># 用空格分隔，输出 0 1 2 3</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>直接遍历 <code>range(4)</code> 并逐个打印。</li>
-</ul>
-<h5 id="方法-3解包-range-对象">方法 3：解包 <code>range</code> 对象</h5>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(*<span class="built_in">range</span>(<span class="number">4</span>))  <span class="comment"># 使用 * 解包，输出 0 1 2 3</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li><code>*range(4)</code> 将 <code>range(4)</code>
-解包为独立参数，<code>print()</code> 默认用空格分隔。</li>
-</ul>
-<h5 id="方法-4拼接字符串">方法 4：拼接字符串</h5>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&#x27; &#x27;</span>.join(<span class="built_in">map</span>(<span class="built_in">str</span>, <span class="built_in">range</span>(<span class="number">4</span>))))  <span class="comment"># 使用 * 解包，输出 0 1 2 3</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li><code>map(str, range(4))</code>
-将数字转为字符串，<code>join()</code> 拼接成一行。</li>
-</ul>
-<h5 id="为什么-range4-不直接显示数字">为什么 <code>range(4)</code>
-不直接显示数字？</h5>
-<ul>
-<li>Python 3 的 <code>range()</code> 返回的是一个
-<strong>惰性序列</strong>（按需生成值），节省内存。<br />
-</li>
-<li>直接打印 <code>range(4)</code> 会显示对象信息，而非内容：
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="built_in">range</span>(<span class="number">4</span>))  <span class="comment"># 输出: range(0, 4)</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-<h2 id="二.-real-和-imag-属性">二. <code>real</code> 和
-<code>imag</code> 属性</h2>
-<h3 id="说明-1">说明</h3>
-<ul>
-<li><code>real</code>：获取复数的实部。</li>
-<li><code>imag</code>：获取复数的虚部。</li>
-</ul>
-<h3 id="示例-1">示例</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">z = <span class="number">3</span> + <span class="number">4j</span></span><br><span class="line"><span class="built_in">print</span>(z.real)  <span class="comment"># 输出 3.0</span></span><br><span class="line"><span class="built_in">print</span>(z.imag)  <span class="comment"># 输出 4.0</span></span><br></pre></td></tr></table></figure>
-<h2 id="三.-ogrid-与-mgrid">三. <code>ogrid</code> 与
-<code>mgrid</code></h2>
-<h3 id="语法-1">语法</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">numpy.ogrid[start:stop:step, start:stop:step, ...]</span><br><span class="line">numpy.mgrid[start:stop:step, start:stop:step, ...]</span><br></pre></td></tr></table></figure>
-<ul>
-<li><code>start</code>：起始值（包含）。</li>
-<li><code>stop</code>：结束值（不包含）。</li>
-<li><code>step</code>：步长。</li>
-<li><h3 id="说明-2">说明</h3></li>
-<li><code>ogrid</code>：生成稀疏数组（节省内存）。</li>
-<li><code>mgrid</code>：生成密集数组（完全展开的网格）。</li>
-</ul>
-<h3 id="示例-2">示例</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># ogrid 示例</span></span><br><span class="line">x = np.ogrid[<span class="number">0</span>:<span class="number">5</span>]</span><br><span class="line"><span class="built_in">print</span>(x)  <span class="comment"># 输出: [0 1 2 3 4]</span></span><br><span class="line"></span><br><span class="line">x, y = np.ogrid[<span class="number">0</span>:<span class="number">3</span>, <span class="number">0</span>:<span class="number">3</span>]</span><br><span class="line"><span class="built_in">print</span>(x)  <span class="comment"># 输出: [[0] [1] [2]]</span></span><br><span class="line"><span class="built_in">print</span>(y)  <span class="comment"># 输出: [[0 1 2]]</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># mgrid 示例</span></span><br><span class="line">x, y = np.mgrid[<span class="number">0</span>:<span class="number">3</span>, <span class="number">0</span>:<span class="number">3</span>]</span><br><span class="line"><span class="built_in">print</span>(x)  <span class="comment"># 输出: [[0 0 0] [1 1 1] [2 2 2]]</span></span><br><span class="line"><span class="built_in">print</span>(y)  <span class="comment"># 输出: [[0 1 2] [0 1 2] [0 1 2]]</span></span><br></pre></td></tr></table></figure>
-<p>以下两个程序，通过画图可以直观显示出ogrid和mgrid这两个函数在生成数据集时的差异。
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">x,y=np.ogrid[<span class="number">0</span>:<span class="number">5</span>,<span class="number">0</span>:<span class="number">5</span>]</span><br><span class="line">plt.scatter(x,y)</span><br><span class="line">plt.show()</span><br><span class="line">plt.savefig(<span class="string">&#x27;ogrid-draw.png&#x27;</span>)</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">x,y=np.mgrid[<span class="number">0</span>:<span class="number">5</span>,<span class="number">0</span>:<span class="number">5</span>]</span><br><span class="line">plt.scatter(x,y)</span><br><span class="line">plt.title(<span class="string">&quot;5x5 Grid Scatter Plot&quot;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&quot;X-axis&quot;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&quot;Y-axis&quot;</span>)</span><br><span class="line">plt.show()</span><br><span class="line">plt.savefig(<span class="string">&#x27;mgrid-draw.png&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<h2 id="四.-numpy.asarray-与-numpy.array">四. <code>numpy.asarray</code>
-与 <code>numpy.array</code></h2>
-<h3 id="语法-2">语法</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">numpy.asarray(a, dtype=<span class="literal">None</span>, order=<span class="literal">None</span>)</span><br></pre></td></tr></table></figure>
-<ul>
-<li><strong><code>a</code></strong>:
-输入数据，可以是列表、元组、数组或其他可转换为数组的对象。</li>
-<li><strong><code>dtype</code></strong>:
-可选参数，指定数组的数据类型（如 <code>float</code>、<code>int</code>
-等）。</li>
-<li><strong><code>order</code></strong>:
-可选参数，指定数组的内存布局（如 <code>'C'</code> 表示 C
-风格，<code>'F'</code> 表示 Fortran 风格）。</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">numpy.array(<span class="built_in">object</span>, dtype=<span class="literal">None</span>, copy=<span class="literal">True</span>, order=<span class="string">&#x27;K&#x27;</span>, subok=<span class="literal">False</span>, ndmin=<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-<ul>
-<li><strong><code>object</code></strong>:
-<ul>
-<li><strong>类型</strong>:
-任何可迭代对象（如列表、元组、其他数组等）。</li>
-<li><strong>作用</strong>: 输入数据，用于创建 NumPy 数组。</li>
-<li><strong>示例</strong>: <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">numpy.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])  <span class="comment"># 从列表创建数组</span></span><br><span class="line">numpy.array((<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>))  <span class="comment"># 从元组创建数组</span></span><br></pre></td></tr></table></figure></li>
-</ul></li>
-<li><strong><code>dtype</code></strong>:
-<ul>
-<li><strong>类型</strong>: 数据类型对象（如
-<code>int</code>、<code>float</code>、<code>str</code> 等）或字符串（如
-<code>'int32'</code>、<code>'float64'</code>）。</li>
-<li><strong>作用</strong>: 指定数组的数据类型。如果未指定，NumPy
-会自动推断数据类型。</li>
-<li><strong>示例</strong>: <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">numpy.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], dtype=<span class="built_in">float</span>)  <span class="comment"># 指定为浮点数类型</span></span><br><span class="line">numpy.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], dtype=<span class="string">&#x27;int32&#x27;</span>)  <span class="comment"># 指定为 32 位整数类型</span></span><br></pre></td></tr></table></figure></li>
-</ul></li>
-<li><strong><code>copy</code></strong>:
-<ul>
-<li><strong>类型</strong>: 布尔值（<code>True</code> 或
-<code>False</code>）。</li>
-<li><strong>作用</strong>: 是否创建输入数据的副本。如果为
-<code>True</code>（默认），则总是创建新数组；如果为
-<code>False</code>，则尽可能避免复制数据（仅在必要时复制）。</li>
-<li><strong>示例</strong>: <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line">b = numpy.array(a, copy=<span class="literal">False</span>)  <span class="comment"># 尽可能不复制数据</span></span><br></pre></td></tr></table></figure></li>
-</ul></li>
-<li><strong><code>order</code></strong>:
-<ul>
-<li><strong>类型</strong>:
-字符串（<code>'C'</code>、<code>'F'</code>、<code>'A'</code> 或
-<code>'K'</code>）。</li>
-<li><strong>作用</strong>: 控制数组的内存布局。
-<ul>
-<li><code>'C'</code>: C 风格（行优先）。</li>
-<li><code>'F'</code>: Fortran 风格（列优先）。</li>
-<li><code>'A'</code>: 如果输入是 Fortran 风格的数组，则返回 Fortran
-风格；否则返回 C 风格。</li>
-<li><code>'K'</code>: 尽可能保持输入数据的布局（默认）。</li>
-</ul></li>
-<li><strong>示例</strong>: <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">numpy.array([[<span class="number">1</span>, <span class="number">2</span>], [<span class="number">3</span>, <span class="number">4</span>]], order=<span class="string">&#x27;F&#x27;</span>)  <span class="comment"># 列优先存储</span></span><br></pre></td></tr></table></figure></li>
-</ul></li>
-<li><strong><code>subok</code></strong>:
-<ul>
-<li><strong>类型</strong>: 布尔值（<code>True</code> 或
-<code>False</code>）。</li>
-<li><strong>作用</strong>: 是否返回子类数组。如果为
-<code>True</code>，则返回输入对象的子类数组；如果为
-<code>False</code>（默认），则返回基类 <code>ndarray</code>。</li>
-<li><strong>示例</strong>: <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyArray</span>(numpy.ndarray):</span><br><span class="line"><span class="keyword">pass</span></span><br><span class="line">a = numpy.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]).view(MyArray)</span><br><span class="line">b = numpy.array(a, subok=<span class="literal">True</span>)  <span class="comment"># 返回 MyArray 类型</span></span><br></pre></td></tr></table></figure></li>
-</ul></li>
-<li><strong><code>ndmin</code></strong>:
-<ul>
-<li><strong>类型</strong>: 整数。</li>
-<li><strong>作用</strong>:
-指定返回数组的最小维度。如果输入数据的维度小于
-<code>ndmin</code>，则会自动补全维度。</li>
-<li><strong>示例</strong>: <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">numpy.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], ndmin=<span class="number">2</span>)  <span class="comment"># 返回二维数组</span></span><br></pre></td></tr></table></figure></li>
-</ul></li>
-</ul>
-<h3 id="说明-3">说明</h3>
-<ul>
-<li><code>numpy.asarray</code>：将输入转换为 <code>numpy</code>
-数组，如果输入已经是数组，则不创建副本。</li>
-<li><code>numpy.array</code>：总是创建一个新的数组副本。</li>
-</ul>
-<h3 id="示例-3">示例</h3>
-<h4
-id="示例1将列表转换为数组输入已经是数组">示例1：将列表转换为数组+输入已经是数组</h4>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">data=[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]</span><br><span class="line"><span class="comment">#asarray示例</span></span><br><span class="line">arr=np.asarray(data)</span><br><span class="line"><span class="built_in">print</span>(arr)<span class="comment"># 输出: [1 2 3 4]</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(arr)) <span class="comment">#输出&lt;class &#x27;numpy.ndarray&#x27;&gt;，表示 N-dimensional array（N 维数组），简称 ndarray</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#array示例</span></span><br><span class="line">brr=np.array(data)<span class="comment"># 输出: [1 2 3 4]</span></span><br><span class="line"><span class="built_in">print</span>(brr)</span><br><span class="line"></span><br><span class="line"><span class="comment">#输入已经是数组</span></span><br><span class="line">crr=np.asarray(brr)</span><br><span class="line"><span class="built_in">print</span>(crr <span class="keyword">is</span> brr)<span class="comment">#输出: True（有创建新副本）</span></span><br><span class="line"></span><br><span class="line">drr=np.array(brr)</span><br><span class="line"><span class="built_in">print</span>(drr <span class="keyword">is</span> brr)<span class="comment">#输出: False（创建了新副本）</span></span><br></pre></td></tr></table></figure>
-<h4 id="示例-2指定数据类型">示例 2：指定数据类型</h4>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">data = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line">arr = np.asarray(data, dtype=<span class="built_in">float</span>)</span><br><span class="line"><span class="built_in">print</span>(arr)  <span class="comment"># 输出: [1. 2. 3. 4.]</span></span><br></pre></td></tr></table></figure>
-<h2 id="五.-numpy.frompyfunc">五. <code>numpy.frompyfunc</code></h2>
-<h3 id="语法-3">语法</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">numpy.frompyfunc(func, nin, nout)</span><br></pre></td></tr></table></figure>
-<h3 id="说明-4">说明</h3>
-<ul>
-<li><code>frompyfunc</code> 是 NumPy 库中的一个函数，用于将普通的 Python
-函数转换为 <strong>通用函数（ufunc）</strong>。通用函数是 NumPy
-中的一种特殊函数，可以对NumPy数组进行逐元素操作，并支持<strong>广播机制</strong>。
-<strong>返回对象数组</strong>：默认情况下，<code>frompyfunc</code>
-返回的对象是 <code>dtype=object</code>
-的数组。如果需要特定类型，可以使用 <code>np.vectorize</code>。</li>
-</ul>
-<h3 id="示例-4">示例</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义一个普通的 Python 函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">my_add</span>(<span class="params">x, y</span>):</span><br><span class="line">    <span class="keyword">return</span> x + y</span><br><span class="line">    </span><br><span class="line"><span class="comment"># 将 Python 函数转换为 ufunc</span></span><br><span class="line">my_ufunc = np.frompyfunc(my_add, <span class="number">2</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 ufunc 操作 NumPy 数组</span></span><br><span class="line">result = my_ufunc(np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]), np.array([<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]))</span><br><span class="line"><span class="built_in">print</span>(result)  <span class="comment"># 输出: [5 7 9]</span></span><br></pre></td></tr></table></figure>
-<h3 id="与-np.vectorize-的区别">与 <code>np.vectorize</code> 的区别</h3>
-<ul>
-<li><code>np.vectorize</code> 是另一个类似的函数，也可以将 Python
-函数转换为
-ufunc，但它提供了更多的选项（如指定输出类型）。<code>frompyfunc</code>
-更底层，性能稍高，但功能较少。</li>
-</ul>
-<h2 id="六.-广播机制">六. 广播机制</h2>
-<h3 id="说明-5">说明</h3>
-<ul>
-<li>广播机制允许在不同形状的数组之间进行算术运算，自动扩展较小的数组以匹配较大数组的形状。</li>
-</ul>
-<h3 id="广播规则">广播规则</h3>
+<p>它看起来非常神秘，但如果我们站在“程序是怎么画出它的”这个角度去看，事情其实很清楚：</p>
 <ol type="1">
-<li><strong>维度对齐</strong>：从数组的最后一个维度（最右边）开始，依次比较两个数组的维度大小。</li>
-<li><strong>维度兼容</strong>：两个数组的维度大小在以下情况下是兼容的：
-<ul>
-<li>两个维度的大小相等。</li>
-<li>其中一个维度的大小为 1。</li>
-</ul></li>
-<li><strong>扩展维度</strong>：如果两个数组的维度不匹配，NumPy
-会将大小为 1 的维度扩展为与另一个数组对应维度的大小相同。</li>
-<li><strong>维度不足</strong>：如果两个数组的维度数不同，NumPy
-会在形状较小的数组前面补 1，直到两个数组的维度数相同。</li>
+<li>先在复平面上取很多点；</li>
+<li>对每个点做同样的迭代；</li>
+<li>根据这个点“逃逸得有多快”给它上色；</li>
+<li>最后把结果保存成一张图片。</li>
 </ol>
-<h3 id="示例-5">示例</h3>
-<h4 id="示例-1标量与数组的广播">示例 1：标量与数组的广播</h4>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">a = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line">b = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 标量 b 被广播为 [2, 2, 2]，然后与 a 相加</span></span><br><span class="line">result = a + b</span><br><span class="line"><span class="built_in">print</span>(result)  <span class="comment"># 输出: [3 4 5]</span></span><br></pre></td></tr></table></figure>
-<h4 id="示例-2不同形状数组的广播">示例 2：不同形状数组的广播</h4>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">a = np.array([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]])  <span class="comment"># 形状: (2, 3)</span></span><br><span class="line">b = np.array([<span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span>])            <span class="comment"># 形状: (3,)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># b 被广播为 [[10, 20, 30], [10, 20, 30]]，然后与 a 相加</span></span><br><span class="line">result = a + b</span><br><span class="line"><span class="built_in">print</span>(result)</span><br><span class="line"><span class="comment"># 输出:</span></span><br><span class="line"><span class="comment"># [[11 22 33]</span></span><br><span class="line"><span class="comment">#  [14 25 36]]</span></span><br></pre></td></tr></table></figure>
-<h4 id="示例-3维度不足的广播">示例 3：维度不足的广播</h4>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">a = np.array([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>]])  <span class="comment"># 形状: (3, 1)</span></span><br><span class="line">b = np.array([<span class="number">10</span>, <span class="number">20</span>])         <span class="comment"># 形状: (2,)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># a 被广播为 [[1, 1], [2, 2], [3, 3]]</span></span><br><span class="line"><span class="comment"># b 被广播为 [[10, 20], [10, 20], [10, 20]]</span></span><br><span class="line">result = a + b</span><br><span class="line"><span class="built_in">print</span>(result)</span><br><span class="line"><span class="comment"># 输出:</span></span><br><span class="line"><span class="comment"># [[11 21]</span></span><br><span class="line"><span class="comment">#  [12 22]</span></span><br><span class="line"><span class="comment">#  [13 23]]</span></span><br></pre></td></tr></table></figure>
-<h3 id="广播的限制">广播的限制</h3>
-<p>广播机制虽然强大，但并非所有形状的数组都可以广播。如果两个数组的形状在任何维度上都不兼容（即既不相等，也不为
-1），则会引发 <code>ValueError</code>。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">a = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])  <span class="comment"># 形状: (3,)</span></span><br><span class="line">b = np.array([<span class="number">10</span>, <span class="number">20</span>])   <span class="comment"># 形状: (2,)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 无法广播，因为最后一个维度的大小不兼容</span></span><br><span class="line">result = a + b  <span class="comment"># 引发 ValueError</span></span><br></pre></td></tr></table></figure>
-<h2 id="七.-astype">七. <code>astype</code></h2>
-<h3 id="语法-4">语法</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ndarray.astype(dtype, order=<span class="string">&#x27;K&#x27;</span>, casting=<span class="string">&#x27;unsafe&#x27;</span>, subok=<span class="literal">True</span>, copy=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+<p>这篇文章的目标，不是只给出一个能运行的 Mandelbrot
+程序，而是把这段程序背后的每一步都讲透，尤其是最关键也最容易让人迷惑的一步：</p>
+<blockquote>
+<p><strong>程序到底是怎么在复平面里生成一整张图所需要的那些点的？</strong></p>
+</blockquote>
+<p>这一步理解了，Mandelbrot 集的程序就算真正入门了。</p>
+<hr />
+<h1 id="一先看完整程序">一、先看完整程序</h1>
+<p>我们先把完整代码摆出来，后面再一段一段拆开。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span></span><br><span class="line"><span class="string">A fast Mandelbrot set wallpaper renderer</span></span><br><span class="line"><span class="string">~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> numba <span class="keyword">import</span> jit  <span class="comment"># type: ignore</span></span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line">MAXITERS = <span class="number">200</span></span><br><span class="line">RADIUS = <span class="number">100</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@jit</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">color</span>(<span class="params">z, i</span>):</span><br><span class="line">    v = np.log2(i + <span class="number">1</span> - np.log2(np.log2(<span class="built_in">abs</span>(z)))) / <span class="number">5</span></span><br><span class="line">    <span class="keyword">if</span> v &lt; <span class="number">1.0</span>:</span><br><span class="line">        <span class="keyword">return</span> v**<span class="number">4</span>, v**<span class="number">2.5</span>, v</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        v = <span class="built_in">max</span>(<span class="number">0</span>, <span class="number">2</span> - v)</span><br><span class="line">        <span class="keyword">return</span> v, v**<span class="number">1.5</span>, v**<span class="number">3</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@jit</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">iterate</span>(<span class="params">c</span>):</span><br><span class="line">    z = <span class="number">0j</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(MAXITERS):</span><br><span class="line">        <span class="keyword">if</span> z.real * z.real + z.imag * z.imag &gt; RADIUS:</span><br><span class="line">            <span class="keyword">return</span> color(z, i)</span><br><span class="line">        z = z * z + c</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>(<span class="params">xmin, xmax, ymin, ymax, width, height</span>):</span><br><span class="line">    y, x = np.ogrid[ymax:ymin:height * <span class="number">1j</span>, xmin:xmax:width * <span class="number">1j</span>]</span><br><span class="line">    z = x + y * <span class="number">1j</span></span><br><span class="line">    R, G, B = np.asarray(np.frompyfunc(iterate, <span class="number">1</span>, <span class="number">3</span>)(z)).astype(<span class="built_in">float</span>)</span><br><span class="line">    img = np.stack((R, G, B), axis=<span class="number">2</span>)</span><br><span class="line">    Image.fromarray(np.uint8(img * <span class="number">255</span>)).save(<span class="string">&quot;mandelbrot4.png&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main(-<span class="number">2.1</span>, <span class="number">0.8</span>, -<span class="number">1.16</span>, <span class="number">1.16</span>, <span class="number">800</span>, <span class="number">640</span>)</span><br></pre></td></tr></table></figure>
+<p>别急着被
+<code>ogrid</code>、<code>frompyfunc</code>、<code>stack</code>
+这些名字吓到。实际上，这段程序的主线极其工整：</p>
 <ul>
-<li><strong><code>dtype</code></strong>: 目标数据类型（如
-<code>int</code>、<code>float</code>、<code>str</code> 等）。</li>
-<li><strong><code>order</code></strong>: 控制内存布局（可选，默认
-<code>'K'</code>）。</li>
-<li><strong><code>casting</code></strong>:
-控制类型转换的规则（可选，默认 <code>'unsafe'</code>）。</li>
-<li><strong><code>subok</code></strong>: 是否返回子类（可选，默认
-<code>True</code>）。</li>
-<li><strong><code>copy</code></strong>: 是否创建副本（可选，默认
-<code>True</code>）。</li>
+<li><code>main()</code> 先定义观察窗口；</li>
+<li>再生成复平面中的采样网格；</li>
+<li>然后对每个采样点调用 <code>iterate()</code>；</li>
+<li><code>iterate()</code> 判断这个点会不会逃逸；</li>
+<li><code>color()</code> 根据逃逸情况返回 RGB 颜色；</li>
+<li>最后把三张颜色通道表合成图像并保存。</li>
 </ul>
-<h3 id="说明-6">说明</h3>
+<p>所以，我们真正要做的，就是把这一条主线看清楚。</p>
+<hr />
+<h1 id="二mandelbrot-集到底是什么">二、Mandelbrot 集到底是什么？</h1>
+<p>Mandelbrot 集研究的是下面这个迭代：</p>
+<p><span class="math display">\[
+z_{n+1} = z_n^2 + c, \qquad z_0 = 0
+\]</span></p>
+<p>这里：</p>
 <ul>
-<li><code>astype</code>
-的主要作用是改变数组的数据类型。例如，将整数数组转换为浮点数数组，或者将浮点数数组转换为字符串数组等。</li>
+<li><code>c</code> 是复平面上的一个点；</li>
+<li><code>z</code> 是从 <code>0</code> 开始不断迭代出来的复数序列。</li>
 </ul>
-<h3 id="示例-6">示例</h3>
-<h4 id="示例1.-将整数数组转换为浮点数数组">示例1.
-将整数数组转换为浮点数数组</h4>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">a = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>])</span><br><span class="line">b = a.astype(<span class="built_in">float</span>)  <span class="comment"># 将整数数组转换为浮点数数组</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(b)             <span class="comment"># 输出: [1. 2. 3. 4.]</span></span><br><span class="line"><span class="built_in">print</span>(b.dtype)       <span class="comment"># 输出: float64</span></span><br></pre></td></tr></table></figure>
-<h4 id="示例2.-将浮点数数组转换为整数数组">示例2.
-将浮点数数组转换为整数数组</h4>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">a = np.array([<span class="number">1.5</span>, <span class="number">2.7</span>, <span class="number">3.9</span>])</span><br><span class="line">b = a.astype(<span class="built_in">int</span>)    <span class="comment"># 将浮点数数组转换为整数数组（小数部分会被截断）</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(b)             <span class="comment"># 输出: [1 2 3]</span></span><br><span class="line"><span class="built_in">print</span>(b.dtype)       <span class="comment"># 输出: int64</span></span><br></pre></td></tr></table></figure>
-<h4 id="示例3.-将数组转换为字符串类型">示例3.
-将数组转换为字符串类型</h4>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">a = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line">b = a.astype(<span class="built_in">str</span>)    <span class="comment"># 将数组转换为字符串类型</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(b)             <span class="comment"># 输出: [&#x27;1&#x27; &#x27;2&#x27; &#x27;3&#x27;]</span></span><br><span class="line"><span class="built_in">print</span>(b.dtype)       <span class="comment"># 输出: &lt;U21 (表示长度为 21 的 Unicode 字符串)</span></span><br></pre></td></tr></table></figure>
-<h4 id="示例4.-指定数据类型">示例4. 指定数据类型</h4>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">a = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line">b = a.astype(np.float32)  <span class="comment"># 将数组转换为 32 位浮点数</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(b)             <span class="comment"># 输出: [1. 2. 3.]</span></span><br><span class="line"><span class="built_in">print</span>(b.dtype)       <span class="comment"># 输出: float32</span></span><br></pre></td></tr></table></figure>
-<h3 id="注意事项">注意事项</h3>
-<ol type="1">
-<li><strong>数据截断</strong>：如果将浮点数转换为整数，小数部分会被截断，而不是四舍五入。</li>
-<li><strong>内存占用</strong>：不同的数据类型占用的内存空间不同，转换时需要注意内存开销。</li>
-<li><strong>副本创建</strong>：默认情况下，<code>astype</code>
-会创建一个新的数组副本。如果不需要副本，可以设置
-<code>copy=False</code>，但前提是数据类型兼容。</li>
-</ol>
-<h2 id="八.-numpy.stack">八. <code>numpy.stack</code></h2>
-<h3 id="语法-5">语法</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">numpy.stack(arrays, axis=<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<p>我们关心的问题只有一个：</p>
+<blockquote>
+<p>对于某个给定的复数 <code>c</code>，从 <code>z=0</code>
+开始不断迭代，<code>z</code> 会不会越跑越远？</p>
+</blockquote>
+<p>如果它很快越跑越大，说明这个点在 Mandelbrot 集外面。
+如果它怎么迭代都不明显发散，我们就把它视为 Mandelbrot
+集内部，或者至少非常接近边界。</p>
+<p>于是，绘制 Mandelbrot 图，本质上就是：</p>
+<blockquote>
+<p><strong>把复平面切成很多很多个点，对每个点都问一遍：你会不会逃逸？</strong></p>
+</blockquote>
+<p>程序最终画出来的，并不是一个“神秘的形状”，而是一个巨大的“判定结果图”。</p>
+<hr />
+<h1 id="三程序整体到底在做什么">三、程序整体到底在做什么？</h1>
+<p>如果把整段代码抽象成一句话，那就是：</p>
+<blockquote>
+<p><strong>把图像中的每一个像素，映射为复平面中的一个复数点，然后检查这个点的迭代命运，最后把命运翻译成颜色。</strong></p>
+</blockquote>
+<p>这件事可以拆成五步：</p>
+<h2 id="第-1-步确定你想看复平面的哪一块">第 1
+步：确定你想看复平面的哪一块</h2>
+<p>程序最后调用：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">main(-<span class="number">2.1</span>, <span class="number">0.8</span>, -<span class="number">1.16</span>, <span class="number">1.16</span>, <span class="number">800</span>, <span class="number">640</span>)</span><br></pre></td></tr></table></figure>
+<p>这表示：</p>
 <ul>
-<li><strong><code>arrays</code></strong>:
-需要堆叠的数组序列（通常是一个列表或元组）。</li>
-<li><strong><code>axis</code></strong>: 指定沿哪个轴堆叠数组。默认是
-<code>axis=0</code>，表示沿着新的第一个维度堆叠。</li>
+<li>实部范围从 <code>-2.1</code> 到 <code>0.8</code></li>
+<li>虚部范围从 <code>-1.16</code> 到 <code>1.16</code></li>
+<li>图像大小是 <code>800 × 640</code></li>
 </ul>
-<h3 id="示例-7">示例</h3>
-<h4 id="示例1.-沿新轴堆叠一维数组">示例1. 沿新轴堆叠一维数组</h4>
-<p>垂直堆叠（按行合并，axis=0）</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">a = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line">b = np.array([<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 沿 axis=0 堆叠</span></span><br><span class="line">stacked = np.stack([a, b])</span><br><span class="line"><span class="built_in">print</span>(stacked)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[[1 2 3]</span><br><span class="line"> [4 5 6]]</span><br></pre></td></tr></table></figure>
+<p>也就是说，我们把复平面上的一个矩形窗口拿出来观察，然后把这个矩形离散成
+<code>800 × 640</code> 个采样位置。</p>
+<hr />
+<h2 id="第-2-步给每个像素分配一个复数坐标">第 2
+步：给每个像素分配一个复数坐标</h2>
+<p>核心代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">y, x = np.ogrid[ymax:ymin:height * <span class="number">1j</span>, xmin:xmax:width * <span class="number">1j</span>]</span><br><span class="line">z = x + y * <span class="number">1j</span></span><br></pre></td></tr></table></figure>
+<p>这一步是整段程序的灵魂，后面我们会单独用一整节讲透。</p>
+<hr />
+<h2 id="第-3-步对每个复数点做迭代">第 3 步：对每个复数点做迭代</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iterate(c)</span><br></pre></td></tr></table></figure>
+<p>对于每个 <code>c</code>，从 <code>z=0j</code> 开始，不断执行：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">z = z * z + c</span><br></pre></td></tr></table></figure>
+<p>一旦 <code>z</code> 变得足够大，就认为它已经逃逸。</p>
+<hr />
+<h2 id="第-4-步根据逃逸情况生成颜色">第 4 步：根据逃逸情况生成颜色</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">color(z, i)</span><br></pre></td></tr></table></figure>
+<p>它根据：</p>
 <ul>
-<li>这里 <code>a</code> 和 <code>b</code> 是一维数组，<code>stack</code>
-将它们沿新的第一个维度堆叠，形成一个二维数组。</li>
+<li>在第几步逃逸；</li>
+<li>逃逸时 <code>z</code> 的大小；</li>
 </ul>
-<h4 id="示例2.-沿-axis1-堆叠">示例2. 沿 axis=1 堆叠</h4>
-<p>水平堆叠（按列合并，axis=1）</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">stacked = np.stack([a, b], axis=<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(stacked)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[[1 4]</span><br><span class="line"> [2 5]</span><br><span class="line"> [3 6]]</span><br></pre></td></tr></table></figure>
+<p>来返回 <code>(R, G, B)</code> 三个颜色值。</p>
+<hr />
+<h2 id="第-5-步把颜色数组保存成图像">第 5 步：把颜色数组保存成图像</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">img = np.stack((R, G, B), axis=<span class="number">2</span>)</span><br><span class="line">Image.fromarray(np.uint8(img * <span class="number">255</span>)).save(<span class="string">&quot;mandelbrot4.png&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>最后把三张二维颜色表拼成一张 RGB 图像。</p>
+<hr />
+<h1
+id="四最关键的一步程序是怎么生成复平面中的点的">四、最关键的一步：程序是怎么生成复平面中的点的？</h1>
+<p>这一节要讲透彻，因为它决定了你到底有没有真正看懂这段程序。</p>
+<h2 id="图像像素和复平面点之间的对应关系">4.1
+图像像素和复平面点之间的对应关系</h2>
+<p>一张图像是一个矩形网格：</p>
 <ul>
-<li>这里 <code>a</code> 和 <code>b</code>
-沿第二个维度（<code>axis=1</code>）堆叠。</li>
+<li>横向有 <code>width</code> 个像素；</li>
+<li>纵向有 <code>height</code> 个像素。</li>
 </ul>
-<h4 id="示例3.-堆叠二维数组">示例3. 堆叠二维数组</h4>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">x = np.array([[<span class="number">1</span>, <span class="number">2</span>], [<span class="number">3</span>, <span class="number">4</span>]])</span><br><span class="line">y = np.array([[<span class="number">5</span>, <span class="number">6</span>], [<span class="number">7</span>, <span class="number">8</span>]])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 沿 axis=0 堆叠</span></span><br><span class="line">stacked = np.stack([x, y])</span><br><span class="line"><span class="built_in">print</span>(stacked)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[[[1 2]</span><br><span class="line">  [3 4]]</span><br><span class="line"></span><br><span class="line"> [[5 6]</span><br><span class="line">  [7 8]]]</span><br></pre></td></tr></table></figure>
+<p>复平面中的观察区域，也可以看成一个矩形：</p>
 <ul>
-<li>这里 <code>x</code> 和 <code>y</code> 是二维数组，<code>stack</code>
-将它们沿新的第一个维度堆叠，形成一个三维数组。</li>
+<li>横向对应复数的实部；</li>
+<li>纵向对应复数的虚部。</li>
 </ul>
-<h4 id="示例4.-沿-axis2-堆叠">示例4. 沿 axis=2 堆叠</h4>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">stacked = np.stack([x, y], axis=<span class="number">2</span>)</span><br><span class="line"><span class="built_in">print</span>(stacked)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[[[1 5]</span><br><span class="line">  [2 6]]</span><br><span class="line"></span><br><span class="line"> [[3 7]</span><br><span class="line">  [4 8]]]</span><br></pre></td></tr></table></figure>
+<p>所以最自然的映射就是：</p>
 <ul>
-<li>这里 <code>x</code> 和 <code>y</code>
-沿第三个维度（<code>axis=2</code>）堆叠。</li>
+<li>图像每一列，对应一个实部；</li>
+<li>图像每一行，对应一个虚部；</li>
+<li>行和列一组合，就得到一个复数 <code>c = 实部 + 虚部 * i</code>。</li>
 </ul>
-<h3
-id="numpy.stack-与-numpy.concatenate-的区别"><code>numpy.stack</code> 与
-<code>numpy.concatenate</code> 的区别</h3>
+<p>这就是“图像采样”的本质。</p>
+<hr />
+<h2 id="np.ogrid-到底生成了什么">4.2 <code>np.ogrid</code>
+到底生成了什么？</h2>
+<p>代码是：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">y, x = np.ogrid[ymax:ymin:height * <span class="number">1j</span>, xmin:xmax:width * <span class="number">1j</span>]</span><br></pre></td></tr></table></figure>
+<p>很多人第一次看到这个写法会懵：</p>
 <ul>
-<li><strong><code>numpy.stack</code></strong>:
-创建一个新的维度来堆叠数组。</li>
-<li><strong><code>numpy.concatenate</code></strong>:
-在现有维度上连接数组，不会创建新的维度。</li>
+<li>为什么左边是 <code>y, x</code>，不是 <code>x, y</code>？</li>
+<li>为什么切片里会有 <code>height * 1j</code>
+这种看上去很奇怪的东西？</li>
+<li>为什么 <code>y</code> 的范围要写成
+<code>ymax:ymin</code>，居然是反过来的？</li>
+</ul>
+<p>别急，我们一个一个来。</p>
+<hr />
+<h2 id="ogrid-不是在生成完整坐标表而是在生成行坐标-列坐标">4.3
+<code>ogrid</code> 不是在生成“完整坐标表”，而是在生成“行坐标 +
+列坐标”</h2>
+<p>先看结果形式。</p>
+<p>如果我们写：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x, y = np.ogrid[<span class="number">0</span>:<span class="number">3</span>, <span class="number">0</span>:<span class="number">4</span>]</span><br></pre></td></tr></table></figure>
+<p>那么：</p>
+<ul>
+<li><code>x</code> 会像一个列向量；</li>
+<li><code>y</code> 会像一个行向量。</li>
+</ul>
+<p>也就是说，<code>ogrid</code>
+并不急着把整张二维网格完全铺开，而是先给你：</p>
+<ul>
+<li>一组“每一行用什么值”；</li>
+<li>一组“每一列用什么值”。</li>
+</ul>
+<p>放到 Mandelbrot 程序里，就是：</p>
+<ul>
+<li><code>y</code> 负责每一行的虚部；</li>
+<li><code>x</code> 负责每一列的实部。</li>
+</ul>
+<p>这其实很聪明，因为整张复平面网格可以由“列坐标”和“行坐标”组合出来，不需要一开始就手工构造二维嵌套列表。</p>
+<hr />
+<h2 id="height-1j-和-width-1j-到底是什么意思">4.4
+<code>height * 1j</code> 和 <code>width * 1j</code>
+到底是什么意思？</h2>
+<p>这是初学者最容易误会的地方。</p>
+<p>这里的 <code>1j</code> <strong>不是说步长是虚数</strong>。</p>
+<p>在 <code>ogrid</code>、<code>mgrid</code>
+这种写法里，如果切片第三项是复数，例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span>:<span class="number">10</span>:<span class="number">5j</span></span><br></pre></td></tr></table></figure>
+<p>它的含义是：</p>
+<blockquote>
+<p>在 <code>0</code> 到 <code>10</code> 之间，均匀取 <strong>5
+个点</strong>。</p>
+</blockquote>
+<p>所以：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xmin:xmax:width * <span class="number">1j</span></span><br></pre></td></tr></table></figure>
+<p>表示：</p>
+<blockquote>
+<p>在实部区间 <code>[xmin, xmax]</code> 上，均匀取 <code>width</code>
+个采样点。</p>
+</blockquote>
+<p>而：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ymax:ymin:height * <span class="number">1j</span></span><br></pre></td></tr></table></figure>
+<p>表示：</p>
+<blockquote>
+<p>在虚部区间 <code>[ymax, ymin]</code> 上，均匀取 <code>height</code>
+个采样点。</p>
+</blockquote>
+<p>换句话说，这里的第三项不是“步长”，而是“点数”。</p>
+<p>这是一种非常优雅的写法：</p>
+<ul>
+<li>你不必自己算步长；</li>
+<li>只要告诉 NumPy：我要横向 <code>width</code> 个点，纵向
+<code>height</code> 个点；</li>
+<li>它就自动把区间均匀分好了。</li>
+</ul>
+<hr />
+<h2 id="为什么-y-是从-ymax-到-ymin而不是从-ymin-到-ymax">4.5 为什么
+<code>y</code> 是从 <code>ymax</code> 到 <code>ymin</code>，而不是从
+<code>ymin</code> 到 <code>ymax</code>？</h2>
+<p>这是因为：</p>
+<ul>
+<li>在数学坐标系里，向上是正方向；</li>
+<li>在图像数组里，第 0 行在最上面，行号越大越往下。</li>
+</ul>
+<p>我们希望图像最上方显示的是“虚部较大”的位置，也就是复平面上半部分。</p>
+<p>所以程序写成：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ymax:ymin:height * <span class="number">1j</span></span><br></pre></td></tr></table></figure>
+<p>这样：</p>
+<ul>
+<li>第一行对应 <code>ymax</code>；</li>
+<li>最后一行对应 <code>ymin</code>。</li>
+</ul>
+<p>图像显示出来时，上下方向才会和我们熟悉的复平面方向一致。</p>
+<p>如果你把它写反了，图像会整体上下颠倒。</p>
+<hr />
+<h2 id="一个小尺寸例子彻底看懂-ogrid">4.6 一个小尺寸例子，彻底看懂
+<code>ogrid</code></h2>
+<p>假设我们不是画 <code>800 × 640</code>，而是只画一个
+<code>4 × 3</code> 的小图：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">xmin, xmax = -<span class="number">2</span>, <span class="number">1</span></span><br><span class="line">ymin, ymax = -<span class="number">1</span>, <span class="number">1</span></span><br><span class="line">width, height = <span class="number">4</span>, <span class="number">3</span></span><br></pre></td></tr></table></figure>
+<p>那么：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">y, x = np.ogrid[<span class="number">1</span>:-<span class="number">1</span>:<span class="number">3j</span>, -<span class="number">2</span>:<span class="number">1</span>:<span class="number">4j</span>]</span><br></pre></td></tr></table></figure>
+<p>大致会得到：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">x = [[-<span class="number">2</span>, -<span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>]]</span><br><span class="line"></span><br><span class="line">y = [[ <span class="number">1</span>],</span><br><span class="line">     [ <span class="number">0</span>],</span><br><span class="line">     [-<span class="number">1</span>]]</span><br></pre></td></tr></table></figure>
+<p>这里请特别注意它们的形状：</p>
+<ul>
+<li><code>x</code> 只有一行，表示四列分别对应哪些实部；</li>
+<li><code>y</code> 只有一列，表示三行分别对应哪些虚部。</li>
+</ul>
+<p>于是再看下一句：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">z = x + y * <span class="number">1j</span></span><br></pre></td></tr></table></figure>
+<p>它得到的就是：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[[-<span class="number">2</span>+<span class="number">1j</span>, -<span class="number">1</span>+<span class="number">1j</span>,  <span class="number">0</span>+<span class="number">1j</span>,  <span class="number">1</span>+<span class="number">1j</span>],</span><br><span class="line"> [-<span class="number">2</span>+<span class="number">0j</span>, -<span class="number">1</span>+<span class="number">0j</span>,  <span class="number">0</span>+<span class="number">0j</span>,  <span class="number">1</span>+<span class="number">0j</span>],</span><br><span class="line"> [-<span class="number">2</span>-<span class="number">1j</span>, -<span class="number">1</span>-<span class="number">1j</span>,  <span class="number">0</span>-<span class="number">1j</span>,  <span class="number">1</span>-<span class="number">1j</span>]]</span><br></pre></td></tr></table></figure>
+<p>这就是一张完整的复数坐标表。</p>
+<p>现在整件事就清楚了：</p>
+<ul>
+<li>每一列先决定实部；</li>
+<li>每一行再决定虚部；</li>
+<li>实部和虚部一组合，就得到每个像素对应的复数。</li>
+</ul>
+<hr />
+<h2 id="z-x-y-1j-为什么这么优雅">4.7 <code>z = x + y * 1j</code>
+为什么这么优雅？</h2>
+<p>因为复数本来就写成：</p>
+<p><span class="math display">\[
+a + bi
+\]</span></p>
+<p>在 Python 里：</p>
+<ul>
+<li><code>a</code> 是实部；</li>
+<li><code>b * 1j</code> 是虚部。</li>
+</ul>
+<p>所以：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">z = x + y * <span class="number">1j</span></span><br></pre></td></tr></table></figure>
+<p>就是在做：</p>
+<blockquote>
+<p>把 <code>x</code> 当实部，把 <code>y</code> 当虚部，拼成复数。</p>
+</blockquote>
+<p>如果不用 NumPy 的广播机制，你就得手写双重循环：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> <span class="built_in">range</span>(height):</span><br><span class="line">    <span class="keyword">for</span> col <span class="keyword">in</span> <span class="built_in">range</span>(width):</span><br><span class="line">        c = real[col] + imag[row] * <span class="number">1j</span></span><br></pre></td></tr></table></figure>
+<p>而现在这件事被一行写完了。</p>
+<p>这不是“炫技”，而是向量化编程最漂亮的地方：</p>
+<blockquote>
+<p><strong>把成千上万个像素点的计算，统一表达成数组之间的运算。</strong></p>
+</blockquote>
+<hr />
+<h1 id="五广播机制为什么-x-y-1j-能自动变成二维网格">五、广播机制：为什么
+<code>x + y * 1j</code> 能自动变成二维网格？</h1>
+<p>理解上面那句代码，还必须明白 NumPy 的广播机制。</p>
+<p><code>x</code> 和 <code>y</code> 的形状并不一样：</p>
+<ul>
+<li><code>x</code> 的形状是 <code>(1, width)</code>；</li>
+<li><code>y</code> 的形状是 <code>(height, 1)</code>。</li>
+</ul>
+<p>按常识看，好像没法直接相加。</p>
+<p>但 NumPy 的广播机制允许它们这样做：</p>
+<ul>
+<li>那一行 <code>x</code> 被“复制”成 <code>height</code> 行；</li>
+<li>那一列 <code>y</code> 被“复制”成 <code>width</code> 列；</li>
+<li>最终两者都视为 <code>(height, width)</code> 的形状。</li>
 </ul>
 <p>例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">a = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line">b = np.array([<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 concatenate</span></span><br><span class="line">concatenated = np.concatenate([a, b])</span><br><span class="line"><span class="built_in">print</span>(concatenated)  <span class="comment"># 输出: [1 2 3 4 5 6]</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 stack</span></span><br><span class="line">stacked = np.stack([a, b])</span><br><span class="line"><span class="built_in">print</span>(stacked)  <span class="comment"># 输出: [[1 2 3] [4 5 6]]</span></span><br></pre></td></tr></table></figure>
-<h2 id="九.-pil.image.fromarray">九.
-<code>PIL.Image.fromarray</code></h2>
-<h3 id="语法-6">语法</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PIL.Image.fromarray(array, mode=<span class="literal">None</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">x = [[<span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span>]]</span><br><span class="line">y = [[<span class="number">1</span>],</span><br><span class="line">     [<span class="number">2</span>],</span><br><span class="line">     [<span class="number">3</span>]]</span><br></pre></td></tr></table></figure>
+<p>那么：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x + y</span><br></pre></td></tr></table></figure>
+<p>会得到：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[[<span class="number">11</span>, <span class="number">21</span>, <span class="number">31</span>],</span><br><span class="line"> [<span class="number">12</span>, <span class="number">22</span>, <span class="number">32</span>],</span><br><span class="line"> [<span class="number">13</span>, <span class="number">23</span>, <span class="number">33</span>]]</span><br></pre></td></tr></table></figure>
+<p>Mandelbrot 程序里，<code>x + y * 1j</code>
+就是同样的逻辑，只不过把普通数字换成了复数。</p>
+<p>所以这一句其实等价于：</p>
+<blockquote>
+<p>对整个图像平面上的所有像素，批量构造复数坐标。</p>
+</blockquote>
+<hr />
+<h1
+id="六每个点接下来会经历什么iteratec-逐行讲解">六、每个点接下来会经历什么？<code>iterate(c)</code>
+逐行讲解</h1>
+<p>核心函数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@jit</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">iterate</span>(<span class="params">c</span>):</span><br><span class="line">    z = <span class="number">0j</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(MAXITERS):</span><br><span class="line">        <span class="keyword">if</span> z.real * z.real + z.imag * z.imag &gt; RADIUS:</span><br><span class="line">            <span class="keyword">return</span> color(z, i)</span><br><span class="line">        z = z * z + c</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p>我们一行一行来看。</p>
+<hr />
+<h2 id="z-0j">6.1 <code>z = 0j</code></h2>
+<p>这表示从复数 <code>0 + 0i</code> 开始。</p>
+<p>这是 Mandelbrot 集定义的一部分，不是程序员随便选的初值。</p>
+<p>Mandelbrot 集关注的就是：</p>
+<blockquote>
+<p>对每个参数 <code>c</code>，从 <code>z_0 = 0</code>
+出发的轨道是否发散。</p>
+</blockquote>
+<p>如果你把初值改了，那研究的就不是标准 Mandelbrot 集了。</p>
+<hr />
+<h2 id="for-i-in-rangemaxiters">6.2
+<code>for i in range(MAXITERS)</code></h2>
+<p>这里的 <code>range(MAXITERS)</code> 表示最多迭代
+<code>MAXITERS</code> 次。</p>
+<p>原程序设置：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MAXITERS = <span class="number">200</span></span><br></pre></td></tr></table></figure>
+<p>它的意义是：</p>
 <ul>
-<li><strong>数据类型 (<code>dtype</code>)</strong>:
-<ul>
-<li><code>Image.fromarray</code> 要求输入数组的数据类型为
-<code>np.uint8</code>（0 到 255 的整数）。</li>
-<li>如果数组的值是浮点数（例如 0 到 1 之间的值），需要先将其转换为
-<code>np.uint8</code>：</li>
-</ul></li>
+<li>如果某个点很快逃逸，就提前结束；</li>
+<li>如果算了 200 次还没明显逃逸，就暂时把它当作“未逃逸”。</li>
 </ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">array = (array * <span class="number">255</span>).astype(np.uint8)</span><br></pre></td></tr></table></figure>
+<p>这不是数学上严格的“永不发散证明”，而是一种数值计算中的近似判定。</p>
+<p>原因很简单：</p>
 <ul>
-<li><strong>数组形状</strong>:
-<ul>
-<li>灰度图像：2D 数组，形状为 <code>(height, width)</code>。</li>
-<li>彩色图像：3D 数组，形状为 <code>(height, width, 3)</code>（RGB）或
-<code>(height, width, 4)</code>（RGBA）。</li>
-</ul></li>
-<li><strong>模式 (<code>mode</code>)</strong>:
-<ul>
-<li><code>Image.fromarray</code> 会自动根据数组的形状推断图像的模式（如
-<code>'L'</code> 表示灰度，<code>'RGB'</code> 表示彩色）。</li>
-<li>如果需要指定模式，可以使用 <code>mode</code> 参数：</li>
-</ul></li>
+<li>真正的定义是“无限次迭代”；</li>
+<li>但计算机只能做有限次。</li>
 </ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">image = Image.fromarray(array, mode=<span class="string">&#x27;RGB&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<h3 id="说明-7">说明</h3>
+<p>所以绘图时我们总是设一个“最大迭代次数”。</p>
+<hr />
+<h2 id="为什么用-z.real-和-z.imag">6.3 为什么用 <code>z.real</code> 和
+<code>z.imag</code>？</h2>
+<p>代码里写的是：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> z.real * z.real + z.imag * z.imag &gt; RADIUS:</span><br></pre></td></tr></table></figure>
+<p>这里：</p>
 <ul>
-<li>将 NumPy 数组转换为 PIL 图像对象。 在 Python
-中，<code>PIL.Image.fromarray</code> 是 PIL（Python Imaging
-Library）或其分支 Pillow 库中的一个函数，用于将 NumPy 数组转换为 PIL
-图像对象。这对于处理图像数据（例如从 NumPy 数组生成图像）非常有用。</li>
-<li>如果你还没有安装 Pillow，可以通过以下命令安装：</li>
+<li><code>z.real</code> 是复数的实部；</li>
+<li><code>z.imag</code> 是复数的虚部。</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install pillow</span><br></pre></td></tr></table></figure>
-<h3 id="示例-8">示例</h3>
+<p>例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">z = <span class="number">3</span> + <span class="number">4j</span></span><br><span class="line"><span class="built_in">print</span>(z.real)  <span class="comment"># 3.0</span></span><br><span class="line"><span class="built_in">print</span>(z.imag)  <span class="comment"># 4.0</span></span><br></pre></td></tr></table></figure>
+<p>而：</p>
+<p><span class="math display">\[
+|z|^2 = (\Re z)^2 + (\Im z)^2
+\]</span></p>
+<p>所以程序实际上是在比较复数模长的平方。</p>
+<p>如果模长变得很大，就说明这个轨道已经跑远了。</p>
+<hr />
+<h2 id="为什么这里不直接写-absz-某个数">6.4 为什么这里不直接写
+<code>abs(z) &gt; 某个数</code>？</h2>
+<p>因为：</p>
 <ul>
-<li><code>Image.fromarray</code> 的基本用法</li>
+<li><code>abs(z)</code> 会计算复数的模；</li>
+<li>模长通常涉及平方根；</li>
+<li>而比较大小时，比较平方就够了。</li>
 </ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br></pre></td></tr></table></figure>
-<h4 id="示例1将-numpy-数组转换为灰度图像">示例1：将 NumPy
-数组转换为灰度图像</h4>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="comment"># 创建一个 2D NumPy 数组（灰度图像）</span></span><br><span class="line">array = np.array([</span><br><span class="line">    [<span class="number">0</span>, <span class="number">50</span>, <span class="number">100</span>],</span><br><span class="line">    [<span class="number">150</span>, <span class="number">200</span>, <span class="number">255</span>]</span><br><span class="line">], dtype=np.uint8)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将数组转换为 PIL 图像</span></span><br><span class="line">image = Image.fromarray(array)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 显示图像</span></span><br><span class="line">image.show()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 保存图像</span></span><br><span class="line">image.save(<span class="string">&#x27;gray_image.png&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">array = np.array([[<span class="number">0</span>, <span class="number">255</span>], [<span class="number">255</span>, <span class="number">0</span>]], dtype=np.uint8)</span><br><span class="line">image = Image.fromarray(array, mode=<span class="string">&#x27;L&#x27;</span>)</span><br><span class="line">image.show()</span><br></pre></td></tr></table></figure>
+<p>所以：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">z.real * z.real + z.imag * z.imag</span><br></pre></td></tr></table></figure>
+<p>通常比直接开方更高效。</p>
+<p>这类优化在数值计算里很常见：</p>
+<blockquote>
+<p><strong>能不做开方，就不做开方。</strong></p>
+</blockquote>
+<hr />
+<h2 id="radius-100-为什么这么大">6.5 <code>RADIUS = 100</code>
+为什么这么大？</h2>
+<p>不少教材会直接写“逃逸半径取 2 即可”，因为理论上对于 Mandelbrot
+集，模长大于 2 后轨道就会发散。</p>
+<p>但在这个程序里，它取的是：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RADIUS = <span class="number">100</span></span><br></pre></td></tr></table></figure>
+<p>注意这里程序比较的是：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">z.real * z.real + z.imag * z.imag &gt; RADIUS</span><br></pre></td></tr></table></figure>
+<p>也就是比较的是模长平方，而不是模长本身。</p>
+<p>因此：</p>
 <ul>
-<li>这里<code>dtype=np.uint8</code> 确保数组的值在 0 到 255 之间。</li>
+<li>若 <code>RADIUS = 100</code>，对应的模长阈值是
+<code>sqrt(100) = 10</code>。</li>
 </ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个 100x100 的灰度图像（随机像素值）</span></span><br><span class="line">gray_image = np.random.randint(<span class="number">0</span>, <span class="number">256</span>, size=(<span class="number">100</span>, <span class="number">100</span>), dtype=np.uint8)</span><br><span class="line"><span class="comment"># numpy.random.randint(low, high=None, size=None, dtype=&#x27;int&#x27;)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将数组转换为 PIL 图像</span></span><br><span class="line">image = Image.fromarray(gray_image, mode=<span class="string">&#x27;L&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 显示图像</span></span><br><span class="line">image.show()</span><br></pre></td></tr></table></figure>
-<h4 id="示例2.-将-numpy-数组转换为彩色图像">示例2. 将 NumPy
-数组转换为彩色图像</h4>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="comment"># 创建一个 3D NumPy 数组（RGB 图像）</span></span><br><span class="line">array = np.array([</span><br><span class="line">    [[<span class="number">255</span>, <span class="number">0</span>, <span class="number">0</span>], [<span class="number">0</span>, <span class="number">255</span>, <span class="number">0</span>], [<span class="number">0</span>, <span class="number">0</span>, <span class="number">255</span>]],  <span class="comment"># 红色, 绿色, 蓝色</span></span><br><span class="line">    [[<span class="number">255</span>, <span class="number">255</span>, <span class="number">0</span>], [<span class="number">255</span>, <span class="number">0</span>, <span class="number">255</span>], [<span class="number">0</span>, <span class="number">255</span>, <span class="number">255</span>]]  <span class="comment"># 黄色, 洋红色, 青色</span></span><br><span class="line">], dtype=np.uint8)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将数组转换为 PIL 图像</span></span><br><span class="line">image = Image.fromarray(array)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 显示图像</span></span><br><span class="line">image.show()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 保存图像</span></span><br><span class="line">image.save(<span class="string">&#x27;color_image.png&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="comment"># 创建一个 100x100 的彩色图像（随机 RGB 值）</span></span><br><span class="line">color_image = np.random.randint(<span class="number">0</span>, <span class="number">256</span>, size=(<span class="number">100</span>, <span class="number">100</span>, <span class="number">3</span>), dtype=np.uint8)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将数组转换为 PIL 图像</span></span><br><span class="line">image = Image.fromarray(color_image, mode=<span class="string">&#x27;RGB&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 显示图像</span></span><br><span class="line">image.show()</span><br></pre></td></tr></table></figure>
-<h4 id="示例3将浮点数组转换为图像">示例3：将浮点数组转换为图像</h4>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="comment"># 创建一个浮点数组（值在 0 到 1 之间）</span></span><br><span class="line">array = np.random.rand(<span class="number">100</span>, <span class="number">100</span>)  <span class="comment"># 100x100 的随机灰度图像</span></span><br><span class="line"><span class="comment">#在NumPy中，random.rand()是一个常用的随机数生成函数，用于生成均匀分布在[0, 1)之间的随机数。</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将浮点数组转换为 0-255 的整数数组</span></span><br><span class="line">array = (array * <span class="number">255</span>).astype(np.uint8)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将数组转换为 PIL 图像</span></span><br><span class="line">image = Image.fromarray(array, mode=<span class="string">&#x27;L&#x27;</span>)  <span class="comment"># &#x27;L&#x27; 表示灰度模式</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 显示图像</span></span><br><span class="line">image.show()</span><br></pre></td></tr></table></figure>
-<h2 id="十.-unit8函数">十. unit8函数</h2>
-<p>在图像处理中，图像的像素值通常以 <code>uint8</code> 类型存储（0
-表示黑色，255 表示白色）。<code>uint8</code> 的取值范围是 0 到 255。</p>
-<h3 id="示例-9">示例</h3>
-<h4 id="示例1-创建-uint8-数组">示例1 创建 <code>uint8</code> 数组</h4>
-<p>可以使用 <code>numpy.array</code> 或 <code>numpy.zeros</code>
-等函数创建 <code>uint8</code> 类型的数组。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个 uint8 数组</span></span><br><span class="line">array = np.array([<span class="number">0</span>, <span class="number">127</span>, <span class="number">255</span>], dtype=np.uint8)</span><br><span class="line"><span class="built_in">print</span>(array)</span><br><span class="line"><span class="built_in">print</span>(array.dtype)  <span class="comment"># 输出数据类型</span></span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[  0 127 255]</span><br><span class="line">uint8</span><br></pre></td></tr></table></figure>
+<p>这依然远大于
+2，说明程序更倾向于“等它跑得非常明显了再判定逃逸”，这样有时能让平滑着色更稳定一些。</p>
+<hr />
+<h2 id="z-z-z-c">6.6 <code>z = z * z + c</code></h2>
+<p>这就是 Mandelbrot 集最核心的迭代公式：</p>
+<p><span class="math display">\[
+z_{n+1} = z_n^2 + c
+\]</span></p>
+<p>程序里每次循环都做一次这件事。</p>
+<p>于是每个点 <code>c</code> 都会产生属于自己的轨道：</p>
 <ul>
-<li>这里 <code>dtype=np.uint8</code> 指定数组的数据类型为
-<code>uint8</code>。</li>
+<li>有的点很快发散；</li>
+<li>有的点绕来绕去；</li>
+<li>有的点长时间被困在某个区域里。</li>
 </ul>
-<h4 id="示例2-创建全零或全一的-uint8-数组">示例2 创建全零或全一的
-<code>uint8</code> 数组</h4>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建一个 3x3 的全零 uint8 数组</span></span><br><span class="line">zeros_array = np.zeros((<span class="number">3</span>, <span class="number">3</span>), dtype=np.uint8)</span><br><span class="line"><span class="built_in">print</span>(zeros_array)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个 2x2 的全一 uint8 数组</span></span><br><span class="line">ones_array = np.ones((<span class="number">2</span>, <span class="number">2</span>), dtype=np.uint8)</span><br><span class="line"><span class="built_in">print</span>(ones_array)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[[0 0 0]</span><br><span class="line"> [0 0 0]</span><br><span class="line"> [0 0 0]]</span><br><span class="line">[[1 1]</span><br><span class="line"> [1 1]]</span><br></pre></td></tr></table></figure>
-<h4 id="示例3-创建随机-uint8-数组">示例3 创建随机 <code>uint8</code>
-数组</h4>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建一个 2x2 的随机 uint8 数组（值在 0 到 255 之间）</span></span><br><span class="line">random_array = np.random.randint(<span class="number">0</span>, <span class="number">256</span>, size=(<span class="number">2</span>, <span class="number">2</span>), dtype=np.uint8)</span><br><span class="line"><span class="built_in">print</span>(random_array)</span><br></pre></td></tr></table></figure>
-<p>输出（示例）：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[[ 42 173]</span><br><span class="line"> [ 89 211]]</span><br></pre></td></tr></table></figure>
-<h3 id="uint8-的特性"><code>uint8</code> 的特性</h3>
-<h4 id="取值范围">取值范围</h4>
+<p>而整个 Mandelbrot 图，就是这些轨道命运的总地图。</p>
+<hr />
+<h2 id="为什么未逃逸点返回黑色">6.7 为什么未逃逸点返回黑色？</h2>
+<p>函数最后写着：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p>这表示 RGB 三个通道都为 0，也就是黑色。</p>
+<p>于是图中 Mandelbrot
+集内部就会呈现为黑色区域，而外围点会根据逃逸速度呈现不同颜色。</p>
+<p>这也是 Mandelbrot 图最常见的视觉风格之一。</p>
+<hr />
+<h1
+id="七colorz-i颜色为什么这么平滑">七、<code>color(z, i)</code>：颜色为什么这么平滑？</h1>
+<p>再看颜色函数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@jit</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">color</span>(<span class="params">z, i</span>):</span><br><span class="line">    v = np.log2(i + <span class="number">1</span> - np.log2(np.log2(<span class="built_in">abs</span>(z)))) / <span class="number">5</span></span><br><span class="line">    <span class="keyword">if</span> v &lt; <span class="number">1.0</span>:</span><br><span class="line">        <span class="keyword">return</span> v**<span class="number">4</span>, v**<span class="number">2.5</span>, v</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        v = <span class="built_in">max</span>(<span class="number">0</span>, <span class="number">2</span> - v)</span><br><span class="line">        <span class="keyword">return</span> v, v**<span class="number">1.5</span>, v**<span class="number">3</span></span><br></pre></td></tr></table></figure>
+<p>这段代码的重点，不在于某个具体颜色公式，而在于它采用了“平滑着色”的思想。</p>
+<p>如果我们只按整数迭代次数上色，例如：</p>
 <ul>
-<li><code>uint8</code> 的取值范围是 0 到 255。</li>
-<li>如果赋值超出范围，值会“环绕”（即取模 256）： <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">array = np.array([<span class="number">256</span>, <span class="number">257</span>, <span class="number">258</span>], dtype=np.uint8)</span><br><span class="line"><span class="built_in">print</span>(array)  <span class="comment"># 输出: [0 1 2]</span></span><br></pre></td></tr></table></figure></li>
-<li>如果对 <code>uint8</code>
-数组进行数学运算（如加法、乘法），结果可能会溢出。如果需要避免溢出，可以先将数组转换为更大的数据类型（如
-<code>uint16</code> 或 <code>float</code>），再进行运算。例如：
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a = np.array([<span class="number">200</span>], dtype=np.uint8)</span><br><span class="line">b = np.array([<span class="number">100</span>], dtype=np.uint8)</span><br><span class="line">c = a + b</span><br><span class="line"><span class="built_in">print</span>(c)  <span class="comment"># 输出: [44]（因为 300 % 256 = 44）</span></span><br></pre></td></tr></table></figure></li>
+<li>第 10 次逃逸画一种颜色；</li>
+<li>第 11 次逃逸画另一种颜色；</li>
 </ul>
-<h4 id="数据类型转换">数据类型转换</h4>
+<p>那么最后得到的图往往会有一圈一圈的明显色带。</p>
+<p>这是因为颜色只在整数层面变化，不够连续。</p>
+<p>而这里通过对逃逸状态做对数修正，把颜色参数 <code>v</code>
+调整成更平滑的连续值，于是边界附近的颜色过渡就会细腻得多。</p>
+<p>你可以把它理解成：</p>
 <ul>
-<li>可以将其他数据类型的数组转换为 <code>uint8</code>：</li>
+<li><code>iterate()</code> 决定“这个点什么时候逃逸”；</li>
+<li><code>color()</code> 决定“逃逸时该给什么颜色”。</li>
 </ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">float_array = np.array([<span class="number">0.1</span>, <span class="number">0.5</span>, <span class="number">1.0</span>])</span><br><span class="line">uint8_array = (float_array * <span class="number">255</span>).astype(np.uint8)</span><br><span class="line"><span class="built_in">print</span>(uint8_array)  <span class="comment"># 输出: [ 25 127 255]</span></span><br></pre></td></tr></table></figure>
-<h4 id="与其他数据类型的兼容性">与其他数据类型的兼容性</h4>
+<p>一个负责判命运，一个负责调色板。</p>
+<hr />
+<h1
+id="八为什么它能一次处理整张图frompyfunc-讲透">八、为什么它能一次处理整张图？<code>frompyfunc</code>
+讲透</h1>
+<p>程序里有一句比较不好读：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">R, G, B = np.asarray(np.frompyfunc(iterate, <span class="number">1</span>, <span class="number">3</span>)(z)).astype(<span class="built_in">float</span>)</span><br></pre></td></tr></table></figure>
+<p>别怕，它其实只是在做一件非常朴素的事：</p>
+<blockquote>
+<p>把原本只能处理“单个点”的
+<code>iterate(c)</code>，变成一个可以作用在整个数组上的函数。</p>
+</blockquote>
+<hr />
+<h2 id="iteratec-原本只能算一个点">8.1 <code>iterate(c)</code>
+原本只能算一个点</h2>
+<p>函数定义是：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">iterate</span>(<span class="params">c</span>):</span><br></pre></td></tr></table></figure>
+<p>它输入一个复数 <code>c</code>，输出一个三元组：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(R, G, B)</span><br></pre></td></tr></table></figure>
+<p>所以它本质上是“单点版本”。</p>
+<hr />
+<h2 id="np.frompyfunciterate-1-3-在做什么">8.2
+<code>np.frompyfunc(iterate, 1, 3)</code> 在做什么？</h2>
+<p>这里：</p>
 <ul>
-<li>当 <code>uint8</code>
-数组与其他数据类型的数组一起运算时，结果的数据类型可能会提升。例如：</li>
+<li>第一个参数 <code>iterate</code>：原函数；</li>
+<li>第二个参数 <code>1</code>：表示它有 1 个输入；</li>
+<li>第三个参数 <code>3</code>：表示它有 3 个输出。</li>
 </ul>
-<p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a = np.array([<span class="number">1</span>], dtype=np.uint8)</span><br><span class="line">b = np.array([<span class="number">1</span>], dtype=np.float32)</span><br><span class="line">c = a + b</span><br><span class="line"><span class="built_in">print</span>(c.dtype)  <span class="comment"># 输出: float32</span></span><br></pre></td></tr></table></figure></p>
-<p>以上内容按照函数和概念分类整理，方便快速查找和学习。</p>
-<h1 id="附-mandelbrot程序">附: Mandelbrot程序</h1>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span></span><br><span class="line"><span class="string">A fast Mandelbrot set wallpaper renderer</span></span><br><span class="line"><span class="string">~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">reddit discussion:</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    &quot;https://www.reddit.com/r/math/comments/2abwyt/smooth_colour_mandelbrot&quot;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> numba <span class="keyword">import</span> jit <span class="comment"># type: ignore</span></span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line">MAXITERS = <span class="number">200</span></span><br><span class="line">RADIUS = <span class="number">100</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@jit</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">color</span>(<span class="params">z, i</span>):</span><br><span class="line">    v = np.log2(i + <span class="number">1</span> - np.log2(np.log2(<span class="built_in">abs</span>(z)))) / <span class="number">5</span></span><br><span class="line">    <span class="keyword">if</span> v &lt; <span class="number">1.0</span>:</span><br><span class="line">        <span class="keyword">return</span> v**<span class="number">4</span>, v**<span class="number">2.5</span>, v</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        v = <span class="built_in">max</span>(<span class="number">0</span>, <span class="number">2</span> - v)</span><br><span class="line">        <span class="keyword">return</span> v, v**<span class="number">1.5</span>, v**<span class="number">3</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@jit</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">iterate</span>(<span class="params">c</span>):</span><br><span class="line">    z = <span class="number">0j</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(MAXITERS):</span><br><span class="line">        <span class="keyword">if</span> z.real * z.real + z.imag * z.imag &gt; RADIUS:</span><br><span class="line">            <span class="keyword">return</span> color(z, i)</span><br><span class="line">        z = z * z + c</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>(<span class="params">xmin, xmax, ymin, ymax, width, height</span>):</span><br><span class="line">    y, x = np.ogrid[ymax : ymin : height * <span class="number">1j</span>, xmin : xmax : width * <span class="number">1j</span>]</span><br><span class="line">    z = x + y * <span class="number">1j</span></span><br><span class="line">    R, G, B = np.asarray(np.frompyfunc(iterate, <span class="number">1</span>, <span class="number">3</span>)(z)).astype(<span class="built_in">float</span>)</span><br><span class="line">    img = np.stack((R, G, B), axis=<span class="number">2</span>)</span><br><span class="line">    Image.fromarray(np.uint8(img * <span class="number">255</span>)).save(<span class="string">&quot;mandelbrot4.png&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main(-<span class="number">2.1</span>, <span class="number">0.8</span>, -<span class="number">1.16</span>, <span class="number">1.16</span>, <span class="number">800</span>, <span class="number">640</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><img src="/images/mandelbrot/mandelbrot4.png" alt="图Koch3-xuehua" style="width: 100%;"></p>
+<p>也就是说：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">np.frompyfunc(iterate, <span class="number">1</span>, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+<p>把 <code>iterate</code> 包装成了一个“逐元素应用”的函数。</p>
+<p>于是：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">np.frompyfunc(iterate, <span class="number">1</span>, <span class="number">3</span>)(z)</span><br></pre></td></tr></table></figure>
+<p>就表示：</p>
+<blockquote>
+<p>对数组 <code>z</code> 中的每一个复数点，都执行一次
+<code>iterate()</code>，然后分别收集三个返回值。</p>
+</blockquote>
+<p>最后你就得到三张二维表：</p>
+<ul>
+<li>一张红色通道；</li>
+<li>一张绿色通道；</li>
+<li>一张蓝色通道。</li>
+</ul>
+<hr />
+<h2 id="为什么后面要接-np.asarray....astypefloat">8.3 为什么后面要接
+<code>np.asarray(...).astype(float)</code>？</h2>
+<p>这是因为 <code>frompyfunc</code> 产生的结果默认是对象数组，也就是
+<code>dtype=object</code>。</p>
+<p>但后面图像处理更适合使用普通浮点数数组，所以程序又做了两件事：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">np.asarray(...)</span><br><span class="line">.astype(<span class="built_in">float</span>)</span><br></pre></td></tr></table></figure>
+<p>也就是：</p>
+<ol type="1">
+<li>把结果转成 NumPy 数组；</li>
+<li>再把数据类型转成浮点数。</li>
+</ol>
+<p>这样后续才能方便地做：</p>
+<ul>
+<li>数值缩放；</li>
+<li>通道拼接；</li>
+<li>图像格式转换。</li>
+</ul>
+<hr />
+<h1
+id="九numpy.asarray-和-numpy.array-有什么区别">九、<code>numpy.asarray</code>
+和 <code>numpy.array</code> 有什么区别？</h1>
+<p>Mandelbrot 程序里出现了这两个函数，我们放在程序的上下文里理解。</p>
+<h2 id="np.asarray">9.1 <code>np.asarray</code></h2>
+<p><code>np.asarray(a)</code> 的意思是：</p>
+<blockquote>
+<p>尽量把 <code>a</code>
+变成数组，但如果它本来就是数组，就尽量不要多复制一份。</p>
+</blockquote>
+<p>例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">a = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line">b = np.asarray(a)</span><br><span class="line"><span class="built_in">print</span>(b <span class="keyword">is</span> a)  <span class="comment"># True</span></span><br></pre></td></tr></table></figure>
+<hr />
+<h2 id="np.array">9.2 <code>np.array</code></h2>
+<p><code>np.array(a)</code> 的意思通常是：</p>
+<blockquote>
+<p>创建一个新的数组对象。</p>
+</blockquote>
+<p>例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">a = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line">b = np.array(a)</span><br><span class="line"><span class="built_in">print</span>(b <span class="keyword">is</span> a)  <span class="comment"># False</span></span><br></pre></td></tr></table></figure>
+<hr />
+<h2 id="为什么这里更适合-asarray">9.3 为什么这里更适合
+<code>asarray</code>？</h2>
+<p>因为我们只是想把 <code>frompyfunc</code>
+的输出整理成数值数组，不是非要强行复制一份新的数据。</p>
+<p>所以：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">np.asarray(...)</span><br></pre></td></tr></table></figure>
+<p>更贴合“转换而不是重新制造”的意图。</p>
+<hr />
+<h1
+id="十astypefloat为什么还要改数据类型">十、<code>astype(float)</code>：为什么还要改数据类型？</h1>
+<p><code>astype</code> 的作用是把数组转换成另一种数据类型。</p>
+<p>例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line">b = a.astype(<span class="built_in">float</span>)</span><br></pre></td></tr></table></figure>
+<p>则 <code>b</code> 会变成浮点数组。</p>
+<p>在我们的程序里：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.astype(<span class="built_in">float</span>)</span><br></pre></td></tr></table></figure>
+<p>是因为颜色值后面还要参与数值运算，比如乘以
+<code>255</code>，所以把它们转成普通的浮点数数组更方便、更稳定。</p>
+<hr />
+<h1
+id="十一np.stackr-g-b-axis2三张二维表怎么变成一张彩色图">十一、<code>np.stack((R, G, B), axis=2)</code>：三张二维表怎么变成一张彩色图？</h1>
+<p>假设前面得到了：</p>
+<ul>
+<li><code>R</code>：红色强度二维表；</li>
+<li><code>G</code>：绿色强度二维表；</li>
+<li><code>B</code>：蓝色强度二维表。</li>
+</ul>
+<p>每一个都是 <code>(height, width)</code> 形状。</p>
+<p>但真正的 RGB 图像，通常需要一个三维数组：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(height, width, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+<p>其中最后一个维度长度是 3，分别表示红、绿、蓝三个通道。</p>
+<p>所以程序写：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">img = np.stack((R, G, B), axis=<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+<p>意思就是：</p>
+<blockquote>
+<p>把三张二维图，沿着第三个维度叠起来。</p>
+</blockquote>
+<p>例如，如果某个像素位置：</p>
+<ul>
+<li><code>R=0.8</code></li>
+<li><code>G=0.3</code></li>
+<li><code>B=0.1</code></li>
+</ul>
+<p>那么叠起来后，这个像素就变成：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">0.8</span>, <span class="number">0.3</span>, <span class="number">0.1</span>]</span><br></pre></td></tr></table></figure>
+<p>这就是一个 RGB 像素。</p>
+<hr />
+<h1
+id="十二uint8-和-image.fromarray为什么最后一定要乘-255">十二、<code>uint8</code>
+和 <code>Image.fromarray</code>：为什么最后一定要乘 255？</h1>
+<p>这是图像处理里非常基础，但必须讲明白的一步。</p>
+<h2 id="颜色函数输出的是-0-到-1-附近的浮点数">12.1 颜色函数输出的是 0 到
+1 附近的浮点数</h2>
+<p><code>color()</code> 返回的是类似这样的值：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="number">0.12</span>, <span class="number">0.56</span>, <span class="number">0.91</span>)</span><br></pre></td></tr></table></figure>
+<p>这适合数学计算，但不适合直接存成常见图片格式。</p>
+<hr />
+<h2 id="图像像素通常要用-uint8">12.2 图像像素通常要用
+<code>uint8</code></h2>
+<p>常见的 RGB 图像，每个通道通常都是一个 0 到 255 的整数：</p>
+<ul>
+<li>0 表示这个通道完全没有亮度；</li>
+<li>255 表示这个通道亮度最大。</li>
+</ul>
+<p>而 <code>uint8</code> 就是“8 位无符号整数”，范围恰好是：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span> ~ <span class="number">255</span></span><br></pre></td></tr></table></figure>
+<p>所以：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">np.uint8(img * <span class="number">255</span>)</span><br></pre></td></tr></table></figure>
+<p>是在做两件事：</p>
+<ol type="1">
+<li>先把 <code>0~1</code> 的浮点值放大到 <code>0~255</code>；</li>
+<li>再转成适合图像保存的整数格式。</li>
+</ol>
+<hr />
+<h2 id="image.fromarray-做了什么">12.3 <code>Image.fromarray</code>
+做了什么？</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Image.fromarray(np.uint8(img * <span class="number">255</span>))</span><br></pre></td></tr></table></figure>
+<p>这句的意思是：</p>
+<blockquote>
+<p>把一个 NumPy 数组变成 Pillow 能识别的图像对象。</p>
+</blockquote>
+<p>当这个数组是 <code>(height, width, 3)</code> 并且类型是
+<code>uint8</code> 时，Pillow 会把它理解成一张 RGB 彩色图。</p>
+<p>最后：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.save(<span class="string">&quot;mandelbrot4.png&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>就把图像写入磁盘了。</p>
+<hr />
+<h1 id="十三为什么程序里用了-jit">十三、为什么程序里用了
+<code>@jit</code>？</h1>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> numba <span class="keyword">import</span> jit</span><br></pre></td></tr></table></figure>
+<p>然后：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@jit</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">color</span>(<span class="params">...</span>):</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line"><span class="meta">@jit</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">iterate</span>(<span class="params">...</span>):</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+<p><code>@jit</code> 是 Numba 提供的即时编译装饰器。</p>
+<p>它的作用可以粗略理解为：</p>
+<blockquote>
+<p>尝试把原本用 Python 写的数值循环，编译成更快的机器码执行。</p>
+</blockquote>
+<p>为什么这里特别有用？</p>
+<p>因为 Mandelbrot 绘图里最耗时的部分，恰恰就是：</p>
+<ul>
+<li>对大量像素逐点迭代；</li>
+<li>每个点又要循环很多次。</li>
+</ul>
+<p>这种“很多小循环”的场景，纯 Python 往往会比较慢，而 <code>@jit</code>
+往往能明显提速。</p>
+<hr />
+<h1
+id="十四把原文件中的函数知识点放回程序上下文里重新理解">十四、把原文件中的函数知识点，放回程序上下文里重新理解</h1>
+<ul>
+<li><code>range</code></li>
+<li><code>real</code> / <code>imag</code></li>
+<li><code>ogrid</code> / <code>mgrid</code></li>
+<li><code>numpy.asarray</code> / <code>numpy.array</code></li>
+<li><code>numpy.frompyfunc</code></li>
+<li>广播机制</li>
+<li><code>astype</code></li>
+<li><code>numpy.stack</code></li>
+<li><code>PIL.Image.fromarray</code></li>
+<li><code>uint8</code></li>
+</ul>
+<blockquote>
+<p><strong>它们在 Mandelbrot 程序里各自扮演了什么角色。</strong></p>
+</blockquote>
+<p>下面我们把它们串起来总结一遍。</p>
+<hr />
+<h2 id="range">14.1 <code>range</code></h2>
+<p>在程序里：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(MAXITERS):</span><br></pre></td></tr></table></figure>
+<p>它表示：</p>
+<blockquote>
+<p>让每个点最多迭代 <code>MAXITERS</code> 次。</p>
+</blockquote>
+<p>也就是说，<code>range</code> 在这里负责的是“时间推进”。</p>
+<hr />
+<h2 id="real-和-imag">14.2 <code>real</code> 和 <code>imag</code></h2>
+<p>在程序里：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">z.real * z.real + z.imag * z.imag</span><br></pre></td></tr></table></figure>
+<p>它们负责从复数中取出实部和虚部，用来计算模长平方。</p>
+<p>也就是说，<code>real</code> / <code>imag</code>
+在这里负责的是“读取复数坐标”。</p>
+<hr />
+<h2 id="ogrid">14.3 <code>ogrid</code></h2>
+<p>在程序里：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">y, x = np.ogrid[ymax:ymin:height * <span class="number">1j</span>, xmin:xmax:width * <span class="number">1j</span>]</span><br></pre></td></tr></table></figure>
+<p>它负责的是：</p>
+<blockquote>
+<p><strong>把图像的行列，转换成复平面中的实部和虚部采样表。</strong></p>
+</blockquote>
+<p>这是全程序中最关键的采样步骤。</p>
+<hr />
+<h2 id="广播机制">14.4 广播机制</h2>
+<p>在程序里：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">z = x + y * <span class="number">1j</span></span><br></pre></td></tr></table></figure>
+<p>它让形状不同的 <code>x</code> 和 <code>y</code>
+自动扩展成完整二维网格。</p>
+<p>所以广播机制在这里负责的是：</p>
+<blockquote>
+<p><strong>把“行坐标”和“列坐标”拼成整张复数平面。</strong></p>
+</blockquote>
+<hr />
+<h2 id="frompyfunc">14.5 <code>frompyfunc</code></h2>
+<p>在程序里：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">np.frompyfunc(iterate, <span class="number">1</span>, <span class="number">3</span>)(z)</span><br></pre></td></tr></table></figure>
+<p>它负责的是：</p>
+<blockquote>
+<p>把原本处理单点的
+<code>iterate</code>，推广成对整张复数网格逐元素应用。</p>
+</blockquote>
+<hr />
+<h2 id="asarray">14.6 <code>asarray</code></h2>
+<p>在程序里：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">np.asarray(...)</span><br></pre></td></tr></table></figure>
+<p>它负责把结果整理成 NumPy 数组，方便后面继续数值运算。</p>
+<hr />
+<h2 id="astype">14.7 <code>astype</code></h2>
+<p>在程序里：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.astype(<span class="built_in">float</span>)</span><br></pre></td></tr></table></figure>
+<p>它负责把对象数组转换成浮点数数组。</p>
+<hr />
+<h2 id="stack">14.8 <code>stack</code></h2>
+<p>在程序里：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">np.stack((R, G, B), axis=<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+<p>它负责把三张二维通道图叠成一张 RGB 彩图。</p>
+<hr />
+<h2 id="image.fromarray">14.9 <code>Image.fromarray</code></h2>
+<p>在程序里：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Image.fromarray(...)</span><br></pre></td></tr></table></figure>
+<p>它负责把 NumPy 数组正式转换成图像对象。</p>
+<hr />
+<h2 id="uint8">14.10 <code>uint8</code></h2>
+<p>在程序里：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">np.uint8(img * <span class="number">255</span>)</span><br></pre></td></tr></table></figure>
+<p>它负责把浮点颜色值转换成 0 到 255 的图像像素格式。</p>
+<hr />
+<h1 id="十五如果不用-ogrid能不能写当然能但会笨很多">十五、如果不用
+<code>ogrid</code>，能不能写？当然能，但会笨很多</h1>
+<p>为了帮助你更深地理解 <code>ogrid</code>
+的价值，我们不妨写一个“更直白但更笨”的版本。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">real_vals = np.linspace(xmin, xmax, width)</span><br><span class="line">imag_vals = np.linspace(ymax, ymin, height)</span><br><span class="line"></span><br><span class="line">z = np.empty((height, width), dtype=<span class="built_in">complex</span>)</span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> <span class="built_in">range</span>(height):</span><br><span class="line">    <span class="keyword">for</span> col <span class="keyword">in</span> <span class="built_in">range</span>(width):</span><br><span class="line">        z[row, col] = real_vals[col] + imag_vals[row] * <span class="number">1j</span></span><br></pre></td></tr></table></figure>
+<p>这段代码做的事情和：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">y, x = np.ogrid[ymax:ymin:height * <span class="number">1j</span>, xmin:xmax:width * <span class="number">1j</span>]</span><br><span class="line">z = x + y * <span class="number">1j</span></span><br></pre></td></tr></table></figure>
+<p>本质上是一样的。</p>
+<p>但后者明显更好：</p>
+<ul>
+<li>更短；</li>
+<li>更数学化；</li>
+<li>更容易和“实部 + 虚部 × i”这个概念直接对应；</li>
+<li>更能体现 NumPy 数组编程的风格。</li>
+</ul>
+<p>所以当你真正理解这两行后，会发现它不是写法花哨，而是表达得更本质。</p>
+<hr />
+<h1
+id="十六读这段程序时最容易卡住的三个地方">十六、读这段程序时最容易卡住的三个地方</h1>
+<h2 id="卡点一为什么-height-1j-不是虚数步长">16.1 卡点一：为什么
+<code>height * 1j</code> 不是虚数步长？</h2>
+<p>因为在 <code>ogrid</code> / <code>mgrid</code>
+的切片语法中，复数第三项表示“点数”，不是步长。</p>
+<hr />
+<h2 id="卡点二为什么-x-和-y-形状不一样还能相加">16.2 卡点二：为什么
+<code>x</code> 和 <code>y</code> 形状不一样还能相加？</h2>
+<p>因为广播机制会自动扩展它们。</p>
+<hr />
+<h2 id="卡点三为什么不一个像素一个像素地循环">16.3
+卡点三：为什么不一个像素一个像素地循环？</h2>
+<p>当然可以那么写，但 NumPy 更擅长的是：</p>
+<blockquote>
+<p><strong>把许多点的操作统一写成数组运算。</strong></p>
+</blockquote>
+<p>这正是这段代码简洁又高效的原因。</p>
+<hr />
+<h1
+id="十七从函数清单到程序思维这段-mandelbrot-代码真正教会我们的是什么">十七、从“函数清单”到“程序思维”：这段
+Mandelbrot 代码真正教会我们的是什么？</h1>
+<p>表面上看，这段程序用了很多工具：</p>
+<ul>
+<li>复数；</li>
+<li>NumPy；</li>
+<li>广播；</li>
+<li>图像转换；</li>
+<li>即时编译。</li>
+</ul>
+<p>但更深一层，它其实教会了我们一种非常重要的数值计算思维：</p>
+<h2 id="先把数学对象离散化">17.1 先把数学对象离散化</h2>
+<p>复平面原本是连续的，但计算机处理的是有限数组。</p>
+<p>所以第一步永远是：</p>
+<blockquote>
+<p>先把连续区域采样成有限网格。</p>
+</blockquote>
+<hr />
+<h2 id="再把单点规则推广成整张网格的规则">17.2
+再把单点规则推广成整张网格的规则</h2>
+<p>单个点的迭代公式很简单：</p>
+<p><span class="math display">\[
+z \mapsto z^2 + c
+\]</span></p>
+<p>但真正画图时，你要让整张网格的每个点都经历这条规则。</p>
+<hr />
+<h2 id="最后把抽象结果翻译成可视化结果">17.3
+最后把抽象结果翻译成可视化结果</h2>
+<p>数学上我们得到的是：</p>
+<ul>
+<li>这个点逃了还是没逃；</li>
+<li>它在第几步逃；</li>
+<li>它逃逸时的状态。</li>
+</ul>
+<p>而图像上我们需要的是：</p>
+<ul>
+<li>这个像素是什么颜色。</li>
+</ul>
+<p>也就是说，绘图程序本质上总是在做“数学世界”和“视觉世界”的翻译。</p>
+<hr />
+<h1
+id="十八给初学者的一个最简理解版本">十八、给初学者的一个最简理解版本</h1>
+<p>如果你现在已经读到这里，但还想要一个极简版本，那我把整段程序压缩成三句话：</p>
+<ol type="1">
+<li><strong>用 <code>ogrid</code>
+生成实部和虚部采样值，并通过广播拼成复数网格。</strong></li>
+<li><strong>对每个复数点 <code>c</code>，从 <code>z=0</code> 开始反复做
+<code>z=z*z+c</code>，观察它是否逃逸。</strong></li>
+<li><strong>把逃逸结果转成 RGB 颜色，再保存成 PNG 图。</strong></li>
+</ol>
+<p>而其中最核心的一句，就是：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">y, x = np.ogrid[ymax:ymin:height * <span class="number">1j</span>, xmin:xmax:width * <span class="number">1j</span>]</span><br><span class="line">z = x + y * <span class="number">1j</span></span><br></pre></td></tr></table></figure>
+<p>因为这一步完成了从“图像像素”到“复数坐标”的真正映射。</p>
+<hr />
+<h1 id="十九结语">十九、结语</h1>
+<p>Mandelbrot 集之所以迷人，是因为它同时站在三种世界的交界处：</p>
+<ul>
+<li>在数学里，它是复动力系统中的经典对象；</li>
+<li>在程序里，它是数组计算、向量化和图像生成的完美练习题；</li>
+<li>在视觉上，它又能生成极富冲击力的分形图像。</li>
+</ul>
+<p>而这段程序最值得细细体会的地方，不只是“它能跑”，而是它把一件看似复杂的事，压缩成了非常优雅的几行：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">y, x = np.ogrid[ymax:ymin:height * <span class="number">1j</span>, xmin:xmax:width * <span class="number">1j</span>]</span><br><span class="line">z = x + y * <span class="number">1j</span></span><br><span class="line">R, G, B = np.asarray(np.frompyfunc(iterate, <span class="number">1</span>, <span class="number">3</span>)(z)).astype(<span class="built_in">float</span>)</span><br><span class="line">img = np.stack((R, G, B), axis=<span class="number">2</span>)</span><br><span class="line">Image.fromarray(np.uint8(img * <span class="number">255</span>)).save(<span class="string">&quot;mandelbrot4.png&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>如果把这几行背后的含义都真正吃透了，那么你掌握的就不只是“怎么画
+Mandelbrot 集”，而是：</p>
+<blockquote>
+<p><strong>如何把一个连续数学对象，转化成一张由离散像素组成的图像。</strong></p>
+</blockquote>
+<p>这正是数值可视化最核心的能力之一。</p>
+<hr />
+<h1 id="附注释版代码">附：注释版代码</h1>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> numba <span class="keyword">import</span> jit</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line">MAXITERS = <span class="number">200</span></span><br><span class="line">RADIUS = <span class="number">100</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@jit</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">color</span>(<span class="params">z, i</span>):</span><br><span class="line">    <span class="comment"># 根据逃逸时机和平滑公式生成 RGB 值</span></span><br><span class="line">    v = np.log2(i + <span class="number">1</span> - np.log2(np.log2(<span class="built_in">abs</span>(z)))) / <span class="number">5</span></span><br><span class="line">    <span class="keyword">if</span> v &lt; <span class="number">1.0</span>:</span><br><span class="line">        <span class="keyword">return</span> v**<span class="number">4</span>, v**<span class="number">2.5</span>, v</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        v = <span class="built_in">max</span>(<span class="number">0</span>, <span class="number">2</span> - v)</span><br><span class="line">        <span class="keyword">return</span> v, v**<span class="number">1.5</span>, v**<span class="number">3</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@jit</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">iterate</span>(<span class="params">c</span>):</span><br><span class="line">    <span class="comment"># 从 z=0 开始做 Mandelbrot 迭代</span></span><br><span class="line">    z = <span class="number">0j</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(MAXITERS):</span><br><span class="line">        <span class="comment"># 检查是否逃逸：这里比较的是 |z|^2</span></span><br><span class="line">        <span class="keyword">if</span> z.real * z.real + z.imag * z.imag &gt; RADIUS:</span><br><span class="line">            <span class="keyword">return</span> color(z, i)</span><br><span class="line">        z = z * z + c</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 若在最大迭代次数内未逃逸，则视为内部点，涂黑</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>(<span class="params">xmin, xmax, ymin, ymax, width, height</span>):</span><br><span class="line">    <span class="comment"># 生成复平面采样网格：</span></span><br><span class="line">    <span class="comment"># x 给出每一列的实部，y 给出每一行的虚部</span></span><br><span class="line">    y, x = np.ogrid[ymax:ymin:height * <span class="number">1j</span>, xmin:xmax:width * <span class="number">1j</span>]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 通过广播构造完整的复数网格</span></span><br><span class="line">    z = x + y * <span class="number">1j</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 对每个采样点逐元素调用 iterate，得到 R/G/B 三个通道</span></span><br><span class="line">    R, G, B = np.asarray(np.frompyfunc(iterate, <span class="number">1</span>, <span class="number">3</span>)(z)).astype(<span class="built_in">float</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 拼成 (height, width, 3) 的 RGB 图像数组</span></span><br><span class="line">    img = np.stack((R, G, B), axis=<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 将 0~1 的浮点值映射到 0~255，并转成 uint8 图像保存</span></span><br><span class="line">    Image.fromarray(np.uint8(img * <span class="number">255</span>)).save(<span class="string">&quot;mandelbrot4.png&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main(-<span class="number">2.1</span>, <span class="number">0.8</span>, -<span class="number">1.16</span>, <span class="number">1.16</span>, <span class="number">800</span>, <span class="number">640</span>)</span><br></pre></td></tr></table></figure>
 
     </div>
 

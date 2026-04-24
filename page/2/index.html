@@ -1613,7 +1613,7 @@ class="math inline">\(f(n)\)</span> 就是一个递归函数，于是f(n)
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-04-23 16:34:21" itemprop="dateModified" datetime="2026-04-23T16:34:21+08:00">2026-04-23</time>
+      <time title="Modified: 2026-04-24 11:24:19" itemprop="dateModified" datetime="2026-04-24T11:24:19+08:00">2026-04-24</time>
     </span>
 
   
@@ -1647,7 +1647,7 @@ class="math inline">\(f(n)\)</span> 就是一个递归函数，于是f(n)
 </blockquote>
 <p>这一步理解了，Mandelbrot 集的程序就算真正入门了。</p>
 <hr />
-<h1 id="一先看完整程序">一、先看完整程序</h1>
+<h1 id="先看完整程序">先看完整程序</h1>
 <p>我们先把完整代码摆出来，后面再一段一段拆开。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span></span><br><span class="line"><span class="string">A fast Mandelbrot set wallpaper renderer</span></span><br><span class="line"><span class="string">~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> numba <span class="keyword">import</span> jit  <span class="comment"># type: ignore</span></span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line">MAXITERS = <span class="number">200</span></span><br><span class="line">RADIUS = <span class="number">100</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@jit</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">color</span>(<span class="params">z, i</span>):</span><br><span class="line">    v = np.log2(i + <span class="number">1</span> - np.log2(np.log2(<span class="built_in">abs</span>(z)))) / <span class="number">5</span></span><br><span class="line">    <span class="keyword">if</span> v &lt; <span class="number">1.0</span>:</span><br><span class="line">        <span class="keyword">return</span> v**<span class="number">4</span>, v**<span class="number">2.5</span>, v</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        v = <span class="built_in">max</span>(<span class="number">0</span>, <span class="number">2</span> - v)</span><br><span class="line">        <span class="keyword">return</span> v, v**<span class="number">1.5</span>, v**<span class="number">3</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@jit</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">iterate</span>(<span class="params">c</span>):</span><br><span class="line">    z = <span class="number">0j</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(MAXITERS):</span><br><span class="line">        <span class="keyword">if</span> z.real * z.real + z.imag * z.imag &gt; RADIUS:</span><br><span class="line">            <span class="keyword">return</span> color(z, i)</span><br><span class="line">        z = z * z + c</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>(<span class="params">xmin, xmax, ymin, ymax, width, height</span>):</span><br><span class="line">    y, x = np.ogrid[ymax:ymin:height * <span class="number">1j</span>, xmin:xmax:width * <span class="number">1j</span>]</span><br><span class="line">    z = x + y * <span class="number">1j</span></span><br><span class="line">    R, G, B = np.asarray(np.frompyfunc(iterate, <span class="number">1</span>, <span class="number">3</span>)(z)).astype(<span class="built_in">float</span>)</span><br><span class="line">    img = np.stack((R, G, B), axis=<span class="number">2</span>)</span><br><span class="line">    Image.fromarray(np.uint8(img * <span class="number">255</span>)).save(<span class="string">&quot;mandelbrot4.png&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main(-<span class="number">2.1</span>, <span class="number">0.8</span>, -<span class="number">1.16</span>, <span class="number">1.16</span>, <span class="number">800</span>, <span class="number">640</span>)</span><br></pre></td></tr></table></figure>
 <p>别急着被
@@ -1663,7 +1663,7 @@ class="math inline">\(f(n)\)</span> 就是一个递归函数，于是f(n)
 </ul>
 <p>所以，我们真正要做的，就是把这一条主线看清楚。</p>
 <hr />
-<h1 id="二mandelbrot-集到底是什么">二、Mandelbrot 集到底是什么？</h1>
+<h1 id="mandelbrot-集到底是什么">Mandelbrot 集到底是什么？</h1>
 <p>Mandelbrot 集研究的是下面这个迭代：</p>
 <p><span class="math display">\[
 z_{n+1} = z_n^2 + c, \qquad z_0 = 0
@@ -1687,14 +1687,13 @@ z_{n+1} = z_n^2 + c, \qquad z_0 = 0
 </blockquote>
 <p>程序最终画出来的，并不是一个“神秘的形状”，而是一个巨大的“判定结果图”。</p>
 <hr />
-<h1 id="三程序整体到底在做什么">三、程序整体到底在做什么？</h1>
+<h1 id="程序整体到底在做什么">程序整体到底在做什么？</h1>
 <p>如果把整段代码抽象成一句话，那就是：</p>
 <blockquote>
 <p><strong>把图像中的每一个像素，映射为复平面中的一个复数点，然后检查这个点的迭代命运，最后把命运翻译成颜色。</strong></p>
 </blockquote>
 <p>这件事可以拆成五步：</p>
-<h2 id="第-1-步确定你想看复平面的哪一块">第 1
-步：确定你想看复平面的哪一块</h2>
+<h2 id="确定你想看复平面的哪一块">确定你想看复平面的哪一块</h2>
 <p>程序最后调用：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">main(-<span class="number">2.1</span>, <span class="number">0.8</span>, -<span class="number">1.16</span>, <span class="number">1.16</span>, <span class="number">800</span>, <span class="number">640</span>)</span><br></pre></td></tr></table></figure>
 <p>这表示：</p>
@@ -1706,19 +1705,18 @@ z_{n+1} = z_n^2 + c, \qquad z_0 = 0
 <p>也就是说，我们把复平面上的一个矩形窗口拿出来观察，然后把这个矩形离散成
 <code>800 × 640</code> 个采样位置。</p>
 <hr />
-<h2 id="第-2-步给每个像素分配一个复数坐标">第 2
-步：给每个像素分配一个复数坐标</h2>
+<h2 id="给每个像素分配一个复数坐标">给每个像素分配一个复数坐标</h2>
 <p>核心代码：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">y, x = np.ogrid[ymax:ymin:height * <span class="number">1j</span>, xmin:xmax:width * <span class="number">1j</span>]</span><br><span class="line">z = x + y * <span class="number">1j</span></span><br></pre></td></tr></table></figure>
 <p>这一步是整段程序的灵魂，后面我们会单独用一整节讲透。</p>
 <hr />
-<h2 id="第-3-步对每个复数点做迭代">第 3 步：对每个复数点做迭代</h2>
+<h2 id="对每个复数点做迭代">对每个复数点做迭代</h2>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iterate(c)</span><br></pre></td></tr></table></figure>
 <p>对于每个 <code>c</code>，从 <code>z=0j</code> 开始，不断执行：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">z = z * z + c</span><br></pre></td></tr></table></figure>
 <p>一旦 <code>z</code> 变得足够大，就认为它已经逃逸。</p>
 <hr />
-<h2 id="第-4-步根据逃逸情况生成颜色">第 4 步：根据逃逸情况生成颜色</h2>
+<h2 id="根据逃逸情况生成颜色">根据逃逸情况生成颜色</h2>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">color(z, i)</span><br></pre></td></tr></table></figure>
 <p>它根据：</p>
 <ul>
@@ -1727,15 +1725,15 @@ z_{n+1} = z_n^2 + c, \qquad z_0 = 0
 </ul>
 <p>来返回 <code>(R, G, B)</code> 三个颜色值。</p>
 <hr />
-<h2 id="第-5-步把颜色数组保存成图像">第 5 步：把颜色数组保存成图像</h2>
+<h2 id="把颜色数组保存成图像">把颜色数组保存成图像</h2>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">img = np.stack((R, G, B), axis=<span class="number">2</span>)</span><br><span class="line">Image.fromarray(np.uint8(img * <span class="number">255</span>)).save(<span class="string">&quot;mandelbrot4.png&quot;</span>)</span><br></pre></td></tr></table></figure>
 <p>最后把三张二维颜色表拼成一张 RGB 图像。</p>
 <hr />
 <h1
-id="四最关键的一步程序是怎么生成复平面中的点的">四、最关键的一步：程序是怎么生成复平面中的点的？</h1>
+id="最关键的一步程序是怎么生成复平面中的点的">最关键的一步：程序是怎么生成复平面中的点的？</h1>
 <p>这一节要讲透彻，因为它决定了你到底有没有真正看懂这段程序。</p>
-<h2 id="图像像素和复平面点之间的对应关系">4.1
-图像像素和复平面点之间的对应关系</h2>
+<h2
+id="图像像素和复平面点之间的对应关系">图像像素和复平面点之间的对应关系</h2>
 <p>一张图像是一个矩形网格：</p>
 <ul>
 <li>横向有 <code>width</code> 个像素；</li>
@@ -1754,7 +1752,7 @@ id="四最关键的一步程序是怎么生成复平面中的点的">四、最�
 </ul>
 <p>这就是“图像采样”的本质。</p>
 <hr />
-<h2 id="np.ogrid-到底生成了什么">4.2 <code>np.ogrid</code>
+<h2 id="np.ogrid-到底生成了什么"><code>np.ogrid</code>
 到底生成了什么？</h2>
 <p>代码是：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">y, x = np.ogrid[ymax:ymin:height * <span class="number">1j</span>, xmin:xmax:width * <span class="number">1j</span>]</span><br></pre></td></tr></table></figure>
@@ -1768,9 +1766,9 @@ id="四最关键的一步程序是怎么生成复平面中的点的">四、最�
 </ul>
 <p>别急，我们一个一个来。</p>
 <hr />
-<h2 id="ogrid-不是在生成完整坐标表而是在生成行坐标-列坐标">4.3
-<code>ogrid</code> 不是在生成“完整坐标表”，而是在生成“行坐标 +
-列坐标”</h2>
+<h2
+id="ogrid-不是在生成完整坐标表而是在生成行坐标-列坐标"><code>ogrid</code>
+不是在生成“完整坐标表”，而是在生成“行坐标 + 列坐标”</h2>
 <p>先看结果形式。</p>
 <p>如果我们写：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x, y = np.ogrid[<span class="number">0</span>:<span class="number">3</span>, <span class="number">0</span>:<span class="number">4</span>]</span><br></pre></td></tr></table></figure>
@@ -1792,9 +1790,8 @@ id="四最关键的一步程序是怎么生成复平面中的点的">四、最�
 </ul>
 <p>这其实很聪明，因为整张复平面网格可以由“列坐标”和“行坐标”组合出来，不需要一开始就手工构造二维嵌套列表。</p>
 <hr />
-<h2 id="height-1j-和-width-1j-到底是什么意思">4.4
-<code>height * 1j</code> 和 <code>width * 1j</code>
-到底是什么意思？</h2>
+<h2 id="height-1j-和-width-1j-到底是什么意思"><code>height * 1j</code>
+和 <code>width * 1j</code> 到底是什么意思？</h2>
 <p>这是初学者最容易误会的地方。</p>
 <p>这里的 <code>1j</code> <strong>不是说步长是虚数</strong>。</p>
 <p>在 <code>ogrid</code>、<code>mgrid</code>
@@ -1828,7 +1825,7 @@ id="四最关键的一步程序是怎么生成复平面中的点的">四、最�
 <li>它就自动把区间均匀分好了。</li>
 </ul>
 <hr />
-<h2 id="为什么-y-是从-ymax-到-ymin而不是从-ymin-到-ymax">4.5 为什么
+<h2 id="为什么-y-是从-ymax-到-ymin而不是从-ymin-到-ymax">为什么
 <code>y</code> 是从 <code>ymax</code> 到 <code>ymin</code>，而不是从
 <code>ymin</code> 到 <code>ymax</code>？</h2>
 <p>这是因为：</p>
@@ -1847,7 +1844,7 @@ id="四最关键的一步程序是怎么生成复平面中的点的">四、最�
 <p>图像显示出来时，上下方向才会和我们熟悉的复平面方向一致。</p>
 <p>如果你把它写反了，图像会整体上下颠倒。</p>
 <hr />
-<h2 id="一个小尺寸例子彻底看懂-ogrid">4.6 一个小尺寸例子，彻底看懂
+<h2 id="一个小尺寸例子彻底看懂-ogrid">一个小尺寸例子，彻底看懂
 <code>ogrid</code></h2>
 <p>假设我们不是画 <code>800 × 640</code>，而是只画一个
 <code>4 × 3</code> 的小图：</p>
@@ -1873,7 +1870,7 @@ id="四最关键的一步程序是怎么生成复平面中的点的">四、最�
 <li>实部和虚部一组合，就得到每个像素对应的复数。</li>
 </ul>
 <hr />
-<h2 id="z-x-y-1j-为什么这么优雅">4.7 <code>z = x + y * 1j</code>
+<h2 id="z-x-y-1j-为什么这么优雅"><code>z = x + y * 1j</code>
 为什么这么优雅？</h2>
 <p>因为复数本来就写成：</p>
 <p><span class="math display">\[
@@ -1898,7 +1895,7 @@ a + bi
 <p><strong>把成千上万个像素点的计算，统一表达成数组之间的运算。</strong></p>
 </blockquote>
 <hr />
-<h1 id="五广播机制为什么-x-y-1j-能自动变成二维网格">五、广播机制：为什么
+<h1 id="广播机制为什么-x-y-1j-能自动变成二维网格">广播机制：为什么
 <code>x + y * 1j</code> 能自动变成二维网格？</h1>
 <p>理解上面那句代码，还必须明白 NumPy 的广播机制。</p>
 <p><code>x</code> 和 <code>y</code> 的形状并不一样：</p>
@@ -1927,13 +1924,13 @@ a + bi
 </blockquote>
 <hr />
 <h1
-id="六每个点接下来会经历什么iteratec-逐行讲解">六、每个点接下来会经历什么？<code>iterate(c)</code>
+id="每个点接下来会经历什么iteratec-逐行讲解">每个点接下来会经历什么？<code>iterate(c)</code>
 逐行讲解</h1>
 <p>核心函数：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@jit</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">iterate</span>(<span class="params">c</span>):</span><br><span class="line">    z = <span class="number">0j</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(MAXITERS):</span><br><span class="line">        <span class="keyword">if</span> z.real * z.real + z.imag * z.imag &gt; RADIUS:</span><br><span class="line">            <span class="keyword">return</span> color(z, i)</span><br><span class="line">        z = z * z + c</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span></span><br></pre></td></tr></table></figure>
 <p>我们一行一行来看。</p>
 <hr />
-<h2 id="z-0j">6.1 <code>z = 0j</code></h2>
+<h2 id="z-0j"><code>z = 0j</code></h2>
 <p>这表示从复数 <code>0 + 0i</code> 开始。</p>
 <p>这是 Mandelbrot 集定义的一部分，不是程序员随便选的初值。</p>
 <p>Mandelbrot 集关注的就是：</p>
@@ -1943,8 +1940,8 @@ id="六每个点接下来会经历什么iteratec-逐行讲解">六、每个点�
 </blockquote>
 <p>如果你把初值改了，那研究的就不是标准 Mandelbrot 集了。</p>
 <hr />
-<h2 id="for-i-in-rangemaxiters">6.2
-<code>for i in range(MAXITERS)</code></h2>
+<h2
+id="for-i-in-rangemaxiters"><code>for i in range(MAXITERS)</code></h2>
 <p>这里的 <code>range(MAXITERS)</code> 表示最多迭代
 <code>MAXITERS</code> 次。</p>
 <p>原程序设置：</p>
@@ -1962,7 +1959,7 @@ id="六每个点接下来会经历什么iteratec-逐行讲解">六、每个点�
 </ul>
 <p>所以绘图时我们总是设一个“最大迭代次数”。</p>
 <hr />
-<h2 id="为什么用-z.real-和-z.imag">6.3 为什么用 <code>z.real</code> 和
+<h2 id="为什么用-z.real-和-z.imag">为什么用 <code>z.real</code> 和
 <code>z.imag</code>？</h2>
 <p>代码里写的是：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> z.real * z.real + z.imag * z.imag &gt; RADIUS:</span><br></pre></td></tr></table></figure>
@@ -1980,7 +1977,7 @@ id="六每个点接下来会经历什么iteratec-逐行讲解">六、每个点�
 <p>所以程序实际上是在比较复数模长的平方。</p>
 <p>如果模长变得很大，就说明这个轨道已经跑远了。</p>
 <hr />
-<h2 id="为什么这里不直接写-absz-某个数">6.4 为什么这里不直接写
+<h2 id="为什么这里不直接写-absz-某个数">为什么这里不直接写
 <code>abs(z) &gt; 某个数</code>？</h2>
 <p>因为：</p>
 <ul>
@@ -1996,7 +1993,7 @@ id="六每个点接下来会经历什么iteratec-逐行讲解">六、每个点�
 <p><strong>能不做开方，就不做开方。</strong></p>
 </blockquote>
 <hr />
-<h2 id="radius-100-为什么这么大">6.5 <code>RADIUS = 100</code>
+<h2 id="radius-100-为什么这么大"><code>RADIUS = 100</code>
 为什么这么大？</h2>
 <p>不少教材会直接写“逃逸半径取 2 即可”，因为理论上对于 Mandelbrot
 集，模长大于 2 后轨道就会发散。</p>
@@ -2013,7 +2010,7 @@ id="六每个点接下来会经历什么iteratec-逐行讲解">六、每个点�
 <p>这依然远大于
 2，说明程序更倾向于“等它跑得非常明显了再判定逃逸”，这样有时能让平滑着色更稳定一些。</p>
 <hr />
-<h2 id="z-z-z-c">6.6 <code>z = z * z + c</code></h2>
+<h2 id="z-z-z-c"><code>z = z * z + c</code></h2>
 <p>这就是 Mandelbrot 集最核心的迭代公式：</p>
 <p><span class="math display">\[
 z_{n+1} = z_n^2 + c
@@ -2027,7 +2024,7 @@ z_{n+1} = z_n^2 + c
 </ul>
 <p>而整个 Mandelbrot 图，就是这些轨道命运的总地图。</p>
 <hr />
-<h2 id="为什么未逃逸点返回黑色">6.7 为什么未逃逸点返回黑色？</h2>
+<h2 id="为什么未逃逸点返回黑色">为什么未逃逸点返回黑色？</h2>
 <p>函数最后写着：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span></span><br></pre></td></tr></table></figure>
 <p>这表示 RGB 三个通道都为 0，也就是黑色。</p>
@@ -2036,7 +2033,7 @@ z_{n+1} = z_n^2 + c
 <p>这也是 Mandelbrot 图最常见的视觉风格之一。</p>
 <hr />
 <h1
-id="七colorz-i颜色为什么这么平滑">七、<code>color(z, i)</code>：颜色为什么这么平滑？</h1>
+id="colorz-i颜色为什么这么平滑"><code>color(z, i)</code>：颜色为什么这么平滑？</h1>
 <p>再看颜色函数：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@jit</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">color</span>(<span class="params">z, i</span>):</span><br><span class="line">    v = np.log2(i + <span class="number">1</span> - np.log2(np.log2(<span class="built_in">abs</span>(z)))) / <span class="number">5</span></span><br><span class="line">    <span class="keyword">if</span> v &lt; <span class="number">1.0</span>:</span><br><span class="line">        <span class="keyword">return</span> v**<span class="number">4</span>, v**<span class="number">2.5</span>, v</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        v = <span class="built_in">max</span>(<span class="number">0</span>, <span class="number">2</span> - v)</span><br><span class="line">        <span class="keyword">return</span> v, v**<span class="number">1.5</span>, v**<span class="number">3</span></span><br></pre></td></tr></table></figure>
 <p>这段代码的重点，不在于某个具体颜色公式，而在于它采用了“平滑着色”的思想。</p>
@@ -2057,7 +2054,7 @@ id="七colorz-i颜色为什么这么平滑">七、<code>color(z, i)</code>：颜
 <p>一个负责判命运，一个负责调色板。</p>
 <hr />
 <h1
-id="八为什么它能一次处理整张图frompyfunc-讲透">八、为什么它能一次处理整张图？<code>frompyfunc</code>
+id="为什么它能一次处理整张图frompyfunc-讲透">为什么它能一次处理整张图？<code>frompyfunc</code>
 讲透</h1>
 <p>程序里有一句比较不好读：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">R, G, B = np.asarray(np.frompyfunc(iterate, <span class="number">1</span>, <span class="number">3</span>)(z)).astype(<span class="built_in">float</span>)</span><br></pre></td></tr></table></figure>
@@ -2067,7 +2064,7 @@ id="八为什么它能一次处理整张图frompyfunc-讲透">八、为什么它
 <code>iterate(c)</code>，变成一个可以作用在整个数组上的函数。</p>
 </blockquote>
 <hr />
-<h2 id="iteratec-原本只能算一个点">8.1 <code>iterate(c)</code>
+<h2 id="iteratec-原本只能算一个点"><code>iterate(c)</code>
 原本只能算一个点</h2>
 <p>函数定义是：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">iterate</span>(<span class="params">c</span>):</span><br></pre></td></tr></table></figure>
@@ -2075,8 +2072,9 @@ id="八为什么它能一次处理整张图frompyfunc-讲透">八、为什么它
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(R, G, B)</span><br></pre></td></tr></table></figure>
 <p>所以它本质上是“单点版本”。</p>
 <hr />
-<h2 id="np.frompyfunciterate-1-3-在做什么">8.2
-<code>np.frompyfunc(iterate, 1, 3)</code> 在做什么？</h2>
+<h2
+id="np.frompyfunciterate-1-3-在做什么"><code>np.frompyfunc(iterate, 1, 3)</code>
+在做什么？</h2>
 <p>这里：</p>
 <ul>
 <li>第一个参数 <code>iterate</code>：原函数；</li>
@@ -2100,7 +2098,7 @@ id="八为什么它能一次处理整张图frompyfunc-讲透">八、为什么它
 <li>一张蓝色通道。</li>
 </ul>
 <hr />
-<h2 id="为什么后面要接-np.asarray....astypefloat">8.3 为什么后面要接
+<h2 id="为什么后面要接-np.asarray....astypefloat">为什么后面要接
 <code>np.asarray(...).astype(float)</code>？</h2>
 <p>这是因为 <code>frompyfunc</code> 产生的结果默认是对象数组，也就是
 <code>dtype=object</code>。</p>
@@ -2118,313 +2116,450 @@ id="八为什么它能一次处理整张图frompyfunc-讲透">八、为什么它
 <li>图像格式转换。</li>
 </ul>
 <hr />
-<h1
-id="九numpy.asarray-和-numpy.array-有什么区别">九、<code>numpy.asarray</code>
-和 <code>numpy.array</code> 有什么区别？</h1>
-<p>Mandelbrot 程序里出现了这两个函数，我们放在程序的上下文里理解。</p>
-<h2 id="np.asarray">9.1 <code>np.asarray</code></h2>
-<p><code>np.asarray(a)</code> 的意思是：</p>
+<h1 id="把程序里的函数和语法逐个讲透">把程序里的函数和语法逐个讲透</h1>
+<p>这一节专门针对“函数和语法还想看得更细”的读者。</p>
+<hr />
+<h2
+id="def函数定义到底在定义什么"><code>def</code>：函数定义到底在定义什么？</h2>
+<p>例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">iterate</span>(<span class="params">c</span>):</span><br></pre></td></tr></table></figure>
+<p>这是 Python 中定义函数的基本语法。结构可以拆成四部分：</p>
+<ol type="1">
+<li><code>def</code>：告诉 Python“我要定义一个函数”；</li>
+<li><code>iterate</code>：函数名；</li>
+<li><code>(c)</code>：参数列表；</li>
+<li><code>:</code>：表示下面缩进的代码块属于这个函数。</li>
+</ol>
+<p>更一般的形式是：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">函数名</span>(<span class="params">参数<span class="number">1</span>, 参数<span class="number">2</span>, ...</span>):</span><br><span class="line">    函数体</span><br><span class="line">    <span class="keyword">return</span> 返回值</span><br></pre></td></tr></table></figure>
+<p>在本程序里：</p>
+<ul>
+<li><code>def color(z, i):</code>
+表示“定义一个接收两个参数的函数”；</li>
+<li><code>def iterate(c):</code> 表示“定义一个接收一个参数的函数”；</li>
+<li><code>def main(xmin, xmax, ymin, ymax, width, height):</code>
+表示“定义主流程函数”。</li>
+</ul>
+<h3 id="参数是什么意思">参数是什么意思？</h3>
+<p>参数就是函数运行时需要的输入。</p>
+<p>例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">x, y</span>):</span><br><span class="line">    <span class="keyword">return</span> x + y</span><br></pre></td></tr></table></figure>
+<p>这里 <code>x</code>、<code>y</code> 都是参数。调用时：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">3</span>, <span class="number">5</span>)</span><br></pre></td></tr></table></figure>
+<p>就是把 <code>3</code> 传给 <code>x</code>，把 <code>5</code> 传给
+<code>y</code>。</p>
+<p>放到 Mandelbrot 程序里：</p>
+<ul>
+<li><code>color(z, i)</code>：需要知道“逃逸时的复数状态
+<code>z</code>”和“逃逸发生在第几步 <code>i</code>”；</li>
+<li><code>iterate(c)</code>：只需要知道当前正在检查的复平面点
+<code>c</code>；</li>
+<li><code>main(...)</code>：需要知道窗口边界和图像尺寸。</li>
+</ul>
+<h3 id="return-是什么"><code>return</code> 是什么？</h3>
+<p><code>return</code> 表示“函数算完以后，把什么结果交还给调用者”。</p>
+<p>例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">square</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> x * x</span><br></pre></td></tr></table></figure>
+<p>调用：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">square(<span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+<p>得到结果 <code>16</code>。</p>
+<p>在本程序里：</p>
+<ul>
+<li><code>color()</code> 返回三个颜色值；</li>
+<li><code>iterate()</code> 返回一个颜色三元组；</li>
+<li><code>main()</code> 不返回值，而是直接把图片保存到磁盘。</li>
+</ul>
+<hr />
+<h2
+id="jit这行前缀到底修饰了什么"><code>@jit</code>：这行前缀到底修饰了什么？</h2>
+<p>写法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@jit</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">iterate</span>(<span class="params">c</span>):</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+<p>这是 Python 的<strong>装饰器语法</strong>。</p>
+<p>它等价于一种更“展开”的写法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">iterate</span>(<span class="params">c</span>):</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">iterate = jit(iterate)</span><br></pre></td></tr></table></figure>
+<p>也就是说：</p>
+<blockquote>
+<p>先定义出原本的 <code>iterate</code> 函数，再把它交给 <code>jit</code>
+去包装，最后重新赋值给 <code>iterate</code>。</p>
+</blockquote>
+<h3 id="那-jit-在做什么">那 <code>jit</code> 在做什么？</h3>
+<p><code>jit</code> 来自 Numba，意思是 <em>just in time
+compilation</em>，即时编译。</p>
+<p>它的目的是：</p>
+<blockquote>
+<p>尝试把原本用 Python
+写的函数编译得更快一些，特别适合数值循环密集的场景。</p>
+</blockquote>
+<p>Mandelbrot 绘图里最耗时的部分恰好就是：</p>
+<ul>
+<li>大量像素；</li>
+<li>每个像素又要迭代很多次。</li>
+</ul>
+<p>所以 <code>@jit</code> 很适合加在 <code>iterate()</code> 和
+<code>color()</code> 这种频繁调用的函数上。</p>
+<h3 id="为什么-main-没有加-jit">为什么 <code>main()</code> 没有加
+<code>@jit</code>？</h3>
+<p>因为 <code>main()</code>
+主要在做数组组织和图像保存，不是最耗时的逐点迭代核心；真正耗时的是
+<code>iterate()</code> 这种会被调用很多很多次的函数。</p>
+<hr />
+<h2
+id="rangemaxiters语法到底是什么"><code>range(MAXITERS)</code>：语法到底是什么？</h2>
+<p>本程序里：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(MAXITERS):</span><br></pre></td></tr></table></figure>
+<h3 id="range-的一般语法"><code>range</code> 的一般语法</h3>
+<p>Python 里 <code>range</code> 最常见有三种写法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">range</span>(stop)</span><br><span class="line"><span class="built_in">range</span>(start, stop)</span><br><span class="line"><span class="built_in">range</span>(start, stop, step)</span><br></pre></td></tr></table></figure>
+<p>它们分别表示：</p>
+<ol type="1">
+<li>从 <code>0</code> 到 <code>stop - 1</code></li>
+<li>从 <code>start</code> 到 <code>stop - 1</code></li>
+<li>从 <code>start</code> 开始按 <code>step</code> 增长，直到但不包括
+<code>stop</code></li>
+</ol>
+<p>例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">range</span>(<span class="number">5</span>)          <span class="comment"># 0, 1, 2, 3, 4</span></span><br><span class="line"><span class="built_in">range</span>(<span class="number">2</span>, <span class="number">6</span>)       <span class="comment"># 2, 3, 4, 5</span></span><br><span class="line"><span class="built_in">range</span>(<span class="number">1</span>, <span class="number">10</span>, <span class="number">2</span>)   <span class="comment"># 1, 3, 5, 7, 9</span></span><br></pre></td></tr></table></figure>
+<h3 id="在这里为什么写成-rangemaxiters">在这里为什么写成
+<code>range(MAXITERS)</code>？</h3>
+<p>因为我们需要一个计数器 <code>i</code>：</p>
+<ul>
+<li>第 0 次迭代</li>
+<li>第 1 次迭代</li>
+<li>第 2 次迭代</li>
+<li>...</li>
+<li>第 <code>MAXITERS - 1</code> 次迭代</li>
+</ul>
+<p>这正是 <code>range(MAXITERS)</code> 最自然的用途。</p>
+<h3 id="range-返回的是列表吗"><code>range</code> 返回的是列表吗？</h3>
+<p>不是。Python 3 里的 <code>range</code> 返回的是 <code>range</code>
+对象，也就是一种惰性序列。它不会一开始就真的生成完整列表，而是在需要时逐个给出整数，这样更省内存。</p>
+<hr />
+<h2
+id="if-...-else-...这里到底在分什么支"><code>if ... else ...</code>：这里到底在分什么支？</h2>
+<p>例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> v &lt; <span class="number">1.0</span>:</span><br><span class="line">    <span class="keyword">return</span> v**<span class="number">4</span>, v**<span class="number">2.5</span>, v</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    v = <span class="built_in">max</span>(<span class="number">0</span>, <span class="number">2</span> - v)</span><br><span class="line">    <span class="keyword">return</span> v, v**<span class="number">1.5</span>, v**<span class="number">3</span></span><br></pre></td></tr></table></figure>
+<p>以及：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> z.real * z.real + z.imag * z.imag &gt; RADIUS:</span><br><span class="line">    <span class="keyword">return</span> color(z, i)</span><br></pre></td></tr></table></figure>
+<p><code>if</code> 的作用就是：</p>
+<blockquote>
+<p>根据条件真假，决定程序接下来走哪条路。</p>
+</blockquote>
+<p>更一般的语法是：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> 条件:</span><br><span class="line">    条件为真时执行</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    条件为假时执行</span><br></pre></td></tr></table></figure>
+<p>这里：</p>
+<ul>
+<li>在 <code>color()</code> 中，是根据 <code>v &lt; 1.0</code>
+选择两套不同的颜色公式；</li>
+<li>在 <code>iterate()</code>
+中，是根据“是否逃逸”决定继续迭代还是立刻返回颜色。</li>
+</ul>
+<hr />
+<h2
+id="absz为什么复数也能取绝对值"><code>abs(z)</code>：为什么复数也能取绝对值？</h2>
+<p>Python 对复数使用 <code>abs(z)</code> 时，返回的是复数的模长。</p>
+<p>例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">z = <span class="number">3</span> + <span class="number">4j</span></span><br><span class="line"><span class="built_in">abs</span>(z)   <span class="comment"># 5.0</span></span><br></pre></td></tr></table></figure>
+<p>因为复数模长定义为：</p>
+<p><span class="math display">\[
+|a+bi| = \sqrt{a^2+b^2}
+\]</span></p>
+<p>在 <code>color()</code> 中：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">abs</span>(z)</span><br></pre></td></tr></table></figure>
+<p>用来参与平滑着色公式，目的是让颜色变化不仅依赖“第几步逃逸”，还参考“逃逸时已经跑多远了”。</p>
+<hr />
+<h2 id="np.log2..."><code>np.log2(...)</code></h2>
+<p><code>np.log2(x)</code> 表示以 2 为底的对数。</p>
+<h3 id="一般形式">一般形式</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">np.log2(x)</span><br></pre></td></tr></table></figure>
+<p>其中 <code>x</code> 可以是：</p>
+<ul>
+<li>一个数字；</li>
+<li>一个数组。</li>
+</ul>
+<p>如果是数组，NumPy 会逐元素计算。</p>
+<p>例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">np.log2(<span class="number">8</span>)                 <span class="comment"># 3.0</span></span><br><span class="line">np.log2(np.array([<span class="number">1</span>,<span class="number">2</span>,<span class="number">4</span>])) <span class="comment"># [0., 1., 2.]</span></span><br></pre></td></tr></table></figure>
+<p>在 <code>color()</code> 里：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">np.log2(i + <span class="number">1</span> - np.log2(np.log2(<span class="built_in">abs</span>(z))))</span><br></pre></td></tr></table></figure>
+<p>这是一层层嵌套调用。阅读时建议从最里面往外看：</p>
+<ol type="1">
+<li><code>abs(z)</code>：先求模长；</li>
+<li><code>np.log2(abs(z))</code>：再求对数；</li>
+<li><code>np.log2(np.log2(abs(z)))</code>：再求一次对数；</li>
+<li><code>i + 1 - (...)</code>：把这个修正项从迭代次数中减掉；</li>
+<li>最外层再求一次 <code>log2</code> 并除以 <code>5</code>。</li>
+</ol>
+<p><span class="math display">\[v=\frac{\log_2(i+1-\log_2(\log_2
+|z|))}{5}\]</span></p>
+<p>你不必一开始就记住完整公式，但必须知道：</p>
+<blockquote>
+<p>这是一个“把离散逃逸层数变得更连续”的平滑处理。</p>
+</blockquote>
+<hr />
+<h2
+id="max0-2---v为什么这里用-max"><code>max(0, 2 - v)</code>：为什么这里用
+<code>max</code>？</h2>
+<p>Python 内置函数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">max</span>(a, b)</span><br></pre></td></tr></table></figure>
+<p>表示返回 <code>a</code> 和 <code>b</code> 中较大的那个。</p>
+<p>例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">max</span>(<span class="number">3</span>, <span class="number">7</span>)   <span class="comment"># 7</span></span><br><span class="line"><span class="built_in">max</span>(-<span class="number">1</span>, <span class="number">0</span>)  <span class="comment"># 0</span></span><br></pre></td></tr></table></figure>
+<p>在程序里：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">v = <span class="built_in">max</span>(<span class="number">0</span>, <span class="number">2</span> - v)</span><br></pre></td></tr></table></figure>
+<p>意思是：</p>
+<ul>
+<li>如果 <code>2 - v</code> 是正数，就保留它；</li>
+<li>如果 <code>2 - v</code> 已经变成负数，就截断成 <code>0</code>。</li>
+</ul>
+<p>这是一种简单的“防止颜色参数变负”的保护。</p>
+<hr />
+<h2
+id="np.ogrid...为什么看起来像切片但又不像普通切片"><code>np.ogrid[...]</code>：为什么看起来像切片，但又不像普通切片？</h2>
+<p>这是整个程序中最值得慢慢看的一个语法点。</p>
+<h3 id="一般外形">一般外形</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">np.ogrid[start:stop:step]</span><br></pre></td></tr></table></figure>
+<p>或者二维：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">np.ogrid[row_start:row_stop:row_step,</span><br><span class="line">         col_start:col_stop:col_step]</span><br></pre></td></tr></table></figure>
+<p>注意：这里用的是方括号 <code>[]</code>，不是圆括号
+<code>()</code>。因为 <code>ogrid</code> 利用了 Python 的切片语法。</p>
+<h3 id="三个位置分别表示什么">三个位置分别表示什么？</h3>
+<p>对于 <code>a:b:c</code>：</p>
+<ul>
+<li><code>a</code>：起点</li>
+<li><code>b</code>：终点</li>
+<li><code>c</code>：通常是步长；但在 <code>ogrid</code> /
+<code>mgrid</code> 里，如果 <code>c</code>
+是复数，则表示“采样点个数”</li>
+</ul>
+<p>所以：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ymax:ymin:height * <span class="number">1j</span></span><br></pre></td></tr></table></figure>
+<p>表示从 <code>ymax</code> 到 <code>ymin</code> 均匀取
+<code>height</code> 个点。</p>
+<h3 id="为什么左边写成-y-x-...-而不是-x-y-...">为什么左边写成
+<code>y, x = ...</code> 而不是 <code>x, y = ...</code>？</h3>
+<p>因为二维数组的第一维是“行”，第二维是“列”。</p>
+<ul>
+<li>第一段切片控制行，也就是 <code>y</code></li>
+<li>第二段切片控制列，也就是 <code>x</code></li>
+</ul>
+<p>所以写成：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">y, x = np.ogrid[行方向, 列方向]</span><br></pre></td></tr></table></figure>
+<p>反而是最符合二维数组语义的。</p>
+<hr />
+<h2 id="jpython-为什么能直接写虚数单位"><code>1j</code>：Python
+为什么能直接写虚数单位？</h2>
+<p>在 Python 中，复数的虚数单位写作 <code>j</code>，不是数学课本常写的
+<code>i</code>。</p>
+<p>例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">3</span> + <span class="number">4j</span></span><br></pre></td></tr></table></figure>
+<p>表示复数 <code>3 + 4i</code>。</p>
+<p>所以：</p>
+<ul>
+<li><code>0j</code> 表示纯零复数；</li>
+<li><code>y * 1j</code> 表示把实数 <code>y</code> 变成纯虚数
+<code>yi</code>；</li>
+<li><code>height * 1j</code> 在 <code>ogrid</code>
+的特殊语法里，则被解释为“取 <code>height</code> 个点”。</li>
+</ul>
+<p>也就是说，同样是 <code>1j</code>，在不同语境中扮演不同角色：</p>
+<ul>
+<li>在普通算术里，它是虚数单位；</li>
+<li>在 <code>ogrid</code> 切片里，它是“采样点个数”的编码方式。</li>
+</ul>
+<hr />
+<h2
+id="np.asarray...它和-np.array...-有什么细微区别"><code>np.asarray(...)</code>：它和
+<code>np.array(...)</code> 有什么细微区别？</h2>
+<h3 id="np.asarraya"><code>np.asarray(a)</code></h3>
+<p>意思是：</p>
 <blockquote>
 <p>尽量把 <code>a</code>
-变成数组，但如果它本来就是数组，就尽量不要多复制一份。</p>
+视为数组；如果它本来已经是数组，就尽量不要再额外复制一份。</p>
 </blockquote>
+<h3 id="np.arraya"><code>np.array(a)</code></h3>
+<p>通常意味着：</p>
+<blockquote>
+<p>根据 <code>a</code> 重新创建一个数组对象。</p>
+</blockquote>
+<p>简单理解：</p>
+<ul>
+<li><code>asarray</code> 更像“转换视图”；</li>
+<li><code>array</code> 更像“新建数组”。</li>
+</ul>
+<p>在本程序里：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">np.asarray(np.frompyfunc(...)(z))</span><br></pre></td></tr></table></figure>
+<p>语义上更像“把这个结果整理成数组”，而不是强调“我一定要再复制一份”。</p>
+<hr />
+<h2
+id="astypefloat为什么写成方法调用"><code>.astype(float)</code>：为什么写成方法调用？</h2>
+<p><code>astype</code> 是 NumPy 数组对象的方法。</p>
+<p>一般形式：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">数组.astype(目标类型)</span><br></pre></td></tr></table></figure>
 <p>例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">a = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line">b = np.asarray(a)</span><br><span class="line"><span class="built_in">print</span>(b <span class="keyword">is</span> a)  <span class="comment"># True</span></span><br></pre></td></tr></table></figure>
-<hr />
-<h2 id="np.array">9.2 <code>np.array</code></h2>
-<p><code>np.array(a)</code> 的意思通常是：</p>
-<blockquote>
-<p>创建一个新的数组对象。</p>
-</blockquote>
-<p>例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">a = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line">b = np.array(a)</span><br><span class="line"><span class="built_in">print</span>(b <span class="keyword">is</span> a)  <span class="comment"># False</span></span><br></pre></td></tr></table></figure>
-<hr />
-<h2 id="为什么这里更适合-asarray">9.3 为什么这里更适合
-<code>asarray</code>？</h2>
-<p>因为我们只是想把 <code>frompyfunc</code>
-的输出整理成数值数组，不是非要强行复制一份新的数据。</p>
-<p>所以：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">np.asarray(...)</span><br></pre></td></tr></table></figure>
-<p>更贴合“转换而不是重新制造”的意图。</p>
-<hr />
-<h1
-id="十astypefloat为什么还要改数据类型">十、<code>astype(float)</code>：为什么还要改数据类型？</h1>
-<p><code>astype</code> 的作用是把数组转换成另一种数据类型。</p>
-<p>例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line">b = a.astype(<span class="built_in">float</span>)</span><br></pre></td></tr></table></figure>
-<p>则 <code>b</code> 会变成浮点数组。</p>
-<p>在我们的程序里：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.astype(<span class="built_in">float</span>)</span><br></pre></td></tr></table></figure>
-<p>是因为颜色值后面还要参与数值运算，比如乘以
-<code>255</code>，所以把它们转成普通的浮点数数组更方便、更稳定。</p>
-<hr />
-<h1
-id="十一np.stackr-g-b-axis2三张二维表怎么变成一张彩色图">十一、<code>np.stack((R, G, B), axis=2)</code>：三张二维表怎么变成一张彩色图？</h1>
-<p>假设前面得到了：</p>
-<ul>
-<li><code>R</code>：红色强度二维表；</li>
-<li><code>G</code>：绿色强度二维表；</li>
-<li><code>B</code>：蓝色强度二维表。</li>
-</ul>
-<p>每一个都是 <code>(height, width)</code> 形状。</p>
-<p>但真正的 RGB 图像，通常需要一个三维数组：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(height, width, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
-<p>其中最后一个维度长度是 3，分别表示红、绿、蓝三个通道。</p>
-<p>所以程序写：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">img = np.stack((R, G, B), axis=<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
-<p>意思就是：</p>
-<blockquote>
-<p>把三张二维图，沿着第三个维度叠起来。</p>
-</blockquote>
-<p>例如，如果某个像素位置：</p>
-<ul>
-<li><code>R=0.8</code></li>
-<li><code>G=0.3</code></li>
-<li><code>B=0.1</code></li>
-</ul>
-<p>那么叠起来后，这个像素就变成：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">0.8</span>, <span class="number">0.3</span>, <span class="number">0.1</span>]</span><br></pre></td></tr></table></figure>
-<p>这就是一个 RGB 像素。</p>
-<hr />
-<h1
-id="十二uint8-和-image.fromarray为什么最后一定要乘-255">十二、<code>uint8</code>
-和 <code>Image.fromarray</code>：为什么最后一定要乘 255？</h1>
-<p>这是图像处理里非常基础，但必须讲明白的一步。</p>
-<h2 id="颜色函数输出的是-0-到-1-附近的浮点数">12.1 颜色函数输出的是 0 到
-1 附近的浮点数</h2>
-<p><code>color()</code> 返回的是类似这样的值：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="number">0.12</span>, <span class="number">0.56</span>, <span class="number">0.91</span>)</span><br></pre></td></tr></table></figure>
-<p>这适合数学计算，但不适合直接存成常见图片格式。</p>
-<hr />
-<h2 id="图像像素通常要用-uint8">12.2 图像像素通常要用
-<code>uint8</code></h2>
-<p>常见的 RGB 图像，每个通道通常都是一个 0 到 255 的整数：</p>
-<ul>
-<li>0 表示这个通道完全没有亮度；</li>
-<li>255 表示这个通道亮度最大。</li>
-</ul>
-<p>而 <code>uint8</code> 就是“8 位无符号整数”，范围恰好是：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span> ~ <span class="number">255</span></span><br></pre></td></tr></table></figure>
-<p>所以：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">np.uint8(img * <span class="number">255</span>)</span><br></pre></td></tr></table></figure>
-<p>是在做两件事：</p>
-<ol type="1">
-<li>先把 <code>0~1</code> 的浮点值放大到 <code>0~255</code>；</li>
-<li>再转成适合图像保存的整数格式。</li>
-</ol>
-<hr />
-<h2 id="image.fromarray-做了什么">12.3 <code>Image.fromarray</code>
-做了什么？</h2>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Image.fromarray(np.uint8(img * <span class="number">255</span>))</span><br></pre></td></tr></table></figure>
-<p>这句的意思是：</p>
-<blockquote>
-<p>把一个 NumPy 数组变成 Pillow 能识别的图像对象。</p>
-</blockquote>
-<p>当这个数组是 <code>(height, width, 3)</code> 并且类型是
-<code>uint8</code> 时，Pillow 会把它理解成一张 RGB 彩色图。</p>
-<p>最后：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.save(<span class="string">&quot;mandelbrot4.png&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>就把图像写入磁盘了。</p>
-<hr />
-<h1 id="十三为什么程序里用了-jit">十三、为什么程序里用了
-<code>@jit</code>？</h1>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> numba <span class="keyword">import</span> jit</span><br></pre></td></tr></table></figure>
-<p>然后：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@jit</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">color</span>(<span class="params">...</span>):</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line"><span class="meta">@jit</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">iterate</span>(<span class="params">...</span>):</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
-<p><code>@jit</code> 是 Numba 提供的即时编译装饰器。</p>
-<p>它的作用可以粗略理解为：</p>
-<blockquote>
-<p>尝试把原本用 Python 写的数值循环，编译成更快的机器码执行。</p>
-</blockquote>
-<p>为什么这里特别有用？</p>
-<p>因为 Mandelbrot 绘图里最耗时的部分，恰恰就是：</p>
-<ul>
-<li>对大量像素逐点迭代；</li>
-<li>每个点又要循环很多次。</li>
-</ul>
-<p>这种“很多小循环”的场景，纯 Python 往往会比较慢，而 <code>@jit</code>
-往往能明显提速。</p>
-<hr />
-<h1
-id="十四把原文件中的函数知识点放回程序上下文里重新理解">十四、把原文件中的函数知识点，放回程序上下文里重新理解</h1>
-<ul>
-<li><code>range</code></li>
-<li><code>real</code> / <code>imag</code></li>
-<li><code>ogrid</code> / <code>mgrid</code></li>
-<li><code>numpy.asarray</code> / <code>numpy.array</code></li>
-<li><code>numpy.frompyfunc</code></li>
-<li>广播机制</li>
-<li><code>astype</code></li>
-<li><code>numpy.stack</code></li>
-<li><code>PIL.Image.fromarray</code></li>
-<li><code>uint8</code></li>
-</ul>
-<blockquote>
-<p><strong>它们在 Mandelbrot 程序里各自扮演了什么角色。</strong></p>
-</blockquote>
-<p>下面我们把它们串起来总结一遍。</p>
-<hr />
-<h2 id="range">14.1 <code>range</code></h2>
-<p>在程序里：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(MAXITERS):</span><br></pre></td></tr></table></figure>
-<p>它表示：</p>
-<blockquote>
-<p>让每个点最多迭代 <code>MAXITERS</code> 次。</p>
-</blockquote>
-<p>也就是说，<code>range</code> 在这里负责的是“时间推进”。</p>
-<hr />
-<h2 id="real-和-imag">14.2 <code>real</code> 和 <code>imag</code></h2>
-<p>在程序里：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">z.real * z.real + z.imag * z.imag</span><br></pre></td></tr></table></figure>
-<p>它们负责从复数中取出实部和虚部，用来计算模长平方。</p>
-<p>也就是说，<code>real</code> / <code>imag</code>
-在这里负责的是“读取复数坐标”。</p>
-<hr />
-<h2 id="ogrid">14.3 <code>ogrid</code></h2>
-<p>在程序里：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">y, x = np.ogrid[ymax:ymin:height * <span class="number">1j</span>, xmin:xmax:width * <span class="number">1j</span>]</span><br></pre></td></tr></table></figure>
-<p>它负责的是：</p>
-<blockquote>
-<p><strong>把图像的行列，转换成复平面中的实部和虚部采样表。</strong></p>
-</blockquote>
-<p>这是全程序中最关键的采样步骤。</p>
-<hr />
-<h2 id="广播机制">14.4 广播机制</h2>
-<p>在程序里：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">z = x + y * <span class="number">1j</span></span><br></pre></td></tr></table></figure>
-<p>它让形状不同的 <code>x</code> 和 <code>y</code>
-自动扩展成完整二维网格。</p>
-<p>所以广播机制在这里负责的是：</p>
-<blockquote>
-<p><strong>把“行坐标”和“列坐标”拼成整张复数平面。</strong></p>
-</blockquote>
-<hr />
-<h2 id="frompyfunc">14.5 <code>frompyfunc</code></h2>
-<p>在程序里：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">np.frompyfunc(iterate, <span class="number">1</span>, <span class="number">3</span>)(z)</span><br></pre></td></tr></table></figure>
-<p>它负责的是：</p>
-<blockquote>
-<p>把原本处理单点的
-<code>iterate</code>，推广成对整张复数网格逐元素应用。</p>
-</blockquote>
-<hr />
-<h2 id="asarray">14.6 <code>asarray</code></h2>
-<p>在程序里：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">np.asarray(...)</span><br></pre></td></tr></table></figure>
-<p>它负责把结果整理成 NumPy 数组，方便后面继续数值运算。</p>
-<hr />
-<h2 id="astype">14.7 <code>astype</code></h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line">a.astype(<span class="built_in">float</span>)</span><br></pre></td></tr></table></figure>
+<p>会得到浮点数组。</p>
 <p>在程序里：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.astype(<span class="built_in">float</span>)</span><br></pre></td></tr></table></figure>
-<p>它负责把对象数组转换成浮点数数组。</p>
+<p>表示把数组元素转成浮点型。</p>
+<h3 id="为什么不是写-floatarray">为什么不是写
+<code>float(array)</code>？</h3>
+<p>因为 <code>float(array)</code>
+只能尝试把整个对象转成一个单一浮点数，而 <code>astype(float)</code>
+是对数组中每个元素逐个转换。</p>
 <hr />
-<h2 id="stack">14.8 <code>stack</code></h2>
-<p>在程序里：</p>
+<h2
+id="np.stackr-g-b-axis2为什么-axis2-恰好是第三维"><code>np.stack((R, G, B), axis=2)</code>：为什么
+<code>axis=2</code> 恰好是第三维？</h2>
+<p><code>stack</code> 的一般语法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">np.stack([数组<span class="number">1</span>, 数组<span class="number">2</span>, ...], axis=某个轴)</span><br></pre></td></tr></table></figure>
+<p>它的意思是：</p>
+<blockquote>
+<p>沿一个新的维度，把多个形状相同的数组叠起来。</p>
+</blockquote>
+<p>如果：</p>
+<ul>
+<li><code>R</code> 是 <code>(height, width)</code></li>
+<li><code>G</code> 是 <code>(height, width)</code></li>
+<li><code>B</code> 是 <code>(height, width)</code></li>
+</ul>
+<p>那么：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">np.stack((R, G, B), axis=<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
-<p>它负责把三张二维通道图叠成一张 RGB 彩图。</p>
+<p>会得到：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(height, width, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+<p>为什么是 <code>axis=2</code>？因为：</p>
+<ul>
+<li><code>axis=0</code> 会把颜色通道放到最前面，得到
+<code>(3, height, width)</code>；</li>
+<li><code>axis=1</code> 会把颜色通道插到中间；</li>
+<li><code>axis=2</code> 刚好把颜色通道放在最后一维，这正是常见 RGB
+图像的排布。</li>
+</ul>
 <hr />
-<h2 id="image.fromarray">14.9 <code>Image.fromarray</code></h2>
-<p>在程序里：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Image.fromarray(...)</span><br></pre></td></tr></table></figure>
-<p>它负责把 NumPy 数组正式转换成图像对象。</p>
+<h2
+id="np.uint8img-255这里其实连着发生了两件事"><code>np.uint8(img * 255)</code>：这里其实连着发生了两件事</h2>
+<p>先看里面：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">img * <span class="number">255</span></span><br></pre></td></tr></table></figure>
+<p>表示把 <code>0~1</code> 左右的浮点颜色值放大到 <code>0~255</code>
+的像素范围。</p>
+<p>再看外面：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">np.uint8(...)</span><br></pre></td></tr></table></figure>
+<p>表示把这些数转成 8 位无符号整数。<code>uint8</code>
+的取值范围就是：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span> ~ <span class="number">255</span></span><br></pre></td></tr></table></figure>
+<p>这正好对应图像像素通道最常见的存储格式。</p>
 <hr />
-<h2 id="uint8">14.10 <code>uint8</code></h2>
-<p>在程序里：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">np.uint8(img * <span class="number">255</span>)</span><br></pre></td></tr></table></figure>
-<p>它负责把浮点颜色值转换成 0 到 255 的图像像素格式。</p>
+<h2
+id="image.fromarray...它到底识别数组的什么信息"><code>Image.fromarray(...)</code>：它到底识别数组的什么信息？</h2>
+<p>一般形式：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Image.fromarray(array)</span><br></pre></td></tr></table></figure>
+<p>Pillow 会根据数组的：</p>
+<ul>
+<li>形状；</li>
+<li>数据类型；</li>
+</ul>
+<p>来猜这是一张什么图。</p>
+<p>例如：</p>
+<ul>
+<li><code>(height, width)</code> +
+<code>uint8</code>：常被理解为灰度图；</li>
+<li><code>(height, width, 3)</code> + <code>uint8</code>：常被理解为 RGB
+彩图。</li>
+</ul>
+<p>在本程序里：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Image.fromarray(np.uint8(img * <span class="number">255</span>))</span><br></pre></td></tr></table></figure>
+<p>由于数组形状是 <code>(height, width, 3)</code>，类型是
+<code>uint8</code>，所以 Pillow 会把它当成一张标准 RGB 彩图。</p>
 <hr />
-<h1 id="十五如果不用-ogrid能不能写当然能但会笨很多">十五、如果不用
+<h2
+id="savemandelbrot4.png这个方法真正做了什么"><code>.save("mandelbrot4.png")</code>：这个方法真正做了什么？</h2>
+<p><code>save</code> 是 Pillow 图像对象的方法。</p>
+<p>一般形式：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">image.save(<span class="string">&quot;文件名&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>它会根据文件后缀判断保存格式。</p>
+<p>例如：</p>
+<ul>
+<li><code>.png</code> 保存成 PNG；</li>
+<li><code>.jpg</code> 保存成 JPEG。</li>
+</ul>
+<p>在这里：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.save(<span class="string">&quot;mandelbrot4.png&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>表示把生成的图像保存为 PNG 文件。</p>
+<hr />
+<h2
+id="if-__name__-__main__这句很多人都会跳过但其实值得懂"><code>if __name__ == "__main__":</code>：这句很多人都会跳过，但其实值得懂</h2>
+<p>写法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main(...)</span><br></pre></td></tr></table></figure>
+<p>这里的 <code>__name__</code> 是 Python 模块的一个特殊变量。</p>
+<ul>
+<li>如果这个文件是“直接运行”的，那么 <code>__name__</code> 的值就是
+<code>"__main__"</code>；</li>
+<li>如果这个文件是“被别的文件 import 进去”的，那么 <code>__name__</code>
+就不是 <code>"__main__"</code>，而是模块名。</li>
+</ul>
+<p>所以这句的含义是：</p>
+<blockquote>
+<p>只有当这个文件被直接执行时，才自动调用
+<code>main()</code>；如果只是被别的程序导入，就不要立刻开始画图。</p>
+</blockquote>
+<p>这是 Python 程序里非常常见也非常实用的写法。</p>
+<hr />
+<h1
+id="把所有函数放回程序主线里再串一次">把所有函数放回程序主线里，再串一次</h1>
+<p>现在我们回头看这段代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>(<span class="params">xmin, xmax, ymin, ymax, width, height</span>):</span><br><span class="line">    y, x = np.ogrid[ymax:ymin:height * <span class="number">1j</span>, xmin:xmax:width * <span class="number">1j</span>]</span><br><span class="line">    z = x + y * <span class="number">1j</span></span><br><span class="line">    R, G, B = np.asarray(np.frompyfunc(iterate, <span class="number">1</span>, <span class="number">3</span>)(z)).astype(<span class="built_in">float</span>)</span><br><span class="line">    img = np.stack((R, G, B), axis=<span class="number">2</span>)</span><br><span class="line">    Image.fromarray(np.uint8(img * <span class="number">255</span>)).save(<span class="string">&quot;mandelbrot4.png&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>这时它的含义已经非常透明了：</p>
+<ol type="1">
+<li><code>main(...)</code>：接收观察窗口和图像尺寸；</li>
+<li><code>np.ogrid[...]</code>：生成“每行虚部”和“每列实部”；</li>
+<li><code>x + y * 1j</code>：拼成整张复数采样网格；</li>
+<li><code>np.frompyfunc(iterate, 1, 3)</code>：把单点迭代推广到整张网格；</li>
+<li><code>np.asarray(...).astype(float)</code>：把返回结果整理成浮点数组；</li>
+<li><code>np.stack((R, G, B), axis=2)</code>：把三张二维颜色图叠成一张
+RGB 图；</li>
+<li><code>np.uint8(img * 255)</code>：转换为标准图像像素格式；</li>
+<li><code>Image.fromarray(...).save(...)</code>：保存为 PNG 文件。</li>
+</ol>
+<p>这正是“从数学到图像”的完整翻译链条。</p>
+<hr />
+<h1 id="如果不用-ogrid能不能写当然能但会笨很多">如果不用
 <code>ogrid</code>，能不能写？当然能，但会笨很多</h1>
-<p>为了帮助你更深地理解 <code>ogrid</code>
-的价值，我们不妨写一个“更直白但更笨”的版本。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">real_vals = np.linspace(xmin, xmax, width)</span><br><span class="line">imag_vals = np.linspace(ymax, ymin, height)</span><br><span class="line"></span><br><span class="line">z = np.empty((height, width), dtype=<span class="built_in">complex</span>)</span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> <span class="built_in">range</span>(height):</span><br><span class="line">    <span class="keyword">for</span> col <span class="keyword">in</span> <span class="built_in">range</span>(width):</span><br><span class="line">        z[row, col] = real_vals[col] + imag_vals[row] * <span class="number">1j</span></span><br></pre></td></tr></table></figure>
 <p>这段代码做的事情和：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">y, x = np.ogrid[ymax:ymin:height * <span class="number">1j</span>, xmin:xmax:width * <span class="number">1j</span>]</span><br><span class="line">z = x + y * <span class="number">1j</span></span><br></pre></td></tr></table></figure>
-<p>本质上是一样的。</p>
-<p>但后者明显更好：</p>
-<ul>
-<li>更短；</li>
-<li>更数学化；</li>
-<li>更容易和“实部 + 虚部 × i”这个概念直接对应；</li>
-<li>更能体现 NumPy 数组编程的风格。</li>
-</ul>
-<p>所以当你真正理解这两行后，会发现它不是写法花哨，而是表达得更本质。</p>
+<p>本质上一样，但后者更短、更自然，也更贴近“实部 + 虚部 ×
+i”的数学表达。</p>
 <hr />
-<h1
-id="十六读这段程序时最容易卡住的三个地方">十六、读这段程序时最容易卡住的三个地方</h1>
-<h2 id="卡点一为什么-height-1j-不是虚数步长">16.1 卡点一：为什么
-<code>height * 1j</code> 不是虚数步长？</h2>
-<p>因为在 <code>ogrid</code> / <code>mgrid</code>
-的切片语法中，复数第三项表示“点数”，不是步长。</p>
-<hr />
-<h2 id="卡点二为什么-x-和-y-形状不一样还能相加">16.2 卡点二：为什么
-<code>x</code> 和 <code>y</code> 形状不一样还能相加？</h2>
-<p>因为广播机制会自动扩展它们。</p>
-<hr />
-<h2 id="卡点三为什么不一个像素一个像素地循环">16.3
-卡点三：为什么不一个像素一个像素地循环？</h2>
-<p>当然可以那么写，但 NumPy 更擅长的是：</p>
-<blockquote>
-<p><strong>把许多点的操作统一写成数组运算。</strong></p>
-</blockquote>
-<p>这正是这段代码简洁又高效的原因。</p>
-<hr />
-<h1
-id="十七从函数清单到程序思维这段-mandelbrot-代码真正教会我们的是什么">十七、从“函数清单”到“程序思维”：这段
-Mandelbrot 代码真正教会我们的是什么？</h1>
-<p>表面上看，这段程序用了很多工具：</p>
-<ul>
-<li>复数；</li>
-<li>NumPy；</li>
-<li>广播；</li>
-<li>图像转换；</li>
-<li>即时编译。</li>
-</ul>
-<p>但更深一层，它其实教会了我们一种非常重要的数值计算思维：</p>
-<h2 id="先把数学对象离散化">17.1 先把数学对象离散化</h2>
-<p>复平面原本是连续的，但计算机处理的是有限数组。</p>
-<p>所以第一步永远是：</p>
-<blockquote>
-<p>先把连续区域采样成有限网格。</p>
-</blockquote>
-<hr />
-<h2 id="再把单点规则推广成整张网格的规则">17.2
-再把单点规则推广成整张网格的规则</h2>
-<p>单个点的迭代公式很简单：</p>
-<p><span class="math display">\[
-z \mapsto z^2 + c
-\]</span></p>
-<p>但真正画图时，你要让整张网格的每个点都经历这条规则。</p>
-<hr />
-<h2 id="最后把抽象结果翻译成可视化结果">17.3
-最后把抽象结果翻译成可视化结果</h2>
-<p>数学上我们得到的是：</p>
-<ul>
-<li>这个点逃了还是没逃；</li>
-<li>它在第几步逃；</li>
-<li>它逃逸时的状态。</li>
-</ul>
-<p>而图像上我们需要的是：</p>
-<ul>
-<li>这个像素是什么颜色。</li>
-</ul>
-<p>也就是说，绘图程序本质上总是在做“数学世界”和“视觉世界”的翻译。</p>
-<hr />
-<h1
-id="十八给初学者的一个最简理解版本">十八、给初学者的一个最简理解版本</h1>
-<p>如果你现在已经读到这里，但还想要一个极简版本，那我把整段程序压缩成三句话：</p>
+<h1 id="最容易卡住的几个语法点">最容易卡住的几个语法点</h1>
 <ol type="1">
-<li><strong>用 <code>ogrid</code>
-生成实部和虚部采样值，并通过广播拼成复数网格。</strong></li>
-<li><strong>对每个复数点 <code>c</code>，从 <code>z=0</code> 开始反复做
-<code>z=z*z+c</code>，观察它是否逃逸。</strong></li>
-<li><strong>把逃逸结果转成 RGB 颜色，再保存成 PNG 图。</strong></li>
+<li><strong><code>height * 1j</code> 不是虚数步长</strong></li>
 </ol>
-<p>而其中最核心的一句，就是：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">y, x = np.ogrid[ymax:ymin:height * <span class="number">1j</span>, xmin:xmax:width * <span class="number">1j</span>]</span><br><span class="line">z = x + y * <span class="number">1j</span></span><br></pre></td></tr></table></figure>
-<p>因为这一步完成了从“图像像素”到“复数坐标”的真正映射。</p>
+<p>在 <code>ogrid</code> / <code>mgrid</code>
+的切片语法里，复数第三项表示“取多少个点”。</p>
+<ol start="2" type="1">
+<li><strong><code>x</code> 和 <code>y</code>
+形状不一样还能相加</strong></li>
+</ol>
+<p>因为广播机制会自动扩展它们。</p>
+<ol start="3" type="1">
+<li><strong><code>frompyfunc(iterate, 1, 3)</code> 里的 <code>1</code>
+和 <code>3</code></strong></li>
+</ol>
+<ul>
+<li><code>1</code> 表示输入参数个数；</li>
+<li><code>3</code> 表示输出值个数。</li>
+</ul>
+<ol start="4" type="1">
+<li><strong><code>axis=2</code> 为什么不是
+<code>axis=0</code></strong></li>
+</ol>
+<p>因为图像通常组织成 <code>(高, 宽, 通道)</code>。</p>
+<ol start="5" type="1">
+<li><strong><code>astype(float)</code> 和 <code>np.uint8(...)</code>
+为什么都要有</strong></li>
+</ol>
+<p>因为中间阶段适合用浮点数计算，最后保存图片又必须转成整数像素格式。</p>
 <hr />
-<h1 id="十九结语">十九、结语</h1>
+<h1 id="结语">结语</h1>
 <p>Mandelbrot 集之所以迷人，是因为它同时站在三种世界的交界处：</p>
 <ul>
 <li>在数学里，它是复动力系统中的经典对象；</li>

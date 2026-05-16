@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="最大最小化规划模型 在数学建模与优化决策领域，最大最小化（Minimax&#x2F;Maximin）规划模型是一类经典的保守决策模型，广泛应用于选址规划、投资风险管理、博弈论策略制定等场景。本文将从模型原理、典型例题到代码实现，全方位解析最大最小化规划模型的应用方法。 最大最小化规划模型原理 核心思想 最大最小化策略（Minimax strategy）由博弈论奠基人约翰·冯·诺伊曼于1928年提出">
+<meta property="og:type" content="article">
+<meta property="og:title" content="最大最小化规划模型">
+<meta property="og:url" content="http://example.com/2026/04/14/MinimaxProgramming/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="最大最小化规划模型 在数学建模与优化决策领域，最大最小化（Minimax&#x2F;Maximin）规划模型是一类经典的保守决策模型，广泛应用于选址规划、投资风险管理、博弈论策略制定等场景。本文将从模型原理、典型例题到代码实现，全方位解析最大最小化规划模型的应用方法。 最大最小化规划模型原理 核心思想 最大最小化策略（Minimax strategy）由博弈论奠基人约翰·冯·诺伊曼于1928年提出">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-04-14T08:47:22.000Z">
+<meta property="article:modified_time" content="2026-05-16T00:04:03.927Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2026/04/14/MinimaxProgramming/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2026/04/14/MinimaxProgramming/","path":"2026/04/14/MinimaxProgramming/","title":"最大最小化规划模型"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>最大最小化规划模型 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%80%E5%A4%A7%E6%9C%80%E5%B0%8F%E5%8C%96%E8%A7%84%E5%88%92%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">最大最小化规划模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%80%E5%A4%A7%E6%9C%80%E5%B0%8F%E5%8C%96%E8%A7%84%E5%88%92%E6%A8%A1%E5%9E%8B%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">最大最小化规划模型原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3"><span class="nav-number">2.1.</span> <span class="nav-text">核心思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E5%AD%A6%E6%A8%A1%E5%9E%8B"><span class="nav-number">2.2.</span> <span class="nav-text">数学模型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B8%E5%9E%8B%E4%BE%8B%E9%A2%98%E5%9F%8E%E5%B8%82%E4%BE%9B%E5%BA%94%E4%B8%AD%E5%BF%83%E9%80%89%E5%9D%80%E9%97%AE%E9%A2%98"><span class="nav-number">3.</span> <span class="nav-text">典型例题：城市供应中心选址问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-number">3.1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9C%80%E6%B1%82%E7%82%B9%E5%9D%90%E6%A0%87"><span class="nav-number">3.2.</span> <span class="nav-text">需求点坐标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E5%AD%A6%E6%A8%A1%E5%9E%8B%E6%9E%84%E5%BB%BA"><span class="nav-number">3.3.</span> <span class="nav-text">数学模型构建</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E6%B1%82%E8%A7%A3%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.</span> <span class="nav-text">代码求解实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#matlab%E5%AE%9E%E7%8E%B0fminimax%E5%87%BD%E6%95%B0"><span class="nav-number">4.1.</span> <span class="nav-text">Matlab实现（fminimax函数）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E8%AF%AD%E6%B3%95"><span class="nav-number">4.1.1.</span> <span class="nav-text">函数语法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B%E9%A2%98%E6%B1%82%E8%A7%A3%E4%BB%A3%E7%A0%81"><span class="nav-number">4.1.2.</span> <span class="nav-text">例题求解代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C"><span class="nav-number">4.1.3.</span> <span class="nav-text">运行结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#python%E5%AE%9E%E7%8E%B0%E5%A4%9A%E5%9C%BA%E6%99%AF%E6%A1%88%E4%BE%8B"><span class="nav-number">4.2.</span> <span class="nav-text">Python实现（多场景案例）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="nav-number">4.2.1.</span> <span class="nav-text">环境准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B1%E7%BA%BF%E6%80%A7%E6%9C%80%E5%A4%A7%E6%9C%80%E5%B0%8F%E5%8C%96%E6%8A%95%E8%B5%84%E7%BB%84%E5%90%88%E4%BC%98%E5%8C%96"><span class="nav-number">4.2.2.</span> <span class="nav-text">案例1：线性最大最小化（投资组合优化）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B2%E9%9D%9E%E7%BA%BF%E6%80%A7%E6%9C%80%E5%A4%A7%E6%9C%80%E5%B0%8F%E5%8C%96%E8%AE%BE%E6%96%BD%E9%80%89%E5%9D%80"><span class="nav-number">4.2.3.</span> <span class="nav-text">案例2：非线性最大最小化（设施选址）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B3%E9%80%9A%E7%94%A8%E6%9C%80%E5%A4%A7%E6%9C%80%E5%B0%8F%E5%8C%96%E6%B1%82%E8%A7%A3%E5%99%A8"><span class="nav-number">4.2.4.</span> <span class="nav-text">案例3：通用最大最小化求解器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B4%E5%8D%9A%E5%BC%88%E8%AE%BA%E4%B8%AD%E7%9A%84%E6%9C%80%E5%A4%A7%E6%9C%80%E5%B0%8F%E5%8C%96%E9%9B%B6%E5%92%8C%E5%8D%9A%E5%BC%88"><span class="nav-number">4.2.5.</span> <span class="nav-text">案例4：博弈论中的最大最小化（零和博弈）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C"><span class="nav-number">4.2.6.</span> <span class="nav-text">主程序运行</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2026/04/14/MinimaxProgramming/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="最大最小化规划模型 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          最大最小化规划模型
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2026-04-14 16:47:22" itemprop="dateCreated datePublished" datetime="2026-04-14T16:47:22+08:00">2026-04-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2026-05-16 08:04:03" itemprop="dateModified" datetime="2026-05-16T08:04:03+08:00">2026-05-16</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="最大最小化规划模型">最大最小化规划模型</h1>
+<p>在数学建模与优化决策领域，最大最小化（Minimax/Maximin）规划模型是一类经典的保守决策模型，广泛应用于选址规划、投资风险管理、博弈论策略制定等场景。本文将从模型原理、典型例题到代码实现，全方位解析最大最小化规划模型的应用方法。</p>
+<h1 id="最大最小化规划模型原理">最大最小化规划模型原理</h1>
+<h2 id="核心思想">核心思想</h2>
+<p>最大最小化策略（Minimax
+strategy）由博弈论奠基人约翰·冯·诺伊曼于1928年提出，核心是<strong>使决策者的最小收益最大化（或最大损失最小化）</strong>，是一种保守且稳健的决策思路。
+在实际问题中，最大最小化模型常用于：</p>
+<ul>
+<li>应急中心选址：最小化到所有地点的最大距离；</li>
+<li>投资规划：最小化最大风险；</li>
+<li>博弈论：最小化对手的最大收益。</li>
+</ul>
+<h2 id="数学模型">数学模型</h2>
+<p>对决策变量<span class="math inline">\(x\in
+R^n\)</span>，先求各目标函数<span
+class="math inline">\(f_i(x)\)</span>的最大值，再求该最大值的最小值，通用数学模型如下：
+<span
+class="math display">\[\min_{x}\left\{\max\left[f_1(x),f_2(x),\ldots,f_m(x)\right]\right\}\]</span>
+约束条件： <span class="math display">\[s.t.\begin{cases}Ax\leqslant
+b\\Aeq\times x=beq\\C(x)\leqslant 0\\Ceq(x)=0\\VLB\leqslant X\leqslant
+VUB\end{cases}\]</span></p>
+<h1
+id="典型例题城市供应中心选址问题">典型例题：城市供应中心选址问题</h1>
+<h2 id="问题描述">问题描述</h2>
+<p>某城市有10个物品需求点，每个需求点<span
+class="math inline">\(P_i\)</span>的坐标为<span
+class="math inline">\((a_i,b_i)\)</span>（道路网与坐标轴正交，距离按“曼哈顿距离”计算：<span
+class="math inline">\(|x-a_i|+|y-b_i|\)</span>）。需在<span
+class="math inline">\(x\in[3,8]\)</span>、<span
+class="math inline">\(y\in[4,10]\)</span>范围内建设供应中心，要求中心到最远需求点的距离尽可能小。</p>
+<h2 id="需求点坐标">需求点坐标</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><span
+class="math inline">\(a_i\)</span></th>
+<th style="text-align: center;">1</th>
+<th style="text-align: center;">4</th>
+<th style="text-align: center;">3</th>
+<th style="text-align: center;">5</th>
+<th style="text-align: center;">9</th>
+<th style="text-align: center;">12</th>
+<th style="text-align: center;">6</th>
+<th style="text-align: center;">20</th>
+<th style="text-align: center;">17</th>
+<th style="text-align: center;">8</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(b_i\)</span></td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">18</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">9</td>
+</tr>
+</tbody>
+</table>
+<h2 id="数学模型构建">数学模型构建</h2>
+<p>设供应中心坐标为<span
+class="math inline">\((x,y)\)</span>，模型如下： <span
+class="math display">\[
+\begin{aligned}
+\min_{(x,y)}&amp;\quad\left\{\max_{i}\bigl[|x-a_i|+|y-b_i|\bigr]\right\}\\
+\text{s.t.}&amp;\quad\begin{cases}
+3\le x\le 8\\
+4\le y\le 10
+\end{cases}
+\end{aligned}
+\]</span></p>
+<h1 id="代码求解实现">代码求解实现</h1>
+<h2 id="matlab实现fminimax函数">Matlab实现（fminimax函数）</h2>
+<p>Matlab的<code>fminimax</code>函数专为最大最小化问题设计，语法与非线性规划函数一致，核心是将目标函数表示为<strong>函数向量</strong>。</p>
+<h3 id="函数语法">函数语法</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[x,fval]=fminimax(fun,x0,A,b,Aeq,beq,lb,ub,nonlcon,option)</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>fun</code>：目标函数（需定义为函数向量）；</li>
+<li><code>x0</code>：初始值；</li>
+<li><code>lb/ub</code>：决策变量上下界；</li>
+<li>其余参数与非线性规划一致。</li>
+</ul>
+<h3 id="例题求解代码">例题求解代码</h3>
+<p><strong>主程序</strong>： <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">%% 最大最小化模型求解：min&#123;max[f1,f2,···,fm]&#125;</span></span><br><span class="line">clear;clc;<span class="comment">% 清理环境变量</span></span><br><span class="line"><span class="comment">% 1. 定义初始值与边界</span></span><br><span class="line">x0=[<span class="number">6</span>,<span class="number">6</span>];<span class="comment">% 决策变量初始值（x,y）</span></span><br><span class="line">lb=[<span class="number">3</span>,<span class="number">4</span>];<span class="comment">% 决策变量下界 [x_min,y_min]</span></span><br><span class="line">ub=[<span class="number">8</span>,<span class="number">10</span>];<span class="comment">% 决策变量上界 [x_max,y_max]</span></span><br><span class="line"><span class="comment">% 2. 调用fminimax求解</span></span><br><span class="line">[x,feval]=fminimax(@Fun,x0,[],[],[],[],lb,ub);</span><br><span class="line"><span class="comment">% 3. 输出结果</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;最优供应中心坐标：&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>(x);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;各需求点到中心的距离：&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>(feval);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;最小化后的最大距离：&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="built_in">max</span>(feval));</span><br></pre></td></tr></table></figure></p>
+<p><strong>目标函数（Fun.m）</strong>： <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>=<span class="title">Fun</span><span class="params">(x)</span></span></span><br><span class="line">    <span class="comment">% 需求点坐标</span></span><br><span class="line">    a=[<span class="number">1</span> <span class="number">4</span> <span class="number">3</span> <span class="number">5</span> <span class="number">9</span> <span class="number">12</span> <span class="number">6</span> <span class="number">20</span> <span class="number">17</span> <span class="number">8</span>];</span><br><span class="line">    b=[<span class="number">2</span> <span class="number">10</span> <span class="number">8</span> <span class="number">18</span> <span class="number">1</span> <span class="number">4</span> <span class="number">5</span> <span class="number">10</span> <span class="number">8</span> <span class="number">9</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">% 构造函数向量（10个需求点的曼哈顿距离）</span></span><br><span class="line">    f=<span class="built_in">zeros</span>(<span class="number">10</span>,<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>:<span class="number">10</span></span><br><span class="line">        f(<span class="built_in">i</span>)=<span class="built_in">abs</span>(x(<span class="number">1</span>)-a(<span class="built_in">i</span>))+<span class="built_in">abs</span>(x(<span class="number">2</span>)-b(<span class="built_in">i</span>));</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="运行结果">运行结果</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">最优供应中心坐标：</span><br><span class="line">    8.0000    8.5000</span><br><span class="line">各需求点到中心的距离：</span><br><span class="line">   13.5000    5.5000    5.5000   12.5000    8.5000    8.5000    5.5000   13.5000    9.5000    0.5000</span><br><span class="line">最小化后的最大距离：</span><br><span class="line">   13.5000</span><br></pre></td></tr></table></figure>
+<p><strong>结论</strong>：在坐标<span
+class="math inline">\((8,8.5)\)</span>处建供应中心，可使到各需求点的最大距离最小（13.5单位）。</p>
+<h2 id="python实现多场景案例">Python实现（多场景案例）</h2>
+<p>Python通过<code>scipy.optimize</code>模块的<code>linprog</code>（线性）和<code>minimize</code>（非线性）函数实现最大最小化求解，以下是4类典型场景的完整实现。</p>
+<h3 id="环境准备">环境准备</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linprog,minimize</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br></pre></td></tr></table></figure>
+<h3
+id="案例1线性最大最小化投资组合优化">案例1：线性最大最小化（投资组合优化）</h3>
+<p><strong>场景</strong>：最大化投资组合的最小收益率（经济繁荣/一般/衰退3种情景）。
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">maximin_linear_example</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    投资组合选择：最大化最差情景下的收益率</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 3种投资项目在不同情景下的收益率（行：项目，列：情景）</span></span><br><span class="line">    returns=np.array([</span><br><span class="line">        [<span class="number">0.15</span>,<span class="number">0.08</span>,-<span class="number">0.05</span>],<span class="comment"># 项目A：繁荣/一般/衰退</span></span><br><span class="line">        [<span class="number">0.10</span>,<span class="number">0.06</span>,<span class="number">0.02</span>],<span class="comment"># 项目B</span></span><br><span class="line">        [<span class="number">0.05</span>,<span class="number">0.04</span>,<span class="number">0.03</span>]<span class="comment"># 项目C</span></span><br><span class="line">    ])</span><br><span class="line">    </span><br><span class="line">    n_projects=returns.shape[<span class="number">0</span>]</span><br><span class="line">    n_scenarios=returns.shape[<span class="number">1</span>]</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 决策变量：[x0,x1,x2,t]，x为投资比例，t为最小收益率（目标：最大化t）</span></span><br><span class="line">    c=np.zeros(n_projects+<span class="number">1</span>)</span><br><span class="line">    c[-<span class="number">1</span>]=-<span class="number">1</span><span class="comment"># 最大化t等价于最小化-t</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 不等式约束：各情景下收益 ≥ t → -∑(return_ij*x_i)+t ≤ 0</span></span><br><span class="line">    A_ub=[]</span><br><span class="line">    b_ub=[]</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(n_scenarios):</span><br><span class="line">        row=np.zeros(n_projects+<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n_projects):</span><br><span class="line">            row[i]=-returns[i,j]</span><br><span class="line">        row[-<span class="number">1</span>]=<span class="number">1</span></span><br><span class="line">        A_ub.append(row)</span><br><span class="line">        b_ub.append(<span class="number">0</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 等式约束：投资比例和为1</span></span><br><span class="line">    A_eq=[np.ones(n_projects+<span class="number">1</span>)]</span><br><span class="line">    A_eq[<span class="number">0</span>][-<span class="number">1</span>]=<span class="number">0</span><span class="comment"># t的系数为0</span></span><br><span class="line">    b_eq=[<span class="number">1</span>]</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 变量边界：投资比例非负，t无限制</span></span><br><span class="line">    bounds=[(<span class="number">0</span>,<span class="literal">None</span>)]*n_projects+[(<span class="literal">None</span>,<span class="literal">None</span>)]</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 求解线性规划</span></span><br><span class="line">    result=linprog(c,A_ub=A_ub,b_ub=b_ub,A_eq=A_eq,b_eq=b_eq,bounds=bounds)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> result.success:</span><br><span class="line">        investments=result.x[:-<span class="number">1</span>]</span><br><span class="line">        min_return=result.x[-<span class="number">1</span>]</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;=&quot;</span>*<span class="number">50</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;【案例1】投资组合最大最小化结果&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;=&quot;</span>*<span class="number">50</span>)</span><br><span class="line">        <span class="keyword">for</span> i,inv <span class="keyword">in</span> <span class="built_in">enumerate</span>(investments):</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;  项目<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>投资比例：<span class="subst">&#123;inv:<span class="number">.2</span>%&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;  确保的最小收益率：<span class="subst">&#123;min_return:<span class="number">.2</span>%&#125;</span>&quot;</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 计算各情景实际收益率</span></span><br><span class="line">        scenario_returns=returns.T@investments</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;\n  各情景实际收益率：&quot;</span>)</span><br><span class="line">        <span class="keyword">for</span> j,ret <span class="keyword">in</span> <span class="built_in">enumerate</span>(scenario_returns):</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;  情景<span class="subst">&#123;j+<span class="number">1</span>&#125;</span>（经济<span class="subst">&#123;[<span class="string">&#x27;繁荣&#x27;</span>,<span class="string">&#x27;一般&#x27;</span>,<span class="string">&#x27;衰退&#x27;</span>][j]&#125;</span>）：<span class="subst">&#123;ret:<span class="number">.2</span>%&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> investments,min_return</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;优化失败：&quot;</span>,result.message)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span>,<span class="literal">None</span></span><br></pre></td></tr></table></figure></p>
+<h3
+id="案例2非线性最大最小化设施选址">案例2：非线性最大最小化（设施选址）</h3>
+<p><strong>场景</strong>：最小化设施到所有客户的最大欧氏距离。
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">maximin_nonlinear_example</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    设施选址：最小化到所有客户的最大距离</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 客户坐标</span></span><br><span class="line">    customers=np.array([</span><br><span class="line">        [<span class="number">2</span>,<span class="number">8</span>],<span class="comment"># 客户1</span></span><br><span class="line">        [<span class="number">6</span>,<span class="number">4</span>],<span class="comment"># 客户2</span></span><br><span class="line">        [<span class="number">8</span>,<span class="number">7</span>],<span class="comment"># 客户3</span></span><br><span class="line">        [<span class="number">1</span>,<span class="number">2</span>],<span class="comment"># 客户4</span></span><br><span class="line">        [<span class="number">9</span>,<span class="number">1</span>]<span class="comment"># 客户5</span></span><br><span class="line">    ])</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">max_distance</span>(<span class="params">x</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;计算设施到所有客户的最大欧氏距离&quot;&quot;&quot;</span></span><br><span class="line">        facility=np.array([x[<span class="number">0</span>],x[<span class="number">1</span>]])</span><br><span class="line">        distances=np.sqrt(np.<span class="built_in">sum</span>((customers-facility)**<span class="number">2</span>,axis=<span class="number">1</span>))</span><br><span class="line">        <span class="keyword">return</span> np.<span class="built_in">max</span>(distances)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 初始猜测：客户坐标的均值</span></span><br><span class="line">    initial_guess=np.mean(customers,axis=<span class="number">0</span>)</span><br><span class="line">    <span class="comment"># 设施位置边界</span></span><br><span class="line">    bounds=[(<span class="number">0</span>,<span class="number">10</span>),(<span class="number">0</span>,<span class="number">10</span>)]</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 求解最小化最大距离</span></span><br><span class="line">    result=minimize(max_distance,initial_guess,bounds=bounds,method=<span class="string">&#x27;L-BFGS-B&#x27;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> result.success:</span><br><span class="line">        optimal_location=result.x</span><br><span class="line">        min_max_distance=result.fun</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;\n&quot;</span>+<span class="string">&quot;=&quot;</span>*<span class="number">50</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;【案例2】设施选址最小最大距离结果&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;=&quot;</span>*<span class="number">50</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;  最优设施位置：(<span class="subst">&#123;optimal_location[<span class="number">0</span>]:<span class="number">.2</span>f&#125;</span>,<span class="subst">&#123;optimal_location[<span class="number">1</span>]:<span class="number">.2</span>f&#125;</span>)&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;  最小化后的最大距离：<span class="subst">&#123;min_max_distance:<span class="number">.2</span>f&#125;</span>&quot;</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 可视化结果</span></span><br><span class="line">        plt.figure(figsize=(<span class="number">10</span>,<span class="number">6</span>))</span><br><span class="line">        <span class="comment"># 绘制客户点</span></span><br><span class="line">        plt.scatter(customers[:,<span class="number">0</span>],customers[:,<span class="number">1</span>],c=<span class="string">&#x27;blue&#x27;</span>,s=<span class="number">100</span>,label=<span class="string">&#x27;客户位置&#x27;</span>,zorder=<span class="number">5</span>)</span><br><span class="line">        <span class="keyword">for</span> i,(x,y) <span class="keyword">in</span> <span class="built_in">enumerate</span>(customers):</span><br><span class="line">            plt.text(x,y,<span class="string">f&#x27; C<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>&#x27;</span>,fontsize=<span class="number">9</span>,verticalalignment=<span class="string">&#x27;center&#x27;</span>)</span><br><span class="line">        <span class="comment"># 绘制设施位置</span></span><br><span class="line">        plt.scatter(optimal_location[<span class="number">0</span>],optimal_location[<span class="number">1</span>],c=<span class="string">&#x27;red&#x27;</span>,s=<span class="number">150</span>, </span><br><span class="line">                   marker=<span class="string">&#x27;*&#x27;</span>,label=<span class="string">&#x27;最优设施位置&#x27;</span>,zorder=<span class="number">10</span>)</span><br><span class="line">        plt.text(optimal_location[<span class="number">0</span>],optimal_location[<span class="number">1</span>],<span class="string">&#x27;  设施&#x27;</span>,fontsize=<span class="number">10</span>)</span><br><span class="line">        <span class="comment"># 绘制服务范围圆</span></span><br><span class="line">        circle=plt.Circle(optimal_location,min_max_distance,color=<span class="string">&#x27;red&#x27;</span>,alpha=<span class="number">0.1</span>,label=<span class="string">&#x27;服务范围&#x27;</span>)</span><br><span class="line">        plt.gca().add_patch(circle)</span><br><span class="line">        </span><br><span class="line">        plt.xlabel(<span class="string">&#x27;X坐标&#x27;</span>)</span><br><span class="line">        plt.ylabel(<span class="string">&#x27;Y坐标&#x27;</span>)</span><br><span class="line">        plt.title(<span class="string">&#x27;设施选址 - 最小最大距离模型&#x27;</span>)</span><br><span class="line">        plt.legend()</span><br><span class="line">        plt.grid(<span class="literal">True</span>,alpha=<span class="number">0.3</span>)</span><br><span class="line">        plt.axis(<span class="string">&#x27;equal&#x27;</span>)</span><br><span class="line">        plt.show()</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> optimal_location,min_max_distance</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;优化失败：&quot;</span>,result.message)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span>,<span class="literal">None</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="案例3通用最大最小化求解器">案例3：通用最大最小化求解器</h3>
+<p><strong>场景</strong>：自定义多目标函数+约束的最大最小化问题。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MaximinOptimizer</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    通用最大最小化优化器：求解 max_x &#123; min_i [f_i(x)] &#125;</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,objectives,constraints=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        参数：</span></span><br><span class="line"><span class="string">        - objectives: 目标函数列表 [f1(x),f2(x),...,fn(x)]</span></span><br><span class="line"><span class="string">        - constraints: 约束条件列表（scipy格式）</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="variable language_">self</span>.objectives=objectives</span><br><span class="line">        <span class="variable language_">self</span>.constraints=constraints <span class="keyword">if</span> constraints <span class="keyword">else</span> []</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">solve</span>(<span class="params">self,initial_guess,bounds=<span class="literal">None</span>,method=<span class="string">&#x27;SLSQP&#x27;</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        求解逻辑：引入辅助变量t，转化为 max(t) s.t. f_i(x) ≥ t</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        n_vars=<span class="built_in">len</span>(initial_guess)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 目标函数：最大化t → 最小化-t</span></span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">objective_func</span>(<span class="params"><span class="built_in">vars</span></span>):</span><br><span class="line">            <span class="keyword">return</span> -<span class="built_in">vars</span>[-<span class="number">1</span>]</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 约束：f_i(x)-t ≥ 0</span></span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">build_constraints</span>():</span><br><span class="line">            constraints_list=[]</span><br><span class="line">            <span class="comment"># 目标函数约束</span></span><br><span class="line">            <span class="keyword">for</span> i,obj_func <span class="keyword">in</span> <span class="built_in">enumerate</span>(<span class="variable language_">self</span>.objectives):</span><br><span class="line">                <span class="keyword">def</span> <span class="title function_">constraint</span>(<span class="params"><span class="built_in">vars</span>,idx=i</span>):</span><br><span class="line">                    x=<span class="built_in">vars</span>[:-<span class="number">1</span>]</span><br><span class="line">                    t=<span class="built_in">vars</span>[-<span class="number">1</span>]</span><br><span class="line">                    <span class="keyword">return</span> obj_func(x)-t</span><br><span class="line">                constraints_list.append(&#123;<span class="string">&#x27;type&#x27;</span>:<span class="string">&#x27;ineq&#x27;</span>,<span class="string">&#x27;fun&#x27;</span>:constraint&#125;)</span><br><span class="line">            <span class="comment"># 自定义约束</span></span><br><span class="line">            constraints_list.extend(<span class="variable language_">self</span>.constraints)</span><br><span class="line">            <span class="keyword">return</span> constraints_list</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 初始值：原始变量 + t（t初始为所有目标函数的最小值）</span></span><br><span class="line">        t_initial=<span class="built_in">min</span>([obj(initial_guess) <span class="keyword">for</span> obj <span class="keyword">in</span> <span class="variable language_">self</span>.objectives])</span><br><span class="line">        initial_vars=np.append(initial_guess,t_initial)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 变量边界</span></span><br><span class="line">        <span class="keyword">if</span> bounds:</span><br><span class="line">            var_bounds=bounds+[(<span class="literal">None</span>,<span class="literal">None</span>)]<span class="comment"># t无边界</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            var_bounds=[(<span class="literal">None</span>,<span class="literal">None</span>)]*(n_vars+<span class="number">1</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 求解</span></span><br><span class="line">        result=minimize(</span><br><span class="line">            objective_func,</span><br><span class="line">            initial_vars,</span><br><span class="line">            method=method,</span><br><span class="line">            bounds=var_bounds,</span><br><span class="line">            constraints=build_constraints()</span><br><span class="line">        )</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> result.success:</span><br><span class="line">            x_opt=result.x[:-<span class="number">1</span>]</span><br><span class="line">            t_opt=result.x[-<span class="number">1</span>]</span><br><span class="line">            </span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;\n&quot;</span>+<span class="string">&quot;=&quot;</span>*<span class="number">50</span>)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;【案例3】通用最大最小化求解结果&quot;</span>)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;=&quot;</span>*<span class="number">50</span>)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;  最优解 x：<span class="subst">&#123;np.<span class="built_in">round</span>(x_opt,<span class="number">4</span>)&#125;</span>&quot;</span>)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;  最小目标值的最大值 t：<span class="subst">&#123;t_opt:<span class="number">.6</span>f&#125;</span>&quot;</span>)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;\n  各目标函数在最优解处的值：&quot;</span>)</span><br><span class="line">            <span class="keyword">for</span> i,obj_func <span class="keyword">in</span> <span class="built_in">enumerate</span>(<span class="variable language_">self</span>.objectives):</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">f&quot;  f<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>(x)=<span class="subst">&#123;obj_func(x_opt):<span class="number">.6</span>f&#125;</span>&quot;</span>)</span><br><span class="line">            <span class="keyword">return</span> x_opt,t_opt</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;优化失败：&quot;</span>,result.message)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">None</span>,<span class="literal">None</span></span><br></pre></td></tr></table></figure>
+<h3
+id="案例4博弈论中的最大最小化零和博弈">案例4：博弈论中的最大最小化（零和博弈）</h3>
+<p><strong>场景</strong>：行玩家在零和博弈中选择“最大化最小收益”的混合策略。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">game_theory_maximin</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    零和博弈的最大最小化策略：行玩家最大化自己的最小收益</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 收益矩阵（行玩家收益，列玩家策略）</span></span><br><span class="line">    payoff_matrix=np.array([</span><br><span class="line">        [<span class="number">3</span>,-<span class="number">2</span>,<span class="number">1</span>],<span class="comment"># 行策略1</span></span><br><span class="line">        [<span class="number">0</span>,<span class="number">2</span>,-<span class="number">1</span>],<span class="comment"># 行策略2</span></span><br><span class="line">        [-<span class="number">1</span>,<span class="number">1</span>,<span class="number">3</span>]<span class="comment"># 行策略3</span></span><br><span class="line">    ])</span><br><span class="line">    </span><br><span class="line">    n_strategies=payoff_matrix.shape[<span class="number">0</span>]</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 决策变量：[p1,p2,p3,v]，p为策略概率，v为最小收益</span></span><br><span class="line">    c=np.zeros(n_strategies+<span class="number">1</span>)</span><br><span class="line">    c[-<span class="number">1</span>]=-<span class="number">1</span><span class="comment"># 最大化v</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 约束：对列玩家每个策略，行玩家期望收益 ≥ v</span></span><br><span class="line">    A_ub=[]</span><br><span class="line">    b_ub=[]</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(payoff_matrix.shape[<span class="number">1</span>]):</span><br><span class="line">        row=np.zeros(n_strategies+<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n_strategies):</span><br><span class="line">            row[i]=-payoff_matrix[i,j]</span><br><span class="line">        row[-<span class="number">1</span>]=<span class="number">1</span></span><br><span class="line">        A_ub.append(row)</span><br><span class="line">        b_ub.append(<span class="number">0</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 概率和为1</span></span><br><span class="line">    A_eq=[np.ones(n_strategies+<span class="number">1</span>)]</span><br><span class="line">    A_eq[<span class="number">0</span>][-<span class="number">1</span>]=<span class="number">0</span></span><br><span class="line">    b_eq=[<span class="number">1</span>]</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 非负约束</span></span><br><span class="line">    bounds=[(<span class="number">0</span>,<span class="number">1</span>)]*n_strategies+[(<span class="literal">None</span>,<span class="literal">None</span>)]</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 求解</span></span><br><span class="line">    result=linprog(c,A_ub=A_ub,b_ub=b_ub,A_eq=A_eq,b_eq=b_eq,bounds=bounds)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> result.success:</span><br><span class="line">        probabilities=result.x[:-<span class="number">1</span>]</span><br><span class="line">        game_value=result.x[-<span class="number">1</span>]</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;\n&quot;</span>+<span class="string">&quot;=&quot;</span>*<span class="number">50</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;【案例4】博弈论最大最小化策略&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;=&quot;</span>*<span class="number">50</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;  收益矩阵（行玩家vs列玩家）：&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(payoff_matrix)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;\n  行玩家最优混合策略：&quot;</span>)</span><br><span class="line">        <span class="keyword">for</span> i,prob <span class="keyword">in</span> <span class="built_in">enumerate</span>(probabilities):</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;  策略<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>概率：<span class="subst">&#123;prob:<span class="number">.2</span>%&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;  游戏值（最小保证收益）：<span class="subst">&#123;game_value:<span class="number">.3</span>f&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> probabilities,game_value</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;优化失败：&quot;</span>,result.message)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span>,<span class="literal">None</span></span><br></pre></td></tr></table></figure>
+<h3 id="主程序运行">主程序运行</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__==<span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;=== 最大最小化规划模型Python实现合集 ===&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 运行案例1：投资组合</span></span><br><span class="line">    maximin_linear_example()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 运行案例2：设施选址</span></span><br><span class="line">    maximin_nonlinear_example()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 运行案例3：通用求解器</span></span><br><span class="line">    <span class="comment"># 定义目标函数</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">f1</span>(<span class="params">x</span>):<span class="keyword">return</span> <span class="number">3</span>*x[<span class="number">0</span>]+<span class="number">2</span>*x[<span class="number">1</span>]-x[<span class="number">2</span>]</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">f2</span>(<span class="params">x</span>):<span class="keyword">return</span> -x[<span class="number">0</span>]+<span class="number">4</span>*x[<span class="number">1</span>]+<span class="number">2</span>*x[<span class="number">2</span>]</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">f3</span>(<span class="params">x</span>):<span class="keyword">return</span> <span class="number">2</span>*x[<span class="number">0</span>]-x[<span class="number">1</span>]+<span class="number">3</span>*x[<span class="number">2</span>]</span><br><span class="line">    <span class="comment"># 定义约束</span></span><br><span class="line">    constraints=[</span><br><span class="line">        &#123;<span class="string">&#x27;type&#x27;</span>:<span class="string">&#x27;ineq&#x27;</span>,<span class="string">&#x27;fun&#x27;</span>:<span class="keyword">lambda</span> x:<span class="number">10</span>-np.<span class="built_in">sum</span>(x)&#125;,<span class="comment"># ∑x_i ≤ 10</span></span><br><span class="line">        &#123;<span class="string">&#x27;type&#x27;</span>:<span class="string">&#x27;ineq&#x27;</span>,<span class="string">&#x27;fun&#x27;</span>:<span class="keyword">lambda</span> x:x[<span class="number">0</span>]+<span class="number">2</span>*x[<span class="number">1</span>]-<span class="number">5</span>&#125;<span class="comment"># x1+2x2 ≥5</span></span><br><span class="line">    ]</span><br><span class="line">    <span class="comment"># 求解</span></span><br><span class="line">    optimizer=MaximinOptimizer(objectives=[f1,f2,f3],constraints=constraints)</span><br><span class="line">    optimizer.solve(initial_guess=np.array([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]),bounds=[(<span class="number">0</span>,<span class="number">5</span>),(<span class="number">0</span>,<span class="number">5</span>),(<span class="number">0</span>,<span class="number">5</span>)])</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 运行案例4：博弈论</span></span><br><span class="line">    game_theory_maximin()</span><br></pre></td></tr></table></figure>
+<h1 id="总结">总结</h1>
+<p>最大最小化规划模型是保守决策的核心工具，其核心是“从最坏情况出发，追求最优结果”：</p>
+<ul>
+<li>理论层面：通过引入辅助变量可将“最大最小”转化为常规优化问题；</li>
+<li>工具层面：Matlab的<code>fminimax</code>函数可直接求解，Python需通过<code>linprog/minimize</code>自定义转化；</li>
+<li>应用层面：适用于选址、投资、博弈等“风险规避型”决策场景。</li>
+</ul>
+<p>掌握该模型的原理与代码实现，可有效解决数学建模中各类“最小化最大值/最大化最小值”类问题。</p>
+<p align="right">
+<strong>内容编辑：刘忠鑫，李浩民</strong>
+</p>
+<p align="right">
+<strong>内容审核：王颖</strong><span
+class="math inline">\(~~~~~~~~~~~~~~~~~\)</span>
+</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/04/14/IntegerProgramming/" rel="prev" title="整数规划与0-1规划">
+                  <i class="fa fa-angle-left"></i> 整数规划与0-1规划
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/05/16/mandelbrot/" rel="next" title="无尽边界：Mandelbrot 集之美">
+                  无尽边界：Mandelbrot 集之美 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

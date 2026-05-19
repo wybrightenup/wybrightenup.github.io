@@ -134,7 +134,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-count">21</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -152,6 +152,320 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2026/05/19/MinimumSpanningTree/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/05/19/MinimumSpanningTree/" class="post-title-link" itemprop="url">MinimumSpanningTree</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2026-05-19 20:01:49 / Modified: 20:04:31" itemprop="dateCreated datePublished" datetime="2026-05-19T20:01:49+08:00">2026-05-19</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="算法引出及概念">算法引出及概念</h1>
+<h2 id="问题背景a-国通信线路建设">问题背景：A 国通信线路建设</h2>
+<p>A
+国有六个城市之间一直没有通信线路。现在国家希望建设通信线缆，使这六个城市之间能够通信连通。</p>
+<p>已知条件与要求如下：</p>
+<ul>
+<li>六个城市之间，能够建设通信线缆的线路路径距离已经测得。</li>
+<li>要求以最小的成本建设通信线路，使得六个城市之间能够互相通信。</li>
+<li>也就是说，从任意一个顶点出发，都可以到达其他顶点，并且所建设线缆的总长度最小。</li>
+</ul>
+<p>图中的城市可以看成图论中的顶点，城市之间可以建设通信线路的路径可以看成边，路径距离可以看成边的权重。</p>
+<p>该问题要解决的是：<strong>通信线缆应该如何修建，才能保证所有城市连通且总长度最小？</strong></p>
+<h2 id="示例图中的边与权重">示例图中的边与权重</h2>
+<p>根据文档中的示例图和代码，可将六个城市之间可建设的通信线路整理为如下无向加权边：</p>
+<table>
+<thead>
+<tr>
+<th>边</th>
+<th style="text-align: right;">权重</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>城市1—城市2</td>
+<td style="text-align: right;">14</td>
+</tr>
+<tr>
+<td>城市1—城市3</td>
+<td style="text-align: right;">18</td>
+</tr>
+<tr>
+<td>城市2—城市3</td>
+<td style="text-align: right;">13</td>
+</tr>
+<tr>
+<td>城市2—城市4</td>
+<td style="text-align: right;">18</td>
+</tr>
+<tr>
+<td>城市2—城市5</td>
+<td style="text-align: right;">16</td>
+</tr>
+<tr>
+<td>城市3—城市4</td>
+<td style="text-align: right;">12</td>
+</tr>
+<tr>
+<td>城市3—城市5</td>
+<td style="text-align: right;">16</td>
+</tr>
+<tr>
+<td>城市4—城市5</td>
+<td style="text-align: right;">14</td>
+</tr>
+<tr>
+<td>城市4—城市6</td>
+<td style="text-align: right;">19</td>
+</tr>
+<tr>
+<td>城市5—城市6</td>
+<td style="text-align: right;">10</td>
+</tr>
+</tbody>
+</table>
+<h2 id="关于树的一些概念">关于树的一些概念</h2>
+<h3 id="连通图">连通图</h3>
+<p><strong>连通图（Connected Graph）</strong>
+指无向图中任意两个顶点之间都有路径相连。</p>
+<p>也就是说，在一个连通图中，任意两个顶点之间都可以通过图中的边相连而相互到达。文档中的城市通信线路示意图就是一个连通图。</p>
+<h3 id="树">树</h3>
+<p><strong>树（Tree）</strong> 是一种无向无环连通图。</p>
+<p>若一棵树有 (n) 个节点，则它由 (n-1) 条边组成。</p>
+<p>树具有很多重要性质，例如：</p>
+<ul>
+<li>任意两个节点之间都有唯一的路径；</li>
+<li>树中任意两个节点之间的路径是唯一的；</li>
+<li>树是连通的，但不含回路。</li>
+</ul>
+<h3 id="生成树">生成树</h3>
+<p><strong>生成树（Spanning Tree）</strong>
+指一个连通图的一棵包含所有顶点的树。</p>
+<p>它是由原图的所有顶点和部分边组成的子图，并且这些边构成一棵树。</p>
+<p>一个图可能有多个生成树。</p>
+<h3 id="最小生成树">最小生成树</h3>
+<p><strong>最小生成树（Minimum Spanning Tree，MST）</strong>
+指一个连通无向图的一棵生成树，使得所有生成树边的权值之和最小。</p>
+<p>也就是说，在所有能够连接全部顶点且不形成回路的生成树中，选择边权总和最小的一棵。</p>
+<p>一个图的所有生成树中，可能有多个最小生成树。</p>
+<h2 id="最小生成树与最短路径的区别">最小生成树与最短路径的区别</h2>
+<p>文档中特别强调：</p>
+<ul>
+<li><strong>最短路径</strong>：指定起点和终点，研究两点之间的最短路径。</li>
+<li><strong>最小生成树</strong>：研究全局连通，要求所有点两两可达，并使总路径长度最短。</li>
+</ul>
+<p>因此，最短路径关注的是“从一个点到另一个点怎么走最短”，而最小生成树关注的是“如何用最小总代价把所有点连通起来”。</p>
+<hr />
+<h1 id="求解方法">求解方法</h1>
+<p>最小生成树常用的求解方法主要有：</p>
+<ul>
+<li>Kruskal（克鲁斯卡尔）算法；</li>
+<li>Prim（普里姆）算法；</li>
+<li>MATLAB 中的 <code>minspantree</code> 函数。</li>
+</ul>
+<h2 id="kruskal-算法">Kruskal 算法</h2>
+<p>Kruskal 算法适合<strong>点多边少</strong>的图。</p>
+<p>算法步骤如下：</p>
+<ol type="1">
+<li>把图 (G) 中所有边全部去掉，得到由所有单独顶点 (V) 构成的图
+(T)。</li>
+<li>从图 (G) 中取出当前权值最小的边：
+<ul>
+<li>如果该边加入 (T) 的边集合后，(T) 不形成回路，则加入 (T)；</li>
+<li>如果加入后会形成回路，则舍弃该边。</li>
+</ul></li>
+<li>重复第 2 步，直到 (T) 中有 (n-1) 条边，其中 (n) 是顶点数。</li>
+</ol>
+<p>需要注意：</p>
+<ul>
+<li>如果第二步中遇到两条权值相同的最小权值边，可以任选一条。</li>
+<li>因此，最小生成树可能不唯一。</li>
+</ul>
+<h2 id="prim-算法">Prim 算法</h2>
+<p>Prim 算法适合<strong>边多点少</strong>的图。</p>
+<p>算法步骤如下：</p>
+<ol type="1">
+<li>设一空图 (U)，首先将图 (G) 中任意一个顶点取出并加入 (U) 中。</li>
+<li>从图 (U) 外并且与图 (U)
+连接的边中，找到权值最小的边，将这条边和它连接的顶点并入图 (U) 中。</li>
+<li>重复第 2 步，直到 (U) 中包含了所有顶点。</li>
+</ol>
+<p>需要注意：</p>
+<ul>
+<li>如果第二步中遇到两条权值相同的最小权值边，可以任选一条。</li>
+<li>因此，最小生成树可能不唯一。</li>
+</ul>
+<h2 id="matlab-的-minspantree-函数">MATLAB 的 <code>minspantree</code>
+函数</h2>
+<p>MATLAB 可以使用 <code>minspantree</code> 函数求解最小生成树。</p>
+<p>文档中提到：</p>
+<ul>
+<li><code>T = minspantree(G)</code> 默认使用 Prim 算法；</li>
+<li>也可以指定使用 Kruskal 算法，例如：</li>
+</ul>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">T = minspantree(G,<span class="string">&#x27;Method&#x27;</span>,<span class="string">&#x27;sparse&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<hr />
+<h1 id="典型例题">典型例题</h1>
+<h2 id="a-国铺设通信线缆问题">A 国铺设通信线缆问题</h2>
+<h3 id="问题">问题</h3>
+<p>A
+国有六个城市，需要修建通信线缆，使六个城市之间都能互相通信。已知可建设线路的路径距离，要求总线缆长度最小。</p>
+<p>本问题本质上是一个<strong>最小生成树问题</strong>：</p>
+<ul>
+<li>顶点：六个城市；</li>
+<li>边：城市之间可建设的通信线路；</li>
+<li>边权：线路路径距离；</li>
+<li>目标：选出若干条边，使所有城市连通且边权总和最小。</li>
+</ul>
+<h3 id="用-kruskal-算法求解">用 Kruskal 算法求解</h3>
+<p>Kruskal 算法步骤回顾：</p>
+<ol type="1">
+<li>把图 (G) 中所有边全部去掉，得到所有单独顶点构成的图 (T)。</li>
+<li>按权值从小到大依次考察边。</li>
+<li>如果加入该边不会形成回路，则保留该边；否则舍弃该边。</li>
+<li>直到保留了 (n-1) 条边为止。</li>
+</ol>
+<p>对于该例题，选出的最小生成树边的权重为：</p>
+<p>[ 14,,,, ]</p>
+<p>因此最小线缆长度为：</p>
+<p>[ 14+13+12+14+10=63 ]</p>
+<p>所以，A 国铺设通信线缆的最小总长度为 <strong>63</strong>。</p>
+<h3 id="用-prim-算法求解">用 Prim 算法求解</h3>
+<p>Prim 算法步骤回顾：</p>
+<ol type="1">
+<li>设一空图 (U)，首先将图 (G) 中任意一个顶点加入 (U)。</li>
+<li>从 (U) 外并且与 (U) 连接的边中，选取权值最小的边和该边连接的顶点加入
+(U)。</li>
+<li>重复上述过程，直到 (U) 中包含所有顶点。</li>
+</ol>
+<p>对于该例题，Prim 算法也可以得到同样的一棵最小生成树，其边权为：</p>
+<p>[ 14,,,, ]</p>
+<p>因此最小线缆长度仍为：</p>
+<p>[ 14+13+12+14+10=63 ]</p>
+<hr />
+<h1 id="代码求解">代码求解</h1>
+<h2 id="matlab-的-minspantree-函数求解最小生成树">MATLAB 的
+<code>minspantree</code> 函数求解最小生成树</h2>
+<p>下面是文档给出的 MATLAB 代码整理版。</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">clc,clear</span><br><span class="line"></span><br><span class="line"><span class="comment">% matlab中，不存在的边设置成0</span></span><br><span class="line"><span class="comment">% 6个顶点，初始化定义6x6的全零矩阵作为邻接矩阵</span></span><br><span class="line">a = <span class="built_in">zeros</span>(<span class="number">6</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">% 注意，最小生成树是针对无向图的，每条边权重只需要设一次。</span></span><br><span class="line"><span class="comment">% 1到2和2到1是同一条边。</span></span><br><span class="line"><span class="comment">% 因此，可仅使用邻接矩阵的上三角矩阵来构造图G。</span></span><br><span class="line"></span><br><span class="line">a(<span class="number">1</span>,[<span class="number">2</span> <span class="number">3</span>])=[<span class="number">14</span> <span class="number">18</span>];       <span class="comment">% 顶点1到其他顶点的边的权重</span></span><br><span class="line">a(<span class="number">2</span>,[<span class="number">3</span>:<span class="number">5</span>])=[<span class="number">13</span> <span class="number">18</span> <span class="number">16</span>];    <span class="comment">% 顶点2到顶点3、顶点4、顶点5的边的权重</span></span><br><span class="line">a(<span class="number">3</span>,[<span class="number">4</span> <span class="number">5</span>])=[<span class="number">12</span> <span class="number">16</span>];       <span class="comment">% 同上。因为写过1到3、2到3的边的权重，无需重复设</span></span><br><span class="line">a(<span class="number">4</span>,[<span class="number">5</span> <span class="number">6</span>])=[<span class="number">14</span> <span class="number">19</span>]; </span><br><span class="line">a(<span class="number">5</span>,<span class="number">6</span>)=<span class="number">10</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">% graph在图论课程中讲过</span></span><br><span class="line">s=cellstr(strcat(<span class="string">&#x27;城市&#x27;</span>,int2str([<span class="number">1</span>:<span class="number">6</span>]&#x27;)));</span><br><span class="line"></span><br><span class="line">G=graph(a,s,<span class="string">&#x27;upper&#x27;</span>);     <span class="comment">% 仅使用 A 的上三角矩阵来构造图G。</span></span><br><span class="line">p=<span class="built_in">plot</span>(G,<span class="string">&#x27;EdgeLabel&#x27;</span>,G.Edges.Weight);  <span class="comment">% 绘制出图G</span></span><br><span class="line"></span><br><span class="line"><span class="comment">% minspantree函数求解最小生成树</span></span><br><span class="line"><span class="comment">% T=minspantree(G)是默认使用Prim算法</span></span><br><span class="line">T=minspantree(G,<span class="string">&#x27;Method&#x27;</span>,<span class="string">&#x27;sparse&#x27;</span>);    <span class="comment">% 可指定使用Kruskal算法</span></span><br><span class="line"></span><br><span class="line">L = sum(T.Edges.Weight)   <span class="comment">% 对最小生成树的边的权重求和</span></span><br><span class="line"></span><br><span class="line">highlight(p,T,<span class="string">&quot;EdgeColor&quot;</span>,<span class="string">&quot;red&quot;</span>,<span class="string">&#x27;LineWidth&#x27;</span>,<span class="number">2.5</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="代码说明">代码说明</h2>
+<h3 id="初始化邻接矩阵">1. 初始化邻接矩阵</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a = <span class="built_in">zeros</span>(<span class="number">6</span>);</span><br></pre></td></tr></table></figure>
+<p>表示图中共有 6 个顶点，并初始化一个 (6) 的全零矩阵作为邻接矩阵。</p>
+<p>在 MATLAB 中，这里用 <code>0</code> 表示不存在的边。</p>
+<h3 id="设置边权">2. 设置边权</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">a(<span class="number">1</span>,[<span class="number">2</span> <span class="number">3</span>])=[<span class="number">14</span> <span class="number">18</span>];</span><br><span class="line">a(<span class="number">2</span>,[<span class="number">3</span>:<span class="number">5</span>])=[<span class="number">13</span> <span class="number">18</span> <span class="number">16</span>];</span><br><span class="line">a(<span class="number">3</span>,[<span class="number">4</span> <span class="number">5</span>])=[<span class="number">12</span> <span class="number">16</span>];</span><br><span class="line">a(<span class="number">4</span>,[<span class="number">5</span> <span class="number">6</span>])=[<span class="number">14</span> <span class="number">19</span>]; </span><br><span class="line">a(<span class="number">5</span>,<span class="number">6</span>)=<span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+<p>由于最小生成树是针对无向图的，所以每条边的权重只需要设置一次。</p>
+<p>例如，城市1到城市2和城市2到城市1是同一条边，因此只需在邻接矩阵上三角部分设置即可。</p>
+<h3 id="设置顶点名称">3. 设置顶点名称</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">s=cellstr(strcat(<span class="string">&#x27;城市&#x27;</span>,int2str([<span class="number">1</span>:<span class="number">6</span>]&#x27;)));</span><br></pre></td></tr></table></figure>
+<p>这行代码将 1 到 6 号顶点命名为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">城市1, 城市2, 城市3, 城市4, 城市5, 城市6</span><br></pre></td></tr></table></figure>
+<h3 id="构造无向图">4. 构造无向图</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">G=graph(a,s,<span class="string">&#x27;upper&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<p><code>graph(a,s,'upper')</code> 表示仅使用邻接矩阵 <code>a</code>
+的上三角矩阵来构造无向图 (G)。</p>
+<h3 id="绘制原图">5. 绘制原图</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">p=<span class="built_in">plot</span>(G,<span class="string">&#x27;EdgeLabel&#x27;</span>,G.Edges.Weight);</span><br></pre></td></tr></table></figure>
+<p>该语句绘制图 (G)，并在图中标注每条边的权重。</p>
+<h3 id="求解最小生成树">6. 求解最小生成树</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">T=minspantree(G,<span class="string">&#x27;Method&#x27;</span>,<span class="string">&#x27;sparse&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<p>该语句调用 MATLAB 的 <code>minspantree</code>
+函数求解最小生成树。</p>
+<p>文档说明：</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">T=minspantree(G)</span><br></pre></td></tr></table></figure>
+<p>默认使用 Prim 算法。</p>
+<p>而：</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">T=minspantree(G,<span class="string">&#x27;Method&#x27;</span>,<span class="string">&#x27;sparse&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>可以指定使用 Kruskal 算法。</p>
+<h3 id="计算最小生成树边权总和">7. 计算最小生成树边权总和</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">L = sum(T.Edges.Weight)</span><br></pre></td></tr></table></figure>
+<p>该语句对最小生成树中所有边的权重求和，得到最小线缆总长度。</p>
+<p>本例中结果为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">L = 63</span><br></pre></td></tr></table></figure>
+<h3 id="高亮显示最小生成树">8. 高亮显示最小生成树</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">highlight(p,T,<span class="string">&quot;EdgeColor&quot;</span>,<span class="string">&quot;red&quot;</span>,<span class="string">&#x27;LineWidth&#x27;</span>,<span class="number">2.5</span>)</span><br></pre></td></tr></table></figure>
+<p>该语句在原图中将最小生成树对应的边高亮显示，并设置边颜色和线宽。</p>
+<hr />
+<h1 id="总结">总结</h1>
+<p>最小生成树模型适用于一类“全局连通且总代价最小”的问题。</p>
+<p>在 A 国通信线路建设问题中：</p>
+<ul>
+<li>每个城市对应一个顶点；</li>
+<li>可建设通信线路对应边；</li>
+<li>线路距离对应边权；</li>
+<li>目标是使所有城市连通，并使线缆总长度最小。</li>
+</ul>
+<p>常用算法包括：</p>
+<ul>
+<li>Kruskal 算法：适合点多边少的图；</li>
+<li>Prim 算法：适合边多点少的图；</li>
+<li>MATLAB 可使用 <code>minspantree</code> 函数直接求解。</li>
+</ul>
+<p>本例最终得到最小生成树边权之和为：</p>
+<p>[ 14+13+12+14+10=63 ]</p>
+<p>因此最小线缆总长度为 <strong>63</strong>。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -5272,1008 +5586,8 @@ class="math inline">\(A=\begin{bmatrix}0.40&amp;0.30&amp;0.30\end{bmatrix}\)</sp
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2026/01/17/GreyRelationalAnalysis/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="John Doe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Hexo">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2026/01/17/GreyRelationalAnalysis/" class="post-title-link" itemprop="url">灰色关联分析算法</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2026-01-17 15:36:04 / Modified: 18:38:12" itemprop="dateCreated datePublished" datetime="2026-01-17T15:36:04+08:00">2026-01-17</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="模型引出">模型引出</h1>
-<h2 id="什么是灰色系统">什么是灰色系统？</h2>
-<ul>
-<li><strong>灰色系统理论</strong>是1982年由邓聚龙创立的一门边缘性学科（interdisciplinary）。灰色系统用颜色深浅<strong>反映信息量的多少</strong>。说一个系统是黑色的，就是说这个系统是黑洞洞的，信息量太少；说一个系统是白色的，就是说这个系统是清楚的，信息量充足。这种处于黑白之间的系统，或说信息不完全的系统，称为灰色系统或简称灰系统。</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;"></th>
-<th style="text-align: center;">白</th>
-<th style="text-align: center;">黑</th>
-<th style="text-align: center;">灰</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">从表象看</td>
-<td style="text-align: center;">明朗</td>
-<td style="text-align: center;">暗</td>
-<td style="text-align: center;">若明若暗</td>
-</tr>
-<tr>
-<td style="text-align: center;">从过程看</td>
-<td style="text-align: center;">新</td>
-<td style="text-align: center;">旧</td>
-<td style="text-align: center;">新旧交替</td>
-</tr>
-<tr>
-<td style="text-align: center;">从性质看</td>
-<td style="text-align: center;">纯</td>
-<td style="text-align: center;">不纯</td>
-<td style="text-align: center;">多种成分</td>
-</tr>
-<tr>
-<td style="text-align: center;">从信息看</td>
-<td style="text-align: center;">完全</td>
-<td style="text-align: center;">不完全</td>
-<td style="text-align: center;">部分完全</td>
-</tr>
-<tr>
-<td style="text-align: center;">从结果看</td>
-<td style="text-align: center;">唯一的解</td>
-<td style="text-align: center;">无数的解</td>
-<td style="text-align: center;">非唯一性</td>
-</tr>
-<tr>
-<td style="text-align: center;">从态度看</td>
-<td style="text-align: center;">肯定</td>
-<td style="text-align: center;">否定</td>
-<td style="text-align: center;">扬弃</td>
-</tr>
-<tr>
-<td style="text-align: center;">从方法看</td>
-<td style="text-align: center;">严厉</td>
-<td style="text-align: center;">放纵</td>
-<td style="text-align: center;">宽容</td>
-</tr>
-</tbody>
-</table>
-<p>“信息不完全”是灰的基本含义，一般指： 1. 系统因素不完全明确 2.
-因素关系不完全清楚 3. 系统的结构不完全知道 4.
-系统的作用原理不完全明了</p>
-<h2 id="什么是关联分析">什么是关联分析？</h2>
-<ul>
-<li><p>所谓关联分析，就是<strong>系统地分析因素</strong>。回答的问题是：某个包含多种因素的系统中，哪些因素是主要的，哪些是次要的；哪些因素影响大，哪些因素影响小；哪些因素是明显的，哪些因素是潜在的；哪些是需要发展的，哪些是需要抑制的等等。</p></li>
-<li><p>现有因素分析的量化方法，大都是数理统计法如回归分析、方差分析、主要成分分析等，这些方法都有下述弱点：
-（1）要求大量数据，数据量少难以找到统计规律；
-（2）要求分布是典型的（线性的、指数的或对数的），即使是典型的并非都能处理；
-（3）计算工作量大，一般需要计算机帮助；
-（4）有时可能出现反常情况，如正相关则断为负相关，以至正确现象受到歪曲和颠倒。</p></li>
-<li><p>尤其是我国统计数据十分有限，而且现有数据灰度较大，许多数据都出现几次大起大落，没有典型的分布规律。因此，采用数理统计方法往往难以奏效。</p></li>
-</ul>
-<h1 id="模型原理">模型原理</h1>
-<h2 id="灰色关联分析">灰色关联分析</h2>
-<ul>
-<li><p><strong>灰色关联度分析</strong>（Grey Relational
-Analysis，GRA），是一种多因素统计分析的方法。灰色关联分析方法弥补了采用数理统计方法作系统分析所导致的缺憾。它对<strong>样本量的多少和样本有无规律都同样适用</strong>，而且计算量小、十分方便，更不会出现量化结果与定性分析结果不符的情况。</p></li>
-<li><p>灰色关联分析的基本思想是<strong>根据序列曲线几何形状的相似程度</strong>来判断其联系是否紧密。曲线越接近，相应序列之间的关联度就越大，反之就越小。</p></li>
-<li><p>对一个抽象的系统或现象进行分析，首先要选定反映<strong>系统行为特征的数据序列</strong>，称为找系统行为的映射量，用映射量来间接地表征系统行为。例如，用国民平均接受教育的年数来反映教育发达程度，用刑事案件的发案率来反映社会治安面貌和社会秩序，用医院挂号次数来反映国民的健康水平等。有了系统行为特征数据和相关因素的数据，即可作出各个序列的图形，从直观上进行分析。</p></li>
-</ul>
-<h4
-id="曲线几何形态越相似rightarrow发展变化态势就越接近rightarrow其关联程度就越大">曲线几何形态越相似<span
-class="math inline">\(\Rightarrow\)</span>发展变化态势就越接近<span
-class="math inline">\(\Rightarrow\)</span>其关联程度就越大</h4>
-<h2 id="关联分析步骤">关联分析步骤</h2>
-<ol type="1">
-<li>母序列（又称参考序列、母指标）<br />
-能反映系统行为特征的数据序列，类似于因变量 <span
-class="math inline">\(Y\)</span>，记为 <span
-class="math inline">\(Y=[y_1,y_2,\cdots,y_n]^T\)</span><br />
-</li>
-<li>子序列（又称比较序列、子指标）<br />
-影响系统行为的因素组成的数据序列，类似于自变量 $ X $，记为</li>
-</ol>
-<p><span class="math display">\[X_{mn} =
-\begin{bmatrix}
-x_{11} &amp; x_{12} &amp; \cdots &amp; x_{1m} \\
-x_{21} &amp; x_{22} &amp; \cdots &amp; x_{2m} \\
-\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
-x_{n1} &amp; x_{n2} &amp; \cdots &amp; x_{nm}
-\end{bmatrix}\]</span></p>
-<ol start="3" type="1">
-<li>数据预处理<br />
-由于不同要素具有不同量纲和数据范围，因此我们要对他们进行预处理去量纲，将他们统一到近似的范围内，先求出每个指标的均值，再用指标中的元素除以其均值</li>
-</ol>
-<p><span class="math display">\[\tilde{y}_k = \frac{y_k}{\bar{y_i}},
-\bar{y}_i = \frac{1}{n}\sum_{k=1}^n y_k\]</span></p>
-<p><span class="math display">\[\tilde{x}_{ki} =
-\frac{x_{ki}}{\bar{x_i}}, \bar{x}_i = \frac{1}{n}\sum_{k=1}^n x_{ki}
-(i=1, 2, \cdots, m)\]</span></p>
-<ol start="4" type="1">
-<li>计算灰色关联系数</li>
-</ol>
-<p>计算子序列中各个指标与母序列的关联系数</p>
-<p>记为：<br />
-<span class="math display">\[a = \min_{i} \min_{k} |x_0(k) - x_i(k)|,
-\quad b = \max_{i} \max_{k} |x_0(k) - x_i(k)|\]</span></p>
-<p>为两极最小差和最大差</p>
-<p>构造：<br />
-<span class="math display">\[\xi_i(k) = y(x_0(k), x_i(k)) = \frac{a +
-\rho b}{|x_0(k) - x_i(k)| + \rho b}\]</span></p>
-<p>其中 <span class="math inline">\(\rho\)</span> 为分辨系数，一般取
-0.5。</p>
-<ol start="5" type="1">
-<li>计算关联度</li>
-</ol>
-<p><span class="math display">\[r_i = \frac{1}{n} \sum_{k=1}^{n}
-\xi_i(k) = \frac{1}{n} \sum_{k=1}^{n} y(x_0(k), x_i(k))\]</span></p>
-<h1 id="典型例题">典型例题</h1>
-<h2 id="灰色关联分析例题">灰色关联分析例题</h2>
-<p>已知某地国民生产总值，工业和农业生产总值，原始数据的形式及来源见下表，分析工业农业哪个对国民生产总值影响大。</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">项目名称</th>
-<th style="text-align: center;">2016年</th>
-<th style="text-align: center;">2017年</th>
-<th style="text-align: center;">2018年</th>
-<th style="text-align: center;">2019年</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">国民生产总值</td>
-<td style="text-align: center;">55</td>
-<td style="text-align: center;">65</td>
-<td style="text-align: center;">75</td>
-<td style="text-align: center;">100</td>
-</tr>
-<tr>
-<td style="text-align: center;">工业产值</td>
-<td style="text-align: center;">24</td>
-<td style="text-align: center;">38</td>
-<td style="text-align: center;">40</td>
-<td style="text-align: center;">50</td>
-</tr>
-<tr>
-<td style="text-align: center;">农业产值</td>
-<td style="text-align: center;">10</td>
-<td style="text-align: center;">22</td>
-<td style="text-align: center;">18</td>
-<td style="text-align: center;">20</td>
-</tr>
-</tbody>
-</table>
-<ol type="1">
-<li>定义母序列及子序列如下：</li>
-</ol>
-<table style="width:100%;">
-<colgroup>
-<col style="width: 16%" />
-<col style="width: 16%" />
-<col style="width: 16%" />
-<col style="width: 16%" />
-<col style="width: 16%" />
-<col style="width: 16%" />
-</colgroup>
-<thead>
-<tr>
-<th style="text-align: center;">项目名称</th>
-<th style="text-align: center;">2016年</th>
-<th style="text-align: center;">2017年</th>
-<th style="text-align: center;">2018年</th>
-<th style="text-align: center;">2019年</th>
-<th style="text-align: center;">项目代号</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">国民生产总值</td>
-<td style="text-align: center;">55</td>
-<td style="text-align: center;">65</td>
-<td style="text-align: center;">75</td>
-<td style="text-align: center;">100</td>
-<td style="text-align: center;"><span
-class="math display">\[X_0\]</span>(母序列)</td>
-</tr>
-<tr>
-<td style="text-align: center;">工业产值</td>
-<td style="text-align: center;">24</td>
-<td style="text-align: center;">38</td>
-<td style="text-align: center;">40</td>
-<td style="text-align: center;">50</td>
-<td style="text-align: center;"><span
-class="math display">\[X_1\]</span>(子序列)</td>
-</tr>
-<tr>
-<td style="text-align: center;">农业产值</td>
-<td style="text-align: center;">10</td>
-<td style="text-align: center;">22</td>
-<td style="text-align: center;">18</td>
-<td style="text-align: center;">20</td>
-<td style="text-align: center;"><span
-class="math display">\[X_2\]</span>(子序列)</td>
-</tr>
-</tbody>
-</table>
-<ol start="2" type="1">
-<li>数据预处理 对数据进行均值化<br />
-<span class="math display">\[\tilde{y}_k = \frac{y_k}{\bar{y}_i},
-\bar{y}_i = \frac{1}{n} \sum_{k=1}^n y_k, \tilde x_{ki} =
-\frac{x_{ki}}{\bar{x_i}}, \bar x_i = \frac{1}{n} \sum_{k=1}^n x_{ki}
-(i=1,2,\cdots,m)\]</span></li>
-</ol>
-<table style="width:100%;">
-<colgroup>
-<col style="width: 16%" />
-<col style="width: 16%" />
-<col style="width: 16%" />
-<col style="width: 16%" />
-<col style="width: 16%" />
-<col style="width: 16%" />
-</colgroup>
-<thead>
-<tr>
-<th style="text-align: center;">项目名称</th>
-<th style="text-align: center;">2016年</th>
-<th style="text-align: center;">2017年</th>
-<th style="text-align: center;">2018年</th>
-<th style="text-align: center;">2019年</th>
-<th style="text-align: center;">项目代号</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">国民生产总值</td>
-<td style="text-align: center;">0.75</td>
-<td style="text-align: center;">0.88</td>
-<td style="text-align: center;">1.02</td>
-<td style="text-align: center;">1.36</td>
-<td style="text-align: center;">(母序列)</td>
-</tr>
-<tr>
-<td style="text-align: center;">工业产值</td>
-<td style="text-align: center;">0.63</td>
-<td style="text-align: center;">1.00</td>
-<td style="text-align: center;">1.05</td>
-<td style="text-align: center;">1.32</td>
-<td style="text-align: center;">(子序列)</td>
-</tr>
-<tr>
-<td style="text-align: center;">农业产值</td>
-<td style="text-align: center;">0.57</td>
-<td style="text-align: center;">1.26</td>
-<td style="text-align: center;">1.03</td>
-<td style="text-align: center;">1.14</td>
-<td style="text-align: center;">(子序列)</td>
-</tr>
-</tbody>
-</table>
-<ol start="3" type="1">
-<li>求关联系数</li>
-</ol>
-<table style="width:100%;">
-<colgroup>
-<col style="width: 16%" />
-<col style="width: 16%" />
-<col style="width: 16%" />
-<col style="width: 16%" />
-<col style="width: 16%" />
-<col style="width: 16%" />
-</colgroup>
-<thead>
-<tr>
-<th style="text-align: center;"><span
-class="math inline">\(k\)</span></th>
-<th style="text-align: center;"><span
-class="math inline">\(X_0\)</span></th>
-<th style="text-align: center;"><span
-class="math inline">\(X_1\)</span></th>
-<th style="text-align: center;"><span
-class="math inline">\(X_2\)</span></th>
-<th style="text-align: center;"><span class="math inline">\(\vert
-x_0(k)-x_1(k)\vert\)</span></th>
-<th style="text-align: center;"><span class="math inline">\(\vert
-x_0(k)-x_2(k)\vert\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">1</td>
-<td style="text-align: center;">0.75</td>
-<td style="text-align: center;">0.63</td>
-<td style="text-align: center;">0.57</td>
-<td style="text-align: center;">0.12</td>
-<td style="text-align: center;">0.18</td>
-</tr>
-<tr>
-<td style="text-align: center;">2</td>
-<td style="text-align: center;">0.88</td>
-<td style="text-align: center;">1</td>
-<td style="text-align: center;">1.26</td>
-<td style="text-align: center;">0.12</td>
-<td style="text-align: center;">0.38</td>
-</tr>
-<tr>
-<td style="text-align: center;">3</td>
-<td style="text-align: center;">1.02</td>
-<td style="text-align: center;">1.05</td>
-<td style="text-align: center;">1.03</td>
-<td style="text-align: center;">0.03</td>
-<td style="text-align: center;">0.01</td>
-</tr>
-<tr>
-<td style="text-align: center;">4</td>
-<td style="text-align: center;">1.36</td>
-<td style="text-align: center;">1.32</td>
-<td style="text-align: center;">1.14</td>
-<td style="text-align: center;">0.04</td>
-<td style="text-align: center;">0.22</td>
-</tr>
-</tbody>
-</table>
-<p><span
-class="math inline">\(a=\min\limits_i\min\limits_k|x_0(k)-x_i(k)|,b=\max\limits_i\max\limits_k|x_0(k)-x_i(k)|,\xi_i(k)=y(x_0(k),
-x_i(k))=\frac{a+\rho b}{|x_0(k)-x_i(k)|+\rho b}\)</span> <span
-class="math display">\[a = 0.01 \quad b = 0.38\]</span></p>
-<p><span class="math display">\[\xi_i(k) = y(x_0(k), x_i(k)) =
-\frac{0.01 + 0.5 \times 0.38}{|x_0(k) - x_i(k)| + 0.5 \times
-0.38}\]</span></p>
-<p><span class="math display">\[= \frac{0.2}{|x_0(k) - x_i(k)| +
-0.19}\]</span></p>
-<ol start="4" type="1">
-<li>求关联度</li>
-</ol>
-<table>
-<colgroup>
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-<col style="width: 20%" />
-</colgroup>
-<thead>
-<tr>
-<th style="text-align: center;"><span
-class="math inline">\(k\)</span></th>
-<th style="text-align: center;"><span class="math inline">\(\vert
-x_0(k)-x_1(k)\vert\)</span></th>
-<th style="text-align: center;"><span class="math inline">\(\vert
-x_0(k)-x_2(k)\vert\)</span></th>
-<th style="text-align: center;"><span
-class="math inline">\(\xi_1\)</span></th>
-<th style="text-align: center;"><span
-class="math inline">\(\xi_2\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">1</td>
-<td style="text-align: center;">0.12</td>
-<td style="text-align: center;">0.18</td>
-<td style="text-align: center;">0.645</td>
-<td style="text-align: center;">0.541</td>
-</tr>
-<tr>
-<td style="text-align: center;">2</td>
-<td style="text-align: center;">0.12</td>
-<td style="text-align: center;">0.38</td>
-<td style="text-align: center;">0.645</td>
-<td style="text-align: center;">0.351</td>
-</tr>
-<tr>
-<td style="text-align: center;">3</td>
-<td style="text-align: center;">0.03</td>
-<td style="text-align: center;">0.01</td>
-<td style="text-align: center;">0.909</td>
-<td style="text-align: center;">1.000</td>
-</tr>
-<tr>
-<td style="text-align: center;">4</td>
-<td style="text-align: center;">0.04</td>
-<td style="text-align: center;">0.22</td>
-<td style="text-align: center;">0.870</td>
-<td style="text-align: center;">0.488</td>
-</tr>
-</tbody>
-</table>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">$ k $</th>
-<th style="text-align: center;"><span
-class="math inline">\(\xi_1\)</span></th>
-<th style="text-align: center;"><span
-class="math inline">\(\xi_2\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">1</td>
-<td style="text-align: center;">0.645</td>
-<td style="text-align: center;">0.541</td>
-</tr>
-<tr>
-<td style="text-align: center;">2</td>
-<td style="text-align: center;">0.645</td>
-<td style="text-align: center;">0.351</td>
-</tr>
-<tr>
-<td style="text-align: center;">3</td>
-<td style="text-align: center;">0.909</td>
-<td style="text-align: center;">1.000</td>
-</tr>
-<tr>
-<td style="text-align: center;">4</td>
-<td style="text-align: center;">0.870</td>
-<td style="text-align: center;">0.488</td>
-</tr>
-<tr>
-<td style="text-align: center;"><strong><span
-class="math inline">\(r\)</span></strong></td>
-<td style="text-align: center;"><strong>0.767</strong></td>
-<td style="text-align: center;"><strong>0.595</strong></td>
-</tr>
-</tbody>
-</table>
-<p><span class="math display">\[r_i = \frac{1}{n} \sum_{k=1}^{n}
-\xi_i(k) = \frac{1}{n} \sum_{k=1}^{n} y(x_0(k), x_i(k))\]</span></p>
-<p><span class="math display">\[r_1 &gt; r_2 \quad
-\text{工业产值关联度更大}\]</span></p>
-<h2 id="灰色关联评价例题">灰色关联评价例题</h2>
-<p>我们来换个方法给明星K选对象，还是A、B、C三位候选人（K觉得身高165是最好，体重在90-100斤是最好）</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">候选人</th>
-<th style="text-align: center;">颜值</th>
-<th style="text-align: center;">脾气（争吵次数）</th>
-<th style="text-align: center;">身高</th>
-<th style="text-align: center;">体重</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">A</td>
-<td style="text-align: center;">9</td>
-<td style="text-align: center;">10</td>
-<td style="text-align: center;">175</td>
-<td style="text-align: center;">120</td>
-</tr>
-<tr>
-<td style="text-align: center;">B</td>
-<td style="text-align: center;">8</td>
-<td style="text-align: center;">7</td>
-<td style="text-align: center;">164</td>
-<td style="text-align: center;">80</td>
-</tr>
-<tr>
-<td style="text-align: center;">C</td>
-<td style="text-align: center;">6</td>
-<td style="text-align: center;">3</td>
-<td style="text-align: center;">157</td>
-<td style="text-align: center;">90</td>
-</tr>
-</tbody>
-</table>
-<ol type="1">
-<li>数据正向化处理（可看Topsis一节）</li>
-</ol>
-<p>将原始矩阵正向化，就是要将所有的指标类型统一转化为极大型指标。</p>
-<p><span class="math display">\[X_{mn} =
-\begin{bmatrix}
-x_{11} &amp; x_{12} &amp; \cdots &amp; x_{1m} \\
-x_{21} &amp; x_{22} &amp; \cdots &amp; x_{2m} \\
-\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
-x_{n1} &amp; x_{n2} &amp; \cdots &amp; x_{nm}
-\end{bmatrix}\]</span></p>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">候选人</th>
-<th style="text-align: center;">颜值</th>
-<th style="text-align: center;">脾气（争吵次数）</th>
-<th style="text-align: center;">身高</th>
-<th style="text-align: center;">体重</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">A</td>
-<td style="text-align: center;">9</td>
-<td style="text-align: center;">0</td>
-<td style="text-align: center;">0</td>
-<td style="text-align: center;">0</td>
-</tr>
-<tr>
-<td style="text-align: center;">B</td>
-<td style="text-align: center;">8</td>
-<td style="text-align: center;">3</td>
-<td style="text-align: center;">0.9</td>
-<td style="text-align: center;">0.5</td>
-</tr>
-<tr>
-<td style="text-align: center;">C</td>
-<td style="text-align: center;">6</td>
-<td style="text-align: center;">7</td>
-<td style="text-align: center;">0.2</td>
-<td style="text-align: center;">1</td>
-</tr>
-</tbody>
-</table>
-<ol start="2" type="1">
-<li>正向化后数据预处理（可看Topsis一节）</li>
-</ol>
-<p>每个指标的元素除以该指标元素的平均值</p>
-<p><span class="math display">\[Z_{nm} =
-\begin{bmatrix}
-z_{11} &amp; z_{12} &amp; \cdots &amp; z_{1m} \\
-z_{21} &amp; z_{22} &amp; \cdots &amp; z_{2m} \\
-\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
-z_{n1} &amp; z_{n2} &amp; \cdots &amp; z_{nm}
-\end{bmatrix}\]</span></p>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">候选人</th>
-<th style="text-align: center;">颜值</th>
-<th style="text-align: center;">脾气（争吵次数）</th>
-<th style="text-align: center;">身高</th>
-<th style="text-align: center;">体重</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">A</td>
-<td style="text-align: center;">1.17</td>
-<td style="text-align: center;">0.00</td>
-<td style="text-align: center;">0.00</td>
-<td style="text-align: center;">0.00</td>
-</tr>
-<tr>
-<td style="text-align: center;">B</td>
-<td style="text-align: center;">1.04</td>
-<td style="text-align: center;">0.90</td>
-<td style="text-align: center;">2.45</td>
-<td style="text-align: center;">1.00</td>
-</tr>
-<tr>
-<td style="text-align: center;">C</td>
-<td style="text-align: center;">0.78</td>
-<td style="text-align: center;">2.10</td>
-<td style="text-align: center;">0.55</td>
-<td style="text-align: center;">2.00</td>
-</tr>
-</tbody>
-</table>
-<ol start="3" type="1">
-<li>构造母序列</li>
-</ol>
-<p><span class="math display">\[Y = [y_1, y_2, \cdots,
-y_n]^T\]</span></p>
-<p>其中 <span
-class="math inline">\(y_i=\max(z_{i1},z_{i2},\cdots,z_{im})\)</span></p>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">候选人</th>
-<th style="text-align: center;">Y</th>
-<th style="text-align: center;">颜值</th>
-<th style="text-align: center;">脾气（争吵次数）</th>
-<th style="text-align: center;">身高</th>
-<th style="text-align: center;">体重</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">A</td>
-<td style="text-align: center;">1.17</td>
-<td style="text-align: center;">1.17</td>
-<td style="text-align: center;">0.00</td>
-<td style="text-align: center;">0.00</td>
-<td style="text-align: center;">0.00</td>
-</tr>
-<tr>
-<td style="text-align: center;">B</td>
-<td style="text-align: center;">2.45</td>
-<td style="text-align: center;">1.04</td>
-<td style="text-align: center;">0.90</td>
-<td style="text-align: center;">2.45</td>
-<td style="text-align: center;">1.00</td>
-</tr>
-<tr>
-<td style="text-align: center;">C</td>
-<td style="text-align: center;">2.10</td>
-<td style="text-align: center;">0.78</td>
-<td style="text-align: center;">2.10</td>
-<td style="text-align: center;">0.55</td>
-<td style="text-align: center;">2.00</td>
-</tr>
-</tbody>
-</table>
-<ol start="4" type="1">
-<li>计算关联系数</li>
-</ol>
-<p>记差值矩阵为 $ K $ <span class="math display">\[K_{nm} =
-\begin{bmatrix}
-k_{11} &amp; k_{12} &amp; \cdots &amp; k_{1m} \\
-k_{21} &amp; k_{22} &amp; \cdots &amp; k_{2m} \\
-\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
-k_{n1} &amp; k_{n2} &amp; \cdots &amp; k_{nm}
-\end{bmatrix}\]</span>=<span class="math display">\[\begin{bmatrix}
-|z_{11}-y_{1}| &amp; |z_{2}-y_{1}| &amp; \cdots &amp; |z_{1m}-y_{1}| \\
-|z_{21}-y_{2}| &amp; |z_{22}-y_{2}| &amp; \cdots &amp; |z_{2m}-y_{2}| \\
-\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
-|z_{n1}-y_{n}| &amp; |z_{n2}-y_{n}| &amp; \cdots &amp; |z_{nm}-z_{n}|
-\end{bmatrix}\]</span> <span
-class="math display">\[a=\min\limits_i\min\limits_k|x_0(k)-x_i(k)|,b=\max\limits_i\max\limits_k|x_0(k)-x_i(k)|.\]</span></p>
-<table style="width:100%;">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 10%" />
-<col style="width: 10%" />
-<col style="width: 10%" />
-<col style="width: 10%" />
-<col style="width: 10%" />
-<col style="width: 10%" />
-<col style="width: 10%" />
-<col style="width: 10%" />
-<col style="width: 10%" />
-</colgroup>
-<thead>
-<tr>
-<th style="text-align: center;">候选人</th>
-<th style="text-align: center;">$ Y $</th>
-<th style="text-align: center;">$ Z_1 $</th>
-<th style="text-align: center;">$ Z_2 $</th>
-<th style="text-align: center;">$ Z_3 $</th>
-<th style="text-align: center;">$ Z_4 $</th>
-<th style="text-align: center;"><span class="math inline">\(|z_{k1} -
-y_k|\)</span></th>
-<th style="text-align: center;"><span class="math inline">\(|z_{k2} -
-y_k|\)</span></th>
-<th style="text-align: center;"><span class="math inline">\(|z_{k3} -
-y_k|\)</span></th>
-<th style="text-align: center;"><span class="math inline">\(|z_{k4} -
-y_k|\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">A</td>
-<td style="text-align: center;">1.17</td>
-<td style="text-align: center;">1.17</td>
-<td style="text-align: center;">0.00</td>
-<td style="text-align: center;">0.00</td>
-<td style="text-align: center;">0.00</td>
-<td style="text-align: center;">0.00</td>
-<td style="text-align: center;">1.17</td>
-<td style="text-align: center;">1.17</td>
-<td style="text-align: center;">1.17</td>
-</tr>
-<tr>
-<td style="text-align: center;">B</td>
-<td style="text-align: center;">2.45</td>
-<td style="text-align: center;">1.04</td>
-<td style="text-align: center;">0.90</td>
-<td style="text-align: center;">2.45</td>
-<td style="text-align: center;">1.00</td>
-<td style="text-align: center;">1.41</td>
-<td style="text-align: center;">1.55</td>
-<td style="text-align: center;">0.00</td>
-<td style="text-align: center;">1.45</td>
-</tr>
-<tr>
-<td style="text-align: center;">C</td>
-<td style="text-align: center;">2.10</td>
-<td style="text-align: center;">0.78</td>
-<td style="text-align: center;">2.10</td>
-<td style="text-align: center;">0.55</td>
-<td style="text-align: center;">2.00</td>
-<td style="text-align: center;">1.32</td>
-<td style="text-align: center;">0.00</td>
-<td style="text-align: center;">1.55</td>
-<td style="text-align: center;">0.10</td>
-</tr>
-</tbody>
-</table>
-<p>易得 $ a = 0, b = 1.55 $</p>
-<p><span class="math display">\[\xi_i(k) = y(x_0(k), x_i(k)) = \frac{0 +
-0.5 \times 1.55}{|x_0(k) - x_i(k)| + 0.5 \times 1.55} =
-\frac{0.775}{|x_0(k) - x_i(k)| + 0.775}\]</span></p>
-<table style="width:100%;">
-<colgroup>
-<col style="width: 11%" />
-<col style="width: 11%" />
-<col style="width: 11%" />
-<col style="width: 11%" />
-<col style="width: 11%" />
-<col style="width: 11%" />
-<col style="width: 11%" />
-<col style="width: 11%" />
-<col style="width: 11%" />
-</colgroup>
-<thead>
-<tr>
-<th style="text-align: center;">候选人</th>
-<th style="text-align: center;"><span class="math inline">\(\vert
-z_{k1}-y_k \vert\)</span></th>
-<th style="text-align: center;"><span class="math inline">\(\vert
-z_{k2}-y_k \vert\)</span></th>
-<th style="text-align: center;"><span class="math inline">\(\vert
-z_{k3}-y_k \vert\)</span></th>
-<th style="text-align: center;"><span class="math inline">\(\vert
-z_{k4}-y_k \vert\)</span></th>
-<th style="text-align: center;"><span
-class="math inline">\(\xi_1\)</span></th>
-<th style="text-align: center;"><span
-class="math inline">\(\xi_2\)</span></th>
-<th style="text-align: center;"><span
-class="math inline">\(\xi_3\)</span></th>
-<th style="text-align: center;"><span
-class="math inline">\(\xi_4\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">A</td>
-<td style="text-align: center;">0.00</td>
-<td style="text-align: center;">1.17</td>
-<td style="text-align: center;">1.17</td>
-<td style="text-align: center;">1.17</td>
-<td style="text-align: center;">1.000</td>
-<td style="text-align: center;">0.398</td>
-<td style="text-align: center;">0.398</td>
-<td style="text-align: center;">0.398</td>
-</tr>
-<tr>
-<td style="text-align: center;">B</td>
-<td style="text-align: center;">1.41</td>
-<td style="text-align: center;">1.55</td>
-<td style="text-align: center;">0.00</td>
-<td style="text-align: center;">1.45</td>
-<td style="text-align: center;">0.355</td>
-<td style="text-align: center;">0.333</td>
-<td style="text-align: center;">1.000</td>
-<td style="text-align: center;">0.348</td>
-</tr>
-<tr>
-<td style="text-align: center;">C</td>
-<td style="text-align: center;">1.32</td>
-<td style="text-align: center;">0.00</td>
-<td style="text-align: center;">1.55</td>
-<td style="text-align: center;">0.10</td>
-<td style="text-align: center;">0.370</td>
-<td style="text-align: center;">1.000</td>
-<td style="text-align: center;">0.333</td>
-<td style="text-align: center;">0.886</td>
-</tr>
-</tbody>
-</table>
-<ol start="5" type="1">
-<li>计算关联度<br />
-<span class="math display">\[r_i = \frac{1}{n} \sum_{k=1}^n \xi_i(k) =
-\frac{1}{n} \sum_{k=1}^n y(x_0(k), x_i(k))\]</span></li>
-</ol>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">候选人</th>
-<th style="text-align: center;"><span
-class="math inline">\(\xi_1\)</span></th>
-<th style="text-align: center;"><span
-class="math inline">\(\xi_2\)</span></th>
-<th style="text-align: center;"><span
-class="math inline">\(\xi_3\)</span></th>
-<th style="text-align: center;"><span
-class="math inline">\(\xi_4\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">A</td>
-<td style="text-align: center;">1.000</td>
-<td style="text-align: center;">0.398</td>
-<td style="text-align: center;">0.398</td>
-<td style="text-align: center;">0.398</td>
-</tr>
-<tr>
-<td style="text-align: center;">B</td>
-<td style="text-align: center;">0.355</td>
-<td style="text-align: center;">0.333</td>
-<td style="text-align: center;">1.000</td>
-<td style="text-align: center;">0.348</td>
-</tr>
-<tr>
-<td style="text-align: center;">C</td>
-<td style="text-align: center;">0.370</td>
-<td style="text-align: center;">1.000</td>
-<td style="text-align: center;">0.333</td>
-<td style="text-align: center;">0.886</td>
-</tr>
-<tr>
-<td style="text-align: center;"><strong><span
-class="math inline">\(r\)</span></strong></td>
-<td style="text-align: center;"><strong>0.575</strong></td>
-<td style="text-align: center;"><strong>0.577</strong></td>
-<td style="text-align: center;"><strong>0.577</strong></td>
-<td style="text-align: center;"><strong>0.544</strong></td>
-</tr>
-</tbody>
-</table>
-<ol start="6" type="1">
-<li>计算指标权重<br />
-<span class="math display">\[w_i = \frac{r_i}{\sum\limits_{k=1}^m r_k}
-(i=1,2,\cdots,m)\]</span></li>
-</ol>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">候选人</th>
-<th style="text-align: center;">颜值</th>
-<th style="text-align: center;">脾气（争吵次数）</th>
-<th style="text-align: center;">身高</th>
-<th style="text-align: center;">体重</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;"><span
-class="math inline">\(r\)</span></td>
-<td style="text-align: center;">0.575</td>
-<td style="text-align: center;">0.577</td>
-<td style="text-align: center;">0.577</td>
-<td style="text-align: center;">0.544</td>
-</tr>
-<tr>
-<td style="text-align: center;"><span
-class="math inline">\(w\)</span></td>
-<td style="text-align: center;">0.253</td>
-<td style="text-align: center;">0.254</td>
-<td style="text-align: center;">0.254</td>
-<td style="text-align: center;">0.239</td>
-</tr>
-</tbody>
-</table>
-<ol start="7" type="1">
-<li>计算得分并归一化<br />
-<span class="math display">\[S_i = \sum_{k=1}^m Z_{ik}\cdot w_i, \tilde
-S_i = \frac{S_i}{\sum\limits_{k=1}^m S_k} (i=1,2,\cdots,n)\]</span></li>
-</ol>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">候选人</th>
-<th style="text-align: center;">颜值</th>
-<th style="text-align: center;">脾气（争吵次数）</th>
-<th style="text-align: center;">身高</th>
-<th style="text-align: center;">体重</th>
-<th style="text-align: center;">得分</th>
-<th style="text-align: center;">归一化得分</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">A</td>
-<td style="text-align: center;">1.17</td>
-<td style="text-align: center;">0.00</td>
-<td style="text-align: center;">0.00</td>
-<td style="text-align: center;">0.00</td>
-<td style="text-align: center;">0.296</td>
-<td style="text-align: center;">0.099</td>
-</tr>
-<tr>
-<td style="text-align: center;">B</td>
-<td style="text-align: center;">1.04</td>
-<td style="text-align: center;">0.90</td>
-<td style="text-align: center;">2.45</td>
-<td style="text-align: center;">1.00</td>
-<td style="text-align: center;">1.353</td>
-<td style="text-align: center;"><strong>0.451</strong></td>
-</tr>
-<tr>
-<td style="text-align: center;">C</td>
-<td style="text-align: center;">0.78</td>
-<td style="text-align: center;">2.10</td>
-<td style="text-align: center;">0.55</td>
-<td style="text-align: center;">2.00</td>
-<td style="text-align: center;">1.348</td>
-<td style="text-align: center;">0.450</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li><strong>明星K依然选择了B</strong></li>
-</ul>
-<h1 id="灰色关联分析算法的matlab代码">灰色关联分析算法的Matlab代码</h1>
-<h2 id="灰色关联分析例题的matlab代码">灰色关联分析例题的matlab代码</h2>
-<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">%% 灰色关联分析用于系统分析例题的讲解</span></span><br><span class="line">clear;clc</span><br><span class="line"><span class="comment">% A=[55 24 10;65 38 22;75 40 18;100 50 20]</span></span><br><span class="line">A=input(<span class="string">&#x27;请输入初始矩阵=&#x27;</span>)  <span class="comment">% 输入初始矩阵</span></span><br><span class="line">Mean = <span class="built_in">mean</span>(A);  <span class="comment">% 求出每一列的均值以供后续的数据预处理</span></span><br><span class="line">A = A ./ <span class="built_in">repmat</span>(Mean,<span class="built_in">size</span>(A,<span class="number">1</span>),<span class="number">1</span>);  <span class="comment">%size(A,1)=6, repmat(Mean,6,1)可以将矩阵进行复制，复制为和A同等大小，然后使用点除（对应元素相除），这些在第一讲层次分析法都讲过</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;预处理后的矩阵为：&#x27;</span>); <span class="built_in">disp</span>(A)</span><br><span class="line">Y = A(:,<span class="number">1</span>);  <span class="comment">% 母序列</span></span><br><span class="line">X = A(:,<span class="number">2</span>:<span class="keyword">end</span>); <span class="comment">% 子序列</span></span><br><span class="line">absX0_Xi = <span class="built_in">abs</span>(X - <span class="built_in">repmat</span>(Y,<span class="number">1</span>,<span class="built_in">size</span>(X,<span class="number">2</span>)))  <span class="comment">% 计算|X0-Xi|矩阵(在这里我们把X0定义为了Y)</span></span><br><span class="line">a = <span class="built_in">min</span>(<span class="built_in">min</span>(absX0_Xi))    <span class="comment">% 计算两级最小差a</span></span><br><span class="line">b = <span class="built_in">max</span>(<span class="built_in">max</span>(absX0_Xi))  <span class="comment">% 计算两级最大差b</span></span><br><span class="line">rho = <span class="number">0.5</span>; <span class="comment">% 分辨系数取0.5</span></span><br><span class="line"><span class="built_in">gamma</span> = (a+rho*b) ./ (absX0_Xi  + rho*b)  <span class="comment">% 计算子序列中各个指标与母序列的关联系数</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;子序列中各个指标的灰色关联度分别为：&#x27;</span>)</span><br><span class="line"><span class="built_in">disp</span>(<span class="built_in">mean</span>(<span class="built_in">gamma</span>))</span><br></pre></td></tr></table></figure>
-<h2 id="灰色关联评价例题的matlab代码">灰色关联评价例题的matlab代码</h2>
-<h3 id="主脚本">主脚本</h3>
-<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">clear;clc</span><br><span class="line"><span class="comment">%%  1.判断是否需要正向化</span></span><br><span class="line"><span class="comment">% A=[9 10 175 120;8 7 164 80;6 3 157 90]</span></span><br><span class="line">X=input(<span class="string">&#x27;指标矩阵A=&#x27;</span>);    <span class="comment">%%输入判断矩阵</span></span><br><span class="line">[n,m] = <span class="built_in">size</span>(X);</span><br><span class="line"><span class="built_in">disp</span>([<span class="string">&#x27;共有&#x27;</span> num2str(n) <span class="string">&#x27;个评价对象, &#x27;</span> num2str(m) <span class="string">&#x27;个评价指标&#x27;</span>]) </span><br><span class="line">Judge = input([<span class="string">&#x27;这&#x27;</span> num2str(m) <span class="string">&#x27;个指标是否需要经过正向化处理，需要请输入1 ，不需要输入0：  &#x27;</span>]);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> Judge == <span class="number">1</span></span><br><span class="line">    Position = input(<span class="string">&#x27;请输入需要正向化处理的指标所在的列，例如第2、3、6三列需要处理，那么你需要输入[2,3,6]： &#x27;</span>); <span class="comment">%[2,3,4]</span></span><br><span class="line">    <span class="built_in">disp</span>(<span class="string">&#x27;请输入需要处理的这些列的指标类型（1：极小型， 2：中间型， 3：区间型） &#x27;</span>)</span><br><span class="line">    Type = input(<span class="string">&#x27;例如：第2列是极小型，第3列是区间型，第6列是中间型，就输入[1,3,2]：  &#x27;</span>); <span class="comment">%[2,1,3]</span></span><br><span class="line">    <span class="comment">% 注意，Position和Type是两个同维度的行向量</span></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span> : <span class="built_in">size</span>(Position,<span class="number">2</span>)  <span class="comment">%这里需要对这些列分别处理，因此我们需要知道一共要处理的次数，即</span></span><br><span class="line">        <span class="comment">% 循环的次数</span></span><br><span class="line">        X(:,Position(<span class="built_in">i</span>)) = Positivization(X(:,Position(<span class="built_in">i</span>)),Type(<span class="built_in">i</span>),Position(<span class="built_in">i</span>));</span><br><span class="line">    <span class="comment">% Positivization是我们自己定义的函数，其作用是进行正向化，其一共接收三个参数</span></span><br><span class="line">    <span class="comment">% 第一个参数是要正向化处理的那一列向量 X(:,Position(i))   回顾上一讲的知识，X(:,n)表示取第n列的全部元素</span></span><br><span class="line">    <span class="comment">% 第二个参数是对应的这一列的指标类型（1：极小型， 2：中间型， 3：区间型）</span></span><br><span class="line">    <span class="comment">% 第三个参数是告诉函数我们正在处理的是原始矩阵中的哪一列</span></span><br><span class="line">    <span class="comment">% 该函数有一个返回值，它返回正向化之后的指标，我们可以将其直接赋值给我们原始要处理的那一列向量</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    <span class="built_in">disp</span>(<span class="string">&#x27;正向化后的矩阵 X = &#x27;</span>)</span><br><span class="line">    <span class="built_in">disp</span>(X)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">%% 对正向化后的矩阵进行预处理</span></span><br><span class="line">Mean = <span class="built_in">mean</span>(X);  <span class="comment">% 求出每一列的均值以供后续的数据预处理</span></span><br><span class="line">Z = X ./ <span class="built_in">repmat</span>(Mean,<span class="built_in">size</span>(X,<span class="number">1</span>),<span class="number">1</span>);  </span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;预处理后的矩阵为：&#x27;</span>); <span class="built_in">disp</span>(Z)</span><br><span class="line"></span><br><span class="line"><span class="comment">%% 构造母序列和子序列</span></span><br><span class="line">Y = <span class="built_in">max</span>(Z,[],<span class="number">2</span>);  <span class="comment">% 母序列为虚拟的，用每一行的最大值构成的列向量表示母序列</span></span><br><span class="line">X = Z; <span class="comment">% 子序列就是预处理后的数据矩阵</span></span><br><span class="line"></span><br><span class="line"><span class="comment">%% 计算得分</span></span><br><span class="line">absX0_Xi = <span class="built_in">abs</span>(X - <span class="built_in">repmat</span>(Y,<span class="number">1</span>,<span class="built_in">size</span>(X,<span class="number">2</span>)))  <span class="comment">% 计算|X0-Xi|矩阵</span></span><br><span class="line">a = <span class="built_in">min</span>(<span class="built_in">min</span>(absX0_Xi))    <span class="comment">% 计算两级最小差a</span></span><br><span class="line">b = <span class="built_in">max</span>(<span class="built_in">max</span>(absX0_Xi))  <span class="comment">% 计算两级最大差b</span></span><br><span class="line">rho = <span class="number">0.5</span>; <span class="comment">% 分辨系数取0.5</span></span><br><span class="line"><span class="built_in">gamma</span> = (a+rho*b) ./ (absX0_Xi  + rho*b)  <span class="comment">% 计算子序列中各个指标与母序列的关联系数</span></span><br><span class="line">weight = <span class="built_in">mean</span>(<span class="built_in">gamma</span>) / sum(<span class="built_in">mean</span>(<span class="built_in">gamma</span>));  <span class="comment">% 利用子序列中各个指标的灰色关联度计算权重</span></span><br><span class="line">score = sum(X .* <span class="built_in">repmat</span>(weight,<span class="built_in">size</span>(X,<span class="number">1</span>),<span class="number">1</span>),<span class="number">2</span>);   <span class="comment">% 未归一化的得分</span></span><br><span class="line">stand_S = score / sum(score);   <span class="comment">% 归一化后的得分</span></span><br><span class="line">[sorted_S,index] = <span class="built_in">sort</span>(stand_S ,<span class="string">&#x27;descend&#x27;</span>) <span class="comment">% 进行排序</span></span><br></pre></td></tr></table></figure>
-<h4 id="主函数">主函数</h4>
-<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% function [输出变量] = 函数名称(输入变量)  </span></span><br><span class="line"><span class="comment">% 函数的中间部分都是函数体</span></span><br><span class="line"><span class="comment">% 函数的最后要用end结尾</span></span><br><span class="line"><span class="comment">% 输出变量和输入变量可以有多个，用逗号隔开</span></span><br><span class="line"><span class="comment">% function [a,b,c]=test(d,e,f)</span></span><br><span class="line"><span class="comment">%     a=d+e;</span></span><br><span class="line"><span class="comment">%     b=e+f;</span></span><br><span class="line"><span class="comment">%     c=f+d;</span></span><br><span class="line"><span class="comment">% end</span></span><br><span class="line"><span class="comment">% 自定义的函数要单独放在一个m文件中，不可以直接放在主函数里面（和其他大多数语言不同）</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[posit_x]</span> = <span class="title">Positivization</span><span class="params">(x,type,i)</span></span></span><br><span class="line"><span class="comment">% 输入变量有三个：</span></span><br><span class="line"><span class="comment">% x：需要正向化处理的指标对应的原始列向量</span></span><br><span class="line"><span class="comment">% type： 指标的类型（1：极小型， 2：中间型， 3：区间型）</span></span><br><span class="line"><span class="comment">% i: 正在处理的是原始矩阵中的哪一列</span></span><br><span class="line"><span class="comment">% 输出变量posit_x表示：正向化后的列向量</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">type</span> == <span class="number">1</span>  <span class="comment">%极小型</span></span><br><span class="line">        <span class="built_in">disp</span>([<span class="string">&#x27;第&#x27;</span> num2str(<span class="built_in">i</span>) <span class="string">&#x27;列是极小型，正在正向化&#x27;</span>] )</span><br><span class="line">        posit_x = Min2Max(x);  <span class="comment">%调用Min2Max函数来正向化</span></span><br><span class="line">        <span class="built_in">disp</span>([<span class="string">&#x27;第&#x27;</span> num2str(<span class="built_in">i</span>) <span class="string">&#x27;列极小型正向化处理完成&#x27;</span>] )</span><br><span class="line">        <span class="built_in">disp</span>(<span class="string">&#x27;~~~~~~~~~~~~~~~~~~~~分界线~~~~~~~~~~~~~~~~~~~~&#x27;</span>)</span><br><span class="line">    <span class="keyword">elseif</span> <span class="built_in">type</span> == <span class="number">2</span>  <span class="comment">%中间型</span></span><br><span class="line">        <span class="built_in">disp</span>([<span class="string">&#x27;第&#x27;</span> num2str(<span class="built_in">i</span>) <span class="string">&#x27;列是中间型&#x27;</span>] )</span><br><span class="line">        best = input(<span class="string">&#x27;请输入最佳的那一个值： &#x27;</span>);</span><br><span class="line">        posit_x = Mid2Max(x,best);</span><br><span class="line">        <span class="built_in">disp</span>([<span class="string">&#x27;第&#x27;</span> num2str(<span class="built_in">i</span>) <span class="string">&#x27;列中间型正向化处理完成&#x27;</span>] )</span><br><span class="line">        <span class="built_in">disp</span>(<span class="string">&#x27;~~~~~~~~~~~~~~~~~~~~分界线~~~~~~~~~~~~~~~~~~~~&#x27;</span>)</span><br><span class="line">    <span class="keyword">elseif</span> <span class="built_in">type</span> == <span class="number">3</span>  <span class="comment">%区间型</span></span><br><span class="line">        <span class="built_in">disp</span>([<span class="string">&#x27;第&#x27;</span> num2str(<span class="built_in">i</span>) <span class="string">&#x27;列是区间型&#x27;</span>] )</span><br><span class="line">        a = input(<span class="string">&#x27;请输入区间的下界： &#x27;</span>);</span><br><span class="line">        b = input(<span class="string">&#x27;请输入区间的上界： &#x27;</span>); </span><br><span class="line">        posit_x = Inter2Max(x,a,b);</span><br><span class="line">        <span class="built_in">disp</span>([<span class="string">&#x27;第&#x27;</span> num2str(<span class="built_in">i</span>) <span class="string">&#x27;列区间型正向化处理完成&#x27;</span>] )</span><br><span class="line">        <span class="built_in">disp</span>(<span class="string">&#x27;~~~~~~~~~~~~~~~~~~~~分界线~~~~~~~~~~~~~~~~~~~~&#x27;</span>)</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="built_in">disp</span>(<span class="string">&#x27;没有这种类型的指标，请检查Type向量中是否有除了1、2、3之外的其他值&#x27;</span>)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
-<h5 id="子函数">子函数</h5>
-<ol type="1">
-<li><p>Min2Max函数 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[posit_x]</span> = <span class="title">Min2Max</span><span class="params">(x)</span></span></span><br><span class="line">    posit_x = <span class="built_in">max</span>(x) - x;</span><br><span class="line">     <span class="comment">%posit_x = 1 ./ x;    %如果x全部都大于0，也可以这样正向化</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p></li>
-<li><p>Mid2Max函数 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[posit_x]</span> = <span class="title">Mid2Max</span><span class="params">(x,best)</span></span></span><br><span class="line">    M = <span class="built_in">max</span>(<span class="built_in">abs</span>(x-best));</span><br><span class="line">    posit_x = <span class="number">1</span> - <span class="built_in">abs</span>(x-best) / M;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p></li>
-<li><p>Inter2Max函数 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[posit_x]</span> = <span class="title">Inter2Max</span><span class="params">(x,a,b)</span></span></span><br><span class="line">    r_x = <span class="built_in">size</span>(x,<span class="number">1</span>);  <span class="comment">% row of x </span></span><br><span class="line">    M = <span class="built_in">max</span>([a-<span class="built_in">min</span>(x),<span class="built_in">max</span>(x)-b]);</span><br><span class="line">    posit_x = <span class="built_in">zeros</span>(r_x,<span class="number">1</span>);   <span class="comment">%zeros函数用法: zeros(3)  zeros(3,1)  ones(3)</span></span><br><span class="line">    <span class="comment">% 初始化posit_x全为0  初始化的目的是节省处理时间</span></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>: r_x</span><br><span class="line">        <span class="keyword">if</span> x(<span class="built_in">i</span>) &lt; a</span><br><span class="line">           posit_x(<span class="built_in">i</span>) = <span class="number">1</span>-(a-x(<span class="built_in">i</span>))/M;</span><br><span class="line">        <span class="keyword">elseif</span> x(<span class="built_in">i</span>) &gt; b</span><br><span class="line">           posit_x(<span class="built_in">i</span>) = <span class="number">1</span>-(x(<span class="built_in">i</span>)-b)/M;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">           posit_x(<span class="built_in">i</span>) = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p></li>
-</ol>
-<h1 id="灰色关联分析算法的python代码">灰色关联分析算法的python代码</h1>
-<h2 id="灰色关联分析例题的python代码">灰色关联分析例题的python代码</h2>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># 请输入初始矩阵[[55, 24, 10], [65, 38, 22], [75, 40, 18], [100, 50, 20]]</span></span><br><span class="line">A = np.array(<span class="built_in">eval</span>(<span class="built_in">input</span>(<span class="string">&#x27;请输入初始矩阵=&#x27;</span>)))  <span class="comment"># 假设输入的形式是合法的Python列表形式</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 求出每一列的均值以供后续的数据预处理</span></span><br><span class="line">Mean = np.mean(A, axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 预处理后的矩阵</span></span><br><span class="line">A_norm = A / Mean</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;预处理后的矩阵为：&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(A_norm)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 母序列</span></span><br><span class="line">Y = A_norm[:, <span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 子序列</span></span><br><span class="line">X = A_norm[:, <span class="number">1</span>:]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算|X0-Xi|矩阵(在这里我们把X0定义为了Y)</span></span><br><span class="line">absX0_Xi = np.<span class="built_in">abs</span>(X - np.tile(Y.reshape(-<span class="number">1</span>, <span class="number">1</span>), (<span class="number">1</span>, X.shape[<span class="number">1</span>])))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算两级最小差a</span></span><br><span class="line">a = np.<span class="built_in">min</span>(absX0_Xi)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算两级最大差b</span></span><br><span class="line">b = np.<span class="built_in">max</span>(absX0_Xi)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 分辨系数取0.5</span></span><br><span class="line">rho = <span class="number">0.5</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算子序列中各个指标与母序列的关联系数</span></span><br><span class="line">gamma = (a + rho * b) / (absX0_Xi + rho * b)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;子序列中各个指标的灰色关联度分别为：&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(np.mean(gamma, axis=<span class="number">0</span>))</span><br></pre></td></tr></table></figure>
-<h2 id="灰色关联评价例题的python代码">灰色关联评价例题的python代码</h2>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np  <span class="comment"># 导入numpy库，用于进行科学计算</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 从用户输入中接收参评数目和指标数目，并将输入的字符串转换为数值</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;请输入参评数目：&quot;</span>)</span><br><span class="line">n = <span class="built_in">eval</span>(<span class="built_in">input</span>())  <span class="comment"># 接收参评数目</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;请输入指标数目：&quot;</span>)</span><br><span class="line">m = <span class="built_in">eval</span>(<span class="built_in">input</span>())  <span class="comment"># 接收指标数目</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 接收用户输入的类型矩阵，该矩阵指示了每个指标的类型（极大型、极小型等）</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;请输入类型矩阵：1:极大型，2：极小型，3：中间型，4：区间型&quot;</span>)</span><br><span class="line">kind = <span class="built_in">input</span>().split(<span class="string">&quot; &quot;</span>)  <span class="comment"># 将输入的字符串按空格分割，形成列表</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 接收用户输入的矩阵并转换为numpy数组</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;请输入矩阵：&quot;</span>)</span><br><span class="line">A = np.zeros(shape=(n, m))  <span class="comment"># 初始化一个n行m列的全零矩阵A</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">    A[i] = <span class="built_in">input</span>().split(<span class="string">&quot; &quot;</span>)  <span class="comment"># 接收每行输入的数据</span></span><br><span class="line">    A[i] = <span class="built_in">list</span>(<span class="built_in">map</span>(<span class="built_in">float</span>, A[i]))  <span class="comment"># 将接收到的字符串列表转换为浮点数列表</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;输入矩阵为：\n&#123;&#125;&quot;</span>.<span class="built_in">format</span>(A))  <span class="comment"># 打印输入的矩阵A</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 极小型指标转化为极大型指标的函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">minTomax</span>(<span class="params">maxx, x</span>):</span><br><span class="line">    x = <span class="built_in">list</span>(x)  <span class="comment"># 将输入的指标数据转换为列表</span></span><br><span class="line">    ans = [[(maxx-e)] <span class="keyword">for</span> e <span class="keyword">in</span> x]  <span class="comment"># 计算最大值与每个指标值的差，并将其放入新列表中</span></span><br><span class="line">    <span class="keyword">return</span> np.array(ans)  <span class="comment"># 将列表转换为numpy数组并返回</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 中间型指标转化为极大型指标的函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">midTomax</span>(<span class="params">bestx, x</span>):</span><br><span class="line">    x = <span class="built_in">list</span>(x)  <span class="comment"># 将输入的指标数据转换为列表</span></span><br><span class="line">    h = [<span class="built_in">abs</span>(e-bestx) <span class="keyword">for</span> e <span class="keyword">in</span> x]  <span class="comment"># 计算每个指标值与最优值之间的绝对差</span></span><br><span class="line">    M = <span class="built_in">max</span>(h)  <span class="comment"># 找到最大的差值</span></span><br><span class="line">    <span class="keyword">if</span> M == <span class="number">0</span>:</span><br><span class="line">        M = <span class="number">1</span>  <span class="comment"># 防止最大差值为0的情况</span></span><br><span class="line">    ans = [[(<span class="number">1</span>-e/M)] <span class="keyword">for</span> e <span class="keyword">in</span> h]  <span class="comment"># 计算每个差值占最大差值的比例，并从1中减去，得到新指标值</span></span><br><span class="line">    <span class="keyword">return</span> np.array(ans)  <span class="comment"># 返回处理后的numpy数组</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 区间型指标转化为极大型指标的函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">regTomax</span>(<span class="params">lowx, highx, x</span>):</span><br><span class="line">    x = <span class="built_in">list</span>(x)  <span class="comment"># 将输入的指标数据转换为列表</span></span><br><span class="line">    M = <span class="built_in">max</span>(lowx-<span class="built_in">min</span>(x), <span class="built_in">max</span>(x)-highx)  <span class="comment"># 计算指标值超出区间的最大距离</span></span><br><span class="line">    <span class="keyword">if</span> M == <span class="number">0</span>:</span><br><span class="line">        M = <span class="number">1</span>  <span class="comment"># 防止最大距离为0的情况</span></span><br><span class="line">    ans = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(x)):</span><br><span class="line">        <span class="keyword">if</span> x[i]&lt;lowx:</span><br><span class="line">            ans.append([(<span class="number">1</span>-(lowx-x[i])/M)])  <span class="comment"># 如果指标值小于下限，则计算其与下限的距离比例</span></span><br><span class="line">        <span class="keyword">elif</span> x[i]&gt;highx:</span><br><span class="line">            ans.append([(<span class="number">1</span>-(x[i]-highx)/M)])  <span class="comment"># 如果指标值大于上限，则计算其与上限的距离比例</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            ans.append([<span class="number">1</span>])  <span class="comment"># 如果指标值在区间内，则直接取为1</span></span><br><span class="line">    <span class="keyword">return</span> np.array(ans)  <span class="comment"># 返回处理后的numpy数组</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 统一指标类型，将所有指标转化为极大型指标</span></span><br><span class="line">X = np.zeros(shape=(n, <span class="number">1</span>))</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(m):</span><br><span class="line">    <span class="keyword">if</span> kind[i]==<span class="string">&quot;1&quot;</span>:  <span class="comment"># 如果当前指标为极大型，则直接使用原值</span></span><br><span class="line">        v = np.array(A[:, i])</span><br><span class="line">    <span class="keyword">elif</span> kind[i]==<span class="string">&quot;2&quot;</span>:  <span class="comment"># 如果当前指标为极小型，调用minTomax函数转换</span></span><br><span class="line">        maxA = <span class="built_in">max</span>(A[:, i])</span><br><span class="line">        v = minTomax(maxA, A[:, i])</span><br><span class="line">    <span class="keyword">elif</span> kind[i]==<span class="string">&quot;3&quot;</span>:  <span class="comment"># 如果当前指标为中间型，调用midTomax函数转换</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;类型三：请输入最优值：&quot;</span>)</span><br><span class="line">        bestA = <span class="built_in">eval</span>(<span class="built_in">input</span>())</span><br><span class="line">        v = midTomax(bestA, A[:, i])</span><br><span class="line">    <span class="keyword">elif</span> kind[i]==<span class="string">&quot;4&quot;</span>:  <span class="comment"># 如果当前指标为区间型，调用regTomax函数转换</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;类型四：请输入区间[a, b]值a：&quot;</span>)</span><br><span class="line">        lowA = <span class="built_in">eval</span>(<span class="built_in">input</span>())</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;类型四：请输入区间[a, b]值b：&quot;</span>)</span><br><span class="line">        highA = <span class="built_in">eval</span>(<span class="built_in">input</span>())</span><br><span class="line">        v = regTomax(lowA, highA, A[:, i])</span><br><span class="line">    <span class="keyword">if</span> i==<span class="number">0</span>:</span><br><span class="line">        X = v.reshape(-<span class="number">1</span>, <span class="number">1</span>)  <span class="comment"># 如果是第一个指标，直接替换X数组</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        X = np.hstack([X, v.reshape(-<span class="number">1</span>, <span class="number">1</span>)])  <span class="comment"># 如果不是第一个指标，则将新指标列拼接到X数组上</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;统一指标后矩阵为：\n&#123;&#125;&quot;</span>.<span class="built_in">format</span>(X))  <span class="comment"># 打印处理后的矩阵X</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 对正向化后的矩阵进行预处理</span></span><br><span class="line">Mean = np.mean(X, axis=<span class="number">0</span>)</span><br><span class="line">Z = X / Mean</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;预处理后的矩阵为：&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(Z)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构造母序列和子序列</span></span><br><span class="line">Y = np.<span class="built_in">max</span>(Z, axis=<span class="number">1</span>)  <span class="comment"># 母序列为虚拟的，用每一行的最大值构成的列向量表示母序列</span></span><br><span class="line">X = Z  <span class="comment"># 子序列就是预处理后的数据矩阵</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算得分</span></span><br><span class="line">absX0_Xi = np.<span class="built_in">abs</span>(X - np.tile(Y.reshape(-<span class="number">1</span>, <span class="number">1</span>), (<span class="number">1</span>, X.shape[<span class="number">1</span>])))</span><br><span class="line">a = np.<span class="built_in">min</span>(absX0_Xi)</span><br><span class="line">b = np.<span class="built_in">max</span>(absX0_Xi)</span><br><span class="line">rho = <span class="number">0.5</span>  <span class="comment"># 分辨系数取0.5</span></span><br><span class="line">gamma = (a + rho * b) / (absX0_Xi + rho * b)  <span class="comment"># 计算子序列中各个指标与母序列的关联系数</span></span><br><span class="line">weight = np.mean(gamma, axis=<span class="number">0</span>) / np.<span class="built_in">sum</span>(np.mean(gamma, axis=<span class="number">0</span>))  <span class="comment"># 利用子序列中各个指标的灰色关联度计算权重</span></span><br><span class="line">score = np.<span class="built_in">sum</span>(X * np.tile(weight, (X.shape[<span class="number">0</span>], <span class="number">1</span>)), axis=<span class="number">1</span>)   <span class="comment"># 未归一化的得分</span></span><br><span class="line">stand_S = score / np.<span class="built_in">sum</span>(score)  <span class="comment"># 归一化后的得分</span></span><br><span class="line">sorted_S = np.sort(stand_S)[::-<span class="number">1</span>]  <span class="comment"># 进行降序排序</span></span><br><span class="line">index = np.argsort(stand_S)[::-<span class="number">1</span>]  <span class="comment"># 排序后的索引</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;归一化后的得分及其索引（降序）：&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(sorted_S)</span><br><span class="line"><span class="built_in">print</span>(index)</span><br></pre></td></tr></table></figure>
-<p align="right">
-<strong>内容编辑：杜灯</strong>
-</p>
-<p align="right">
-<strong>内容审核：王颖</strong>
-</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" title="Next page" aria-label="Next page" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" title="Next page" aria-label="Next page" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="算法引出及概念 问题背景：A 国通信线路建设 A 国有六个城市之间一直没有通信线路。现在国家希望建设通信线缆，使这六个城市之间能够通信连通。 已知条件与要求如下：  六个城市之间，能够建设通信线缆的线路路径距离已经测得。 要求以最小的成本建设通信线路，使得六个城市之间能够互相通信。 也就是说，从任意一个顶点出发，都可以到达其他顶点，并且所建设线缆的总长度最小。  图中的城市可以">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MinimumSpanningTree">
+<meta property="og:url" content="http://example.com/2026/05/19/MinimumSpanningTree/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="算法引出及概念 问题背景：A 国通信线路建设 A 国有六个城市之间一直没有通信线路。现在国家希望建设通信线缆，使这六个城市之间能够通信连通。 已知条件与要求如下：  六个城市之间，能够建设通信线缆的线路路径距离已经测得。 要求以最小的成本建设通信线路，使得六个城市之间能够互相通信。 也就是说，从任意一个顶点出发，都可以到达其他顶点，并且所建设线缆的总长度最小。  图中的城市可以">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-05-19T12:01:49.000Z">
+<meta property="article:modified_time" content="2026-05-19T12:04:31.978Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2026/05/19/MinimumSpanningTree/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2026/05/19/MinimumSpanningTree/","path":"2026/05/19/MinimumSpanningTree/","title":"MinimumSpanningTree"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MinimumSpanningTree | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E5%BC%95%E5%87%BA%E5%8F%8A%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">算法引出及概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AFa-%E5%9B%BD%E9%80%9A%E4%BF%A1%E7%BA%BF%E8%B7%AF%E5%BB%BA%E8%AE%BE"><span class="nav-number">1.1.</span> <span class="nav-text">问题背景：A 国通信线路建设</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%E5%9B%BE%E4%B8%AD%E7%9A%84%E8%BE%B9%E4%B8%8E%E6%9D%83%E9%87%8D"><span class="nav-number">1.2.</span> <span class="nav-text">示例图中的边与权重</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E6%A0%91%E7%9A%84%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5"><span class="nav-number">1.3.</span> <span class="nav-text">关于树的一些概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E9%80%9A%E5%9B%BE"><span class="nav-number">1.3.1.</span> <span class="nav-text">连通图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%91"><span class="nav-number">1.3.2.</span> <span class="nav-text">树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E6%A0%91"><span class="nav-number">1.3.3.</span> <span class="nav-text">生成树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91"><span class="nav-number">1.3.4.</span> <span class="nav-text">最小生成树</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91%E4%B8%8E%E6%9C%80%E7%9F%AD%E8%B7%AF%E5%BE%84%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.4.</span> <span class="nav-text">最小生成树与最短路径的区别</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B1%82%E8%A7%A3%E6%96%B9%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">求解方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#kruskal-%E7%AE%97%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">Kruskal 算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#prim-%E7%AE%97%E6%B3%95"><span class="nav-number">2.2.</span> <span class="nav-text">Prim 算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#matlab-%E7%9A%84-minspantree-%E5%87%BD%E6%95%B0"><span class="nav-number">2.3.</span> <span class="nav-text">MATLAB 的 minspantree
+函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B8%E5%9E%8B%E4%BE%8B%E9%A2%98"><span class="nav-number">3.</span> <span class="nav-text">典型例题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#a-%E5%9B%BD%E9%93%BA%E8%AE%BE%E9%80%9A%E4%BF%A1%E7%BA%BF%E7%BC%86%E9%97%AE%E9%A2%98"><span class="nav-number">3.1.</span> <span class="nav-text">A 国铺设通信线缆问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">3.1.1.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8-kruskal-%E7%AE%97%E6%B3%95%E6%B1%82%E8%A7%A3"><span class="nav-number">3.1.2.</span> <span class="nav-text">用 Kruskal 算法求解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8-prim-%E7%AE%97%E6%B3%95%E6%B1%82%E8%A7%A3"><span class="nav-number">3.1.3.</span> <span class="nav-text">用 Prim 算法求解</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E6%B1%82%E8%A7%A3"><span class="nav-number">4.</span> <span class="nav-text">代码求解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#matlab-%E7%9A%84-minspantree-%E5%87%BD%E6%95%B0%E6%B1%82%E8%A7%A3%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91"><span class="nav-number">4.1.</span> <span class="nav-text">MATLAB 的
+minspantree 函数求解最小生成树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E8%AF%B4%E6%98%8E"><span class="nav-number">4.2.</span> <span class="nav-text">代码说明</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E9%82%BB%E6%8E%A5%E7%9F%A9%E9%98%B5"><span class="nav-number">4.2.1.</span> <span class="nav-text">1. 初始化邻接矩阵</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E8%BE%B9%E6%9D%83"><span class="nav-number">4.2.2.</span> <span class="nav-text">2. 设置边权</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E9%A1%B6%E7%82%B9%E5%90%8D%E7%A7%B0"><span class="nav-number">4.2.3.</span> <span class="nav-text">3. 设置顶点名称</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E6%97%A0%E5%90%91%E5%9B%BE"><span class="nav-number">4.2.4.</span> <span class="nav-text">4. 构造无向图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%98%E5%88%B6%E5%8E%9F%E5%9B%BE"><span class="nav-number">4.2.5.</span> <span class="nav-text">5. 绘制原图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B1%82%E8%A7%A3%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91"><span class="nav-number">4.2.6.</span> <span class="nav-text">6. 求解最小生成树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91%E8%BE%B9%E6%9D%83%E6%80%BB%E5%92%8C"><span class="nav-number">4.2.7.</span> <span class="nav-text">7. 计算最小生成树边权总和</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E4%BA%AE%E6%98%BE%E7%A4%BA%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91"><span class="nav-number">4.2.8.</span> <span class="nav-text">8. 高亮显示最小生成树</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2026/05/19/MinimumSpanningTree/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="MinimumSpanningTree | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MinimumSpanningTree
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2026-05-19 20:01:49 / Modified: 20:04:31" itemprop="dateCreated datePublished" datetime="2026-05-19T20:01:49+08:00">2026-05-19</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="算法引出及概念">算法引出及概念</h1>
+<h2 id="问题背景a-国通信线路建设">问题背景：A 国通信线路建设</h2>
+<p>A
+国有六个城市之间一直没有通信线路。现在国家希望建设通信线缆，使这六个城市之间能够通信连通。</p>
+<p>已知条件与要求如下：</p>
+<ul>
+<li>六个城市之间，能够建设通信线缆的线路路径距离已经测得。</li>
+<li>要求以最小的成本建设通信线路，使得六个城市之间能够互相通信。</li>
+<li>也就是说，从任意一个顶点出发，都可以到达其他顶点，并且所建设线缆的总长度最小。</li>
+</ul>
+<p>图中的城市可以看成图论中的顶点，城市之间可以建设通信线路的路径可以看成边，路径距离可以看成边的权重。</p>
+<p>该问题要解决的是：<strong>通信线缆应该如何修建，才能保证所有城市连通且总长度最小？</strong></p>
+<h2 id="示例图中的边与权重">示例图中的边与权重</h2>
+<p>根据文档中的示例图和代码，可将六个城市之间可建设的通信线路整理为如下无向加权边：</p>
+<table>
+<thead>
+<tr>
+<th>边</th>
+<th style="text-align: right;">权重</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>城市1—城市2</td>
+<td style="text-align: right;">14</td>
+</tr>
+<tr>
+<td>城市1—城市3</td>
+<td style="text-align: right;">18</td>
+</tr>
+<tr>
+<td>城市2—城市3</td>
+<td style="text-align: right;">13</td>
+</tr>
+<tr>
+<td>城市2—城市4</td>
+<td style="text-align: right;">18</td>
+</tr>
+<tr>
+<td>城市2—城市5</td>
+<td style="text-align: right;">16</td>
+</tr>
+<tr>
+<td>城市3—城市4</td>
+<td style="text-align: right;">12</td>
+</tr>
+<tr>
+<td>城市3—城市5</td>
+<td style="text-align: right;">16</td>
+</tr>
+<tr>
+<td>城市4—城市5</td>
+<td style="text-align: right;">14</td>
+</tr>
+<tr>
+<td>城市4—城市6</td>
+<td style="text-align: right;">19</td>
+</tr>
+<tr>
+<td>城市5—城市6</td>
+<td style="text-align: right;">10</td>
+</tr>
+</tbody>
+</table>
+<h2 id="关于树的一些概念">关于树的一些概念</h2>
+<h3 id="连通图">连通图</h3>
+<p><strong>连通图（Connected Graph）</strong>
+指无向图中任意两个顶点之间都有路径相连。</p>
+<p>也就是说，在一个连通图中，任意两个顶点之间都可以通过图中的边相连而相互到达。文档中的城市通信线路示意图就是一个连通图。</p>
+<h3 id="树">树</h3>
+<p><strong>树（Tree）</strong> 是一种无向无环连通图。</p>
+<p>若一棵树有 (n) 个节点，则它由 (n-1) 条边组成。</p>
+<p>树具有很多重要性质，例如：</p>
+<ul>
+<li>任意两个节点之间都有唯一的路径；</li>
+<li>树中任意两个节点之间的路径是唯一的；</li>
+<li>树是连通的，但不含回路。</li>
+</ul>
+<h3 id="生成树">生成树</h3>
+<p><strong>生成树（Spanning Tree）</strong>
+指一个连通图的一棵包含所有顶点的树。</p>
+<p>它是由原图的所有顶点和部分边组成的子图，并且这些边构成一棵树。</p>
+<p>一个图可能有多个生成树。</p>
+<h3 id="最小生成树">最小生成树</h3>
+<p><strong>最小生成树（Minimum Spanning Tree，MST）</strong>
+指一个连通无向图的一棵生成树，使得所有生成树边的权值之和最小。</p>
+<p>也就是说，在所有能够连接全部顶点且不形成回路的生成树中，选择边权总和最小的一棵。</p>
+<p>一个图的所有生成树中，可能有多个最小生成树。</p>
+<h2 id="最小生成树与最短路径的区别">最小生成树与最短路径的区别</h2>
+<p>文档中特别强调：</p>
+<ul>
+<li><strong>最短路径</strong>：指定起点和终点，研究两点之间的最短路径。</li>
+<li><strong>最小生成树</strong>：研究全局连通，要求所有点两两可达，并使总路径长度最短。</li>
+</ul>
+<p>因此，最短路径关注的是“从一个点到另一个点怎么走最短”，而最小生成树关注的是“如何用最小总代价把所有点连通起来”。</p>
+<hr />
+<h1 id="求解方法">求解方法</h1>
+<p>最小生成树常用的求解方法主要有：</p>
+<ul>
+<li>Kruskal（克鲁斯卡尔）算法；</li>
+<li>Prim（普里姆）算法；</li>
+<li>MATLAB 中的 <code>minspantree</code> 函数。</li>
+</ul>
+<h2 id="kruskal-算法">Kruskal 算法</h2>
+<p>Kruskal 算法适合<strong>点多边少</strong>的图。</p>
+<p>算法步骤如下：</p>
+<ol type="1">
+<li>把图 (G) 中所有边全部去掉，得到由所有单独顶点 (V) 构成的图
+(T)。</li>
+<li>从图 (G) 中取出当前权值最小的边：
+<ul>
+<li>如果该边加入 (T) 的边集合后，(T) 不形成回路，则加入 (T)；</li>
+<li>如果加入后会形成回路，则舍弃该边。</li>
+</ul></li>
+<li>重复第 2 步，直到 (T) 中有 (n-1) 条边，其中 (n) 是顶点数。</li>
+</ol>
+<p>需要注意：</p>
+<ul>
+<li>如果第二步中遇到两条权值相同的最小权值边，可以任选一条。</li>
+<li>因此，最小生成树可能不唯一。</li>
+</ul>
+<h2 id="prim-算法">Prim 算法</h2>
+<p>Prim 算法适合<strong>边多点少</strong>的图。</p>
+<p>算法步骤如下：</p>
+<ol type="1">
+<li>设一空图 (U)，首先将图 (G) 中任意一个顶点取出并加入 (U) 中。</li>
+<li>从图 (U) 外并且与图 (U)
+连接的边中，找到权值最小的边，将这条边和它连接的顶点并入图 (U) 中。</li>
+<li>重复第 2 步，直到 (U) 中包含了所有顶点。</li>
+</ol>
+<p>需要注意：</p>
+<ul>
+<li>如果第二步中遇到两条权值相同的最小权值边，可以任选一条。</li>
+<li>因此，最小生成树可能不唯一。</li>
+</ul>
+<h2 id="matlab-的-minspantree-函数">MATLAB 的 <code>minspantree</code>
+函数</h2>
+<p>MATLAB 可以使用 <code>minspantree</code> 函数求解最小生成树。</p>
+<p>文档中提到：</p>
+<ul>
+<li><code>T = minspantree(G)</code> 默认使用 Prim 算法；</li>
+<li>也可以指定使用 Kruskal 算法，例如：</li>
+</ul>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">T = minspantree(G,<span class="string">&#x27;Method&#x27;</span>,<span class="string">&#x27;sparse&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<hr />
+<h1 id="典型例题">典型例题</h1>
+<h2 id="a-国铺设通信线缆问题">A 国铺设通信线缆问题</h2>
+<h3 id="问题">问题</h3>
+<p>A
+国有六个城市，需要修建通信线缆，使六个城市之间都能互相通信。已知可建设线路的路径距离，要求总线缆长度最小。</p>
+<p>本问题本质上是一个<strong>最小生成树问题</strong>：</p>
+<ul>
+<li>顶点：六个城市；</li>
+<li>边：城市之间可建设的通信线路；</li>
+<li>边权：线路路径距离；</li>
+<li>目标：选出若干条边，使所有城市连通且边权总和最小。</li>
+</ul>
+<h3 id="用-kruskal-算法求解">用 Kruskal 算法求解</h3>
+<p>Kruskal 算法步骤回顾：</p>
+<ol type="1">
+<li>把图 (G) 中所有边全部去掉，得到所有单独顶点构成的图 (T)。</li>
+<li>按权值从小到大依次考察边。</li>
+<li>如果加入该边不会形成回路，则保留该边；否则舍弃该边。</li>
+<li>直到保留了 (n-1) 条边为止。</li>
+</ol>
+<p>对于该例题，选出的最小生成树边的权重为：</p>
+<p>[ 14,,,, ]</p>
+<p>因此最小线缆长度为：</p>
+<p>[ 14+13+12+14+10=63 ]</p>
+<p>所以，A 国铺设通信线缆的最小总长度为 <strong>63</strong>。</p>
+<h3 id="用-prim-算法求解">用 Prim 算法求解</h3>
+<p>Prim 算法步骤回顾：</p>
+<ol type="1">
+<li>设一空图 (U)，首先将图 (G) 中任意一个顶点加入 (U)。</li>
+<li>从 (U) 外并且与 (U) 连接的边中，选取权值最小的边和该边连接的顶点加入
+(U)。</li>
+<li>重复上述过程，直到 (U) 中包含所有顶点。</li>
+</ol>
+<p>对于该例题，Prim 算法也可以得到同样的一棵最小生成树，其边权为：</p>
+<p>[ 14,,,, ]</p>
+<p>因此最小线缆长度仍为：</p>
+<p>[ 14+13+12+14+10=63 ]</p>
+<hr />
+<h1 id="代码求解">代码求解</h1>
+<h2 id="matlab-的-minspantree-函数求解最小生成树">MATLAB 的
+<code>minspantree</code> 函数求解最小生成树</h2>
+<p>下面是文档给出的 MATLAB 代码整理版。</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">clc,clear</span><br><span class="line"></span><br><span class="line"><span class="comment">% matlab中，不存在的边设置成0</span></span><br><span class="line"><span class="comment">% 6个顶点，初始化定义6x6的全零矩阵作为邻接矩阵</span></span><br><span class="line">a = <span class="built_in">zeros</span>(<span class="number">6</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">% 注意，最小生成树是针对无向图的，每条边权重只需要设一次。</span></span><br><span class="line"><span class="comment">% 1到2和2到1是同一条边。</span></span><br><span class="line"><span class="comment">% 因此，可仅使用邻接矩阵的上三角矩阵来构造图G。</span></span><br><span class="line"></span><br><span class="line">a(<span class="number">1</span>,[<span class="number">2</span> <span class="number">3</span>])=[<span class="number">14</span> <span class="number">18</span>];       <span class="comment">% 顶点1到其他顶点的边的权重</span></span><br><span class="line">a(<span class="number">2</span>,[<span class="number">3</span>:<span class="number">5</span>])=[<span class="number">13</span> <span class="number">18</span> <span class="number">16</span>];    <span class="comment">% 顶点2到顶点3、顶点4、顶点5的边的权重</span></span><br><span class="line">a(<span class="number">3</span>,[<span class="number">4</span> <span class="number">5</span>])=[<span class="number">12</span> <span class="number">16</span>];       <span class="comment">% 同上。因为写过1到3、2到3的边的权重，无需重复设</span></span><br><span class="line">a(<span class="number">4</span>,[<span class="number">5</span> <span class="number">6</span>])=[<span class="number">14</span> <span class="number">19</span>]; </span><br><span class="line">a(<span class="number">5</span>,<span class="number">6</span>)=<span class="number">10</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">% graph在图论课程中讲过</span></span><br><span class="line">s=cellstr(strcat(<span class="string">&#x27;城市&#x27;</span>,int2str([<span class="number">1</span>:<span class="number">6</span>]&#x27;)));</span><br><span class="line"></span><br><span class="line">G=graph(a,s,<span class="string">&#x27;upper&#x27;</span>);     <span class="comment">% 仅使用 A 的上三角矩阵来构造图G。</span></span><br><span class="line">p=<span class="built_in">plot</span>(G,<span class="string">&#x27;EdgeLabel&#x27;</span>,G.Edges.Weight);  <span class="comment">% 绘制出图G</span></span><br><span class="line"></span><br><span class="line"><span class="comment">% minspantree函数求解最小生成树</span></span><br><span class="line"><span class="comment">% T=minspantree(G)是默认使用Prim算法</span></span><br><span class="line">T=minspantree(G,<span class="string">&#x27;Method&#x27;</span>,<span class="string">&#x27;sparse&#x27;</span>);    <span class="comment">% 可指定使用Kruskal算法</span></span><br><span class="line"></span><br><span class="line">L = sum(T.Edges.Weight)   <span class="comment">% 对最小生成树的边的权重求和</span></span><br><span class="line"></span><br><span class="line">highlight(p,T,<span class="string">&quot;EdgeColor&quot;</span>,<span class="string">&quot;red&quot;</span>,<span class="string">&#x27;LineWidth&#x27;</span>,<span class="number">2.5</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="代码说明">代码说明</h2>
+<h3 id="初始化邻接矩阵">1. 初始化邻接矩阵</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a = <span class="built_in">zeros</span>(<span class="number">6</span>);</span><br></pre></td></tr></table></figure>
+<p>表示图中共有 6 个顶点，并初始化一个 (6) 的全零矩阵作为邻接矩阵。</p>
+<p>在 MATLAB 中，这里用 <code>0</code> 表示不存在的边。</p>
+<h3 id="设置边权">2. 设置边权</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">a(<span class="number">1</span>,[<span class="number">2</span> <span class="number">3</span>])=[<span class="number">14</span> <span class="number">18</span>];</span><br><span class="line">a(<span class="number">2</span>,[<span class="number">3</span>:<span class="number">5</span>])=[<span class="number">13</span> <span class="number">18</span> <span class="number">16</span>];</span><br><span class="line">a(<span class="number">3</span>,[<span class="number">4</span> <span class="number">5</span>])=[<span class="number">12</span> <span class="number">16</span>];</span><br><span class="line">a(<span class="number">4</span>,[<span class="number">5</span> <span class="number">6</span>])=[<span class="number">14</span> <span class="number">19</span>]; </span><br><span class="line">a(<span class="number">5</span>,<span class="number">6</span>)=<span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+<p>由于最小生成树是针对无向图的，所以每条边的权重只需要设置一次。</p>
+<p>例如，城市1到城市2和城市2到城市1是同一条边，因此只需在邻接矩阵上三角部分设置即可。</p>
+<h3 id="设置顶点名称">3. 设置顶点名称</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">s=cellstr(strcat(<span class="string">&#x27;城市&#x27;</span>,int2str([<span class="number">1</span>:<span class="number">6</span>]&#x27;)));</span><br></pre></td></tr></table></figure>
+<p>这行代码将 1 到 6 号顶点命名为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">城市1, 城市2, 城市3, 城市4, 城市5, 城市6</span><br></pre></td></tr></table></figure>
+<h3 id="构造无向图">4. 构造无向图</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">G=graph(a,s,<span class="string">&#x27;upper&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<p><code>graph(a,s,'upper')</code> 表示仅使用邻接矩阵 <code>a</code>
+的上三角矩阵来构造无向图 (G)。</p>
+<h3 id="绘制原图">5. 绘制原图</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">p=<span class="built_in">plot</span>(G,<span class="string">&#x27;EdgeLabel&#x27;</span>,G.Edges.Weight);</span><br></pre></td></tr></table></figure>
+<p>该语句绘制图 (G)，并在图中标注每条边的权重。</p>
+<h3 id="求解最小生成树">6. 求解最小生成树</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">T=minspantree(G,<span class="string">&#x27;Method&#x27;</span>,<span class="string">&#x27;sparse&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<p>该语句调用 MATLAB 的 <code>minspantree</code>
+函数求解最小生成树。</p>
+<p>文档说明：</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">T=minspantree(G)</span><br></pre></td></tr></table></figure>
+<p>默认使用 Prim 算法。</p>
+<p>而：</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">T=minspantree(G,<span class="string">&#x27;Method&#x27;</span>,<span class="string">&#x27;sparse&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>可以指定使用 Kruskal 算法。</p>
+<h3 id="计算最小生成树边权总和">7. 计算最小生成树边权总和</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">L = sum(T.Edges.Weight)</span><br></pre></td></tr></table></figure>
+<p>该语句对最小生成树中所有边的权重求和，得到最小线缆总长度。</p>
+<p>本例中结果为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">L = 63</span><br></pre></td></tr></table></figure>
+<h3 id="高亮显示最小生成树">8. 高亮显示最小生成树</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">highlight(p,T,<span class="string">&quot;EdgeColor&quot;</span>,<span class="string">&quot;red&quot;</span>,<span class="string">&#x27;LineWidth&#x27;</span>,<span class="number">2.5</span>)</span><br></pre></td></tr></table></figure>
+<p>该语句在原图中将最小生成树对应的边高亮显示，并设置边颜色和线宽。</p>
+<hr />
+<h1 id="总结">总结</h1>
+<p>最小生成树模型适用于一类“全局连通且总代价最小”的问题。</p>
+<p>在 A 国通信线路建设问题中：</p>
+<ul>
+<li>每个城市对应一个顶点；</li>
+<li>可建设通信线路对应边；</li>
+<li>线路距离对应边权；</li>
+<li>目标是使所有城市连通，并使线缆总长度最小。</li>
+</ul>
+<p>常用算法包括：</p>
+<ul>
+<li>Kruskal 算法：适合点多边少的图；</li>
+<li>Prim 算法：适合边多点少的图；</li>
+<li>MATLAB 可使用 <code>minspantree</code> 函数直接求解。</li>
+</ul>
+<p>本例最终得到最小生成树边权之和为：</p>
+<p>[ 14+13+12+14+10=63 ]</p>
+<p>因此最小线缆总长度为 <strong>63</strong>。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/05/19/ShortestPath/" rel="prev" title="ShortestPath">
+                  <i class="fa fa-angle-left"></i> ShortestPath
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

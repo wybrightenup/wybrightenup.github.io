@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="在数学建模中，很多决策问题并不是“连续”的。机器台数、车辆数量、人员安排、货物是否装车、项目是否选择，这些变量往往只能取整数，甚至只能取 0 或 1。此时，如果仍然直接使用普通线性规划，就可能得到小数解，而小数解在现实中没有意义。 整数规划就是用来处理这类离散决策问题的重要工具。它广泛出现在资源分配、背包选择、任务指派、路径选择、生产安排等场景中。本文将以“游戏升级问题”为引入，系统整理整数">
+<meta property="og:type" content="website">
+<meta property="og:title" content="整数规划与0-1规划">
+<meta property="og:url" content="http://example.com/operations-research-and-optimization/IntegerProgramming.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="在数学建模中，很多决策问题并不是“连续”的。机器台数、车辆数量、人员安排、货物是否装车、项目是否选择，这些变量往往只能取整数，甚至只能取 0 或 1。此时，如果仍然直接使用普通线性规划，就可能得到小数解，而小数解在现实中没有意义。 整数规划就是用来处理这类离散决策问题的重要工具。它广泛出现在资源分配、背包选择、任务指派、路径选择、生产安排等场景中。本文将以“游戏升级问题”为引入，系统整理整数">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-04-14T07:37:30.000Z">
+<meta property="article:modified_time" content="2026-08-02T07:50:54.699Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/operations-research-and-optimization/IntegerProgramming">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/operations-research-and-optimization/IntegerProgramming.html","path":"operations-research-and-optimization/IntegerProgramming.html","title":"整数规划与0-1规划"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>整数规划与0-1规划 | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%8E%E6%B8%B8%E6%88%8F%E5%8D%87%E7%BA%A7%E9%97%AE%E9%A2%98%E7%90%86%E8%A7%A3%E6%95%B4%E6%95%B0%E8%A7%84%E5%88%92"><span class="nav-number">1.</span> <span class="nav-text">从游戏升级问题理解整数规划</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF"><span class="nav-number">1.1.</span> <span class="nav-text">问题背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%B3%E7%AD%96%E5%8F%98%E9%87%8F"><span class="nav-number">1.2.</span> <span class="nav-text">决策变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B%E6%9C%80%E5%A4%A7%E5%8C%96%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.3.</span> <span class="nav-text">建立最大化模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E6%9D%BE%E5%BC%9B%E4%B8%8E%E6%95%B4%E6%95%B0%E8%A7%84%E5%88%92%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.4.</span> <span class="nav-text">线性松弛与整数规划的区别</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E5%8E%9F%E7%90%86%E6%95%B4%E6%95%B0%E8%A7%84%E5%88%92%E4%B8%8E-0-1-%E8%A7%84%E5%88%92"><span class="nav-number">2.</span> <span class="nav-text">模型原理：整数规划与 0-1 规划</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%95%B4%E6%95%B0%E8%A7%84%E5%88%92"><span class="nav-number">2.1.</span> <span class="nav-text">什么是整数规划</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B4%E6%95%B0%E8%A7%84%E5%88%92%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">2.2.</span> <span class="nav-text">整数规划的分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%84%E5%88%92%E7%9A%84%E5%90%AB%E4%B9%89"><span class="nav-number">2.3.</span> <span class="nav-text">0-1 规划的含义</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E6%A8%A1%E5%9E%8B%E5%BD%A2%E5%BC%8F%E4%B8%8E-matlab-%E6%B1%82%E8%A7%A3%E6%A0%BC%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text">标准模型形式与 MATLAB
+求解格式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#intlinprog-%E5%87%BD%E6%95%B0%E6%A0%BC%E5%BC%8F"><span class="nav-number">3.1.</span> <span class="nav-text">intlinprog 函数格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E6%95%B4%E6%95%B0%E8%A7%84%E5%88%92matlab%E6%B1%82%E8%A7%A3%E7%9A%84%E6%A0%87%E5%87%86%E5%BD%A2%E5%BC%8F"><span class="nav-number">3.2.</span> <span class="nav-text">线性整数规划matlab求解的标准形式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E5%A4%A7%E5%8C%96%E9%97%AE%E9%A2%98%E8%BD%AC%E5%8C%96%E4%B8%BA%E6%9C%80%E5%B0%8F%E5%8C%96%E9%97%AE%E9%A2%98"><span class="nav-number">3.3.</span> <span class="nav-text">最大化问题转化为最小化问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%A6%E6%9D%9F%E6%96%B9%E5%90%91%E7%9A%84%E6%95%B4%E7%90%86"><span class="nav-number">3.4.</span> <span class="nav-text">约束方向的整理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B4%E6%95%B0%E8%A7%84%E5%88%92%E5%BB%BA%E6%A8%A1%E7%9A%84%E4%B8%80%E8%88%AC%E6%B5%81%E7%A8%8B"><span class="nav-number">4.</span> <span class="nav-text">整数规划建模的一般流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E4%BE%8B%E9%A2%98%E6%B8%B8%E6%88%8F%E5%8D%87%E7%BA%A7%E9%97%AE%E9%A2%98%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">5.</span> <span class="nav-text">基础例题：游戏升级问题代码实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#matlab%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E6%9D%BE%E5%BC%9B%E7%89%88%E6%9C%AC"><span class="nav-number">5.1.</span> <span class="nav-text">MATLAB：线性规划松弛版本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#matlab%E6%95%B4%E6%95%B0%E8%A7%84%E5%88%92%E7%89%88%E6%9C%AC"><span class="nav-number">5.2.</span> <span class="nav-text">MATLAB：整数规划版本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pythonpulp-%E7%89%88%E6%9C%AC"><span class="nav-number">5.3.</span> <span class="nav-text">Python：PuLP 版本</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B8%E5%9E%8B%E4%BE%8B%E9%A2%98%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98"><span class="nav-number">6.</span> <span class="nav-text">典型例题：背包问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-number">6.1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%B3%E7%AD%96%E5%8F%98%E9%87%8F-1"><span class="nav-number">6.2.</span> <span class="nav-text">决策变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1"><span class="nav-number">6.3.</span> <span class="nav-text">数学建模</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#matlab-%E5%AE%9E%E7%8E%B0"><span class="nav-number">6.4.</span> <span class="nav-text">MATLAB 实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#python-%E5%AE%9E%E7%8E%B0"><span class="nav-number">6.5.</span> <span class="nav-text">Python 实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E4%BC%98%E8%A7%A3%E8%A7%A3%E9%87%8A"><span class="nav-number">6.6.</span> <span class="nav-text">最优解解释</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98%E7%9A%84%E5%BB%BA%E6%A8%A1%E5%90%AF%E5%8F%91"><span class="nav-number">6.7.</span> <span class="nav-text">背包问题的建模启发</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B8%E5%9E%8B%E4%BE%8B%E9%A2%98%E6%8C%87%E6%B4%BE%E9%97%AE%E9%A2%98"><span class="nav-number">7.</span> <span class="nav-text">典型例题：指派问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0-1"><span class="nav-number">7.1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%B3%E7%AD%96%E5%8F%98%E9%87%8F-2"><span class="nav-number">7.2.</span> <span class="nav-text">决策变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1-1"><span class="nav-number">7.3.</span> <span class="nav-text">数学建模</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8C%E4%B8%8B%E6%A0%87%E5%8F%98%E9%87%8F%E5%88%B0%E5%8D%95%E4%B8%8B%E6%A0%87%E5%8F%98%E9%87%8F%E7%9A%84%E8%BD%AC%E6%8D%A2"><span class="nav-number">7.4.</span> <span class="nav-text">双下标变量到单下标变量的转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#matlab-%E5%AE%9E%E7%8E%B0-1"><span class="nav-number">7.5.</span> <span class="nav-text">MATLAB 实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#python-%E5%AE%9E%E7%8E%B0-1"><span class="nav-number">7.6.</span> <span class="nav-text">Python 实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E4%BC%98%E8%A7%A3%E8%A7%A3%E9%87%8A-1"><span class="nav-number">7.7.</span> <span class="nav-text">最优解解释</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E6%B4%BE%E9%97%AE%E9%A2%98%E7%9A%84%E5%BB%BA%E6%A8%A1%E5%90%AF%E5%8F%91"><span class="nav-number">7.8.</span> <span class="nav-text">指派问题的建模启发</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E7%B1%BB%E6%A8%A1%E5%9E%8B%E7%9A%84%E7%BB%93%E6%9E%84%E5%AF%B9%E6%AF%94"><span class="nav-number">8.</span> <span class="nav-text">三类模型的结构对比</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E6%98%93%E9%94%99%E7%82%B9"><span class="nav-number">9.</span> <span class="nav-text">常见易错点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%98%E8%AE%B0%E6%9C%80%E5%A4%A7%E5%8C%96%E9%97%AE%E9%A2%98%E8%A6%81%E5%8F%96%E8%B4%9F%E5%8F%B7"><span class="nav-number">9.1.</span> <span class="nav-text">忘记最大化问题要取负号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AA%E5%86%99-intcon%E5%BF%98%E8%AE%B0%E8%AE%BE%E7%BD%AE-0-1-%E4%B8%8A%E4%B8%8B%E7%95%8C"><span class="nav-number">9.2.</span> <span class="nav-text">只写
+intcon，忘记设置 0-1 上下界</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E4%B8%8D%E7%AD%89%E5%BC%8F%E6%96%B9%E5%90%91%E5%86%99%E9%94%99"><span class="nav-number">9.3.</span> <span class="nav-text">把不等式方向写错</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%98%E8%AE%B0%E8%A1%A5%E7%A9%BA%E7%9F%A9%E9%98%B5"><span class="nav-number">9.4.</span> <span class="nav-text">忘记补空矩阵</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%B3%E7%AD%96%E5%8F%98%E9%87%8F%E9%A1%BA%E5%BA%8F%E4%B8%8E%E7%9B%AE%E6%A0%87%E5%87%BD%E6%95%B0%E9%A1%BA%E5%BA%8F%E4%B8%8D%E4%B8%80%E8%87%B4"><span class="nav-number">9.5.</span> <span class="nav-text">决策变量顺序与目标函数顺序不一致</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%B9%E6%B1%82%E8%A7%A3%E7%BB%93%E6%9E%9C%E7%9A%84%E7%9F%A9%E9%98%B5%E8%BF%98%E5%8E%9F%E4%B8%8D%E6%B8%85%E6%A5%9A"><span class="nav-number">9.6.</span> <span class="nav-text">对求解结果的矩阵还原不清楚</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%AF%E5%A4%8D%E7%94%A8%E4%BB%A3%E7%A0%81%E6%A8%A1%E6%9D%BF"><span class="nav-number">10.</span> <span class="nav-text">可复用代码模板</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#matlab-%E6%95%B4%E6%95%B0%E8%A7%84%E5%88%92%E9%80%9A%E7%94%A8%E6%A8%A1%E6%9D%BF"><span class="nav-number">10.1.</span> <span class="nav-text">MATLAB 整数规划通用模板</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#matlab-0-1-%E8%83%8C%E5%8C%85%E6%A8%A1%E6%9D%BF"><span class="nav-number">10.2.</span> <span class="nav-text">MATLAB 0-1 背包模板</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#matlab-%E6%8C%87%E6%B4%BE%E9%97%AE%E9%A2%98%E6%A8%A1%E6%9D%BF"><span class="nav-number">10.3.</span> <span class="nav-text">MATLAB 指派问题模板</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#python-pulp-%E9%80%9A%E7%94%A8%E6%A8%A1%E6%9D%BF"><span class="nav-number">10.4.</span> <span class="nav-text">Python PuLP 通用模板</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0%E5%B0%8F%E7%BB%93"><span class="nav-number">11.</span> <span class="nav-text">学习小结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">整数规划与0-1规划
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <p>在数学建模中，很多决策问题并不是“连续”的。机器台数、车辆数量、人员安排、货物是否装车、项目是否选择，这些变量往往只能取整数，甚至只能取
+0 或
+1。此时，如果仍然直接使用普通线性规划，就可能得到小数解，而小数解在现实中没有意义。</p>
+<p>整数规划就是用来处理这类离散决策问题的重要工具。它广泛出现在资源分配、背包选择、任务指派、路径选择、生产安排等场景中。本文将以“游戏升级问题”为引入，系统整理整数规划与
+0-1 规划的模型原理，并结合背包问题、指派问题给出 MATLAB 与 Python
+的实现方式。</p>
+<h1 id="从游戏升级问题理解整数规划">从游戏升级问题理解整数规划</h1>
+<h2 id="问题背景">问题背景</h2>
+<p>假设游戏每天有 100 点体力，玩家可以通过反复通关 A、B、C
+三张地图来获得经验：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">地图</th>
+<th style="text-align: center;">每次通关获得经验</th>
+<th style="text-align: center;">每次通关消耗体力</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">4</td>
+</tr>
+<tr>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: center;">8</td>
+</tr>
+<tr>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">40</td>
+<td style="text-align: center;">10</td>
+</tr>
+</tbody>
+</table>
+<p>同时，A、B、C 三张地图每天加起来最多通关 20
+次。问题是：应该如何组合三张地图的通关次数，使当天获得的经验最大？</p>
+<p>这个问题看起来像一个普通的线性规划问题，但它有一个关键要求：通关次数必须是整数。不能通关
+A 图 16.6667 次，也不能通关 C 图 3.3333
+次。因此，这实际上是一个整数规划问题。</p>
+<h2 id="决策变量">决策变量</h2>
+<p>设 <span class="math inline">\(x_1\)</span> 表示 A 图通关次数，<span
+class="math inline">\(x_2\)</span> 表示 B 图通关次数，<span
+class="math inline">\(x_3\)</span> 表示 C
+图通关次数。由于通关次数不能为负，并且必须为整数，因此有 <span
+class="math inline">\(x_1,x_2,x_3\geqslant 0\)</span>，且 <span
+class="math inline">\(x_1,x_2,x_3\in\mathbb{Z}\)</span>。</p>
+<h2 id="建立最大化模型">建立最大化模型</h2>
+<p>目标是最大化总经验：</p>
+<p><span class="math display">\[
+\max~y=20x_1+30x_2+40x_3.
+\]</span></p>
+<p>约束来自两个方面：第一，总体力不能超过 100；第二，总通关次数不能超过
+20。因此模型为：</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\max~y=20x_1+30x_2+40x_3,\\
+&amp;\text{s.t.}\begin{cases}
+4x_1+8x_2+10x_3\leqslant100,\\
+x_1+x_2+x_3\leqslant20,\\
+x_1,x_2,x_3\geqslant0,\\
+x_1,x_2,x_3\in\mathbb{Z}.\end{cases}
+\end{aligned}
+\]</span></p>
+<p>MATLAB 的 <code>intlinprog</code>
+默认求解最小化问题，所以需要把最大化目标改写为最小化目标：</p>
+<p><span class="math display">\[\min~-y=-20x_1-30x_2-40x_3.\]</span></p>
+<p>对应的 MATLAB 参数为：</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">f = [<span class="number">-20</span>; <span class="number">-30</span>; <span class="number">-40</span>];</span><br><span class="line">intcon = [<span class="number">1</span>; <span class="number">2</span>; <span class="number">3</span>];</span><br><span class="line">A = [<span class="number">4</span>, <span class="number">8</span>, <span class="number">10</span>;</span><br><span class="line">     <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>];</span><br><span class="line">b = [<span class="number">100</span>; <span class="number">20</span>];</span><br><span class="line">lb = <span class="built_in">zeros</span>(<span class="number">3</span>,<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="线性松弛与整数规划的区别">线性松弛与整数规划的区别</h2>
+<p>如果暂时不要求变量为整数，直接用 <code>linprog</code>
+求线性规划松弛问题，可能得到：</p>
+<p><span class="math display">\[
+x_1=16.6667,\qquad x_2=0,\qquad x_3=3.3333,
+\]</span></p>
+<p>最大经验约为 <span
+class="math inline">\(466.6667\)</span>。这个结果看似更优，但它并不可执行，因为通关次数不能是小数。</p>
+<p>使用 <code>intlinprog</code> 加入整数约束后，可得到整数最优解：</p>
+<p><span class="math display">\[
+x_1=17,\qquad x_2=0,\qquad x_3=3,
+\]</span></p>
+<p>最大经验为：</p>
+<p><span class="math display">\[
+17\times20+0\times30+3\times40=460.
+\]</span></p>
+<p>也就是说，最优方案是 A 图通关 17 次，B 图通关 0 次，C 图通关 3
+次。该方案总通关次数为 20，总体力消耗为 <span
+class="math inline">\(17\times4+3\times10=98\)</span>，满足约束。</p>
+<h1 id="模型原理整数规划与-0-1-规划">模型原理：整数规划与 0-1 规划</h1>
+<h2 id="什么是整数规划">什么是整数规划</h2>
+<p><strong>整数规划</strong>是在规划模型中要求部分或全部决策变量取整数值的一类优化模型。很多实际问题中的变量本身就不能取小数，例如机器台数、工作人数、装货车数、货物件数等。</p>
+<p>需要特别注意的是，不能简单地把线性规划得到的小数解四舍五入成整数解。原因有两个：第一，四舍五入后的解可能不满足约束条件；第二，即使四舍五入后的解可行，也不一定是整数规划的最优解。因此，整数规划需要专门的建模和求解方法。</p>
+<h2 id="整数规划的分类">整数规划的分类</h2>
+<p>从变量取值要求来看，整数规划可以分为三类：</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">类型</th>
+<th style="text-align: center;">含义</th>
+<th style="text-align: center;">典型例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">纯整数规划</td>
+<td style="text-align: center;">所有决策变量都必须取整数</td>
+<td style="text-align: center;">生产多少台机器、安排多少辆车</td>
+</tr>
+<tr>
+<td style="text-align: center;">混合整数规划</td>
+<td
+style="text-align: center;">只有部分变量必须取整数，另一部分变量可以连续取值</td>
+<td style="text-align: center;">既有设备数量，又有连续生产量</td>
+</tr>
+<tr>
+<td style="text-align: center;">0-1 规划</td>
+<td style="text-align: center;">变量只能取 0 或 1</td>
+<td style="text-align: center;">是否选择某物品、是否指派某人</td>
+</tr>
+</tbody>
+</table>
+<p>从目标函数和约束形式来看，整数规划还可以分为以下几类：</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">类型</th>
+<th style="text-align: center;">目标函数与约束形式</th>
+<th style="text-align: center;">常见求解方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">线性整数规划</td>
+<td style="text-align: center;">目标函数和约束条件都是线性的</td>
+<td style="text-align: center;">MATLAB 中通常可用
+<code>intlinprog</code> 求解</td>
+</tr>
+<tr>
+<td style="text-align: center;">线性 0-1 规划</td>
+<td style="text-align: center;">目标函数和约束条件都是线性的，变量只能取
+0 或 1</td>
+<td style="text-align: center;">MATLAB 中仍可用
+<code>intlinprog</code>，但需要设置变量上下界
+<code>lb=0</code>、<code>ub=1</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">非线性整数规划</td>
+<td
+style="text-align: center;">目标函数或约束条件中含有非线性项，且部分或全部变量要求取整数</td>
+<td
+style="text-align: center;">一般没有统一的通用精确求解方式，常用蒙特卡罗模拟、遗传算法、粒子群算法等近似算法</td>
+</tr>
+<tr>
+<td style="text-align: center;">非线性 0-1 规划</td>
+<td
+style="text-align: center;">目标函数或约束条件中含有非线性项，且变量只能取
+0 或 1</td>
+<td
+style="text-align: center;">通常也采用近似算法或智能优化算法求解</td>
+</tr>
+</tbody>
+</table>
+<h2 id="规划的含义">0-1 规划的含义</h2>
+<p>0-1 规划是整数规划的一种特殊形式，变量只能取 0 或
+1。它特别适合表达“是否”的决策。例如：</p>
+<ul>
+<li><span class="math inline">\(x_i=1\)</span>：选择第 <span
+class="math inline">\(i\)</span> 个项目；<span
+class="math inline">\(x_i=0\)</span>：不选择；</li>
+<li><span class="math inline">\(x_{ij}=1\)</span>：把第 <span
+class="math inline">\(i\)</span> 个人分配给第 <span
+class="math inline">\(j\)</span> 个任务；<span
+class="math inline">\(x_{ij}=0\)</span>：不分配；</li>
+<li><span class="math inline">\(x_i=1\)</span>：经过第 <span
+class="math inline">\(i\)</span> 条路线；<span
+class="math inline">\(x_i=0\)</span>：不经过。</li>
+</ul>
+<p>0-1 变量不仅要用 <code>intcon</code> 指定为整数变量，还必须设置下界为
+0、上界为 1。否则变量只是整数变量，仍然可能取 2、3 或 -1。</p>
+<h1 id="标准模型形式与-matlab-求解格式">标准模型形式与 MATLAB
+求解格式</h1>
+<h2 id="intlinprog-函数格式"><code>intlinprog</code> 函数格式</h2>
+<p>MATLAB 中线性整数规划和线性 0-1 规划都可以使用：</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[x, fval] = intlinprog(f, intcon, A, b, Aeq, beq, lb, ub)</span><br></pre></td></tr></table></figure>
+<p>各参数含义如下：</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+<th>建模注意点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>f</code></td>
+<td>目标函数系数向量</td>
+<td>必须按最小化形式填写</td>
+</tr>
+<tr>
+<td><code>intcon</code></td>
+<td>要求取整数值的变量下标</td>
+<td>如 <code>intcon=[1,3]</code> 表示 <span
+class="math inline">\(x_1,x_3\)</span> 取整数</td>
+</tr>
+<tr>
+<td><code>A</code></td>
+<td>不等式约束系数矩阵</td>
+<td>对应 <span class="math inline">\(Ax\leqslant b\)</span></td>
+</tr>
+<tr>
+<td><code>b</code></td>
+<td>不等式约束右端常数向量</td>
+<td>行数与 <code>A</code> 一致</td>
+</tr>
+<tr>
+<td><code>Aeq</code></td>
+<td>等式约束系数矩阵</td>
+<td>对应 <span class="math inline">\(A_{eq}x=b_{eq}\)</span></td>
+</tr>
+<tr>
+<td><code>beq</code></td>
+<td>等式约束右端常数向量</td>
+<td>行数与 <code>Aeq</code> 一致</td>
+</tr>
+<tr>
+<td><code>lb</code></td>
+<td>决策变量下界</td>
+<td>非负约束常写 <code>zeros(n,1)</code></td>
+</tr>
+<tr>
+<td><code>ub</code></td>
+<td>决策变量上界</td>
+<td>0-1 变量常写 <code>ones(n,1)</code></td>
+</tr>
+</tbody>
+</table>
+<h2
+id="线性整数规划matlab求解的标准形式">线性整数规划matlab求解的标准形式</h2>
+<p><span class="math display">\[\begin{aligned}
+&amp;\min f^Tx\\
+&amp;\text{s.t.}\begin{cases}
+Ax\leqslant b\\
+A_{eq}x=b_{eq}\\
+lb\leqslant x\leqslant ub\\
+x_i\in\mathbb{Z},~i\in\texttt{intcon}.\end{cases}
+\end{aligned}\]</span></p>
+<p>其中，<code>intcon</code> 是整数变量下标集合。如果所有变量都在
+<code>intcon</code> 中，就是纯整数规划；如果只有一部分变量在
+<code>intcon</code> 中，就是混合整数规划；如果某些整数变量还满足 <span
+class="math inline">\(0\leqslant x_i\leqslant 1\)</span>，它们就是 0-1
+变量。</p>
+<h2 id="最大化问题转化为最小化问题">最大化问题转化为最小化问题</h2>
+<p><code>intlinprog</code> 默认求解最小化问题。因此，如果原问题是：</p>
+<p><span class="math display">\[
+\max c^Tx,
+\]</span></p>
+<p>通常改写为：</p>
+<p><span class="math display">\[
+\min -c^Tx.
+\]</span></p>
+<p>求解后，若 MATLAB 返回的目标函数值为
+<code>fval</code>，则原最大化问题的最优值为：</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bestValue = -fval;</span><br></pre></td></tr></table></figure>
+<h2 id="约束方向的整理">约束方向的整理</h2>
+<p><code>intlinprog</code> 中不等式约束统一写成 <span
+class="math inline">\(Ax\leqslant b\)</span>。因此，建模时需要注意：</p>
+<ul>
+<li>若原约束是 <span class="math inline">\(a^Tx\leqslant
+b\)</span>，可直接放入 <code>A</code> 与 <code>b</code>；</li>
+<li>若原约束是 <span class="math inline">\(a^Tx\geqslant
+b\)</span>，应两边同时乘以 <span
+class="math inline">\(-1\)</span>，改写为 <span
+class="math inline">\(-a^Tx\leqslant -b\)</span>；</li>
+<li>若原约束是 <span class="math inline">\(a^Tx=b\)</span>，应放入
+<code>Aeq</code> 与 <code>beq</code>；</li>
+<li>若没有某类约束，可用空矩阵 <code>[]</code> 表示。</li>
+</ul>
+<h1 id="整数规划建模的一般流程">整数规划建模的一般流程</h1>
+<p>整数规划与 0-1 规划的建模通常可以按以下步骤进行。</p>
+<ul>
+<li>首先，明确决策变量。变量表示数量时，通常使用整数变量；变量表示“是否选择”“是否分配”时，通常使用
+0-1 变量。</li>
+<li>其次，写出目标函数。目标可能是最大利润、最大收益、最大经验、最小成本、最短时间或最少资源消耗。如果使用
+<code>intlinprog</code>
+处理最大化问题，需要将目标函数取相反数，改写为最小化。</li>
+<li>然后，整理约束条件。常见约束包括资源总量限制、预算限制、容量限制、次数限制、分配限制、覆盖限制、变量非负约束、0-1
+约束等。</li>
+<li>最后，把数学模型转化为代码中的
+<code>f, intcon, A, b, Aeq, beq, lb, ub</code>。这是从数学模型走向计算求解的关键一步。</li>
+</ul>
+<h1
+id="基础例题游戏升级问题代码实现">基础例题：游戏升级问题代码实现</h1>
+<h2 id="matlab线性规划松弛版本">MATLAB：线性规划松弛版本</h2>
+<p>下面代码不加入整数约束，只是求解线性规划松弛问题。它可以用于对比说明“小数解虽然目标值更高，但不一定符合实际”。</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">clc</span><br><span class="line">clear all</span><br><span class="line">close all</span><br><span class="line"></span><br><span class="line">f = [<span class="number">-20</span>; <span class="number">-30</span>; <span class="number">-40</span>];</span><br><span class="line">A = [<span class="number">4</span>, <span class="number">8</span>, <span class="number">10</span>; <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>];</span><br><span class="line">b = [<span class="number">100</span>; <span class="number">20</span>];</span><br><span class="line">lb = <span class="built_in">zeros</span>(<span class="number">3</span>, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">[x, fval] = linprog(f, A, b, [], [], lb);  <span class="comment">% 没有等式约束</span></span><br><span class="line"></span><br><span class="line">y = -fval;  <span class="comment">% 目标函数为最大化</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;A、B、C三图分别通关的次数为：&#x27;</span>)</span><br><span class="line"><span class="built_in">disp</span>(x)</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;最终获得的经验为：&#x27;</span>)</span><br><span class="line"><span class="built_in">disp</span>(y)</span><br></pre></td></tr></table></figure>
+<h2 id="matlab整数规划版本">MATLAB：整数规划版本</h2>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">clc, clear</span><br><span class="line"></span><br><span class="line">f = [<span class="number">-20</span>; <span class="number">-30</span>; <span class="number">-40</span>];</span><br><span class="line">intcon = [<span class="number">1</span>; <span class="number">2</span>; <span class="number">3</span>];</span><br><span class="line">A = [<span class="number">4</span>, <span class="number">8</span>, <span class="number">10</span>;</span><br><span class="line">     <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>];</span><br><span class="line">b = [<span class="number">100</span>; <span class="number">20</span>];</span><br><span class="line">lb = <span class="built_in">zeros</span>(<span class="number">3</span>,<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">[x, fval] = intlinprog(f, intcon, A, b, [], [], lb);  <span class="comment">% 没有等式约束</span></span><br><span class="line"></span><br><span class="line">y = -fval;  <span class="comment">% 目标函数为最大化</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;A、B、C三图分别通关的次数为：&#x27;</span>)</span><br><span class="line"><span class="built_in">disp</span>(x)</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;最终获得的经验为：&#x27;</span>)</span><br><span class="line"><span class="built_in">disp</span>(y)</span><br></pre></td></tr></table></figure>
+<p>运行结果为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">x =</span><br><span class="line">   17.0000</span><br><span class="line">         0</span><br><span class="line">    3.0000</span><br><span class="line"></span><br><span class="line">fval = -460</span><br><span class="line"></span><br><span class="line">y = 460</span><br></pre></td></tr></table></figure>
+<h2 id="pythonpulp-版本">Python：PuLP 版本</h2>
+<p>Python 中使用 PuLP 时，可以直接写最大化问题，不必像 MATLAB
+那样手动把目标函数变成负号形式。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pulp <span class="keyword">import</span> LpMaximize, LpProblem, LpVariable, value</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 创建最大化问题</span></span><br><span class="line">problem = LpProblem(name=<span class="string">&quot;Maximize_Experience&quot;</span>, sense=LpMaximize)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 定义非负整数变量</span></span><br><span class="line">x1 = LpVariable(name=<span class="string">&quot;x1&quot;</span>, lowBound=<span class="number">0</span>, cat=<span class="string">&quot;Integer&quot;</span>)  <span class="comment"># A 图次数</span></span><br><span class="line">x2 = LpVariable(name=<span class="string">&quot;x2&quot;</span>, lowBound=<span class="number">0</span>, cat=<span class="string">&quot;Integer&quot;</span>)  <span class="comment"># B 图次数</span></span><br><span class="line">x3 = LpVariable(name=<span class="string">&quot;x3&quot;</span>, lowBound=<span class="number">0</span>, cat=<span class="string">&quot;Integer&quot;</span>)  <span class="comment"># C 图次数</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 目标函数：最大化经验</span></span><br><span class="line">problem += <span class="number">20</span>*x1 + <span class="number">30</span>*x2 + <span class="number">40</span>*x3, <span class="string">&quot;Total_Experience&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 约束条件</span></span><br><span class="line">problem += <span class="number">4</span>*x1 + <span class="number">8</span>*x2 + <span class="number">10</span>*x3 &lt;= <span class="number">100</span>, <span class="string">&quot;Energy_Constraint&quot;</span></span><br><span class="line">problem += x1 + x2 + x3 &lt;= <span class="number">20</span>, <span class="string">&quot;Times_Constraint&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 5. 求解</span></span><br><span class="line">problem.solve()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6. 输出结果</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;A、B、C 三图分别通关的次数为：&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">int</span>(value(x1)), <span class="built_in">int</span>(value(x2)), <span class="built_in">int</span>(value(x3)))</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最终获得的经验为：&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">int</span>(value(problem.objective)))</span><br></pre></td></tr></table></figure>
+<h1 id="典型例题背包问题">典型例题：背包问题</h1>
+<h2 id="问题描述">问题描述</h2>
+<p>有 10 件货物要从甲地运送到乙地，每件货物的重量和利润如下表所示：</p>
+<table>
+<thead>
+<tr>
+<th>物品</th>
+<th style="text-align: right;">1</th>
+<th style="text-align: right;">2</th>
+<th style="text-align: right;">3</th>
+<th style="text-align: right;">4</th>
+<th style="text-align: right;">5</th>
+<th style="text-align: right;">6</th>
+<th style="text-align: right;">7</th>
+<th style="text-align: right;">8</th>
+<th style="text-align: right;">9</th>
+<th style="text-align: right;">10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>重量/t</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr>
+<td>利润/元</td>
+<td style="text-align: right;">540</td>
+<td style="text-align: right;">200</td>
+<td style="text-align: right;">180</td>
+<td style="text-align: right;">350</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">150</td>
+<td style="text-align: right;">280</td>
+<td style="text-align: right;">450</td>
+<td style="text-align: right;">320</td>
+<td style="text-align: right;">120</td>
+</tr>
+</tbody>
+</table>
+<p>现只有一辆最大载重为 30t
+的货车，因此只能选择部分货物运送。目标是在不超过载重限制的前提下，使总利润最大。</p>
+<h2 id="决策变量-1">决策变量</h2>
+<p>设<span class="math inline">\(x_i=\begin{cases}
+1, &amp; \text{运送第 }i\text{ 件货物},\\
+0, &amp; \text{不运送第 }i\text{ 件货物},
+\end{cases}
+\qquad i=1,2,\ldots,10.\)</span></p>
+<p>这是典型的 0-1 规划问题。</p>
+<h2 id="数学建模">数学建模</h2>
+<p>设 <span class="math inline">\(w_i\)</span> 表示第 <span
+class="math inline">\(i\)</span> 件货物的重量，<span
+class="math inline">\(p_i\)</span> 表示第 <span
+class="math inline">\(i\)</span> 件货物的利润。模型为：</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\max\sum\limits_{i=1}^{10}p_i x_i, \\
+&amp;\text{s.t.}\begin{cases}\sum\limits_{i=1}^{10}w_i x_i\leqslant30 \\
+x_i\in\{0,1\}
+\end{cases}
+\end{aligned}
+\]</span></p>
+<p>转化为 <code>intlinprog</code> 的最小化形式：</p>
+<p><span class="math display">\[
+\min -\sum_{i=1}^{10}p_ix_i.
+\]</span></p>
+<h2 id="matlab-实现">MATLAB 实现</h2>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">%% 背包问题（货车运送货物的问题）</span></span><br><span class="line">clear; clc</span><br><span class="line"></span><br><span class="line">c = -[<span class="number">540</span> <span class="number">200</span> <span class="number">180</span> <span class="number">350</span> <span class="number">60</span> <span class="number">150</span> <span class="number">280</span> <span class="number">450</span> <span class="number">320</span> <span class="number">120</span>];</span><br><span class="line"><span class="comment">% 目标函数的系数矩阵：最大化问题记得加负号</span></span><br><span class="line"></span><br><span class="line">intcon = <span class="number">1</span>:<span class="number">10</span>;</span><br><span class="line"><span class="comment">% 一共 10 个决策变量，均为 0-1 整数变量</span></span><br><span class="line"></span><br><span class="line">A = [<span class="number">6</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span> <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">5</span> <span class="number">4</span> <span class="number">2</span>];</span><br><span class="line">b = <span class="number">30</span>;</span><br><span class="line"><span class="comment">% 线性不等式约束：物品总重量不能超过 30</span></span><br><span class="line"></span><br><span class="line">Aeq = [];</span><br><span class="line">beq = [];</span><br><span class="line"><span class="comment">% 不存在线性等式约束</span></span><br><span class="line"></span><br><span class="line">lb = <span class="built_in">zeros</span>(<span class="number">10</span>,<span class="number">1</span>);</span><br><span class="line">ub = <span class="built_in">ones</span>(<span class="number">10</span>,<span class="number">1</span>);</span><br><span class="line"><span class="comment">% 0-1 变量的上下界</span></span><br><span class="line"></span><br><span class="line">[x, fval] = intlinprog(c, intcon, A, b, Aeq, beq, lb, ub);</span><br><span class="line"></span><br><span class="line">max_profit = -fval;</span><br><span class="line"></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;选中的物品（1 表示选中，0 表示未选）：&#x27;</span>)</span><br><span class="line"><span class="built_in">disp</span>(<span class="built_in">round</span>(x&#x27;))</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;最大总利润（元）：&#x27;</span>)</span><br><span class="line"><span class="built_in">disp</span>(max_profit)</span><br></pre></td></tr></table></figure>
+<h2 id="python-实现">Python 实现</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pulp <span class="keyword">import</span> LpMaximize, LpProblem, LpVariable, lpSum, value</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 创建最大化问题</span></span><br><span class="line">problem = LpProblem(name=<span class="string">&quot;Knapsack_Problem&quot;</span>, sense=LpMaximize)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 定义参数</span></span><br><span class="line">profits = [<span class="number">540</span>, <span class="number">200</span>, <span class="number">180</span>, <span class="number">350</span>, <span class="number">60</span>, <span class="number">150</span>, <span class="number">280</span>, <span class="number">450</span>, <span class="number">320</span>, <span class="number">120</span>]</span><br><span class="line">weights = [<span class="number">6</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">4</span>, <span class="number">2</span>]</span><br><span class="line">max_weight = <span class="number">30</span></span><br><span class="line">n = <span class="built_in">len</span>(profits)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 定义 0-1 决策变量</span></span><br><span class="line">x = [LpVariable(name=<span class="string">f&quot;x<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>&quot;</span>, cat=<span class="string">&quot;Binary&quot;</span>) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n)]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 目标函数：最大化总利润</span></span><br><span class="line">problem += lpSum(profits[i] * x[i] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n)), <span class="string">&quot;Total_Profit&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 5. 约束条件：总重量不超过 30</span></span><br><span class="line">problem += lpSum(weights[i] * x[i] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n)) &lt;= max_weight, <span class="string">&quot;Weight_Constraint&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 6. 求解</span></span><br><span class="line">problem.solve()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7. 输出结果</span></span><br><span class="line">selected_items = [<span class="built_in">int</span>(value(x[i])) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n)]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;选中的物品（1 表示选中，0 表示未选）：&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(selected_items)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最大总利润（元）：&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">int</span>(value(problem.objective)))</span><br></pre></td></tr></table></figure>
+<h2 id="最优解解释">最优解解释</h2>
+<p>求解可得到最优选择：选择第 1、2、4、6、7、8、9、10 件货物，不选择第
+3、5 件货物。对应的 0-1 向量为：</p>
+<table>
+<thead>
+<tr>
+<th>物品</th>
+<th style="text-align: right;">1</th>
+<th style="text-align: right;">2</th>
+<th style="text-align: right;">3</th>
+<th style="text-align: right;">4</th>
+<th style="text-align: right;">5</th>
+<th style="text-align: right;">6</th>
+<th style="text-align: right;">7</th>
+<th style="text-align: right;">8</th>
+<th style="text-align: right;">9</th>
+<th style="text-align: right;">10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>是否选择</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+<p>总重量为：</p>
+<p><span class="math display">\[
+6+3+5+2+3+5+4+2=30,
+\]</span></p>
+<p>总利润为：</p>
+<p><span class="math display">\[
+540+200+350+150+280+450+320+120=2410.
+\]</span></p>
+<p>因此，最优方案是在货车刚好满载 30t 的情况下，获得最大利润 2410
+元。</p>
+<h2 id="背包问题的建模启发">背包问题的建模启发</h2>
+<p>背包问题的核心结构是：每个物品要么选，要么不选；每个选择都有收益；每个选择也会消耗容量；总容量有限；目标是在容量限制内最大化收益。</p>
+<p>因此，只要题目中出现“从若干项目中选择一部分，在资源限制下最大化收益”，就可以优先考虑
+0-1 背包模型。</p>
+<h1 id="典型例题指派问题">典型例题：指派问题</h1>
+<h2 id="问题描述-1">问题描述</h2>
+<p>已知 5 名游泳候选人在四种泳姿上的百米成绩，要求选拔队员组成 <span
+class="math inline">\(4\times100\)</span>
+米混合泳接力队，使总用时最短。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">候选人</th>
+<th style="text-align: center;">蝶泳</th>
+<th style="text-align: center;">仰泳</th>
+<th style="text-align: center;">蛙泳</th>
+<th style="text-align: center;">自由泳</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">甲</td>
+<td style="text-align: center;">66.8</td>
+<td style="text-align: center;">75.6</td>
+<td style="text-align: center;">87.0</td>
+<td style="text-align: center;">58.6</td>
+</tr>
+<tr>
+<td style="text-align: center;">乙</td>
+<td style="text-align: center;">57.2</td>
+<td style="text-align: center;">66.0</td>
+<td style="text-align: center;">66.4</td>
+<td style="text-align: center;">53.0</td>
+</tr>
+<tr>
+<td style="text-align: center;">丙</td>
+<td style="text-align: center;">78.0</td>
+<td style="text-align: center;">67.8</td>
+<td style="text-align: center;">84.6</td>
+<td style="text-align: center;">59.4</td>
+</tr>
+<tr>
+<td style="text-align: center;">丁</td>
+<td style="text-align: center;">70.0</td>
+<td style="text-align: center;">74.2</td>
+<td style="text-align: center;">69.6</td>
+<td style="text-align: center;">57.2</td>
+</tr>
+<tr>
+<td style="text-align: center;">戊</td>
+<td style="text-align: center;">67.4</td>
+<td style="text-align: center;">71.0</td>
+<td style="text-align: center;">83.8</td>
+<td style="text-align: center;">62.4</td>
+</tr>
+</tbody>
+</table>
+<p>其中，候选人编号 <span
+class="math inline">\(i=1,2,3,4,5\)</span>，泳姿编号 <span
+class="math inline">\(j=1,2,3,4\)</span>。四种泳姿分别为蝶泳、仰泳、蛙泳和自由泳。</p>
+<h2 id="决策变量-2">决策变量</h2>
+<p>设<span class="math inline">\(x_{ij}=\begin{cases}
+1, &amp; \text{队员 } i \text{ 参加第 } j \text{ 种泳姿},\\
+0, &amp; \text{队员 } i \text{ 不参加第 } j \text{ 种泳姿}.
+\end{cases}\)</span></p>
+<p>设 <span class="math inline">\(t_{ij}\)</span> 表示队员 <span
+class="math inline">\(i\)</span> 参加第 <span
+class="math inline">\(j\)</span> 种泳姿的耗时。</p>
+<h2 id="数学建模-1">数学建模</h2>
+<p><span class="math display">\[
+\begin{align*}
+&amp;\min\sum\limits_{j=1}^4\sum\limits_{i=1}^5t_{ij}x_{ij} \\
+&amp;\text{s.t.}\begin{cases}
+\sum\limits_{j=1}^4x_{ij}\leqslant1\ (i=1,2,3,4,5) \quad
+\text{（每人仅参加1种泳姿）} \\
+\sum\limits_{i=1}^5x_{ij}=1\ (j=1,2,3,4) \quad
+\text{（每种泳姿仅1人参加）} \\
+x_{ij}\in\{0,1\}
+\end{cases}
+\end{align*}
+\]</span></p>
+<h2 id="双下标变量到单下标变量的转换">双下标变量到单下标变量的转换</h2>
+<p><code>intlinprog</code> 接收的是向量形式的决策变量，因此需要把 <span
+class="math inline">\(x_{ij}\)</span>
+展开成一维向量。本文采用“按人分块、每人四个泳姿”的顺序：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">x11 -&gt; x1,  x12 -&gt; x2,  x13 -&gt; x3,  x14 -&gt; x4,</span><br><span class="line">x21 -&gt; x5,  x22 -&gt; x6,  x23 -&gt; x7,  x24 -&gt; x8,</span><br><span class="line">...</span><br><span class="line">x54 -&gt; x20.</span><br></pre></td></tr></table></figure>
+<p>一般公式为：</p>
+<p><span class="math display">\[
+k=4(i-1)+j.
+\]</span></p>
+<p>目标函数系数、约束矩阵 <code>A</code>、约束矩阵 <code>Aeq</code>
+都必须严格使用同一套变量顺序，否则求解结果就会错位。</p>
+<h2 id="matlab-实现-1">MATLAB 实现</h2>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">%% 指派问题（选择队员去进行游泳接力比赛）</span></span><br><span class="line">clear; clc</span><br><span class="line"></span><br><span class="line"><span class="comment">% 双下标转换为单下标：</span></span><br><span class="line"><span class="comment">% x11→x1，x12→x2，…，x24→x8，…，x54→x20</span></span><br><span class="line">c = [<span class="number">66.8</span> <span class="number">75.6</span> <span class="number">87</span> <span class="number">58.6</span> ...</span><br><span class="line">     <span class="number">57.2</span> <span class="number">66</span> <span class="number">66.4</span> <span class="number">53</span> ...</span><br><span class="line">     <span class="number">78</span> <span class="number">67.8</span> <span class="number">84.6</span> <span class="number">59.4</span> ...</span><br><span class="line">     <span class="number">70</span> <span class="number">74.2</span> <span class="number">69.6</span> <span class="number">57.2</span> ...</span><br><span class="line">     <span class="number">67.4</span> <span class="number">71</span> <span class="number">83.8</span> <span class="number">62.4</span>]&#x27;;</span><br><span class="line"></span><br><span class="line">intcon = <span class="number">1</span>:<span class="number">20</span>;</span><br><span class="line"><span class="comment">% 一共 20 个决策变量，均为 0-1 整数变量</span></span><br><span class="line"></span><br><span class="line"><span class="comment">% 不等式约束：每个人最多参加一种泳姿</span></span><br><span class="line">A = <span class="built_in">zeros</span>(<span class="number">5</span>,<span class="number">20</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="number">5</span></span><br><span class="line">    A(<span class="built_in">i</span>, (<span class="number">4</span>*<span class="built_in">i</span><span class="number">-3</span>):<span class="number">4</span>*<span class="built_in">i</span>) = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">b = <span class="built_in">ones</span>(<span class="number">5</span>,<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">% 等式约束：每种泳姿有且仅有一人参加</span></span><br><span class="line">Aeq = <span class="built_in">repmat</span>(<span class="built_in">eye</span>(<span class="number">4</span>), <span class="number">1</span>, <span class="number">5</span>);</span><br><span class="line">beq = <span class="built_in">ones</span>(<span class="number">4</span>,<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">lb = <span class="built_in">zeros</span>(<span class="number">20</span>,<span class="number">1</span>);</span><br><span class="line">ub = <span class="built_in">ones</span>(<span class="number">20</span>,<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">[x, fval] = intlinprog(c, intcon, A, b, Aeq, beq, lb, ub);</span><br><span class="line"></span><br><span class="line">X = <span class="built_in">reshape</span>(x, <span class="number">4</span>, <span class="number">5</span>)&#x27;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;指派矩阵（行：甲乙丙丁戊；列：蝶仰蛙自由）：&#x27;</span>)</span><br><span class="line"><span class="built_in">disp</span>(<span class="built_in">round</span>(X))</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;最小总耗时（秒）：&#x27;</span>)</span><br><span class="line"><span class="built_in">disp</span>(fval)</span><br></pre></td></tr></table></figure>
+<h2 id="python-实现-1">Python 实现</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pulp <span class="keyword">import</span> LpMinimize, LpProblem, LpVariable, lpSum, value</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 创建最小化问题</span></span><br><span class="line">problem = LpProblem(name=<span class="string">&quot;Assignment_Problem&quot;</span>, sense=LpMinimize)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 定义参数：行表示候选人，列表示泳姿</span></span><br><span class="line">T = np.array([</span><br><span class="line">    [<span class="number">66.8</span>, <span class="number">75.6</span>, <span class="number">87.0</span>, <span class="number">58.6</span>],</span><br><span class="line">    [<span class="number">57.2</span>, <span class="number">66.0</span>, <span class="number">66.4</span>, <span class="number">53.0</span>],</span><br><span class="line">    [<span class="number">78.0</span>, <span class="number">67.8</span>, <span class="number">84.6</span>, <span class="number">59.4</span>],</span><br><span class="line">    [<span class="number">70.0</span>, <span class="number">74.2</span>, <span class="number">69.6</span>, <span class="number">57.2</span>],</span><br><span class="line">    [<span class="number">67.4</span>, <span class="number">71.0</span>, <span class="number">83.8</span>, <span class="number">62.4</span>],</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">m, n = T.shape</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 定义 0-1 决策变量 x[i][j]</span></span><br><span class="line">x = [[LpVariable(name=<span class="string">f&quot;x_<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>_<span class="subst">&#123;j+<span class="number">1</span>&#125;</span>&quot;</span>, cat=<span class="string">&quot;Binary&quot;</span>) <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(n)] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(m)]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 目标函数：最小化总耗时</span></span><br><span class="line">problem += lpSum(T[i, j] * x[i][j] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(m) <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(n)), <span class="string">&quot;Total_Time&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 5. 每个人最多参加一种泳姿</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(m):</span><br><span class="line">    problem += lpSum(x[i][j] <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(n)) &lt;= <span class="number">1</span>, <span class="string">f&quot;Person_<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 6. 每种泳姿恰好由一人参加</span></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">    problem += lpSum(x[i][j] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(m)) == <span class="number">1</span>, <span class="string">f&quot;Style_<span class="subst">&#123;j+<span class="number">1</span>&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 7. 求解</span></span><br><span class="line">problem.solve()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 8. 输出结果</span></span><br><span class="line">assignment = np.array([[<span class="built_in">int</span>(value(x[i][j])) <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(n)] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(m)])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;指派矩阵（行：甲乙丙丁戊；列：蝶仰蛙自由）：&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(assignment)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最小总耗时（秒）：&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">round</span>(value(problem.objective), <span class="number">1</span>))</span><br></pre></td></tr></table></figure>
+<h2 id="最优解解释-1">最优解解释</h2>
+<p>求解结果对应的最优指派矩阵为：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">候选人</th>
+<th style="text-align: center;">蝶泳</th>
+<th style="text-align: center;">仰泳</th>
+<th style="text-align: center;">蛙泳</th>
+<th style="text-align: center;">自由泳</th>
+<th style="text-align: center;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">甲</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">甲参加自由泳</td>
+</tr>
+<tr>
+<td style="text-align: center;">乙</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">乙参加蝶泳</td>
+</tr>
+<tr>
+<td style="text-align: center;">丙</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">丙参加仰泳</td>
+</tr>
+<tr>
+<td style="text-align: center;">丁</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">丁参加蛙泳</td>
+</tr>
+<tr>
+<td style="text-align: center;">戊</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">戊不参加</td>
+</tr>
+</tbody>
+</table>
+<p>对应方案为：乙蝶泳、丙仰泳、丁蛙泳、甲自由泳。总耗时为：</p>
+<p><span class="math display">\[
+57.2+67.8+69.6+58.6=253.2.
+\]</span></p>
+<p>因此，最优接力队组合是乙负责蝶泳，丙负责仰泳，丁负责蛙泳，甲负责自由泳，总时间为
+253.2 秒。</p>
+<h2 id="指派问题的建模启发">指派问题的建模启发</h2>
+<p>指派问题的核心结构是：若干人或资源要分配给若干任务；每个任务必须被完成；每个人或资源通常最多承担一个任务；每种分配都有成本、时间或收益；目标是总成本最小或总收益最大。</p>
+<p>如果题目中出现“谁去做哪项任务”“如何分配人员”“如何匹配资源和任务”等关键词，可以优先考虑指派模型。</p>
+<h1 id="三类模型的结构对比">三类模型的结构对比</h1>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">模型</th>
+<th style="text-align: center;">决策变量</th>
+<th style="text-align: center;">典型约束</th>
+<th style="text-align: center;">目标函数</th>
+<th style="text-align: center;">本文例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">普通线性规划松弛</td>
+<td style="text-align: center;">连续变量</td>
+<td style="text-align: center;">资源约束、非负约束</td>
+<td style="text-align: center;">最大收益或最小成本</td>
+<td style="text-align: center;">游戏升级的 <code>linprog</code>
+版本</td>
+</tr>
+<tr>
+<td style="text-align: center;">整数规划</td>
+<td style="text-align: center;">整数变量</td>
+<td style="text-align: center;">资源约束、次数约束、整数约束</td>
+<td style="text-align: center;">最大收益或最小成本</td>
+<td style="text-align: center;">游戏升级的 <code>intlinprog</code>
+版本</td>
+</tr>
+<tr>
+<td style="text-align: center;">0-1 规划</td>
+<td style="text-align: center;">变量只能取 0 或 1</td>
+<td
+style="text-align: center;">是否选择、是否分配、容量限制、唯一性限制</td>
+<td style="text-align: center;">最大收益或最小成本</td>
+<td style="text-align: center;">背包问题、指派问题</td>
+</tr>
+</tbody>
+</table>
+<h1 id="常见易错点">常见易错点</h1>
+<h2 id="忘记最大化问题要取负号">忘记最大化问题要取负号</h2>
+<p><code>intlinprog</code>
+默认求最小值。如果原问题是最大化利润、经验或收益，应把目标函数系数取负号。例如背包问题中应写：</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c = -[<span class="number">540</span> <span class="number">200</span> <span class="number">180</span> <span class="number">350</span> <span class="number">60</span> <span class="number">150</span> <span class="number">280</span> <span class="number">450</span> <span class="number">320</span> <span class="number">120</span>];</span><br></pre></td></tr></table></figure>
+<p>求解后再还原：</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">max_profit = -fval;</span><br></pre></td></tr></table></figure>
+<h2 id="只写-intcon忘记设置-0-1-上下界">只写
+<code>intcon</code>，忘记设置 0-1 上下界</h2>
+<p>对于 0-1 规划，必须同时设置：</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">intcon = <span class="number">1</span>:n;</span><br><span class="line">lb = <span class="built_in">zeros</span>(n,<span class="number">1</span>);</span><br><span class="line">ub = <span class="built_in">ones</span>(n,<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+<p><code>intcon</code> 只保证变量是整数，不能单独保证变量只能取 0 或
+1。</p>
+<h2 id="把不等式方向写错">把不等式方向写错</h2>
+<p><code>intlinprog</code> 的不等式约束是 <span
+class="math inline">\(Ax\leqslant
+b\)</span>。如果原问题中出现大于等于约束，需要先乘以 <span
+class="math inline">\(-1\)</span>，再输入到 <code>A</code> 和
+<code>b</code> 中。</p>
+<h2 id="忘记补空矩阵">忘记补空矩阵</h2>
+<p>没有等式约束时，应写：</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Aeq = [];</span><br><span class="line">beq = [];</span><br></pre></td></tr></table></figure>
+<p>调用函数时也要保留参数位置：</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[x, fval] = intlinprog(c, intcon, A, b, Aeq, beq, lb, ub);</span><br></pre></td></tr></table></figure>
+<h2
+id="决策变量顺序与目标函数顺序不一致">决策变量顺序与目标函数顺序不一致</h2>
+<p>指派问题中，双下标变量要展开为单下标变量。目标函数向量
+<code>c</code>、约束矩阵 <code>A</code>、<code>Aeq</code>
+必须使用同一套变量顺序。本文采用的是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x11, x12, x13, x14, x21, x22, ..., x54</span><br></pre></td></tr></table></figure>
+<p>即每个人对应连续四个泳姿变量。</p>
+<h2 id="对求解结果的矩阵还原不清楚">对求解结果的矩阵还原不清楚</h2>
+<p>指派问题求出来的 <code>x</code> 是 20
+维列向量。为了看得清楚，可使用：</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">X = <span class="built_in">reshape</span>(x, <span class="number">4</span>, <span class="number">5</span>)&#x27;;</span><br></pre></td></tr></table></figure>
+<p>得到 5 行 4 列的矩阵，其中行表示候选人，列表示泳姿。</p>
+<h1 id="可复用代码模板">可复用代码模板</h1>
+<h2 id="matlab-整数规划通用模板">MATLAB 整数规划通用模板</h2>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">clear; clc</span><br><span class="line"></span><br><span class="line"><span class="comment">% 1. 目标函数系数，注意 intlinprog 默认求最小值</span></span><br><span class="line">f = [...];</span><br><span class="line"></span><br><span class="line"><span class="comment">% 2. 整数变量下标</span></span><br><span class="line">intcon = [...];</span><br><span class="line"></span><br><span class="line"><span class="comment">% 3. 不等式约束 A*x &lt;= b</span></span><br><span class="line">A = [...];</span><br><span class="line">b = [...];</span><br><span class="line"></span><br><span class="line"><span class="comment">% 4. 等式约束 Aeq*x = beq；没有则写 []</span></span><br><span class="line">Aeq = [];</span><br><span class="line">beq = [];</span><br><span class="line"></span><br><span class="line"><span class="comment">% 5. 变量上下界</span></span><br><span class="line">lb = [...];</span><br><span class="line">ub = [...];</span><br><span class="line"></span><br><span class="line"><span class="comment">% 6. 求解</span></span><br><span class="line">[x, fval] = intlinprog(f, intcon, A, b, Aeq, beq, lb, ub);</span><br><span class="line"></span><br><span class="line"><span class="comment">% 7. 如果原问题是最大化，记得还原目标函数值</span></span><br><span class="line"><span class="comment">% bestValue = -fval;</span></span><br></pre></td></tr></table></figure>
+<h2 id="matlab-0-1-背包模板">MATLAB 0-1 背包模板</h2>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">clear; clc</span><br><span class="line"></span><br><span class="line">profit = [...];    <span class="comment">% 收益</span></span><br><span class="line">weight = [...];    <span class="comment">% 重量或资源消耗</span></span><br><span class="line">capacity = ...;    <span class="comment">% 容量上限</span></span><br><span class="line">n = <span class="built_in">length</span>(profit);</span><br><span class="line"></span><br><span class="line">f = -profit(:);    <span class="comment">% 最大化收益 -&gt; 最小化负收益</span></span><br><span class="line">intcon = <span class="number">1</span>:n;</span><br><span class="line">A = weight(:)&#x27;;</span><br><span class="line">b = capacity;</span><br><span class="line">Aeq = [];</span><br><span class="line">beq = [];</span><br><span class="line">lb = <span class="built_in">zeros</span>(n,<span class="number">1</span>);</span><br><span class="line">ub = <span class="built_in">ones</span>(n,<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">[x, fval] = intlinprog(f, intcon, A, b, Aeq, beq, lb, ub);</span><br><span class="line"></span><br><span class="line">bestProfit = -fval;</span><br><span class="line">selectedItems = <span class="built_in">find</span>(<span class="built_in">round</span>(x) == <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="matlab-指派问题模板">MATLAB 指派问题模板</h2>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">clear; clc</span><br><span class="line"></span><br><span class="line">T = [...];</span><br><span class="line"><span class="comment">% T 为 m 行 n 列矩阵，m 表示人员数量，n 表示任务数量</span></span><br><span class="line"><span class="comment">% T(i,j) 表示第 i 个人完成第 j 个任务的成本或时间</span></span><br><span class="line"></span><br><span class="line">[m,n] = <span class="built_in">size</span>(T);</span><br><span class="line"></span><br><span class="line">c = <span class="built_in">reshape</span>(T&#x27;, [], <span class="number">1</span>);</span><br><span class="line"><span class="comment">% 采用 x11,x12,...,x1n,x21,... 的顺序</span></span><br><span class="line"></span><br><span class="line">intcon = <span class="number">1</span>:(m*n);</span><br><span class="line">lb = <span class="built_in">zeros</span>(m*n,<span class="number">1</span>);</span><br><span class="line">ub = <span class="built_in">ones</span>(m*n,<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">% 每个人最多做一个任务</span></span><br><span class="line">A = <span class="built_in">zeros</span>(m, m*n);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:m</span><br><span class="line">    A(<span class="built_in">i</span>, (n*(<span class="built_in">i</span><span class="number">-1</span>)+<span class="number">1</span>):(n*<span class="built_in">i</span>)) = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">b = <span class="built_in">ones</span>(m,<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">% 每个任务恰好由一个人完成</span></span><br><span class="line">Aeq = <span class="built_in">repmat</span>(<span class="built_in">eye</span>(n), <span class="number">1</span>, m);</span><br><span class="line">beq = <span class="built_in">ones</span>(n,<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">[x, fval] = intlinprog(c, intcon, A, b, Aeq, beq, lb, ub);</span><br><span class="line"></span><br><span class="line">X = <span class="built_in">reshape</span>(x, n, m)&#x27;;</span><br></pre></td></tr></table></figure>
+<h2 id="python-pulp-通用模板">Python PuLP 通用模板</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pulp <span class="keyword">import</span> LpMaximize, LpMinimize, LpProblem, LpVariable, lpSum, value</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建问题：根据需要选择 LpMaximize 或 LpMinimize</span></span><br><span class="line">problem = LpProblem(name=<span class="string">&quot;Integer_Programming_Model&quot;</span>, sense=LpMaximize)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义变量</span></span><br><span class="line">x = [LpVariable(name=<span class="string">f&quot;x<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>&quot;</span>, lowBound=<span class="number">0</span>, cat=<span class="string">&quot;Integer&quot;</span>) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n)]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义目标函数</span></span><br><span class="line">problem += lpSum(c[i] * x[i] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n)), <span class="string">&quot;Objective&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加约束</span></span><br><span class="line">problem += lpSum(a[i] * x[i] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n)) &lt;= b, <span class="string">&quot;Constraint_1&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 求解</span></span><br><span class="line">problem.solve()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出结果</span></span><br><span class="line">solution = [value(var) <span class="keyword">for</span> var <span class="keyword">in</span> x]</span><br><span class="line">objective_value = value(problem.objective)</span><br></pre></td></tr></table></figure>
+<h1 id="学习小结">学习小结</h1>
+<p>整数规划与 0-1
+规划的关键，不在代码本身，而在于能否把实际问题准确翻译成“决策变量、目标函数、约束条件”三部分。</p>
+<p>如果变量表示数量，并且必须是整数，可以考虑整数规划；如果变量表示“是否选择”，通常应设置为
+0-1 变量；如果目标是最大化，而使用 MATLAB 的
+<code>intlinprog</code>，要把目标函数取负号；如果有容量、体力、预算等限制，要写成资源约束；如果是分配问题，要重点检查“每个人最多一次”和“每个任务恰好一次”这两类约束。</p>
+<p>本文整理的三个核心例子分别对应：游戏升级问题是整数规划，通关次数必须为整数；背包问题是
+0-1 规划，货物选或不选；指派问题也是 0-1
+规划，人员和任务之间进行匹配。掌握这三个例子，就能处理很多数学建模中常见的离散优化问题。</p>
+<p align="right">
+<strong>内容编辑：范思媛，马鑫蕊，张婕</strong>
+</p>
+<p align="right">
+<strong>内容审核：王颖</strong><span
+class="math inline">\(\qquad\qquad\qquad\quad\)</span>
+</p>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

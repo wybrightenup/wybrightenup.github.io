@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="22. 时间序列 ARIMA 模型 一, 从历史变化到可检验的预测 学校安排用电, 仓库补充物资, 管理部门监测需求, 都需要判断未来一段时间可能发生什么. 若每天, 每周或每月都有连续记录, 过去的变化可能包含能够利用的信息: 今天与昨天相似, 某次扰动的影响可能延续几期, 长期水平也可能逐渐改变. ARIMA 把这些关系写成一个简洁的模型. 学习它时, 应始终分清三个问题: 用什">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/wait/ARIMA.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="22. 时间序列 ARIMA 模型 一, 从历史变化到可检验的预测 学校安排用电, 仓库补充物资, 管理部门监测需求, 都需要判断未来一段时间可能发生什么. 若每天, 每周或每月都有连续记录, 过去的变化可能包含能够利用的信息: 今天与昨天相似, 某次扰动的影响可能延续几期, 长期水平也可能逐渐改变. ARIMA 把这些关系写成一个简洁的模型. 学习它时, 应始终分清三个问题: 用什">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/ARIMA/ARIMA-4.png">
+<meta property="og:image" content="http://example.com/images/ARIMA/ARIMA-5.png">
+<meta property="og:image" content="http://example.com/images/ARIMA/ARIMA-7.png">
+<meta property="og:image" content="http://example.com/images/ARIMA/ARIMA-8.png">
+<meta property="og:image" content="http://example.com/images/ARIMA/ARIMA-9.png">
+<meta property="og:image" content="http://example.com/images/ARIMA/ARIMA-10.png">
+<meta property="og:image" content="http://example.com/images/ARIMA/ARIMA-11.png">
+<meta property="og:image" content="http://example.com/images/ARIMA/ARIMA-12.png">
+<meta property="og:image" content="http://example.com/images/ARIMA/ARIMA-13.png">
+<meta property="og:image" content="http://example.com/images/ARIMA/ARIMA-14.png">
+<meta property="og:image" content="http://example.com/images/ARIMA/ARIMA-6.png">
+<meta property="og:image" content="http://example.com/images/ARIMA/ARIMA-15.png">
+<meta property="og:image" content="http://example.com/images/ARIMA/ARIMA-16.png">
+<meta property="og:image" content="http://example.com/images/ARIMA/ARIMA-17.png">
+<meta property="og:image" content="http://example.com/images/ARIMA/ARIMA-18.png">
+<meta property="og:image" content="http://example.com/images/ARIMA/ARIMA-19.png">
+<meta property="og:image" content="http://example.com/images/ARIMA/ARIMA-20.png">
+<meta property="article:published_time" content="2026-10-14T08:08:50.560Z">
+<meta property="article:modified_time" content="2026-10-14T03:40:42.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/ARIMA/ARIMA-4.png">
+
+
+<link rel="canonical" href="http://example.com/wait/ARIMA">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/wait/ARIMA.html","path":"wait/ARIMA.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97-arima-%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">22. 时间序列 ARIMA 模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E4%BB%8E%E5%8E%86%E5%8F%B2%E5%8F%98%E5%8C%96%E5%88%B0%E5%8F%AF%E6%A3%80%E9%AA%8C%E7%9A%84%E9%A2%84%E6%B5%8B"><span class="nav-number">1.1.</span> <span class="nav-text">一, 从历史变化到可检验的预测</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E4%B8%8E%E9%87%87%E6%A0%B7%E5%8F%A3%E5%BE%84"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 时间序列与采样口径</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#arima-%E4%B8%AD%E7%9A%84%E4%B8%89%E4%B8%AA%E9%98%B6%E6%95%B0"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 ARIMA 中的三个阶数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E8%AE%AD%E7%BB%83-%E5%86%8D%E8%AF%84%E4%BB%B7"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 先训练, 再评价</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-ar-ma-%E4%B8%8E-arima-%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%96%B9%E7%A8%8B"><span class="nav-number">1.2.</span> <span class="nav-text">二, AR, MA 与 ARIMA
+的基本方程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%9B%9E%E5%BD%92%E6%A8%A1%E5%9E%8B-arp"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 自回归模型 AR(\(p\))</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A7%BB%E5%8A%A8%E5%B9%B3%E5%9D%87%E6%A8%A1%E5%9E%8B-maq"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 移动平均模型 MA(\(q\))</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%9B%9E%E5%BD%92%E7%A7%BB%E5%8A%A8%E5%B9%B3%E5%9D%87%E6%A8%A1%E5%9E%8B-armapq"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 自回归移动平均模型 ARMA(\(p,q\))</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%AE%E5%88%86%E4%B8%8E-arima"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 差分与 ARIMA</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89-%E5%B9%B3%E7%A8%B3%E6%80%A7-%E6%A3%80%E9%AA%8C%E4%BB%80%E4%B9%88-%E6%80%8E%E6%A0%B7%E8%AF%BB%E7%BB%93%E6%9E%9C"><span class="nav-number">1.3.</span> <span class="nav-text">三, 平稳性: 检验什么,
+怎样读结果</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%BD%E5%B9%B3%E7%A8%B3%E4%B8%8E%E4%B8%A5%E5%B9%B3%E7%A8%B3"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 宽平稳与严平稳</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%AE%E5%88%86%E5%9B%BE%E4%B8%8E%E6%95%B0%E6%8D%AE%E8%8C%83%E5%9B%B4"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 差分图与数据范围</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#adf-%E6%A3%80%E9%AA%8C%E7%9A%84%E5%81%87%E8%AE%BE%E4%B8%8E%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 ADF 检验的假设与设置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B-acf-pacf-%E4%B8%8E%E6%A8%A1%E5%9E%8B%E5%AE%9A%E9%98%B6"><span class="nav-number">1.4.</span> <span class="nav-text">四, ACF, PACF 与模型定阶</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E7%9B%B8%E5%85%B3%E4%B8%8E%E5%81%8F%E8%87%AA%E7%9B%B8%E5%85%B3"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 自相关与偏自相关</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%90%86%E8%AE%BA%E6%88%AA%E5%B0%BE%E4%B8%8E%E6%8B%96%E5%B0%BE"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 理论截尾与拖尾</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E9%98%B6%E5%AF%B9%E7%85%A7%E8%A1%A8%E4%B8%8E%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 定阶对照表与示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#aic-bic-%E4%B8%8E%E5%85%AC%E5%B9%B3%E6%AF%94%E8%BE%83"><span class="nav-number">1.4.4.</span> <span class="nav-text">4.4 AIC, BIC 与公平比较</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94-%E5%8E%86%E5%8F%B2%E4%BE%8B%E9%A2%98-%E7%9C%9F%E6%AD%A3%E9%A2%84%E6%B5%8B%E6%9C%AA%E5%8F%82%E4%B8%8E%E5%BB%BA%E6%A8%A1%E7%9A%84%E6%95%B0%E6%8D%AE"><span class="nav-number">1.5.</span> <span class="nav-text">五, 历史例题:
+真正预测未参与建模的数据</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%9D%A5%E6%BA%90%E4%B8%8E%E5%88%87%E5%88%86"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 数据来源与切分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E4%BC%B0%E8%AE%A1%E7%9A%84%E7%BB%9F%E4%B8%80%E7%BA%A6%E5%AE%9A"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 条件估计的统一约定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AE%8B%E5%B7%AE%E8%AF%8A%E6%96%AD%E4%B8%8D%E8%83%BD%E8%AF%81%E6%98%8E%E7%8B%AC%E7%AB%8B"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 残差诊断不能证明独立</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BA%E5%AE%9A%E8%B5%B7%E7%82%B9%E9%A2%84%E6%B5%8B%E4%B8%8E%E5%B7%AE%E5%88%86%E8%BF%98%E5%8E%9F"><span class="nav-number">1.5.4.</span> <span class="nav-text">5.4 固定起点预测与差分还原</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E%E6%9C%AB%E5%80%BC%E5%9F%BA%E5%87%86%E6%AF%94%E8%BE%83-%E4%B9%9F%E6%A3%80%E6%9F%A5%E6%96%B9%E6%B3%95%E6%95%8F%E6%84%9F%E6%80%A7"><span class="nav-number">1.5.5.</span> <span class="nav-text">5.5 与末值基准比较,
+也检查方法敏感性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD-python-%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.6.</span> <span class="nav-text">六, Python 实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E6%AE%8B%E5%B7%AE%E9%80%92%E6%8E%A8%E4%B8%8E%E5%AE%8C%E6%95%B4%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.2 条件残差递推与完整实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83-matlab-%E5%AF%B9%E5%BA%94%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.7.</span> <span class="nav-text">七, MATLAB 对应实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E6%9D%A1%E4%BB%B6%E6%96%B9%E7%A8%8B%E5%88%B0%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 从条件方程到函数调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E7%A8%8B%E5%BA%8F-arima_main.m"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 主程序 ARIMA_MAIN.m</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E6%A8%A1%E6%B5%81%E7%A8%8B-arima_case.m"><span class="nav-number">1.7.3.</span> <span class="nav-text">7.3 建模流程 arima_case.m</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E4%BC%B0%E8%AE%A1%E5%87%BD%E6%95%B0-arma_css.m%E8%BF%9B%E4%B8%80%E6%AD%A5%E9%98%85%E8%AF%BB"><span class="nav-number">1.7.4.</span> <span class="nav-text">7.4 条件估计函数
+arma_css.m(进一步阅读)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E6%B5%8B%E5%87%BD%E6%95%B0-forecast_simple.m"><span class="nav-number">1.7.5.</span> <span class="nav-text">7.5 预测函数 forecast_simple.m</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#econometrics-toolbox-%E7%9A%84%E5%AF%B9%E5%BA%94%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.7.6.</span> <span class="nav-text">7.6 Econometrics Toolbox
+的对应接口</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB-%E6%80%8E%E6%A0%B7%E4%BD%BF%E7%94%A8%E5%92%8C%E8%AF%84%E4%BB%B7%E9%A2%84%E6%B5%8B%E7%BB%93%E6%9E%9C"><span class="nav-number">1.8.</span> <span class="nav-text">八, 怎样使用和评价预测结果</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%82%E7%94%A8%E8%8C%83%E5%9B%B4%E4%B8%8E%E8%AF%AF%E8%AF%BB"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 适用范围与误读</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0%E7%BB%83%E4%B9%A0"><span class="nav-number">1.8.2.</span> <span class="nav-text">8.2 学习练习</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%A7%A3%E7%AD%94"><span class="nav-number">1.8.3.</span> <span class="nav-text">8.3 参考解答</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D-%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.9.</span> <span class="nav-text">九, 参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="时间序列-arima-模型">22. 时间序列 ARIMA 模型</h1>
+<h2 id="一-从历史变化到可检验的预测">一, 从历史变化到可检验的预测</h2>
+<p>学校安排用电, 仓库补充物资, 管理部门监测需求,
+都需要判断未来一段时间可能发生什么. 若每天, 每周或每月都有连续记录,
+过去的变化可能包含能够利用的信息: 今天与昨天相似,
+某次扰动的影响可能延续几期, 长期水平也可能逐渐改变.</p>
+<p>ARIMA 把这些关系写成一个简洁的模型. 学习它时, 应始终分清三个问题:
+用什么数据建立模型, 模型提取了什么规律,
+以及它对尚未参与建模的数据预测得怎样. 训练期曲线贴合,
+并不能代替真正的未来预测检验.</p>
+<h3 id="时间序列与采样口径">1.1 时间序列与采样口径</h3>
+<p>时间序列是按时间顺序排列的观测值 <span
+class="math inline">\(y_1,y_2,\ldots,y_n\)</span>.
+它同时包含时间信息与数值信息. 常见的区分如下.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">类型</th>
+<th style="text-align: center;">例子</th>
+<th style="text-align: center;">如何理解跨期相加</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">时期总量</td>
+<td style="text-align: center;">每月用电量, 年度 GDP</td>
+<td style="text-align: center;">不重叠且口径一致的总量通常可合计</td>
+</tr>
+<tr>
+<td style="text-align: center;">时期平均或比例</td>
+<td style="text-align: center;">每月平均温度, 年度增长率</td>
+<td
+style="text-align: center;">不能把简单相加解释为更长时期的平均或增长率</td>
+</tr>
+<tr>
+<td style="text-align: center;">时点指标</td>
+<td style="text-align: center;">每日收盘价, 某日库存, 生日体重</td>
+<td style="text-align: center;">可作数学运算,
+但相加通常不表示同类指标的总量</td>
+</tr>
+</tbody>
+</table>
+<p>时点指标通常不能按总量解释跨期合计, 但仍可作数学累加.
+灰色预测中的累加是一种可逆的表示变换, 不要求原指标必须是时期总量.</p>
+<p>经典 ARIMA 按等间隔的<strong>观测步</strong>建立模型.
+真实日期可能因周末, 休市或漏测而不连续; 需要先明确每一步指自然日,
+交易日, 还是数据文件中的下一条记录. 对缺失项的删除或填补会改变这种含义,
+不能悄悄处理.</p>
+<h3 id="arima-中的三个阶数">1.2 ARIMA 中的三个阶数</h3>
+<p>ARIMA 是 Autoregressive Integrated Moving Average 的缩写,
+常译为差分自回归移动平均模型. ARIMA(<span
+class="math inline">\(p,d,q\)</span>) 中:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">符号</th>
+<th style="text-align: center;">含义</th>
+<th style="text-align: center;">直观理解</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(p\)</span></td>
+<td style="text-align: center;">自回归阶数</td>
+<td style="text-align: center;">当前值与前几期值的线性关系</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(d\)</span></td>
+<td style="text-align: center;">普通差分次数</td>
+<td style="text-align: center;">在变化量上建立模型, 再还原水平值</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(q\)</span></td>
+<td style="text-align: center;">移动平均阶数</td>
+<td style="text-align: center;">当前值与前几期扰动的线性关系</td>
+</tr>
+</tbody>
+</table>
+<p>ARIMA 不是把三条预测曲线相加, 而是先对原序列差分, 再对差分序列建立
+ARMA 模型. 本章先讲清 AR, MA 和差分的作用,
+再通过一组历史教学数据演示完整流程.</p>
+<h3 id="先训练-再评价">1.3 先训练, 再评价</h3>
+<p><img src="/images/ARIMA/ARIMA-4.png" alt="" style="width: 100%;"></p>
+<p><strong>图 22-1(ARIMA-4): 建模流程.</strong> 训练期承担检验,
+定阶和参数估计; 留出期只承担最终预测评价. 图中最后一步包含基准模型,
+避免只看预测曲线就宣布方法有效.</p>
+<h2 id="二-ar-ma-与-arima-的基本方程">二, AR, MA 与 ARIMA
+的基本方程</h2>
+<h3 id="自回归模型-arp">2.1 自回归模型 AR(<span
+class="math inline">\(p\)</span>)</h3>
+<p>自回归模型写成</p>
+<p><span class="math display">\[
+y_t=c+\sum\limits_{i=1}^{p}\phi_i y_{t-i}+\varepsilon_t.
+\]</span></p>
+<p><span class="math inline">\(\phi_i\)</span> 是自回归系数,
+<strong>一般不等于滞后 <span class="math inline">\(i\)</span>
+的自相关系数</strong>. <span class="math inline">\(c\)</span>
+是方程中的常数项, 也一般不等于序列均值.</p>
+<p>例如 AR(1):</p>
+<p><span class="math display">\[
+y_t=c+\phi y_{t-1}+\varepsilon_t.
+\]</span></p>
+<p>在因果平稳模型中要求 <span
+class="math inline">\(|\phi|&lt;1\)</span>. 若扰动均值为零,
+则序列均值满足</p>
+<p><span class="math display">\[
+\mu=c+\phi\mu,\qquad \mu=\frac{c}{1-\phi}.
+\]</span></p>
+<p>因此也可以把方程写成 <span
+class="math inline">\(y_t-\mu=\phi(y_{t-1}-\mu)+\varepsilon_t\)</span>.
+较一般的 AR(<span class="math inline">\(p\)</span>) 要检查 AR
+特征多项式的根, 不能只要求每个系数的绝对值小于 1.</p>
+<h3 id="移动平均模型-maq">2.2 移动平均模型 MA(<span
+class="math inline">\(q\)</span>)</h3>
+<p>MA 模型写成</p>
+<p><span class="math display">\[
+y_t=\mu+\varepsilon_t+
+\sum\limits_{j=1}^{q}\theta_j\varepsilon_{t-j}.
+\]</span></p>
+<p>这里的"移动平均"是对<strong>随机扰动</strong>建模,
+不是把过去几期观测值求简单平均. 它描述的是扰动影响的延续,
+并不会消除未来的随机波动.</p>
+<p>本章在估计和预测时采用均值为零, 方差为 <span
+class="math inline">\(\sigma^2\)</span> 的独立同分布创新项,
+条件高斯似然与区间计算进一步采用正态近似. 仅有"不相关"的白噪声条件,
+并不自动推出扰动独立.</p>
+<p>有限阶 MA 模型具有平稳性; 估计时通常还要求可逆性,
+便于从观测中稳定地恢复扰动. 不同软件对 MA 系数的正负号约定可能不同,
+比较结果时应先核对模型方程.</p>
+<h3 id="自回归移动平均模型-armapq">2.3 自回归移动平均模型 ARMA(<span
+class="math inline">\(p,q\)</span>)</h3>
+<p>把两部分合在一起:</p>
+<p><span class="math display">\[
+y_t=c+\sum\limits_{i=1}^{p}\phi_i y_{t-i}
++\varepsilon_t+\sum\limits_{j=1}^{q}\theta_j\varepsilon_{t-j}.
+\]</span></p>
+<p>若采用平稳模型, 且 <span
+class="math inline">\(1-\sum\limits_{i=1}^{p}\phi_i\ne0\)</span>, 则</p>
+<p><span class="math display">\[
+\mu=\frac{c}{1-\sum\limits_{i=1}^{p}\phi_i}.
+\]</span></p>
+<p>本章条件函数用均值 <span class="math inline">\(\mu\)</span>
+表示同一个方程, 输出结构同时给出 <code>mu</code> 与
+<code>constant</code>, 两者的关系为</p>
+<p><span class="math display">\[
+c=\mu\left(1-\sum\limits_{i=1}^{p}\phi_i\right).
+\]</span></p>
+<h3 id="差分与-arima">2.4 差分与 ARIMA</h3>
+<p>一阶差分为</p>
+<p><span class="math display">\[
+\nabla y_t=y_t-y_{t-1}.
+\]</span></p>
+<p>二阶差分是对一阶差分再做差分:</p>
+<p><span class="math display">\[
+\nabla^2y_t=y_t-2y_{t-1}+y_{t-2}.
+\]</span></p>
+<p>在 MATLAB 中, <code>diff(y,2)</code> 表示连续差分两次; 在 Python
+中对应 <code>np.diff(y,n=2)</code>. pandas 的
+<code>series.diff(2)</code> 表示间隔两期的差, 连续二阶差分应写
+<code>series.diff().diff()</code>. <span
+class="math inline">\(y_t-y_{t-2}\)</span> 是间隔两期的差,
+并不是二阶差分.</p>
+<p>令 <span class="math inline">\(w_t=\nabla^dy_t\)</span>, 则 ARIMA
+模型作用于 <span class="math inline">\(w_t\)</span>:</p>
+<p><span class="math display">\[
+w_t=c+\sum\limits_{i=1}^{p}\phi_iw_{t-i}
++\varepsilon_t+\sum\limits_{j=1}^{q}\theta_j\varepsilon_{t-j}.
+\]</span></p>
+<p><img src="/images/ARIMA/ARIMA-5.png" alt="" style="width: 100%;"></p>
+<p><strong>图 22-2(ARIMA-5): 组成结构.</strong> 先差分, 再建模,
+预测后逐级累加还原. 差分次数为零时, ARIMA 就是 ARMA.</p>
+<p>差分可能去除某些趋势, 但不能把任何非平稳序列都自动变成适合 ARIMA
+的序列. 明显季节性, 结构突变和变化的波动强度, 可能需要其他处理.
+差分也不宜过多, 否则可能放大噪声并产生不必要的负相关.</p>
+<p>ARIMA(0,0,0) 也是合法模型, 它表示常数均值加独立噪声.
+不能在候选搜索中无理由地把它排除.</p>
+<h2 id="三-平稳性-检验什么-怎样读结果">三, 平稳性: 检验什么,
+怎样读结果</h2>
+<h3 id="宽平稳与严平稳">3.1 宽平稳与严平稳</h3>
+<p>宽平稳要求</p>
+<p><span class="math display">\[
+\mathrm{E}(y_t)=\mu,\qquad
+\mathrm{Var}(y_t)=\sigma_y^2&lt;\infty,
+\]</span></p>
+<p>且自协方差 <span
+class="math inline">\(\mathrm{Cov}(y_t,y_{t-k})\)</span> 只依赖间隔
+<span class="math inline">\(k\)</span>, 不依赖具体时刻 <span
+class="math inline">\(t\)</span>. 仅有均值, 方差不变还不够.</p>
+<p>严平稳要求任意有限维联合分布在时间平移后保持不变. 它涉及分布,
+而宽平稳涉及一, 二阶矩. 具有有限二阶矩的严平稳过程是宽平稳的,
+反过来一般不成立.</p>
+<p>看图可以发现明显趋势, 季节变化或方差变化, 但不能单凭"多数 ACF
+柱落在参考带中"证明序列平稳.</p>
+<h3 id="差分图与数据范围">3.2 差分图与数据范围</h3>
+<p><img src="/images/ARIMA/ARIMA-7.png" alt="" style="width: 100%;"></p>
+<p><strong>图 22-3(ARIMA-7): 完整历史文件的水平值,
+一阶差分和二阶差分.</strong> 后期水平与波动发生变化. 该图用于描述文件,**
+不参与本例训练期的差分定阶**; 本例所有定阶计算仅使用 2014 年一季度.</p>
+<p>差分后前一项或前两项不存在, 是数学运算自然产生的边界. 应将它们排除,
+不能填成 0 后当作真实差分参与检验.</p>
+<h3 id="adf-检验的假设与设置">3.3 ADF 检验的假设与设置</h3>
+<p>含一个滞后差分项, 常数项而不含线性时间趋势的 ADF 回归可写成</p>
+<p><span class="math display">\[
+\nabla y_t=\alpha+\beta y_{t-1}
++\gamma\nabla y_{t-1}+e_t.
+\]</span></p>
+<p>原假设是 <span class="math inline">\(\beta=0\)</span>,
+即在该设定下存在单位根; 备择假设是 <span
+class="math inline">\(\beta&lt;0\)</span>. ADF 统计量虽然形似回归中的
+<span class="math inline">\(t\)</span> 统计量,
+但单位根假设下的参考分布<strong>不是普通 Student <span
+class="math inline">\(t\)</span> 分布</strong>.</p>
+<p>拒绝单位根原假设, 只能说明当前检验提供了相应证据,
+不能证明序列没有任何其他形式的非平稳性.
+未拒绝也不等于已经证明存在单位根. 应结合数据机制, 图形,
+确定性项与滞后项设置判断.</p>
+<p>本例固定一个滞后差分项, 采用含常数项的设定; <span
+class="math inline">\(p\)</span> 值使用 MacKinnon 响应面近似,
+临界值使用相应有限样本公式. 它不是适用于任意趋势, 任意滞后阶数的 ADF
+通用实现.</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">差分次数 <span
+class="math inline">\(d\)</span></th>
+<th style="text-align: center;">ADF 统计量</th>
+<th style="text-align: center;">近似 <span
+class="math inline">\(p\)</span> 值</th>
+<th style="text-align: center;">5% 临界值</th>
+<th style="text-align: center;">有效样本数</th>
+<th style="text-align: center;">当前设定的结论</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">-2.179683</td>
+<td style="text-align: center;">0.213702</td>
+<td style="text-align: center;">-2.911073</td>
+<td style="text-align: center;">60</td>
+<td style="text-align: center;">未拒绝单位根</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">-5.609735</td>
+<td style="text-align: center;"><span
+class="math inline">\(1.21118\times10^{-6}\)</span></td>
+<td style="text-align: center;">-2.911939</td>
+<td style="text-align: center;">59</td>
+<td style="text-align: center;">拒绝单位根</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">-8.118523</td>
+<td style="text-align: center;"><span
+class="math inline">\(1.17309\times10^{-12}\)</span></td>
+<td style="text-align: center;">-2.912837</td>
+<td style="text-align: center;">58</td>
+<td style="text-align: center;">拒绝单位根</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/images/ARIMA/ARIMA-8.png" alt="" style="width: 100%;"></p>
+<p><strong>图 22-4(ARIMA-8): 训练期 ADF 输出.</strong> 图中设置明确,
+结果与上表一致. 本例在固定滞后为 1 的规则下使用一阶差分,
+不因为二阶差分的 <span class="math inline">\(p\)</span>
+值更小就继续差分.</p>
+<p>若在同一训练集上改为用 AIC 自动选择 ADF 滞后项, 水平值会选取 0
+个滞后差分项, 得到 <span class="math inline">\(p\approx0.04504\)</span>.
+这说明短样本中的结论对检验设定敏感.
+"固定一个滞后"是本例预先声明的教学方案, 不是证明 <span
+class="math inline">\(d=1\)</span> 唯一正确.</p>
+<p>检验显著性水平不要求 <span class="math inline">\(p\)</span>
+值必须"接近零". 按 5% 临界值作判断即可; 响应面 <span
+class="math inline">\(p\)</span>
+值和有限样本临界值的近似可能在边界处略有差异, 应明确采用的判定约定.</p>
+<h2 id="四-acf-pacf-与模型定阶">四, ACF, PACF 与模型定阶</h2>
+<h3 id="自相关与偏自相关">4.1 自相关与偏自相关</h3>
+<p>在宽平稳条件下, 滞后 <span class="math inline">\(k\)</span>
+的自相关为</p>
+<p><span class="math display">\[
+\rho_k=\frac{\mathrm{Cov}(y_t,y_{t-k})}{\mathrm{Var}(y_t)}.
+\]</span></p>
+<p>样本 ACF 需要指定估计方式. 本章先去均值, 再用</p>
+<p><span class="math display">\[
+\hat\rho_k=
+\frac{\sum\limits_{t=k+1}^{n}(y_t-\bar y)(y_{t-k}-\bar y)}
+{\sum\limits_{t=1}^{n}(y_t-\bar y)^2}.
+\]</span></p>
+<p>PACF 衡量剔除中间滞后变量的<strong>线性关系</strong>后,
+两端变量之间剩余的相关性, 并不表示因果影响. 本章样本 PACF 使用与上述 ACF
+一致的 Yule–Walker 方程; 不同估计方法的有限样本图形可能略有不同.</p>
+<p><img src="/images/ARIMA/ARIMA-9.png" alt="" style="width: 100%;"></p>
+<p><strong>图 22-5(ARIMA-9): 训练期水平值的样本 ACF 与 PACF.</strong>
+该图帮助观察相关结构, 不能据此单独决定是否差分.
+水平值存在连续的相邻相关, 不等于已证明 AR(1) 就是正确预测模型.</p>
+<p>图中的虚线是近似白噪声参考范围 <span
+class="math inline">\(\pm1.96/\sqrt n\)</span>. 它是逐阶粗略参考,
+不是全部柱同时满足的 95% 保证; 对有自相关的序列, ACF 的标准误还可能需要
+Bartlett 等近似.</p>
+<h3 id="理论截尾与拖尾">4.2 理论截尾与拖尾</h3>
+<p>理论截尾是指超过某个滞后后, 相关系数严格为零.
+理论拖尾是指不在有限滞后后全部变成零, 可能呈指数衰减,
+交替衰减或阻尼振荡等形态. 有限样本估计会有误差,
+因此理论截尾的样本图也会在零附近波动.</p>
+<p><img src="/images/ARIMA/ARIMA-10.png" alt="" style="width: 100%;"></p>
+<p><strong>图 22-6(ARIMA-10): 两种理论形态.</strong> 左图为 <span
+class="math inline">\(\phi=0.8\)</span> 的 AR(1) 理论 ACF, 右图为 <span
+class="math inline">\(\theta=0.6\)</span> 的 MA(1) 理论 ACF. 右图在 1
+阶以后为零, 而不只是"变得很小".</p>
+<p><img src="/images/ARIMA/ARIMA-11.png" alt="" style="width: 100%;"></p>
+<p><strong>图 22-7(ARIMA-11): 理论 ACF 截尾.</strong> 上排 MA(1) 分别取
+<span class="math inline">\(\theta=0.6,-0.6\)</span>; 下排 MA(2) 分别取
+<span
+class="math inline">\((\theta_1,\theta_2)=(0.6,0.3),(0.6,-0.3)\)</span>.
+这些参数是数学示意, 不是对股票数据拟合得到的参数.</p>
+<p><img src="/images/ARIMA/ARIMA-12.png" alt="" style="width: 100%;"></p>
+<p><strong>图 22-8(ARIMA-12): 不同拖尾形态.</strong> 分别使用 AR(1) 的
+<span class="math inline">\(\phi=0.8,-0.8\)</span> 和 AR(2) 的 <span
+class="math inline">\((1.2,-0.5),(0.6,0.2)\)</span>.
+所有示例采用稳定模型, 不把任意画出的衰减柱当作合法 ACF.</p>
+<p>不能把"最后一根超出参考带的柱"直接当作模型阶数, 也不能凭"超过 5%
+的柱越界"就宣布拖尾. 随机波动和多重比较都会产生偶然越界.</p>
+<h3 id="定阶对照表与示例">4.3 定阶对照表与示例</h3>
+<p>在非退化且无公共因子抵消等通常条件下, 理论形态为:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">模型</th>
+<th style="text-align: center;">理论 ACF</th>
+<th style="text-align: center;">理论 PACF</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">因果平稳 AR(<span
+class="math inline">\(p\)</span>)</td>
+<td style="text-align: center;">通常拖尾</td>
+<td style="text-align: center;"><span class="math inline">\(p\)</span>
+阶后截尾</td>
+</tr>
+<tr>
+<td style="text-align: center;">可逆 MA(<span
+class="math inline">\(q\)</span>)</td>
+<td style="text-align: center;"><span class="math inline">\(q\)</span>
+阶后截尾</td>
+<td style="text-align: center;">通常拖尾</td>
+</tr>
+<tr>
+<td style="text-align: center;">ARMA(<span
+class="math inline">\(p,q\)</span>)</td>
+<td style="text-align: center;">通常拖尾</td>
+<td style="text-align: center;">通常拖尾</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/images/ARIMA/ARIMA-13.png" alt="" style="width: 100%;"></p>
+<p><strong>图 22-9(ARIMA-13): MA(1) 理论 ACF 与 PACF.</strong> <span
+class="math inline">\(\theta=0.6\)</span>, ACF 在 1 阶后截尾, PACF
+交替衰减.</p>
+<p><img src="/images/ARIMA/ARIMA-14.png" alt="" style="width: 100%;"></p>
+<p><strong>图 22-10(ARIMA-14): AR(1) 理论 ACF 与 PACF.</strong> <span
+class="math inline">\(\phi=0.8\)</span>, ACF 为 <span
+class="math inline">\(0.8^k\)</span>, PACF 在 1 阶后截尾.
+理论图没有样本误差, 因此不添加样本置信带.</p>
+<h3 id="aic-bic-与公平比较">4.4 AIC, BIC 与公平比较</h3>
+<p>对同一数据, 同一似然约定下的候选模型, 定义</p>
+<p><span class="math display">\[
+\mathrm{AIC}=-2\hat\ell+2K,
+\qquad
+\mathrm{BIC}=-2\hat\ell+K\ln N.
+\]</span></p>
+<p><span class="math inline">\(\hat\ell\)</span>
+是估计得到的最大对数似然, <span class="math inline">\(K\)</span>
+是估计参数数目, <span class="math inline">\(N\)</span>
+是与似然对应的有效样本数. 常数或均值, AR/MA
+系数以及估计的扰动方差都要按约定计入 <span
+class="math inline">\(K\)</span>.</p>
+<p>AIC 侧重拟合与复杂度的平衡, BIC 在样本增大时有更强的复杂度惩罚. BIC
+在特定条件下有模型选择一致性,
+并不意味着它在有限样本中总是找到真实模型或产生更好的预测.</p>
+<p>比较时要统一差分次数, 样本范围, 常数项政策, 初始化处理与估计方法.
+不能把"有常数, <span
+class="math inline">\(p,q\leqslant5\)</span>"的搜索与"无常数, <span
+class="math inline">\(p,q\leqslant8\)</span>"的结果混在一起,
+再把差异完全归因于 AIC 和 BIC.</p>
+<h2 id="五-历史例题-真正预测未参与建模的数据">五, 历史例题:
+真正预测未参与建模的数据</h2>
+<h3 id="数据来源与切分">5.1 数据来源与切分</h3>
+<p>例题使用公开教学资料中的 <code>ChinaBank.csv</code>, 包含日期,
+开盘价, 最高价, 最低价, 收盘价和成交量. 取得的版本有 <strong>345
+条记录</strong>, 范围为** 2014-01-02 至 2015-04-30**.
+所有计算使用这一份文件的记录顺序和数值.</p>
+<p>数据副本来自<a
+target="_blank" rel="noopener" href="https://github.com/Spinachor/Machine_learning_study_homework/blob/main/ChinaBank.csv">公开教学仓库</a>.
+材料未独立核验其复权, 行情供应商等原始统计口径,
+本例使用文件中的数值与记录顺序, 仅用于历史方法演示,
+不据此判断当前行情.</p>
+<p><img src="/images/ARIMA/ARIMA-6.png" alt="" style="width: 100%;"></p>
+<p><strong>图 22-11(ARIMA-6): 数据前十行.</strong> 日期,
+价格和成交量对应文件中的不同字段, 拟合仅使用 Close.</p>
+<p>全文件中有 22 条成交量为零的记录, 其中包括疑似休市占位.
+为保留教学数据, 本例不自动删除这些记录, 也不另行填补价格.
+每一步表示<strong>文件中的下一条记录</strong>, 不能称为严格的下一交易日.
+实际研究应先明确交易日历和休市处理政策, 再重新验证.</p>
+<p>按日期划分:</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">数据组</th>
+<th style="text-align: center;">日期范围</th>
+<th style="text-align: center;">记录数</th>
+<th style="text-align: center;">用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">训练集</td>
+<td style="text-align: center;">2014 年 1—3 月</td>
+<td style="text-align: center;">62</td>
+<td style="text-align: center;">ADF, 差分定阶, 候选比较, 参数估计</td>
+</tr>
+<tr>
+<td style="text-align: center;">留出测试集</td>
+<td style="text-align: center;">2014 年 4—6 月</td>
+<td style="text-align: center;">65</td>
+<td style="text-align: center;">固定起点的多步预测评价</td>
+</tr>
+<tr>
+<td style="text-align: center;">其余文件记录</td>
+<td style="text-align: center;">2014 年 7 月至 2015 年 4 月</td>
+<td style="text-align: center;">218</td>
+<td style="text-align: center;">仅用于完整文件描述图</td>
+</tr>
+</tbody>
+</table>
+<p>不打乱顺序. 不能用全文件做 ADF 决定 <span
+class="math inline">\(d\)</span>, 也不能先用测试集判断最佳预测曲线,
+再宣称测试集从未参与选择.</p>
+<h3 id="条件估计的统一约定">5.2 条件估计的统一约定</h3>
+<p>本例先采用条件残差平方和估计, 并在同一评分区间计算高斯条件信息准则.
+Python 与基础 MATLAB 的条件程序采用同一数学约定.
+固定预样本扰动与去均值后的预样本状态为零, 通过递推得到扰动,
+再对评分区间最小化残差平方和. AR 部分无 MA 项时使用线性最小二乘; 含 MA
+项时用 <code>fminsearch</code>, 两组初值和较小坐标尺度的精修.</p>
+<p>训练 ADF 按第 3.3 节的固定设置取 <span
+class="math inline">\(d=1\)</span>; 候选为 <span
+class="math inline">\(p,q=0,1,2\)</span>. 为使用相同的评分区间,
+各候选都排除差分序列最初两项的初始化区间, 即公共 <code>burn=2</code>,
+有效评分样本数为 <strong>59</strong>.</p>
+<p>对条件残差 <span class="math inline">\(e_t\)</span>, 用</p>
+<p><span class="math display">\[
+\hat\sigma^2=\frac{1}{N}\sum\limits_{t=b+1}^{n_w}e_t^2,
+\qquad
+\hat\ell=-\frac{N}{2}\left[\ln(2\pi\hat\sigma^2)+1\right]
+\]</span></p>
+<p>计算条件评分, 其中 <span class="math inline">\(b=2\)</span>, <span
+class="math inline">\(n_w=61\)</span>, <span
+class="math inline">\(N=n_w-b=59\)</span>.
+本例各候选都有一个均值参数与一个方差参数, 因此 <span
+class="math inline">\(K=p+q+2\)</span>. 这里 <span
+class="math inline">\(\hat\sigma^2\)</span> 是条件似然估计,
+不是使用回归残差自由度修正后的无偏方差.</p>
+<p>所有候选使用相同条件. 代码拒绝不平稳的 AR 候选, 不可逆的 MA
+候选及未收敛或过于接近单位根边界的优化结果; 失败原因会记录,
+而不是静默丢弃. 本例 Python
+条件程序的九个候选均得到满足检查条件的数值解, 包括 (2,1,2).
+不同优化实现可能到达不同局部解, 应读取收敛记录和根的检查结果,
+不能把某次失败认定为该阶数必然不可估计.数值边界余量为 <span
+class="math inline">\(10^{-5}\)</span>, 是本教学程序的诊断政策,
+不是一个统计置信限. 两组初值, 精修与收敛标志能帮助检查求解过程,
+但不能保证一般 ARMA 优化的全局最优.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">候选 <span
+class="math inline">\((p,d,q)\)</span></th>
+<th style="text-align: center;">条件 AIC</th>
+<th style="text-align: center;">条件 BIC</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">(0,1,0)</td>
+<td style="text-align: center;">-270.512769</td>
+<td style="text-align: center;">-266.357695</td>
+</tr>
+<tr>
+<td style="text-align: center;">(0,1,1)</td>
+<td style="text-align: center;">-269.777448</td>
+<td style="text-align: center;">-263.544835</td>
+</tr>
+<tr>
+<td style="text-align: center;">(0,1,2)</td>
+<td style="text-align: center;">-267.855874</td>
+<td style="text-align: center;">-259.545724</td>
+</tr>
+<tr>
+<td style="text-align: center;">(1,1,0)</td>
+<td style="text-align: center;">-269.919060</td>
+<td style="text-align: center;">-263.686448</td>
+</tr>
+<tr>
+<td style="text-align: center;">(1,1,1)</td>
+<td style="text-align: center;">-270.499379</td>
+<td style="text-align: center;">-262.189229</td>
+</tr>
+<tr>
+<td style="text-align: center;">(1,1,2)</td>
+<td style="text-align: center;">-268.614524</td>
+<td style="text-align: center;">-258.226837</td>
+</tr>
+<tr>
+<td style="text-align: center;">(2,1,0)</td>
+<td style="text-align: center;">-268.212449</td>
+<td style="text-align: center;">-259.902299</td>
+</tr>
+<tr>
+<td style="text-align: center;">(2,1,1)</td>
+<td style="text-align: center;">-268.604315</td>
+<td style="text-align: center;">-258.216628</td>
+</tr>
+<tr>
+<td style="text-align: center;">(2,1,2)</td>
+<td style="text-align: center;">-266.752804</td>
+<td style="text-align: center;">-254.287579</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/images/ARIMA/ARIMA-15.png" alt="" style="width: 100%;"></p>
+<p><strong>图 22-12(ARIMA-15): 条件 BIC 网格.</strong> 横轴是 <span
+class="math inline">\(q\)</span>, 纵轴是 <span
+class="math inline">\(p\)</span>; 这是当前声明的 <span
+class="math inline">\(3\times3\)</span> 候选集;
+九格来自相同条件下的有效评分; 若某次运行出现 failed 格,
+表示该次没有有效评分, 不应补入其他设置的数值.</p>
+<p><img src="/images/ARIMA/ARIMA-16.png" alt="" style="width: 100%;"></p>
+<p><strong>图 22-13(ARIMA-16): BIC 最小的有效候选.</strong> 本例为
+ARIMA(0,1,0), 有效样本 59, 参数数目 2.</p>
+<p><img src="/images/ARIMA/ARIMA-17.png" alt="" style="width: 100%;"></p>
+<p><strong>图 22-14(ARIMA-17): 候选评分的程序流程.</strong>
+图示强调同一数据, 同一初始化区间与同一常数项政策.
+实际程序还处理优化失败和收敛检查.</p>
+<p><img src="/images/ARIMA/ARIMA-18.png" alt="" style="width: 100%;"></p>
+<p><strong>图 22-15(ARIMA-18): 当前 AIC/BIC 的定阶结果.</strong>
+两者均选 (0,1,0), 但 AIC 最优值与 (1,1,1) 相差约 0.0134,
+不能把这么小的评分差理解成强证据.</p>
+<h3 id="残差诊断不能证明独立">5.3 残差诊断不能证明独立</h3>
+<p>对选定模型的评分区间残差, 绘制 ACF, 并进行 Ljung–Box 检验:</p>
+<p><span class="math display">\[
+Q=N(N+2)\sum\limits_{k=1}^{L}\frac{\hat\rho_k^2}{N-k}.
+\]</span></p>
+<p>在通常的近似条件下, 与自由度 <span
+class="math inline">\(L-p-q\)</span> 的卡方分布比较. 本例取 <span
+class="math inline">\(L=10\)</span>, 得到 <span
+class="math inline">\(Q=13.487803\)</span>, <span
+class="math inline">\(p\approx0.197662\)</span>, 没有在 5%
+水平拒绝前十阶残差不相关的原假设.</p>
+<p><img src="/images/ARIMA/ARIMA-19.png" alt="" style="width: 100%;"></p>
+<p><strong>图 22-16(ARIMA-19): 残差 ACF.</strong>
+虚线是近似白噪声参考带. 不拒绝 Ljung–Box 或许多柱位于参考带内,
+均不能证明残差独立, 正态或未来预测准确.</p>
+<p>还应检查残差均值, 异常点, 波动变化和平方残差的相关性.
+参数显著性也是一种诊断, 但不应把"每个参数都显著"作为模型可用的必要条件.
+软件给出的极大似然参数检验通常是渐近近似, 不应一概称为严格的有限样本
+<span class="math inline">\(t\)</span> 检验.</p>
+<h3 id="固定起点预测与差分还原">5.4 固定起点预测与差分还原</h3>
+<p>固定起点多步预测指: 在 2014 年 3 月训练结束后, 一次性预测测试集的 65
+个观测步, 不在中途使用测试真实值更新模型或状态.</p>
+<p>本例的模型为</p>
+<p><span class="math display">\[
+\nabla y_t=\hat\mu+\varepsilon_t,
+\qquad\hat\mu=0.001016949153,
+\qquad\hat\sigma^2=0.0005582878483.
+\]</span></p>
+<p>即带漂移的随机游走. 预测为</p>
+<p><span class="math display">\[
+\hat y_{T+h\mid T}=y_T+h\hat\mu,
+\qquad\mathrm{MSE}_h=h\hat\sigma^2.
+\]</span></p>
+<p>这里的 MSE 在参数固定, 创新项方差恒定等模型条件下计算. 程序用 <span
+class="math inline">\(\hat y\pm1.959964\sqrt{\mathrm{MSE}}\)</span>
+画逐点约 95% 的新观测预测区间, 没有包括参数估计的不确定性,
+也不是整条预测路径的同时覆盖保证.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">向前观测步 <span
+class="math inline">\(h\)</span></th>
+<th style="text-align: center;">预测值</th>
+<th style="text-align: center;">逐点区间下限</th>
+<th style="text-align: center;">逐点区间上限</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2.591017</td>
+<td style="text-align: center;">2.544707</td>
+<td style="text-align: center;">2.637327</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">2.592034</td>
+<td style="text-align: center;">2.526541</td>
+<td style="text-align: center;">2.657526</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">2.595085</td>
+<td style="text-align: center;">2.491532</td>
+<td style="text-align: center;">2.698638</td>
+</tr>
+<tr>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">2.600169</td>
+<td style="text-align: center;">2.453724</td>
+<td style="text-align: center;">2.746615</td>
+</tr>
+<tr>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">2.610339</td>
+<td style="text-align: center;">2.403233</td>
+<td style="text-align: center;">2.817445</td>
+</tr>
+<tr>
+<td style="text-align: center;">65</td>
+<td style="text-align: center;">2.656102</td>
+<td style="text-align: center;">2.282736</td>
+<td style="text-align: center;">3.029467</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/images/ARIMA/ARIMA-20.png" alt="" style="width: 100%;"></p>
+<p><strong>图 22-17(ARIMA-20): 真正的留出预测.</strong> 训练实际值,
+测试实际值, 固定起点预测和末值基准分开显示; 浅色区域为上述预测区间.
+训练期拟合不冒充测试期预测.</p>
+<h3 id="与末值基准比较-也检查方法敏感性">5.5 与末值基准比较,
+也检查方法敏感性</h3>
+<p>基准预测只使用训练期最后一个值 <span
+class="math inline">\(y_T=2.59\)</span>, 即所有未来步都预测为 2.59.
+本例在同一测试集上得到:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">方法</th>
+<th style="text-align: center;">测试 RMSE</th>
+<th style="text-align: center;">测试 MAE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">条件估计版</td>
+<td style="text-align: center;">0.065361</td>
+<td style="text-align: center;">0.050214</td>
+</tr>
+<tr>
+<td style="text-align: center;">末值基准</td>
+<td style="text-align: center;">0.096165</td>
+<td style="text-align: center;">0.075538</td>
+</tr>
+</tbody>
+</table>
+<p>这一切分中, 条件估计版优于末值基准. 但 65 步只来自一段连续留出窗口,
+并不是 65 次相互独立的预测试验. 单次切分优势不能代替滚动评价,
+也不能保证其他时期保持优势.</p>
+<p>另一套 Python 程序使用 statsmodels 的状态空间似然, 在同一差分设置,
+同一候选范围下也选 (0,1,0), 但它使用不同的初始化与评分样本, 得到测试
+RMSE <strong>0.107349</strong>, 反而略高于末值基准. Python 漂移约为
+<span class="math inline">\(-0.00033287\)</span>, 而条件估计版为正.</p>
+<p>这个差异主要与评分区间和初始化有关:
+条件版为公平比较各候选排除了最初两项差分, 恰好排除了 <span
+class="math inline">\(-0.05,-0.03\)</span>; 在短样本中,
+漂移估计因此发生明显变化. 两种方法的 AIC/BIC 不能混为同一评分表,
+但它们的预测误差可以在同一测试集上比较. 数值程序通过验证,
+不代表当前估计约定必然产生最好的预测.</p>
+<p>真实使用时, 应事先确定估计方案和验证规则, 分析初始化, 趋势项,
+差分与窗口选择的敏感性. 如果根据本次测试结果继续修改模型,
+还应另保留一段最终评价数据.</p>
+<h2 id="六-python-实现">六, Python 实现</h2>
+<p>以下先介绍常用库的状态空间实现, 再给出与条件估计公式对应的完整程序.
+两者都只用训练数据选择模型, 然后一次性预测 65 个留出观测步.</p>
+<p>首次使用可运行
+<code>python -m pip install numpy pandas scipy statsmodels matplotlib</code>,
+随后在 <code>code</code> 目录运行 <code>python ARIMA_MAIN.py</code>.
+数据从同一配套目录的 <code>data/ChinaBank.csv</code> 读取.
+<code>ARIMA(train, order=(p,d,q), trend=trend)</code> 接收一维训练数组;
+<code>fit()</code> 估计参数; <code>get_forecast(steps=len(test))</code>
+只以训练结束为起点计算未来预测. <code>predicted_mean</code> 是点预测,
+<code>conf_int(alpha=.05)</code> 是逐点 95% 预测区间.
+这不是新的样本内拟合调用.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pathlib <span class="keyword">import</span> Path</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> warnings</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> statsmodels.tsa.stattools <span class="keyword">import</span> adfuller</span><br><span class="line"><span class="keyword">from</span> statsmodels.tsa.arima.model <span class="keyword">import</span> ARIMA</span><br><span class="line"><span class="keyword">from</span> statsmodels.stats.diagnostic <span class="keyword">import</span> acorr_ljungbox</span><br><span class="line"></span><br><span class="line"><span class="comment"># 此文件使用 statsmodels 的状态空间似然；不是 MATLAB 条件估计的移植。</span></span><br><span class="line">folder = Path(__file__).resolve().parents[<span class="number">1</span>] / <span class="string">&quot;data&quot;</span></span><br><span class="line">data = pd.read_csv(folder / <span class="string">&quot;ChinaBank.csv&quot;</span>, parse_dates=[<span class="string">&quot;Date&quot;</span>])</span><br><span class="line"><span class="keyword">assert</span> data[<span class="string">&quot;Date&quot;</span>].is_monotonic_increasing <span class="keyword">and</span> data[<span class="string">&quot;Date&quot;</span>].is_unique</span><br><span class="line"><span class="keyword">assert</span> np.isfinite(data[<span class="string">&quot;Close&quot;</span>]).<span class="built_in">all</span>() <span class="keyword">and</span> (data[<span class="string">&quot;Close&quot;</span>] &gt; <span class="number">0</span>).<span class="built_in">all</span>()</span><br><span class="line">train = data.loc[(data.Date &gt;= <span class="string">&quot;2014-01-01&quot;</span>) &amp; (data.Date &lt; <span class="string">&quot;2014-04-01&quot;</span>), <span class="string">&quot;Close&quot;</span>].to_numpy()</span><br><span class="line">test = data.loc[(data.Date &gt;= <span class="string">&quot;2014-04-01&quot;</span>) &amp; (data.Date &lt; <span class="string">&quot;2014-07-01&quot;</span>), <span class="string">&quot;Close&quot;</span>].to_numpy()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 明确与 MATLAB ADF 的确定性项、滞后项设置保持一致。</span></span><br><span class="line">adf0 = adfuller(train, maxlag=<span class="number">1</span>, regression=<span class="string">&quot;c&quot;</span>, autolag=<span class="literal">None</span>, result_object=<span class="literal">False</span>)</span><br><span class="line">adf1 = adfuller(np.diff(train), maxlag=<span class="number">1</span>, regression=<span class="string">&quot;c&quot;</span>, autolag=<span class="literal">None</span>, result_object=<span class="literal">False</span>)</span><br><span class="line">d = <span class="number">0</span> <span class="keyword">if</span> adf0[<span class="number">0</span>] &lt; adf0[<span class="number">4</span>][<span class="string">&quot;5%&quot;</span>] <span class="keyword">else</span> <span class="number">1</span></span><br><span class="line"><span class="keyword">if</span> d == <span class="number">1</span>:</span><br><span class="line">    <span class="keyword">assert</span> adf1[<span class="number">0</span>] &lt; adf1[<span class="number">4</span>][<span class="string">&quot;5%&quot;</span>], <span class="string">&quot;一阶差分未通过当前单位根筛查。&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># d=0 估计均值；d=1 的线性趋势在差分方程中对应常数漂移。</span></span><br><span class="line">trend = <span class="string">&quot;c&quot;</span> <span class="keyword">if</span> d == <span class="number">0</span> <span class="keyword">else</span> <span class="string">&quot;t&quot;</span></span><br><span class="line">candidates = []</span><br><span class="line">search_log = []</span><br><span class="line"><span class="keyword">for</span> p <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">    <span class="keyword">for</span> q <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">with</span> warnings.catch_warnings(record=<span class="literal">True</span>) <span class="keyword">as</span> captured:</span><br><span class="line">                warnings.simplefilter(<span class="string">&quot;always&quot;</span>)</span><br><span class="line">                fitted = ARIMA(train, order=(p, d, q), trend=trend).fit()</span><br><span class="line">            search_log.append(&#123;<span class="string">&quot;p&quot;</span>:p,<span class="string">&quot;q&quot;</span>:q,<span class="string">&quot;bic&quot;</span>:<span class="built_in">float</span>(fitted.bic),</span><br><span class="line">                               <span class="string">&quot;converged&quot;</span>:<span class="built_in">bool</span>(fitted.mle_retvals.get(<span class="string">&quot;converged&quot;</span>, <span class="literal">False</span>)),</span><br><span class="line">                               <span class="string">&quot;warnings&quot;</span>:[<span class="built_in">str</span>(w.message) <span class="keyword">for</span> w <span class="keyword">in</span> captured]&#125;)</span><br><span class="line">            <span class="keyword">if</span> fitted.mle_retvals.get(<span class="string">&quot;converged&quot;</span>, <span class="literal">False</span>) <span class="keyword">and</span> np.isfinite(fitted.bic):</span><br><span class="line">                candidates.append((fitted.bic, p, q, fitted))</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">f&quot;跳过未收敛候选：p=<span class="subst">&#123;p&#125;</span>, q=<span class="subst">&#123;q&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">except</span> (ValueError, np.linalg.LinAlgError) <span class="keyword">as</span> error:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;跳过失败候选：p=<span class="subst">&#123;p&#125;</span>, q=<span class="subst">&#123;q&#125;</span>，<span class="subst">&#123;error&#125;</span>&quot;</span>)</span><br><span class="line"><span class="keyword">assert</span> candidates, <span class="string">&quot;没有有效候选模型。&quot;</span></span><br><span class="line">_, p, q, model = <span class="built_in">min</span>(candidates, key=<span class="keyword">lambda</span> row: row[<span class="number">0</span>])</span><br><span class="line">forecast = model.get_forecast(steps=<span class="built_in">len</span>(test))</span><br><span class="line">prediction = np.asarray(forecast.predicted_mean)</span><br><span class="line">interval = np.asarray(forecast.conf_int(alpha=<span class="number">.05</span>))</span><br><span class="line">rmse = np.sqrt(np.mean((test - prediction)**<span class="number">2</span>))</span><br><span class="line">naive_rmse = np.sqrt(np.mean((test - train[-<span class="number">1</span>])**<span class="number">2</span>))</span><br><span class="line">residual = np.asarray(model.resid)[<span class="built_in">max</span>(<span class="number">2</span>, d):]</span><br><span class="line">lb = acorr_ljungbox(residual, lags=[<span class="number">10</span>], model_df=p+q, return_df=<span class="literal">True</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;状态空间 BIC 定阶：(<span class="subst">&#123;p&#125;</span>,<span class="subst">&#123;d&#125;</span>,<span class="subst">&#123;q&#125;</span>)&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;测试 RMSE：ARIMA=<span class="subst">&#123;rmse:<span class="number">.8</span>f&#125;</span>，末值基准=<span class="subst">&#123;naive_rmse:<span class="number">.8</span>f&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(lb)</span><br><span class="line">result = &#123;<span class="string">&quot;method&quot;</span>: <span class="string">&quot;statsmodels state-space likelihood&quot;</span>,</span><br><span class="line">          <span class="string">&quot;order&quot;</span>: [p, d, q], <span class="string">&quot;bic&quot;</span>: <span class="built_in">float</span>(model.bic),</span><br><span class="line">          <span class="string">&quot;rmse&quot;</span>: <span class="built_in">float</span>(rmse), <span class="string">&quot;naive_rmse&quot;</span>: <span class="built_in">float</span>(naive_rmse),</span><br><span class="line">          <span class="string">&quot;prediction&quot;</span>: prediction.tolist(), <span class="string">&quot;interval95&quot;</span>: interval.tolist(),</span><br><span class="line">          <span class="string">&quot;parameters&quot;</span>:<span class="built_in">dict</span>(<span class="built_in">zip</span>(model.param_names,<span class="built_in">map</span>(<span class="built_in">float</span>,model.params))),</span><br><span class="line">          <span class="string">&quot;mae&quot;</span>:<span class="built_in">float</span>(np.mean(<span class="built_in">abs</span>(test-prediction))),</span><br><span class="line">          <span class="string">&quot;naive_mae&quot;</span>:<span class="built_in">float</span>(np.mean(<span class="built_in">abs</span>(test-train[-<span class="number">1</span>]))),</span><br><span class="line">          <span class="string">&quot;search_log&quot;</span>:search_log&#125;</span><br><span class="line">(folder / <span class="string">&quot;Python-results.json&quot;</span>).write_text(json.dumps(result, indent=<span class="number">2</span>), encoding=<span class="string">&quot;utf-8&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><code>adfuller</code> 中 <code>maxlag=1</code> 与
+<code>autolag=None</code> 固定使用一个滞后差分项,
+<code>regression="c"</code> 表示只包含常数. 本例通过
+<code>result_object=False</code> 固定元组返回格式, 前五项依次是统计量,
+近似 <span class="math inline">\(p\)</span> 值, 使用的滞后数,
+有效样本数和临界值字典. 自动选择滞后时还可能返回信息准则结果,
+不能按所有调用都只有固定五项理解.</p>
+<p><code>trend='c'</code> 在 statsmodels 的 <span
+class="math inline">\(d=0\)</span> ARIMA 中表示均值项;
+<code>trend='t'</code> 在本例 <span class="math inline">\(d=1\)</span>
+时对应差分方程的漂移. 它们与 MATLAB <code>arima.Constant</code>
+的含义不能直接按同名参数比较.</p>
+<p>程序明确检查优化收敛, 失败或未收敛候选会给出提示.
+在本例的状态空间运行中, 两个高阶候选未收敛, 未被用于挑选模型.
+未收敛评分不能作为有效选择依据.</p>
+<h3 id="条件残差递推与完整实现">6.2 条件残差递推与完整实现</h3>
+<p>以下程序接收同一数据文件, 在固定设置下计算条件候选评分.
+<code>css_fit</code> 在有 MA 项时用 Nelder-Mead
+方法迭代最小化残差平方和, 即与 MATLAB <code>fminsearch</code>
+相同类别的方法, 但初始单纯形及优化路径可能不同. <code>lfilter</code>
+根据分子 AR 多项式与分母 MA 多项式递推创新残差.
+<code>forecast_css</code> 先预测变化量,
+再把均值和误差冲击逐级累加还原.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;Conditional ARMA estimation and forecast for the ARIMA teaching example.&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">from</span> pathlib <span class="keyword">import</span> Path</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> scipy.signal <span class="keyword">import</span> lfilter</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> minimize</span><br><span class="line"><span class="keyword">from</span> scipy.stats <span class="keyword">import</span> chi2</span><br><span class="line"><span class="keyword">from</span> statsmodels.tsa.stattools <span class="keyword">import</span> adfuller, acf</span><br><span class="line">ROOT = Path(__file__).resolve().parents[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">css_fit</span>(<span class="params">y, p, q, burn=<span class="number">2</span></span>):</span><br><span class="line">    y=np.asarray(y,<span class="built_in">float</span>); n=<span class="built_in">len</span>(y)</span><br><span class="line">    <span class="keyword">if</span> y.ndim!=<span class="number">1</span> <span class="keyword">or</span> <span class="keyword">not</span> np.isfinite(y).<span class="built_in">all</span>() <span class="keyword">or</span> np.std(y)==<span class="number">0</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;A finite nonconstant vector is required&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> burn&lt;<span class="built_in">max</span>(p,q) <span class="keyword">or</span> n-burn&lt;=p+q+<span class="number">2</span>: <span class="keyword">raise</span> ValueError(<span class="string">&#x27;Insufficient scoring observations&#x27;</span>)</span><br><span class="line">    center=y.mean();scale=y.std(ddof=<span class="number">1</span>);v=(y-center)/scale</span><br><span class="line">    indices=np.arange(burn,n)</span><br><span class="line">    X=np.column_stack([np.ones(<span class="built_in">len</span>(indices))]+[v[indices-j] <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,p+<span class="number">1</span>)])</span><br><span class="line">    b=np.linalg.lstsq(X,v[indices],rcond=<span class="literal">None</span>)[<span class="number">0</span>];phi0=b[<span class="number">1</span>:]</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">stable</span>(<span class="params">ar,ma,margin=<span class="number">1e-6</span></span>):</span><br><span class="line">        <span class="keyword">return</span> np.<span class="built_in">all</span>(<span class="built_in">abs</span>(np.roots(np.r_[<span class="number">1</span>,-ar]))&lt;<span class="number">1</span>-margin) <span class="keyword">and</span> np.<span class="built_in">all</span>(<span class="built_in">abs</span>(np.roots(np.r_[<span class="number">1</span>,ma]))&lt;<span class="number">1</span>-margin)</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">objective</span>(<span class="params">par</span>):</span><br><span class="line">        ar=par[<span class="number">1</span>:<span class="number">1</span>+p];ma=par[<span class="number">1</span>+p:]</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> stable(ar,ma):<span class="keyword">return</span> <span class="number">1e6</span>+np.dot(par,par)</span><br><span class="line">        e=lfilter(np.r_[<span class="number">1</span>,-ar],np.r_[<span class="number">1</span>,ma],v-par[<span class="number">0</span>])</span><br><span class="line">        result=np.dot(e[burn:],e[burn:]);<span class="keyword">return</span> result <span class="keyword">if</span> np.isfinite(result) <span class="keyword">else</span> <span class="number">1e6</span></span><br><span class="line">    <span class="keyword">if</span> q==<span class="number">0</span>:</span><br><span class="line">        phi=phi0;theta=np.array([])</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> stable(phi,theta):<span class="keyword">raise</span> ValueError(<span class="string">&#x27;Nonstationary AR least-squares result&#x27;</span>)</span><br><span class="line">        mu0=b[<span class="number">0</span>]/(<span class="number">1</span>-phi.<span class="built_in">sum</span>())</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        start=np.zeros(<span class="number">1</span>+p+q);alternative=start.copy()</span><br><span class="line">        <span class="keyword">if</span> np.<span class="built_in">all</span>(<span class="built_in">abs</span>(np.roots(np.r_[<span class="number">1</span>,-phi0]))&lt;<span class="number">.98</span>):</span><br><span class="line">            alternative[<span class="number">0</span>]=b[<span class="number">0</span>]/(<span class="number">1</span>-phi0.<span class="built_in">sum</span>());alternative[<span class="number">1</span>:<span class="number">1</span>+p]=phi0</span><br><span class="line">        alternative[<span class="number">1</span>+p]=<span class="number">.2</span></span><br><span class="line">        options=<span class="built_in">dict</span>(maxiter=<span class="number">3000</span>,maxfev=<span class="number">10000</span>,xatol=<span class="number">1e-8</span>,fatol=<span class="number">1e-10</span>)</span><br><span class="line">        attempts=[minimize(objective,z,method=<span class="string">&#x27;Nelder-Mead&#x27;</span>,options=options) <span class="keyword">for</span> z <span class="keyword">in</span> [start,alternative]]</span><br><span class="line">        attempts=[a <span class="keyword">for</span> a <span class="keyword">in</span> attempts <span class="keyword">if</span> a.success]</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> attempts:<span class="keyword">raise</span> ValueError(<span class="string">&#x27;Optimization did not converge&#x27;</span>)</span><br><span class="line">        best=<span class="built_in">min</span>(attempts,key=<span class="keyword">lambda</span> a:a.fun);chosen=best.x;value=best.fun</span><br><span class="line">        <span class="keyword">for</span> step <span class="keyword">in</span> [<span class="number">.1</span>,<span class="number">.01</span>]:</span><br><span class="line">            anchor=chosen.copy()</span><br><span class="line">            result=minimize(<span class="keyword">lambda</span> delta:objective(anchor+step*delta),np.zeros_like(anchor),method=<span class="string">&#x27;Nelder-Mead&#x27;</span>,options=options)</span><br><span class="line">            <span class="keyword">if</span> result.success <span class="keyword">and</span> result.fun&lt;value:chosen=anchor+step*result.x;value=result.fun</span><br><span class="line">        mu0=chosen[<span class="number">0</span>];phi=chosen[<span class="number">1</span>:<span class="number">1</span>+p];theta=chosen[<span class="number">1</span>+p:]</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> stable(phi,theta,<span class="number">1e-5</span>):<span class="keyword">raise</span> ValueError(<span class="string">&#x27;Too close to stationarity/invertibility boundary&#x27;</span>)</span><br><span class="line">    mu=center+scale*mu0;e=lfilter(np.r_[<span class="number">1</span>,-phi],np.r_[<span class="number">1</span>,theta],y-mu)</span><br><span class="line">    used=e[burn:];N=<span class="built_in">len</span>(used);variance=<span class="built_in">float</span>(used@used/N)</span><br><span class="line">    <span class="keyword">if</span> variance&lt;=<span class="number">0</span>:<span class="keyword">raise</span> ValueError(<span class="string">&#x27;Zero conditional variance&#x27;</span>)</span><br><span class="line">    logL=-N/<span class="number">2</span>*(np.log(<span class="number">2</span>*np.pi*variance)+<span class="number">1</span>);K=p+q+<span class="number">2</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">dict</span>(mu=<span class="built_in">float</span>(mu),constant=<span class="built_in">float</span>(mu*(<span class="number">1</span>-phi.<span class="built_in">sum</span>())),phi=phi,theta=theta,</span><br><span class="line">                variance=variance,residual=e,logL=logL,aic=-<span class="number">2</span>*logL+<span class="number">2</span>*K,</span><br><span class="line">                bic=-<span class="number">2</span>*logL+K*np.log(N),p=p,q=q,burn=burn,nobs=N,num_parameters=K)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">forecast_css</span>(<span class="params">model,y,d,horizon</span>):</span><br><span class="line">    y=np.asarray(y,<span class="built_in">float</span>);w=np.diff(y,n=d);n=<span class="built_in">len</span>(w)</span><br><span class="line">    values=np.r_[w,np.zeros(horizon)];errors=np.r_[model[<span class="string">&#x27;residual&#x27;</span>],np.zeros(horizon)]</span><br><span class="line">    <span class="keyword">for</span> h <span class="keyword">in</span> <span class="built_in">range</span>(horizon):</span><br><span class="line">        t=n+h;value=model[<span class="string">&#x27;mu&#x27;</span>]</span><br><span class="line">        <span class="keyword">for</span> j,phi <span class="keyword">in</span> <span class="built_in">enumerate</span>(model[<span class="string">&#x27;phi&#x27;</span>],<span class="number">1</span>):value+=phi*(values[t-j]-model[<span class="string">&#x27;mu&#x27;</span>])</span><br><span class="line">        <span class="keyword">for</span> j,theta <span class="keyword">in</span> <span class="built_in">enumerate</span>(model[<span class="string">&#x27;theta&#x27;</span>],<span class="number">1</span>):value+=theta*errors[t-j]</span><br><span class="line">        values[t]=value</span><br><span class="line">    prediction=values[n:].copy()</span><br><span class="line">    <span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(d-<span class="number">1</span>,-<span class="number">1</span>,-<span class="number">1</span>):prediction=np.diff(y,n=k)[-<span class="number">1</span>]+np.cumsum(prediction)</span><br><span class="line">    <span class="keyword">if</span> horizon==<span class="number">0</span>:<span class="keyword">return</span> prediction,np.array([])</span><br><span class="line">    psi=lfilter(np.r_[<span class="number">1</span>,model[<span class="string">&#x27;theta&#x27;</span>]],np.r_[<span class="number">1</span>,-model[<span class="string">&#x27;phi&#x27;</span>]],np.r_[<span class="number">1</span>,np.zeros(horizon-<span class="number">1</span>)])</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(d):psi=np.cumsum(psi)</span><br><span class="line">    <span class="keyword">return</span> prediction,model[<span class="string">&#x27;variance&#x27;</span>]*np.cumsum(psi**<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">plain</span>(<span class="params">value</span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">isinstance</span>(value,<span class="built_in">dict</span>):<span class="keyword">return</span> &#123;k:plain(v) <span class="keyword">for</span> k,v <span class="keyword">in</span> value.items()&#125;</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">isinstance</span>(value,<span class="built_in">list</span>):<span class="keyword">return</span> [plain(v) <span class="keyword">for</span> v <span class="keyword">in</span> value]</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">isinstance</span>(value,np.ndarray):<span class="keyword">return</span> value.tolist()</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">isinstance</span>(value,np.generic):<span class="keyword">return</span> value.item()</span><br><span class="line">    <span class="keyword">return</span> value</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    data=pd.read_csv(ROOT/<span class="string">&#x27;data/ChinaBank.csv&#x27;</span>,parse_dates=[<span class="string">&#x27;Date&#x27;</span>])</span><br><span class="line">    train=data.loc[(data.Date&gt;=<span class="string">&#x27;2014-01-01&#x27;</span>)&amp;(data.Date&lt;<span class="string">&#x27;2014-04-01&#x27;</span>),<span class="string">&#x27;Close&#x27;</span>].to_numpy()</span><br><span class="line">    test=data.loc[(data.Date&gt;=<span class="string">&#x27;2014-04-01&#x27;</span>)&amp;(data.Date&lt;<span class="string">&#x27;2014-07-01&#x27;</span>),<span class="string">&#x27;Close&#x27;</span>].to_numpy()</span><br><span class="line">    adf=[adfuller(np.diff(train,n=d),maxlag=<span class="number">1</span>,regression=<span class="string">&#x27;c&#x27;</span>,autolag=<span class="literal">None</span>, result_object=<span class="literal">False</span>) <span class="keyword">for</span> d <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>)]</span><br><span class="line">    d=<span class="number">0</span> <span class="keyword">if</span> adf[<span class="number">0</span>][<span class="number">0</span>]&lt;adf[<span class="number">0</span>][<span class="number">4</span>][<span class="string">&#x27;5%&#x27;</span>] <span class="keyword">else</span> <span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span> d==<span class="number">1</span> <span class="keyword">and</span> adf[<span class="number">1</span>][<span class="number">0</span>]&gt;=adf[<span class="number">1</span>][<span class="number">4</span>][<span class="string">&#x27;5%&#x27;</span>]:<span class="keyword">raise</span> ValueError(<span class="string">&#x27;First difference did not reject unit root&#x27;</span>)</span><br><span class="line">    models=[];failures=[]</span><br><span class="line">    <span class="keyword">for</span> p <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">        <span class="keyword">for</span> q <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                m=css_fit(np.diff(train,n=d),p,q);models.append(m)</span><br><span class="line">                <span class="built_in">print</span>((p,d,q),m[<span class="string">&#x27;aic&#x27;</span>],m[<span class="string">&#x27;bic&#x27;</span>])</span><br><span class="line">            <span class="keyword">except</span> ValueError <span class="keyword">as</span> e:failures.append(<span class="built_in">dict</span>(order=[p,d,q],reason=<span class="built_in">str</span>(e)));<span class="built_in">print</span>((p,d,q),<span class="string">&#x27;failed&#x27;</span>,<span class="built_in">str</span>(e))</span><br><span class="line">    best=<span class="built_in">min</span>(models,key=<span class="keyword">lambda</span> m:(m[<span class="string">&#x27;bic&#x27;</span>],m[<span class="string">&#x27;p&#x27;</span>],m[<span class="string">&#x27;q&#x27;</span>]))</span><br><span class="line">    pred,mse=forecast_css(best,train,d,<span class="built_in">len</span>(test));baseline=np.full(<span class="built_in">len</span>(test),train[-<span class="number">1</span>]);residual=best[<span class="string">&#x27;residual&#x27;</span>][<span class="number">2</span>:]</span><br><span class="line">    rho=acf(residual,nlags=<span class="number">10</span>,fft=<span class="literal">False</span>);N=<span class="built_in">len</span>(residual)</span><br><span class="line">    Q=N*(N+<span class="number">2</span>)*<span class="built_in">sum</span>(rho[k]**<span class="number">2</span>/(N-k) <span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">11</span>));lbp=chi2.sf(Q,<span class="number">10</span>-best[<span class="string">&#x27;p&#x27;</span>]-best[<span class="string">&#x27;q&#x27;</span>])</span><br><span class="line">    result=<span class="built_in">dict</span>(order=[best[<span class="string">&#x27;p&#x27;</span>],d,best[<span class="string">&#x27;q&#x27;</span>]],d=d,models=models,failures=failures,best=best,</span><br><span class="line">        prediction=pred,mse=mse,baseline=baseline,rmse=np.sqrt(np.mean((test-pred)**<span class="number">2</span>)),</span><br><span class="line">        mae=np.mean(<span class="built_in">abs</span>(test-pred)),naive_rmse=np.sqrt(np.mean((test-baseline)**<span class="number">2</span>)),</span><br><span class="line">        naive_mae=np.mean(<span class="built_in">abs</span>(test-baseline)),lb_Q=Q,lb_p=lbp,</span><br><span class="line">        adf=[<span class="built_in">dict</span>(stat=<span class="built_in">float</span>(a[<span class="number">0</span>]),p=<span class="built_in">float</span>(a[<span class="number">1</span>]),lag=a[<span class="number">2</span>],nobs=a[<span class="number">3</span>],critical=a[<span class="number">4</span>]) <span class="keyword">for</span> a <span class="keyword">in</span> adf])</span><br><span class="line">    (ROOT/<span class="string">&#x27;data/CSS-results.json&#x27;</span>).write_text(json.dumps(plain(result),indent=<span class="number">2</span>,allow_nan=<span class="literal">False</span>))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;selected&#x27;</span>,result[<span class="string">&#x27;order&#x27;</span>],<span class="string">&#x27;mu&#x27;</span>,best[<span class="string">&#x27;mu&#x27;</span>],<span class="string">&#x27;variance&#x27;</span>,best[<span class="string">&#x27;variance&#x27;</span>])</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;RMSE&#x27;</span>,result[<span class="string">&#x27;rmse&#x27;</span>],<span class="string">&#x27;baseline&#x27;</span>,result[<span class="string">&#x27;naive_rmse&#x27;</span>],<span class="string">&#x27;LB&#x27;</span>,Q,lbp)</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">&#x27;__main__&#x27;</span>:main()</span><br></pre></td></tr></table></figure>
+<p><code>mu</code> 是被建模序列的均值, 当 <span
+class="math inline">\(d=1\)</span> 时对应平均变化量;
+<code>constant</code> 是 ARMA 方程的常数. <code>variance</code>
+采用有效评分样本数作分母, <code>nobs</code> 是评分长度,
+<code>num_parameters</code> 包括均值与创新方差.
+这些定义与第五节的公式和表格一致,
+不能把它们当成回归中按残差自由度修正的方差.</p>
+<h2 id="七-matlab-对应实现">七, MATLAB 对应实现</h2>
+<h3 id="从条件方程到函数调用">7.1 从条件方程到函数调用</h3>
+<p>基础 MATLAB 实现不依赖 Econometrics Toolbox. 在 <code>code</code>
+目录中调用 <code>result = arima_case();</code>, 可以得到差分设置,
+候选信息准则, 预测, 基准误差和残差诊断.
+<code>arma_css(w,p,q,burn)</code> 中, <code>w</code> 是差分后的列向量,
+<code>p,q</code> 是 AR 与 MA 阶数, <code>burn</code>
+指所有候选共同排除的初始化长度. 它返回均值 <code>mu</code>, 方程常数
+<code>constant</code>, 系数, 创新方差, 残差及信息准则.</p>
+<p><code>forecast_simple(model,train,d,H)</code> 接收同一次拟合的模型,
+原始训练序列, 差分次数和预测步数, 返回原尺度的预测与均方预测误差. 给定
+<span class="math inline">\(\boldsymbol y=(y_1,\ldots,y_n)^{\mathsf
+T}\)</span>, MATLAB 的 <code>y(:)</code> 只整理输入形状, 不改变观测顺序.
+<code>adf_simple</code> 实现固定一个滞后差分, 含常数的单位根检验;
+它的近似分布系数不适用于任意趋势或滞后设置.</p>
+<p>Python 已给出主要流程, 以下 MATLAB 函数进一步说明条件扰动递推,
+最优化和差分还原的关系.</p>
+<h3 id="主程序-arima_main.m">7.2 主程序 ARIMA_MAIN.m</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">result</span>=<span class="title">ARIMA_MAIN</span><span class="params">(output_dir)</span></span></span><br><span class="line"><span class="comment">% 入口：基础 MATLAB 即可运行，无需 Econometrics Toolbox。</span></span><br><span class="line"><span class="keyword">if</span> nargin&lt;<span class="number">1</span>, output_dir=fullfile(fileparts(mfilename(<span class="string">&#x27;fullpath&#x27;</span>)),<span class="string">&#x27;..&#x27;</span>,<span class="string">&#x27;images&#x27;</span>,<span class="string">&#x27;ARIMA&#x27;</span>); <span class="keyword">end</span></span><br><span class="line">result=arima_case();</span><br><span class="line">fprintf(<span class="string">&#x27;Train=%d, test=%d; d=%d\n&#x27;</span>,<span class="built_in">numel</span>(result.train),<span class="built_in">numel</span>(result.test),result.d);</span><br><span class="line">fprintf(<span class="string">&#x27;BIC order=(%d,%d,%d); AIC order=(%d,%d,%d)\n&#x27;</span>,result.bic_order,result.aic_order);</span><br><span class="line">fprintf(<span class="string">&#x27;Test RMSE: ARIMA=%.8f, baseline=%.8f\n&#x27;</span>,result.rmse,result.naive_rmse);</span><br><span class="line">fprintf(<span class="string">&#x27;Ljung-Box p=%.8f\n&#x27;</span>,result.lb.pvalue);</span><br><span class="line"><span class="keyword">for</span> number=<span class="number">4</span>:<span class="number">20</span></span><br><span class="line">    feval(sprintf(<span class="string">&#x27;plot_ARIMA%d&#x27;</span>,number),output_dir,result); close(gcf);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">if</span> ~exist(output_dir,<span class="string">&#x27;dir&#x27;</span>), mkdir(output_dir); <span class="keyword">end</span></span><br><span class="line">fid=fopen(fullfile(output_dir,<span class="string">&#x27;ARIMA-results.json&#x27;</span>),<span class="string">&#x27;w&#x27;</span>); assert(fid&gt;=<span class="number">0</span>);</span><br><span class="line">cleanup=onCleanup(@() fclose(fid)); fprintf(fid,<span class="string">&#x27;%s&#x27;</span>,jsonencode(result)); clear cleanup;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<h3 id="建模流程-arima_case.m">7.3 建模流程 arima_case.m</h3>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">result</span>=<span class="title">arima_case</span><span class="params">()</span></span></span><br><span class="line"><span class="comment">% 所有建模设置都固定在训练期；测试期只用于最后的预测评价。</span></span><br><span class="line">data=read_chinabank();</span><br><span class="line">train_mask=data.dates&gt;=datenum(<span class="number">2014</span>,<span class="number">1</span>,<span class="number">1</span>) &amp; data.dates&lt;datenum(<span class="number">2014</span>,<span class="number">4</span>,<span class="number">1</span>);</span><br><span class="line">test_mask=data.dates&gt;=datenum(<span class="number">2014</span>,<span class="number">4</span>,<span class="number">1</span>) &amp; data.dates&lt;datenum(<span class="number">2014</span>,<span class="number">7</span>,<span class="number">1</span>);</span><br><span class="line">train=data.close(train_mask); test=data.close(test_mask);</span><br><span class="line">adf=&#123;adf_simple(train),adf_simple(diff(train)),adf_simple(diff(train,<span class="number">2</span>))&#125;;</span><br><span class="line">d=<span class="number">0</span>;</span><br><span class="line"><span class="keyword">if</span> ~adf&#123;<span class="number">1</span>&#125;.reject5</span><br><span class="line">    assert(adf&#123;<span class="number">2</span>&#125;.reject5,<span class="string">&#x27;本程序的一阶差分未拒绝单位根，请重新分析。&#x27;</span>); d=<span class="number">1</span>;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="comment">% 为小样本控制候选规模。改变范围时，必须同时改变公共 burn。</span></span><br><span class="line">max_order=<span class="number">2</span>; burn=max_order; <span class="keyword">if</span> d==<span class="number">0</span>, w=train; <span class="keyword">else</span>, w=diff(train,d); <span class="keyword">end</span></span><br><span class="line">models=cell(max_order+<span class="number">1</span>); AIC=NaN(max_order+<span class="number">1</span>); BIC=AIC; failed=&#123;&#125;;</span><br><span class="line"><span class="keyword">for</span> p=<span class="number">0</span>:max_order</span><br><span class="line">    <span class="keyword">for</span> q=<span class="number">0</span>:max_order</span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">            model=arma_css(w,p,q,burn);</span><br><span class="line">            models&#123;p+<span class="number">1</span>,q+<span class="number">1</span>&#125;=model; AIC(p+<span class="number">1</span>,q+<span class="number">1</span>)=model.aic; BIC(p+<span class="number">1</span>,q+<span class="number">1</span>)=model.bic;</span><br><span class="line">        <span class="keyword">catch</span> err</span><br><span class="line">            failed&#123;<span class="keyword">end</span>+<span class="number">1</span>&#125;=sprintf(<span class="string">&#x27;p=%d,q=%d: %s&#x27;</span>,p,q,err.message);</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">score=BIC; score(~<span class="built_in">isfinite</span>(score))=Inf;</span><br><span class="line">[best_bic,index]=<span class="built_in">min</span>(score(:)); assert(<span class="built_in">isfinite</span>(best_bic),<span class="string">&#x27;没有有效候选模型。&#x27;</span>);</span><br><span class="line">[row,col]=<span class="built_in">ind2sub</span>(<span class="built_in">size</span>(BIC),index); best=models&#123;row,col&#125;;</span><br><span class="line">score=AIC; score(~<span class="built_in">isfinite</span>(score))=Inf;</span><br><span class="line">[~,index]=<span class="built_in">min</span>(score(:)); [arow,acol]=<span class="built_in">ind2sub</span>(<span class="built_in">size</span>(AIC),index);</span><br><span class="line">[prediction,mse]=forecast_simple(best,train,d,<span class="built_in">numel</span>(test));</span><br><span class="line">baseline=<span class="built_in">repmat</span>(train(<span class="keyword">end</span>),<span class="built_in">numel</span>(test),<span class="number">1</span>);</span><br><span class="line">rmse=<span class="built_in">sqrt</span>(<span class="built_in">mean</span>((test-prediction).^<span class="number">2</span>)); naive_rmse=<span class="built_in">sqrt</span>(<span class="built_in">mean</span>((test-baseline).^<span class="number">2</span>));</span><br><span class="line">mae=<span class="built_in">mean</span>(<span class="built_in">abs</span>(test-prediction)); naive_mae=<span class="built_in">mean</span>(<span class="built_in">abs</span>(test-baseline));</span><br><span class="line">residual=best.residual(burn+<span class="number">1</span>:<span class="keyword">end</span>);</span><br><span class="line">L=<span class="built_in">min</span>(<span class="number">10</span>,<span class="built_in">floor</span>(<span class="built_in">numel</span>(residual)/<span class="number">5</span>));</span><br><span class="line">lb=ljung_box_simple(residual,L,best.p+best.q);</span><br><span class="line">result=struct(<span class="string">&#x27;data&#x27;</span>,data,<span class="string">&#x27;train&#x27;</span>,train,<span class="string">&#x27;test&#x27;</span>,test,<span class="string">&#x27;train_dates&#x27;</span>,data.dates(train_mask), ...</span><br><span class="line">    <span class="string">&#x27;test_dates&#x27;</span>,data.dates(test_mask),<span class="string">&#x27;adf&#x27;</span>,&#123;adf&#125;,<span class="string">&#x27;d&#x27;</span>,d,<span class="string">&#x27;burn&#x27;</span>,burn, ...</span><br><span class="line">    <span class="string">&#x27;models&#x27;</span>,&#123;models&#125;,<span class="string">&#x27;AIC&#x27;</span>,AIC,<span class="string">&#x27;BIC&#x27;</span>,BIC,<span class="string">&#x27;failed&#x27;</span>,&#123;failed&#125;, ...</span><br><span class="line">    <span class="string">&#x27;best&#x27;</span>,best,<span class="string">&#x27;aic_order&#x27;</span>,[arow<span class="number">-1</span>,d,acol<span class="number">-1</span>],<span class="string">&#x27;bic_order&#x27;</span>,[row<span class="number">-1</span>,d,col<span class="number">-1</span>], ...</span><br><span class="line">    <span class="string">&#x27;prediction&#x27;</span>,prediction,<span class="string">&#x27;mse&#x27;</span>,mse,<span class="string">&#x27;baseline&#x27;</span>,baseline, ...</span><br><span class="line">    <span class="string">&#x27;rmse&#x27;</span>,rmse,<span class="string">&#x27;naive_rmse&#x27;</span>,naive_rmse,<span class="string">&#x27;mae&#x27;</span>,mae,<span class="string">&#x27;naive_mae&#x27;</span>,naive_mae,<span class="string">&#x27;lb&#x27;</span>,lb);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<h3 id="条件估计函数-arma_css.m进一步阅读">7.4 条件估计函数
+arma_css.m(进一步阅读)</h3>
+<p>代码中的 <code>filter([1,-phi],[1,theta],y-mu)</code>
+根据模型方程计算条件扰动. 对于含 MA 项的模型, 扰动需要递推,
+不能直接把过去未观测的扰动当成普通回归自变量.</p>
+<p>代码检查的是与滞后多项式根互为倒数的时间特征根, 其模应小于 1.
+边界附近保留数值余量. <code>fminsearch</code> 最小化条件残差平方和,
+随后估计方差, 计算条件 AIC/BIC.</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">model</span>=<span class="title">arma_css</span><span class="params">(y,p,q,burn)</span></span></span><br><span class="line"><span class="comment">% 条件高斯估计：固定初始扰动为零，所有候选使用同一段残差评分。</span></span><br><span class="line"><span class="comment">% 模型 y(t)=mu+sum(phi*(y过去-mu))+e(t)+sum(theta*e过去)。</span></span><br><span class="line">y=y(:); n=<span class="built_in">numel</span>(y);</span><br><span class="line">assert(all(<span class="built_in">isfinite</span>(y)) &amp;&amp; std(y)&gt;<span class="number">0</span>,<span class="string">&#x27;数据须有限且方差大于零。&#x27;</span>);</span><br><span class="line">assert(all([p,q,burn]&gt;=<span class="number">0</span>) &amp;&amp; all([p,q,burn]==<span class="built_in">fix</span>([p,q,burn])));</span><br><span class="line">assert(burn&gt;=<span class="built_in">max</span>(p,q) &amp;&amp; n-burn&gt;p+q+<span class="number">2</span>,<span class="string">&#x27;有效样本不足。&#x27;</span>);</span><br><span class="line">center=<span class="built_in">mean</span>(y); scale=std(y); v=(y-center)/scale;</span><br><span class="line"><span class="comment">% q=0 时可直接用线性最小二乘，无需迭代。</span></span><br><span class="line">indices=(burn+<span class="number">1</span>:n)&#x27;; X=<span class="built_in">ones</span>(<span class="built_in">numel</span>(indices),p+<span class="number">1</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span>=<span class="number">1</span>:p, X(:,<span class="built_in">j</span>+<span class="number">1</span>)=v(indices-<span class="built_in">j</span>); <span class="keyword">end</span></span><br><span class="line"><span class="built_in">beta</span>=X\v(indices); phi0=<span class="built_in">beta</span>(<span class="number">2</span>:<span class="keyword">end</span>)&#x27;;</span><br><span class="line"><span class="keyword">if</span> q==<span class="number">0</span></span><br><span class="line">    phi=phi0; theta=[];</span><br><span class="line">    assert(all(<span class="built_in">abs</span>(roots([<span class="number">1</span>,-phi]))&lt;<span class="number">1</span><span class="number">-1e-6</span>),<span class="string">&#x27;AR 最小二乘结果不平稳。&#x27;</span>);</span><br><span class="line">    mu0=<span class="built_in">beta</span>(<span class="number">1</span>)/(<span class="number">1</span>-sum(phi)); exitflag=<span class="number">1</span>;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="comment">% 两组初值；比只给一组初值更容易发现局部收敛问题。</span></span><br><span class="line">    start=<span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">1</span>+p+q);</span><br><span class="line">    alternative=start;</span><br><span class="line">    <span class="keyword">if</span> all(<span class="built_in">abs</span>(roots([<span class="number">1</span>,-phi0]))&lt;<span class="number">0.98</span>)</span><br><span class="line">        alternative(<span class="number">1</span>)=<span class="built_in">beta</span>(<span class="number">1</span>)/(<span class="number">1</span>-sum(phi0));</span><br><span class="line">        alternative(<span class="number">2</span>:<span class="number">1</span>+p)=phi0;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    alternative(<span class="number">2</span>+p)=<span class="number">0.2</span>;</span><br><span class="line">    options=optimset(<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;off&#x27;</span>,<span class="string">&#x27;MaxIter&#x27;</span>,<span class="number">3000</span>,<span class="string">&#x27;MaxFunEvals&#x27;</span>,<span class="number">10000</span>, ...</span><br><span class="line">        <span class="string">&#x27;TolX&#x27;</span>,<span class="number">1e-8</span>,<span class="string">&#x27;TolFun&#x27;</span>,<span class="number">1e-10</span>);</span><br><span class="line">    best=Inf; chosen=[]; exitflag=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> initial=[start;alternative]&#x27;</span><br><span class="line">        [candidate,value,flag]=fminsearch(@objective,initial&#x27;,options);</span><br><span class="line">        <span class="keyword">if</span> flag&gt;<span class="number">0</span> &amp;&amp; value&lt;best</span><br><span class="line">            best=value; chosen=candidate; exitflag=flag;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    assert(~<span class="built_in">isempty</span>(chosen),<span class="string">&#x27;优化未收敛，不能将此候选用于定阶。&#x27;</span>);</span><br><span class="line">    <span class="comment">% 根接近边界时，用较小的坐标尺度再精修，检查局部收敛。</span></span><br><span class="line">    <span class="keyword">for</span> step=[<span class="number">0.1</span>,<span class="number">0.01</span>]</span><br><span class="line">        anchor=chosen;</span><br><span class="line">        [delta,value,flag]=fminsearch(@(delta) objective(anchor+step*delta), ...</span><br><span class="line">            <span class="built_in">zeros</span>(<span class="built_in">size</span>(anchor)),options);</span><br><span class="line">        <span class="keyword">if</span> flag&gt;<span class="number">0</span> &amp;&amp; value&lt;best</span><br><span class="line">            best=value; chosen=anchor+step*delta; exitflag=flag;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    mu0=chosen(<span class="number">1</span>); phi=chosen(<span class="number">2</span>:<span class="number">1</span>+p); theta=chosen(<span class="number">2</span>+p:<span class="keyword">end</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">assert(all(<span class="built_in">abs</span>(roots([<span class="number">1</span>,-phi]))&lt;<span class="number">1</span><span class="number">-1e-5</span>) &amp;&amp; ...</span><br><span class="line">    all(<span class="built_in">abs</span>(roots([<span class="number">1</span>,theta]))&lt;<span class="number">1</span><span class="number">-1e-5</span>), ...</span><br><span class="line">    <span class="string">&#x27;解过于接近单位根边界，本教学程序不给出有效评分。&#x27;</span>);</span><br><span class="line">mu=center+scale*mu0;</span><br><span class="line">residual=filter([<span class="number">1</span>,-phi],[<span class="number">1</span>,theta],y-mu);</span><br><span class="line">used=residual(burn+<span class="number">1</span>:<span class="keyword">end</span>); N=<span class="built_in">numel</span>(used); variance=(used&#x27;*used)/N;</span><br><span class="line">logL=-N/<span class="number">2</span>*(<span class="built_in">log</span>(<span class="number">2</span>*<span class="built_in">pi</span>*variance)+<span class="number">1</span>); K=p+q+<span class="number">2</span>;</span><br><span class="line">model=struct(<span class="string">&#x27;mu&#x27;</span>,mu,<span class="string">&#x27;constant&#x27;</span>,mu*(<span class="number">1</span>-sum(phi)),<span class="string">&#x27;phi&#x27;</span>,phi,<span class="string">&#x27;theta&#x27;</span>,theta, ...</span><br><span class="line">    <span class="string">&#x27;variance&#x27;</span>,variance,<span class="string">&#x27;residual&#x27;</span>,residual,<span class="string">&#x27;fitted&#x27;</span>,y-residual, ...</span><br><span class="line">    <span class="string">&#x27;logL&#x27;</span>,logL,<span class="string">&#x27;aic&#x27;</span>,<span class="number">-2</span>*logL+<span class="number">2</span>*K,<span class="string">&#x27;bic&#x27;</span>,<span class="number">-2</span>*logL+K*<span class="built_in">log</span>(N), ...</span><br><span class="line">    <span class="string">&#x27;p&#x27;</span>,p,<span class="string">&#x27;q&#x27;</span>,q,<span class="string">&#x27;burn&#x27;</span>,burn,<span class="string">&#x27;nobs&#x27;</span>,N,<span class="string">&#x27;num_parameters&#x27;</span>,K,<span class="string">&#x27;exitflag&#x27;</span>,exitflag);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">value</span>=<span class="title">objective</span><span class="params">(par)</span></span></span><br><span class="line">        ar=par(<span class="number">2</span>:<span class="number">1</span>+p); ma=par(<span class="number">2</span>+p:<span class="keyword">end</span>);</span><br><span class="line">        <span class="keyword">if</span> any(<span class="built_in">abs</span>(roots([<span class="number">1</span>,-ar]))&gt;=<span class="number">1</span><span class="number">-1e-6</span>) || ...</span><br><span class="line">                any(<span class="built_in">abs</span>(roots([<span class="number">1</span>,ma]))&gt;=<span class="number">1</span><span class="number">-1e-6</span>)</span><br><span class="line">            value=<span class="number">1e6</span>+sum(par.^<span class="number">2</span>); <span class="keyword">return</span>;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">        e=filter([<span class="number">1</span>,-ar],[<span class="number">1</span>,ma],v-par(<span class="number">1</span>));</span><br><span class="line">        value=sum(e(burn+<span class="number">1</span>:<span class="keyword">end</span>).^<span class="number">2</span>);</span><br><span class="line">        <span class="keyword">if</span> ~<span class="built_in">isfinite</span>(value), value=<span class="number">1e6</span>; <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<h3 id="预测函数-forecast_simple.m">7.5 预测函数 forecast_simple.m</h3>
+<p>未来创新项的条件均值取零; 有过去 MA 扰动时, 前几步预测仍需使用它们.
+差分后的预测逐级累加回到原尺度, 预测方差也必须作相应的还原,
+不能只给预测均值累加.</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[prediction,mse]</span>=<span class="title">forecast_simple</span><span class="params">(model,y,d,horizon)</span></span></span><br><span class="line"><span class="comment">% 先预测差分序列，再逐级累加还原；未来扰动的条件均值取零。</span></span><br><span class="line">y=y(:); assert(d&gt;=<span class="number">0</span> &amp;&amp; d&lt;=<span class="number">2</span> &amp;&amp; d==<span class="built_in">fix</span>(d));</span><br><span class="line">assert(horizon&gt;=<span class="number">0</span> &amp;&amp; horizon==<span class="built_in">fix</span>(horizon));</span><br><span class="line"><span class="keyword">if</span> d==<span class="number">0</span>, w=y; <span class="keyword">else</span>, w=diff(y,d); <span class="keyword">end</span> n=<span class="built_in">numel</span>(w); values=[w;<span class="built_in">zeros</span>(horizon,<span class="number">1</span>)];</span><br><span class="line">errors=[model.residual;<span class="built_in">zeros</span>(horizon,<span class="number">1</span>)];</span><br><span class="line"><span class="keyword">for</span> h=<span class="number">1</span>:horizon</span><br><span class="line">    t=n+h; value=model.mu;</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">j</span>=<span class="number">1</span>:model.p, value=value+model.phi(<span class="built_in">j</span>)*(values(t-<span class="built_in">j</span>)-model.mu); <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">j</span>=<span class="number">1</span>:model.q, value=value+model.theta(<span class="built_in">j</span>)*errors(t-<span class="built_in">j</span>); <span class="keyword">end</span></span><br><span class="line">    values(t)=value;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">prediction=values(n+<span class="number">1</span>:<span class="keyword">end</span>);</span><br><span class="line"><span class="keyword">for</span> k=d<span class="number">-1</span>:<span class="number">-1</span>:<span class="number">0</span></span><br><span class="line">    history=diff(y,k); prediction=history(<span class="keyword">end</span>)+cumsum(prediction);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">if</span> horizon==<span class="number">0</span>, mse=[]; <span class="keyword">return</span>; <span class="keyword">end</span></span><br><span class="line"><span class="comment">% psi 为未来扰动对预测误差的影响；差分还原也要用于 psi。</span></span><br><span class="line">impulse=[<span class="number">1</span>;<span class="built_in">zeros</span>(horizon<span class="number">-1</span>,<span class="number">1</span>)];</span><br><span class="line"><span class="built_in">psi</span>=filter([<span class="number">1</span>,model.theta],[<span class="number">1</span>,-model.phi],impulse);</span><br><span class="line"><span class="keyword">for</span> k=<span class="number">1</span>:d, <span class="built_in">psi</span>=cumsum(<span class="built_in">psi</span>); <span class="keyword">end</span></span><br><span class="line">mse=model.variance*cumsum(<span class="built_in">psi</span>.^<span class="number">2</span>);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>本函数支持 <span class="math inline">\(d=0,1,2\)</span>;
+主例题的自动流程只在 <span class="math inline">\(d=0,1\)</span>
+之间选择. 它实现非季节性, 等观测步, 条件同方差模型, 不是通用的季节 ARIMA
+或金融波动模型库.</p>
+<h3 id="econometrics-toolbox-的对应接口">7.6 Econometrics Toolbox
+的对应接口</h3>
+<p>若已有 Econometrics Toolbox, 可使用 MathWorks 的 <code>arima</code>,
+<code>estimate</code>, <code>infer</code>, <code>forecast</code>,
+<code>adftest</code> 和 <code>lbqtest</code>. 例如, 在已经有训练列向量
+<code>train</code> 和预测步数 <code>H</code> 时:</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% Econometrics Toolbox interface example.</span></span><br><span class="line">Mdl = arima(<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>);  <span class="comment">% 默认估计差分方程中的常数漂移和创新方差。</span></span><br><span class="line">EstMdl = estimate(Mdl,train,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;off&#x27;</span>);</span><br><span class="line">[YF,YMSE] = forecast(EstMdl,H,train);</span><br><span class="line">lower = YF - <span class="number">1.959963984540054</span>*<span class="built_in">sqrt</span>(YMSE);</span><br><span class="line">upper = YF + <span class="number">1.959963984540054</span>*<span class="built_in">sqrt</span>(YMSE);</span><br></pre></td></tr></table></figure>
+<p>官方工具的似然与初始化设置可能不同于本章条件版,
+不能要求输出逐项完全相同. 比较时先统一参数含义, 样本范围,
+常数项和估计目标; 两者的数值比较应统一数学条件,
+同时注意优化和初始化可能带来的差异.</p>
+<h2 id="八-怎样使用和评价预测结果">八, 怎样使用和评价预测结果</h2>
+<h3 id="适用范围与误读">8.1 适用范围与误读</h3>
+<p>ARIMA 适合在观测口径稳定,
+差分后具有可利用线性依赖的序列上建立可解释的基线模型.
+它不能消除未来扰动, 也不能自动适应季节性, 结构突变和时变波动.
+若存在明显周期, 可进一步学习季节 ARIMA; 若波动强度随时间改变,
+应另行检查方差模型.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">常见误读</th>
+<th style="text-align: center;">应如何处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">时点序列不能进行数学累加</td>
+<td style="text-align: center;">区分数学变换与跨期总量的业务含义</td>
+</tr>
+<tr>
+<td style="text-align: center;">多数 ACF 柱在参考带内就是平稳</td>
+<td style="text-align: center;">检查数据机制, 趋势,
+方差与明确设置的单位根检验</td>
+</tr>
+<tr>
+<td style="text-align: center;">差分缺失边界填零方便运行</td>
+<td style="text-align: center;">排除自然缺失的差分边界, 不制造观测</td>
+</tr>
+<tr>
+<td style="text-align: center;">AR 系数就是自相关系数</td>
+<td style="text-align: center;">区分方程系数与相关函数</td>
+</tr>
+<tr>
+<td style="text-align: center;">最后越界的一柱就是阶数</td>
+<td style="text-align: center;">把理论形态作为候选线索,
+结合公平评分和诊断</td>
+</tr>
+<tr>
+<td style="text-align: center;">AIC 或 BIC 最小就证明模型最优</td>
+<td style="text-align: center;">只是在给定候选与评分约定下选择,
+还需验证预测</td>
+</tr>
+<tr>
+<td style="text-align: center;">残差检验未拒绝就证明独立</td>
+<td style="text-align: center;">它只提供所检验滞后相关的证据,
+不证明独立或正态</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>predict()</code>
+的训练拟合就是未来预测</td>
+<td style="text-align: center;">明确训练内预测与
+<code>get_forecast(steps=H)</code> 的留出预测</td>
+</tr>
+<tr>
+<td style="text-align: center;">差分预测均值累加就完成还原</td>
+<td style="text-align: center;">预测误差方差也要按差分反算传播</td>
+</tr>
+<tr>
+<td style="text-align: center;">使用测试数据不断调参仍是独立评价</td>
+<td style="text-align: center;">修改后另留最终评价窗口,
+或设计完整滚动验证</td>
+</tr>
+</tbody>
+</table>
+<h3 id="学习练习">8.2 学习练习</h3>
+<ol type="1">
+<li>对序列 <span class="math inline">\((2,3,5,8)\)</span>
+计算一阶与二阶差分, 并计算间隔两期的差. 三者是否相同?</li>
+<li>平稳 AR(1) 的方程常数为 0.4, 自回归系数为 0.8, 其均值是多少?
+给定最后观测为 3, 下一步条件均值是多少?</li>
+<li>对带漂移的随机游走, 推导两步预测的均值与均方误差.</li>
+<li>本例 ADF 的自动滞后和固定滞后得出不同结论, 应怎样报告?</li>
+<li>条件版在本测试窗口优于末值基准, 状态空间版却较差,
+能否据此说某种语言的模型更好?</li>
+</ol>
+<h3 id="参考解答">8.3 参考解答</h3>
+<ol type="1">
+<li>一阶差分为 <span class="math inline">\((1,2,3)\)</span>, 二阶差分为
+<span class="math inline">\((1,1)\)</span>, 间隔两期的差为 <span
+class="math inline">\((3,5)\)</span>. 它们回答不同的变化问题.</li>
+<li><span class="math inline">\(\mu=0.4/(1-0.8)=2\)</span>,
+下一步条件均值为 <span
+class="math inline">\(0.4+0.8\times3=2.8\)</span>. 方程常数,
+序列均值和本次预测均值是不同的量.</li>
+<li>若 <span
+class="math inline">\(y_t=y_{t-1}+\mu+\varepsilon_t\)</span>, 两步预测为
+<span class="math inline">\(y_T+2\mu\)</span>, 误差为两个未来创新的和.
+参数给定且创新独立同方差时, 均方误差为 <span
+class="math inline">\(2\sigma^2\)</span>.</li>
+<li>同时报告确定性项, 滞后项, 样本范围和两套检验结果. 说明短样本敏感性,
+根据事先确定的建模方案选择, 不反复调整到想要的结论.</li>
+<li>不能. 差异来自估计目标, 初始化与评分区间, 不是语言本身.
+应比较同一测试数据上的方法, 并评估多个窗口和完整选择流程.</li>
+</ol>
+<h2 id="九-参考资料">九, 参考资料</h2>
+<ul>
+<li>Hyndman, R. J. &amp; Athanasopoulos, G. <em>Forecasting: Principles
+and Practice</em>, 3rd ed.: <a
+target="_blank" rel="noopener" href="https://otexts.com/fpp3/arima.html">ARIMA 模型</a>, <a
+target="_blank" rel="noopener" href="https://otexts.com/fpp3/toolbox.html">预测评价与诊断</a>.</li>
+<li>MathWorks: <a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/econ/arima.html">arima</a>, <a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/econ/arima.estimate.html">estimate</a>,
+<a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/econ/arima.forecast.html">forecast</a>,
+<a target="_blank" rel="noopener" href="https://www.mathworks.com/help/econ/adftest.html">adftest</a>,
+<a target="_blank" rel="noopener" href="https://www.mathworks.com/help/econ/lbqtest.html">lbqtest</a>,
+<a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/econ/aicbic.html">aicbic</a>.</li>
+<li>statsmodels: <a
+target="_blank" rel="noopener" href="https://www.statsmodels.org/stable/generated/statsmodels.tsa.stattools.adfuller.html">adfuller</a>,
+<a
+target="_blank" rel="noopener" href="https://www.statsmodels.org/stable/generated/statsmodels.tsa.arima.model.ARIMA.html">ARIMA</a>,
+<a
+target="_blank" rel="noopener" href="https://www.statsmodels.org/stable/generated/statsmodels.stats.diagnostic.acorr_ljungbox.html">acorr_ljungbox</a>.</li>
+<li>MacKinnon 响应面系数的实现依据: <a
+target="_blank" rel="noopener" href="https://github.com/statsmodels/statsmodels/blob/main/statsmodels/tsa/adfvalues.py">statsmodels
+adfvalues 源码</a>.</li>
+<li>历史教学数据副本: <a
+target="_blank" rel="noopener" href="https://github.com/Spinachor/Machine_learning_study_homework/blob/main/ChinaBank.csv">ChinaBank.csv</a>.</li>
+</ul>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

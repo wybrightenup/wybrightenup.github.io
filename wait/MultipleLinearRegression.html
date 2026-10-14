@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="19. 多元线性回归 一, 从一个因素走向多个因素 一元线性回归用一个自变量解释一个数值指标. 实际问题往往同时涉及多个因素: 建材销售量可能与推销开支, 客户账目, 市场竞争和地区销售潜力有关; 水泥凝固时的放热量可能与多种成分的比例有关. 多元线性回归把这些因素放在同一个模型中, 研究它们与指标之间的数量关系. 本章围绕两个例题展开. 销售例题说明怎样估计系数, 检验模型并检查">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/wait/MultipleLinearRegression.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="19. 多元线性回归 一, 从一个因素走向多个因素 一元线性回归用一个自变量解释一个数值指标. 实际问题往往同时涉及多个因素: 建材销售量可能与推销开支, 客户账目, 市场竞争和地区销售潜力有关; 水泥凝固时的放热量可能与多种成分的比例有关. 多元线性回归把这些因素放在同一个模型中, 研究它们与指标之间的数量关系. 本章围绕两个例题展开. 销售例题说明怎样估计系数, 检验模型并检查">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/MultipleLinearRegression/MLR-4.png">
+<meta property="og:image" content="http://example.com/images/MultipleLinearRegression/MLR-5.png">
+<meta property="og:image" content="http://example.com/images/MultipleLinearRegression/MLR-6.png">
+<meta property="og:image" content="http://example.com/images/MultipleLinearRegression/MLR-7.png">
+<meta property="article:published_time" content="2026-10-14T03:31:44.012Z">
+<meta property="article:modified_time" content="2026-10-14T03:14:52.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/MultipleLinearRegression/MLR-4.png">
+
+
+<link rel="canonical" href="http://example.com/wait/MultipleLinearRegression">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/wait/MultipleLinearRegression.html","path":"wait/MultipleLinearRegression.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A%E5%85%83%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92"><span class="nav-number">1.</span> <span class="nav-text">19. 多元线性回归</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E4%BB%8E%E4%B8%80%E4%B8%AA%E5%9B%A0%E7%B4%A0%E8%B5%B0%E5%90%91%E5%A4%9A%E4%B8%AA%E5%9B%A0%E7%B4%A0"><span class="nav-number">1.1.</span> <span class="nav-text">一, 从一个因素走向多个因素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-%E6%A8%A1%E5%9E%8B%E5%8E%9F%E7%90%86%E4%B8%8E%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80"><span class="nav-number">1.2.</span> <span class="nav-text">二, 模型原理与数学基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E5%A4%9A%E4%B8%AA%E6%96%B9%E7%A8%8B%E5%86%99%E6%88%90%E4%B8%80%E4%B8%AA%E7%9F%A9%E9%98%B5%E6%96%B9%E7%A8%8B"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 把多个方程写成一个矩阵方程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B3%95%E4%BC%B0%E8%AE%A1%E7%B3%BB%E6%95%B0"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 用最小二乘法估计系数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E8%83%BD%E8%A7%A3%E9%87%8A%E5%A4%9A%E5%B0%91%E5%8F%98%E5%8C%96"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 模型能解释多少变化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B4%E4%BD%93-f-%E6%A3%80%E9%AA%8C%E4%B8%8E%E5%8D%95%E4%B8%AA%E7%B3%BB%E6%95%B0-t-%E6%A3%80%E9%AA%8C"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 整体 \(F\) 检验与单个系数 \(t\) 检验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%82%B9%E9%A2%84%E6%B5%8B-%E5%9D%87%E5%80%BC%E5%8C%BA%E9%97%B4%E4%B8%8E%E4%B8%AA%E4%BD%93%E9%A2%84%E6%B5%8B%E5%8C%BA%E9%97%B4"><span class="nav-number">1.2.5.</span> <span class="nav-text">2.5 点预测,
+均值区间与个体预测区间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E7%AD%9B%E9%80%89%E6%80%8E%E6%A0%B7%E8%BF%9B%E8%A1%8C"><span class="nav-number">1.2.6.</span> <span class="nav-text">2.6 变量筛选怎样进行</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89-%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%B1%82%E8%A7%A3%E6%B5%81%E7%A8%8B"><span class="nav-number">1.3.</span> <span class="nav-text">三, 建模与求解流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B-%E5%85%B8%E5%9E%8B%E4%BE%8B%E9%A2%98"><span class="nav-number">1.4.</span> <span class="nav-text">四, 典型例题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B%E9%A2%98%E4%B8%80-%E5%BB%BA%E6%9D%90%E9%94%80%E5%94%AE%E9%87%8F%E7%9A%84%E5%9B%A0%E7%B4%A0%E5%88%86%E6%9E%90"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 例题一:
+建材销售量的因素分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E4%B8%8E%E6%95%B0%E6%8D%AE"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">4.1.1 问题与数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8B%9F%E5%90%88%E6%A8%A1%E5%9E%8B%E4%B8%8E%E6%A3%80%E9%AA%8C%E7%B3%BB%E6%95%B0"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">4.1.2 拟合模型与检验系数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AE%8B%E5%B7%AE%E5%9B%BE%E4%B8%8E%E7%AC%AC-16-%E4%B8%AA%E8%A7%82%E6%B5%8B"><span class="nav-number">1.4.1.3.</span> <span class="nav-text">4.1.3 残差图与第 16 个观测</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BC%94%E7%A4%BA%E4%B8%A4%E7%A7%8D%E5%8C%BA%E9%97%B4%E9%A2%84%E6%B5%8B"><span class="nav-number">1.4.1.4.</span> <span class="nav-text">4.1.4 演示两种区间预测</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B%E9%A2%98%E4%BA%8C-%E6%B0%B4%E6%B3%A5%E5%87%9D%E5%9B%BA%E6%97%B6%E7%9A%84%E6%94%BE%E7%83%AD%E9%87%8F"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 例题二: 水泥凝固时的放热量</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E4%B8%8E%E6%95%B0%E6%8D%AE-1"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">4.2.1 问题与数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8E%E5%AE%8C%E6%95%B4%E6%A8%A1%E5%9E%8B%E5%BC%80%E5%A7%8B"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">4.2.2 从完整模型开始</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%89%E7%AE%80%E5%8D%95%E8%A7%84%E5%88%99%E9%80%90%E6%AC%A1%E5%89%94%E9%99%A4"><span class="nav-number">1.4.2.3.</span> <span class="nav-text">4.2.3 按简单规则逐次剔除</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AF%94%E8%BE%83%E4%B8%A4%E4%B8%AA%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.4.2.4.</span> <span class="nav-text">4.2.4 比较两个模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%A8%E5%9B%9E%E5%BD%92%E5%B9%B3%E9%9D%A2%E7%90%86%E8%A7%A3%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.4.2.5.</span> <span class="nav-text">4.2.5 用回归平面理解模型</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94-%E7%AE%80%E5%8D%95%E6%98%93%E6%87%82%E7%9A%84-python-%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.5.</span> <span class="nav-text">五, 简单易懂的 Python 实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E7%9F%A9%E9%98%B5%E4%B8%8E%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 输入矩阵与函数调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%80%E5%94%AE%E4%BE%8B%E9%A2%98%E7%9A%84%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 销售例题的完整代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B0%B4%E6%B3%A5%E4%BE%8B%E9%A2%98%E7%9A%84%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 水泥例题的完整代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD-matlab-%E5%AE%9E%E7%8E%B0%E4%B8%8E%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7"><span class="nav-number">1.6.</span> <span class="nav-text">六, MATLAB 实现与统计工具</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E8%AE%BE%E8%AE%A1%E7%9F%A9%E9%98%B5%E5%88%B0%E5%AE%8C%E6%95%B4%E6%B1%82%E8%A7%A3"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 从设计矩阵到完整求解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%90%86%E8%A7%A3-matlab-%E7%9A%84%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 理解 MATLAB 的统计工具</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83-%E7%BB%93%E6%9E%9C%E8%A7%A3%E8%AF%BB%E4%B8%8E%E5%BA%94%E7%94%A8%E8%BE%B9%E7%95%8C"><span class="nav-number">1.7.</span> <span class="nav-text">七, 结果解读与应用边界</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E6%95%B0%E7%9A%84%E5%A4%A7%E5%B0%8F-%E7%AC%A6%E5%8F%B7%E4%B8%8E%E6%98%BE%E8%91%97%E6%80%A7"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 系数的大小, 符号与显著性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E9%87%8D%E5%85%B1%E7%BA%BF%E6%80%A7%E4%B8%BA%E4%BB%80%E4%B9%88%E5%80%BC%E5%BE%97%E6%B3%A8%E6%84%8F"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 多重共线性为什么值得注意</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E7%9A%84%E4%BC%98%E7%82%B9%E4%B8%8E%E5%B1%80%E9%99%90"><span class="nav-number">1.7.3.</span> <span class="nav-text">7.3 模型的优点与局限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%85%E8%AF%BB%E5%9B%9E%E5%BD%92%E7%BB%93%E6%9E%9C%E6%97%B6%E7%9A%84%E6%A0%B8%E6%9F%A5%E8%A1%A8"><span class="nav-number">1.7.4.</span> <span class="nav-text">7.4 阅读回归结果时的核查表</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB-%E5%AD%A6%E4%B9%A0%E7%BB%83%E4%B9%A0"><span class="nav-number">1.8.</span> <span class="nav-text">八, 学习练习</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%A7%A3%E7%AD%94"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 参考解答</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D-%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99%E4%B8%8E%E7%BB%A7%E7%BB%AD%E5%AD%A6%E4%B9%A0"><span class="nav-number">1.9.</span> <span class="nav-text">九, 参考资料与继续学习</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="多元线性回归">19. 多元线性回归</h1>
+<h2 id="一-从一个因素走向多个因素">一, 从一个因素走向多个因素</h2>
+<p>一元线性回归用一个自变量解释一个数值指标.
+实际问题往往同时涉及多个因素: 建材销售量可能与推销开支, 客户账目,
+市场竞争和地区销售潜力有关; 水泥凝固时的放热量可能与多种成分的比例有关.
+多元线性回归把这些因素放在同一个模型中,
+研究它们与指标之间的数量关系.</p>
+<p>本章围绕两个例题展开. 销售例题说明怎样估计系数,
+检验模型并检查异常观测;
+水泥例题说明为什么"整体显著"与"各个系数显著"会出现不同结果,
+以及怎样进行简单的变量筛选. 掌握这些方法,
+可以为销售资源配置和材料性能分析提供定量依据,
+减少仅凭直觉作决策的偏差.</p>
+<p>模型的一般形式为</p>
+<p><span class="math display">\[
+y_i=\beta_0+\beta_1x_{i1}+\cdots+\beta_kx_{ik}+\varepsilon_i,
+\qquad i=1,2,\ldots,n.
+\]</span></p>
+<p>其中, <span class="math inline">\(y_i\)</span> 表示第 <span
+class="math inline">\(i\)</span> 个观测的响应; 写出含误差项的随机模型时,
+它代表相应的随机响应, <span class="math inline">\(x_{ij}\)</span> 是第
+<span class="math inline">\(j\)</span> 个自变量, <span
+class="math inline">\(\beta_0\)</span> 是截距, <span
+class="math inline">\(\beta_j\)</span> 是回归系数, <span
+class="math inline">\(\varepsilon_i\)</span> 是模型未解释的随机误差.
+估计系数后得到</p>
+<p><span class="math display">\[
+\hat y_i=\hat\beta_0+\hat\beta_1x_{i1}+\cdots+\hat\beta_kx_{ik}.
+\]</span></p>
+<p>"线性"指模型对参数 <span class="math inline">\(\beta_j\)</span>
+是线性的. 例如, 把 <span class="math inline">\(x^2\)</span>
+作为一个自变量后, 模型 <span
+class="math inline">\(y=\beta_0+\beta_1x+\beta_2x^2+\varepsilon\)</span>
+仍属于线性回归. 多个因素共同作用时,
+也不要求每一幅单变量散点图都呈现明显的直线趋势.</p>
+<p>在其他自变量保持不变的条件下, <span
+class="math inline">\(x_j\)</span> 增加一个单位, 模型预测的平均响应改变
+<span class="math inline">\(\hat\beta_j\)</span> 个单位.
+这个解释有两个前提: 变量组合在实际问题中有意义,
+且比较范围没有明显超出已有数据. 由观察数据得到的回归系数,
+不能直接解释为采取某项措施所产生的因果效果.</p>
+<h2 id="二-模型原理与数学基础">二, 模型原理与数学基础</h2>
+<h3 id="把多个方程写成一个矩阵方程">2.1 把多个方程写成一个矩阵方程</h3>
+<p>每行是一组观测, 每列是一个变量. 将 <span
+class="math inline">\(n\)</span> 个观测整理为响应列向量,
+参数列向量与设计矩阵:</p>
+<p><span class="math display">\[
+Y=(y_1,y_2,\ldots,y_n)^{\mathsf T},\qquad
+\beta=(\beta_0,\beta_1,\ldots,\beta_k)^{\mathsf T},\qquad
+\varepsilon=(\varepsilon_1,\varepsilon_2,\ldots,\varepsilon_n)^{\mathsf
+T}.
+\]</span></p>
+<p><span class="math display">\[
+X=\begin{pmatrix}
+1&amp;x_{11}&amp;\cdots&amp;x_{1k}\\
+1&amp;x_{21}&amp;\cdots&amp;x_{2k}\\
+\vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
+1&amp;x_{n1}&amp;\cdots&amp;x_{nk}
+\end{pmatrix}.
+\]</span></p>
+<p>于是模型为</p>
+<p><span class="math display">\[
+Y=X\beta+\varepsilon.
+\]</span></p>
+<p><span class="math inline">\(X\)</span> 称为设计矩阵, 维数为 <span
+class="math inline">\(n\times(k+1)\)</span>, <span
+class="math inline">\(\beta\)</span> 为 <span
+class="math inline">\((k+1)\times1\)</span>, 所以 <span
+class="math inline">\(X\beta\)</span> 是 <span
+class="math inline">\(n\times1\)</span> 的响应列向量. 它的第一列全为 1,
+用来估计截距. 因此, <span class="math inline">\(k\)</span> 个自变量对应
+<span class="math inline">\(k+1\)</span> 个待估参数.
+两个自变量的拟合方程在三维空间中是一张平面;
+更多自变量对应高维空间中的超平面.</p>
+<p>满列秩表示设计矩阵的各列不能由其他列线性组合得到,
+避免不同系数组合给出完全相同的拟合值. 为保证最小二乘系数唯一, 应有 <span
+class="math inline">\(\operatorname{rank}(X)=k+1\)</span>;
+为了估计误差方差并开展检验, 还应有 <span
+class="math inline">\(n&gt;k+1\)</span>. 样本数足够并不自动保证满列秩,
+例如某个自变量完全由其他列线性组合而成时, 仍不能唯一估计全部系数.</p>
+<p>在给定 <span class="math inline">\(X\)</span> 的条件下,
+经典模型假设</p>
+<p><span class="math display">\[
+E(\varepsilon\mid X)=0,\qquad
+\operatorname{Cov}(\varepsilon\mid X)=\sigma^2I_n.
+\]</span></p>
+<p>条件均值是给定所有自变量后的理论平均值.
+这里的条件协方差矩阵表示误差均值为零, 方差相同且彼此不相关;
+不相关一般不等同于独立, 但在联合正态假设下等价. <span
+class="math inline">\(I_n\)</span> 是对角线为 1, 其余元素为 0
+的单位矩阵. 若进一步假设 <span class="math inline">\(\varepsilon\mid
+X\sim N(0,\sigma^2I_n)\)</span>, 就可使用本章的精确 <span
+class="math inline">\(t\)</span> 检验, <span
+class="math inline">\(F\)</span> 检验和区间公式. 正态性针对误差,
+不要求各自变量本身服从正态分布.</p>
+<h3 id="用最小二乘法估计系数">2.2 用最小二乘法估计系数</h3>
+<p>多个因素构成的预测值与实际观测有偏差.
+把偏差平方后相加可以避免正负抵消, 再选择使这个总和最小的系数.
+数学上写为:</p>
+<p><span class="math display">\[
+\min_{\beta}\ Q(\beta)=\sum\limits_{i=1}^{n}
+\left(y_i-\beta_0-\sum\limits_{j=1}^{k}\beta_jx_{ij}\right)^2
+=(Y-X\beta)^{\mathsf T}(Y-X\beta)
+\qquad
+\left\{\begin{aligned}
+\beta_j&amp;\in\mathbb R,\quad j=0,1,\ldots,k.
+\end{aligned}\right.
+\]</span></p>
+<p>对每个参数分别求偏导, 即观察目标随该参数变化的速率.
+把这些导数组成向量可写为 <span class="math inline">\(-2X^{\mathsf
+T}(Y-X\beta)\)</span>. 令它为零, 得到正规方程</p>
+<p><span class="math display">\[
+X^{\mathsf T}X\hat\beta=X^{\mathsf T}Y.
+\]</span></p>
+<p>当 <span class="math inline">\(X\)</span> 满列秩时, 理论表达式为</p>
+<p><span class="math display">\[
+\hat\beta=(X^{\mathsf T}X)^{-1}X^{\mathsf T}Y.
+\]</span></p>
+<p>这条公式便于理解; 编程时应使用软件的最小二乘求解器或 QR 分解,
+避免显式计算逆矩阵. 特别是自变量高度相关时,
+直接求逆更容易放大数值误差.</p>
+<p>拟合值与残差分别为</p>
+<p><span class="math display">\[
+\hat Y=X\hat\beta,\qquad e=Y-\hat Y.
+\]</span></p>
+<p>残差 <span class="math inline">\(e_i\)</span>
+是计算出来的观测值与拟合值之差; 误差 <span
+class="math inline">\(\varepsilon_i\)</span> 是模型中的未知随机量.
+二者应区分. 记残差自由度为 <span
+class="math inline">\(\nu=n-k-1\)</span>, 则</p>
+<p><span class="math display">\[
+\mathrm{SSE}=\sum\limits_{i=1}^{n}e_i^2,\qquad
+s^2=\frac{\mathrm{SSE}}{\nu},\qquad s=\sqrt{s^2}.
+\]</span></p>
+<p><span class="math inline">\(s^2\)</span> 是误差方差 <span
+class="math inline">\(\sigma^2\)</span> 的无偏估计, <span
+class="math inline">\(s\)</span> 称为残差标准误差. 训练集均方根误差为
+<span class="math inline">\(\sqrt{\mathrm{SSE}/n}\)</span>, 分母不同,
+不能与 <span class="math inline">\(s\)</span> 混写.</p>
+<h3 id="模型能解释多少变化">2.3 模型能解释多少变化</h3>
+<p>对含截距的模型, 定义</p>
+<p><span class="math display">\[
+\mathrm{SST}=\sum\limits_{i=1}^{n}(y_i-\bar y)^2,\qquad
+\mathrm{SSR}=\sum\limits_{i=1}^{n}(\hat y_i-\bar y)^2.
+\]</span></p>
+<p>最小二乘拟合满足 <span
+class="math inline">\(\mathrm{SST}=\mathrm{SSR}+\mathrm{SSE}\)</span>.
+当 <span class="math inline">\(\mathrm{SST}&gt;0\)</span> 时,
+决定系数为</p>
+<p><span class="math display">\[
+R^2=\frac{\mathrm{SSR}}{\mathrm{SST}}
+=1-\frac{\mathrm{SSE}}{\mathrm{SST}}.
+\]</span></p>
+<p>例如, <span class="math inline">\(R^2=0.90\)</span>
+表示模型解释了本组样本中约 90% 的因变量离差平方和,
+不能解释为"每一次预测都有 90% 的准确率". 复相关系数为 <span
+class="math inline">\(R=\sqrt{R^2}\)</span>, 而不是 <span
+class="math inline">\(\mathrm{SSR}/\mathrm{SST}\)</span>.</p>
+<p>在相同观测, 同一响应及包含截距的嵌套模型中, 增加自变量不会使训练集的
+<span class="math inline">\(R^2\)</span> 减小, 即使新增变量价值不大.
+因此, 还可查看调整决定系数</p>
+<p><span class="math display">\[
+\bar R^2=1-\frac{\mathrm{SSE}/(n-k-1)}{\mathrm{SST}/(n-1)}.
+\]</span></p>
+<p>调整决定系数考虑了参数数量, 但也不能单独证明模型的预测能力.
+预测任务还需要留出数据或交叉验证.</p>
+<h3 id="整体-f-检验与单个系数-t-检验">2.4 整体 <span
+class="math inline">\(F\)</span> 检验与单个系数 <span
+class="math inline">\(t\)</span> 检验</h3>
+<p>整体 <span class="math inline">\(F\)</span> 检验考察</p>
+<p><span class="math display">\[
+H_0:\beta_1=\cdots=\beta_k=0,
+\qquad H_1:\text{至少一个斜率不为零}.
+\]</span></p>
+<p>检验统计量为</p>
+<p><span class="math display">\[
+F=\frac{\mathrm{SSR}/k}{\mathrm{SSE}/(n-k-1)}.
+\]</span></p>
+<p>在原假设和经典正态模型成立时, <span class="math inline">\(F\sim
+F(k,n-k-1)\)</span>. 若 <span
+class="math inline">\(p&lt;\alpha\)</span>, 则在显著性水平 <span
+class="math inline">\(\alpha\)</span> 下拒绝原假设.
+整体显著只表示这些自变量合在一起具有解释作用,
+不表示每个自变量都显著.</p>
+<p>当模型包含截距且 <span
+class="math inline">\(\mathrm{SSE}&gt;0\)</span> 时, 有</p>
+<p><span class="math display">\[
+F=\frac{n-k-1}{k}\frac{R^2}{1-R^2}.
+\]</span></p>
+<p>因此, 在样本量和自变量个数固定时, 整体 <span
+class="math inline">\(F\)</span> 检验也可以通过 <span
+class="math inline">\(R^2\)</span> 来表达, 二者反映同一整体检验,
+不能视为两份相互独立的证据.</p>
+<p>令 <span class="math inline">\(C=(X^{\mathsf
+T}X)^{-1}=(c_{ij})\)</span>, 行列依截距, 斜率顺序编号为 <span
+class="math inline">\(0,1,\ldots,k\)</span>, 则系数的标准误差为 <span
+class="math inline">\(s\sqrt{c_{jj}}\)</span>. 在原假设 <span
+class="math inline">\(H_0:\beta_j=0\)</span> 与经典正态条件成立时,
+使用</p>
+<p><span class="math display">\[
+t_j=\frac{\hat\beta_j}{s\sqrt{c_{jj}}},\qquad t_j\sim t(\nu).
+\]</span></p>
+<p>系数的 <span class="math inline">\(1-\alpha\)</span> 置信区间为</p>
+<p><span class="math display">\[
+\hat\beta_j\pm t_{1-\alpha/2,\nu}s\sqrt{c_{jj}}.
+\]</span></p>
+<p>标准误描述重复抽样时系数估计的波动, 不等同于观测残差. 这里 <span
+class="math inline">\(t_{1-\alpha/2,\nu}\)</span> 表示 <span
+class="math inline">\(t\)</span> 分布的累积概率为 <span
+class="math inline">\(1-\alpha/2\)</span> 的分位数. 95% 区间应使用 <span
+class="math inline">\(t_{0.975,\nu}\)</span>. 对于 95%
+区间所对应的双侧检验, 区间不包含 0 等价于 <span
+class="math inline">\(p&lt;0.05\)</span>. 一般置信水平 <span
+class="math inline">\(1-\alpha\)</span> 则对应 <span
+class="math inline">\(p&lt;\alpha\)</span>.区间包含 0 说明证据不足,
+不能由此证明该变量没有实际作用.</p>
+<p><span class="math inline">\(p\)</span> 值是在原假设及模型条件成立时,
+得到当前或更极端统计量的概率, 不是"原假设为真的概率". 很小的 <span
+class="math inline">\(p\)</span> 值应以科学计数法报告, 避免把显示为
+<code>0.0000</code> 的结果误写成精确的零.</p>
+<h3 id="点预测-均值区间与个体预测区间">2.5 点预测,
+均值区间与个体预测区间</h3>
+<p>给定新的自变量组合, 令 <span
+class="math inline">\(z=(1,x_1^*,\ldots,x_k^*)^{\mathsf T}\)</span>,
+则点预测为</p>
+<p><span class="math display">\[
+\hat y^*=z^{\mathsf T}\hat\beta.
+\]</span></p>
+<p>相同条件下的平均响应, 其 <span
+class="math inline">\(1-\alpha\)</span> 置信区间为</p>
+<p><span class="math display">\[
+\hat y^*\pm t_{1-\alpha/2,\nu}s\sqrt{z^{\mathsf T}Cz}.
+\]</span></p>
+<p>一个新的独立观测值, 其 <span class="math inline">\(1-\alpha\)</span>
+预测区间为</p>
+<p><span class="math display">\[
+\hat y^*\pm t_{1-\alpha/2,\nu}s\sqrt{1+z^{\mathsf T}Cz}.
+\]</span></p>
+<p>个体预测区间多出的"1"反映新观测本身的随机波动,
+所以比均值置信区间更宽. 两类区间不能混用.
+预测之前还要检查变量组合是否接近已有数据; 单个变量没有超出范围,
+也不保证多个变量的组合得到足够支持.</p>
+<h3 id="变量筛选怎样进行">2.6 变量筛选怎样进行</h3>
+<p>常见筛选方法包括前向选择, 后向剔除和双向逐步回归.
+前向选择从简单模型开始, 逐个尝试加入变量; 后向剔除从完整模型开始,
+逐个删除变量; 双向逐步回归在加入新变量后还会重新检查已入模变量.</p>
+<p>为了让程序容易理解, 本章水泥例题采用<strong>后向剔除</strong>:
+从四个自变量开始, 每次找出斜率中最大的 <span
+class="math inline">\(p\)</span> 值; 若超过设定的删除阈值 0.10,
+就删除对应变量并重新拟合; 否则停止. 截距始终保留. 0.10 是这里的筛选阈值,
+与前面示范检验所用的显著性水平 0.05 应区分.</p>
+<p>逐步筛选得到的是一个依赖数据, 起始模型和规则的候选模型.
+它不能保证找到全局最优模型, 也不能保证保留所有具有真实作用的因素.
+经过筛选后, 再直接使用普通系数 <span class="math inline">\(p\)</span>
+值和置信区间, 会忽略选择过程带来的不确定性; 本章用它们演示探索性分析,
+正式推断需另行设计.</p>
+<h2 id="三-建模与求解流程">三, 建模与求解流程</h2>
+<p>先明确因变量, 自变量和研究目的, 核查数据的记录, 单位与缺失值,
+再构建设计矩阵. 用最小二乘法拟合后, 应同时查看系数, 标准误差,
+整体检验和拟合指标. 随后结合残差,
+实际背景以及自变量之间的相关性检查模型, 必要时筛选变量并重新拟合.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">环节</th>
+<th style="text-align: center;">要做的事</th>
+<th style="text-align: center;">主要输出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">数据整理</td>
+<td style="text-align: center;">一行对应一个观测,
+核对变量含义与单位</td>
+<td style="text-align: center;">自变量数组 <span
+class="math inline">\(x\)</span>, 因变量 <span
+class="math inline">\(y\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">模型构造</td>
+<td style="text-align: center;">明确是否含截距, 检查满列秩</td>
+<td style="text-align: center;">设计矩阵 <span
+class="math inline">\(X\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">参数估计</td>
+<td style="text-align: center;">求解最小二乘问题</td>
+<td style="text-align: center;">系数, 拟合值, 残差</td>
+</tr>
+<tr>
+<td style="text-align: center;">统计检验</td>
+<td style="text-align: center;">检查整体 <span
+class="math inline">\(F\)</span> 检验和系数 <span
+class="math inline">\(t\)</span> 检验</td>
+<td style="text-align: center;"><span class="math inline">\(p\)</span>
+值, 置信区间</td>
+</tr>
+<tr>
+<td style="text-align: center;">模型诊断</td>
+<td style="text-align: center;">检查异常点, 异方差和多重共线性</td>
+<td style="text-align: center;">待核查观测及模型改进方向</td>
+</tr>
+<tr>
+<td style="text-align: center;">变量筛选</td>
+<td style="text-align: center;">结合目的, 背景及预先确定的规则</td>
+<td style="text-align: center;">可解释的候选模型</td>
+</tr>
+<tr>
+<td style="text-align: center;">预测应用</td>
+<td style="text-align: center;">检查适用范围, 区分均值与个体区间</td>
+<td style="text-align: center;">点预测和相应区间</td>
+</tr>
+</tbody>
+</table>
+<p>异常观测应先核查来源和业务背景. 若它是真实记录,
+就可能揭示模型遗漏的因素; 不能为了提高拟合指标而直接删除.</p>
+<h2 id="四-典型例题">四, 典型例题</h2>
+<h3 id="例题一-建材销售量的因素分析">4.1 例题一:
+建材销售量的因素分析</h3>
+<h4 id="问题与数据">4.1.1 问题与数据</h4>
+<p>设一家建材企业需要分析不同地区的销售量与四项指标的关系,
+以辅助资源安排. 以下 20 组数值用于教学示例, 缺少可核查的调查来源,
+不将其表述为某家真实企业的调查结论.因变量 <span
+class="math inline">\(y\)</span> 为建材销售量, 单位为千方, 即千立方米.
+自变量依次为: <span class="math inline">\(x_1\)</span> 推销开支, <span
+class="math inline">\(x_2\)</span> 实际账目数, <span
+class="math inline">\(x_3\)</span> 同类商品竞争数, <span
+class="math inline">\(x_4\)</span> 地区销售潜力.</p>
+<p>本例使用既定数值说明拟合过程, 四个自变量的单位及统计口径尚未明确,
+因而斜率只表示按本表记录尺度计算的变化量. 实际建模时,
+必须先明确开支的货币单位, 账目与竞争的计数范围以及销售潜力的测算规则,
+才能将它们用于业务解释; 不宜跨变量直接比较系数的绝对值大小.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">序号</th>
+<th style="text-align: center;"><span
+class="math inline">\(x_1\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(x_2\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(x_3\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(x_4\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(y\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">5.5</td>
+<td style="text-align: center;">31</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">79.3</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">2.5</td>
+<td style="text-align: center;">55</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">200.1</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">67</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">163.2</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">50</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">16</td>
+<td style="text-align: center;">200.1</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">38</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: center;">146</td>
+</tr>
+<tr>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">2.9</td>
+<td style="text-align: center;">71</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">17</td>
+<td style="text-align: center;">177.7</td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">30.9</td>
+</tr>
+<tr>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">56</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">291.9</td>
+</tr>
+<tr>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">42</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">160</td>
+</tr>
+<tr>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">6.5</td>
+<td style="text-align: center;">73</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">16</td>
+<td style="text-align: center;">339.4</td>
+</tr>
+<tr>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">5.5</td>
+<td style="text-align: center;">60</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">159.6</td>
+</tr>
+<tr>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">44</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">86.3</td>
+</tr>
+<tr>
+<td style="text-align: center;">13</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">50</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">237.5</td>
+</tr>
+<tr>
+<td style="text-align: center;">14</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">39</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">107.2</td>
+</tr>
+<tr>
+<td style="text-align: center;">15</td>
+<td style="text-align: center;">3.5</td>
+<td style="text-align: center;">55</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">155</td>
+</tr>
+<tr>
+<td style="text-align: center;">16</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">70</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">14</td>
+<td style="text-align: center;">201.4</td>
+</tr>
+<tr>
+<td style="text-align: center;">17</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">40</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">100.2</td>
+</tr>
+<tr>
+<td style="text-align: center;">18</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">50</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">135.8</td>
+</tr>
+<tr>
+<td style="text-align: center;">19</td>
+<td style="text-align: center;">7.5</td>
+<td style="text-align: center;">62</td>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">13</td>
+<td style="text-align: center;">223.3</td>
+</tr>
+<tr>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">59</td>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">195</td>
+</tr>
+</tbody>
+</table>
+<h4 id="拟合模型与检验系数">4.1.2 拟合模型与检验系数</h4>
+<p>取 <span class="math inline">\(n=20\)</span>, <span
+class="math inline">\(k=4\)</span>, 残差自由度为 <span
+class="math inline">\(20-4-1=15\)</span>. 对全部数据拟合, 得到</p>
+<p><span class="math display">\[
+\hat y=191.9158-0.7719x_1+3.1725x_2-19.6811x_3-0.4501x_4.
+\]</span></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">参数</th>
+<th style="text-align: center;">估计值</th>
+<th style="text-align: center;">95% 置信区间</th>
+<th style="text-align: center;">双侧 <span
+class="math inline">\(p\)</span> 值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">截距</td>
+<td style="text-align: center;">191.9158</td>
+<td style="text-align: center;">[103.1071, 280.7245]</td>
+<td style="text-align: center;"><span
+class="math inline">\(3.4283\times10^{-4}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(x_1\)</span></td>
+<td style="text-align: center;">-0.7719</td>
+<td style="text-align: center;">[-7.1445, 5.6007]</td>
+<td style="text-align: center;">0.799781</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(x_2\)</span></td>
+<td style="text-align: center;">3.1725</td>
+<td style="text-align: center;">[2.0640, 4.2809]</td>
+<td style="text-align: center;"><span
+class="math inline">\(2.0314\times10^{-5}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(x_3\)</span></td>
+<td style="text-align: center;">-19.6811</td>
+<td style="text-align: center;">[-25.1651, -14.1972]</td>
+<td style="text-align: center;"><span
+class="math inline">\(1.4886\times10^{-6}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(x_4\)</span></td>
+<td style="text-align: center;">-0.4501</td>
+<td style="text-align: center;">[-3.7284, 2.8283]</td>
+<td style="text-align: center;">0.773818</td>
+</tr>
+</tbody>
+</table>
+<p>整体结果为 <span class="math inline">\(R^2=0.903353\)</span>, <span
+class="math inline">\(\bar R^2=0.877580\)</span>, <span
+class="math inline">\(F(4,15)=35.050911\)</span>, 对应 <span
+class="math inline">\(p=1.9038\times10^{-7}\)</span>; 误差方差估计 <span
+class="math inline">\(s^2=644.651040\)</span>.</p>
+<p>整体检验表明四个因素合在一起具有显著的线性解释作用.
+在控制另外三个变量后, <span class="math inline">\(x_2\)</span>, <span
+class="math inline">\(x_3\)</span> 的系数在 0.05 水平下显著; <span
+class="math inline">\(x_1\)</span>, <span
+class="math inline">\(x_4\)</span> 的证据不足. 对 <span
+class="math inline">\(x_3\)</span> 的负系数, 应解释为条件关联:
+其他变量给定时, 竞争指标增大与较低的预测销售量相关.
+不能把这些结果直接当成增减推销开支或竞争数量的因果效应.</p>
+<h4 id="残差图与第-16-个观测">4.1.3 残差图与第 16 个观测</h4>
+<p><img src="/images/MultipleLinearRegression/MLR-4.png" alt="" style="width: 100%;"></p>
+<p><strong>图 19-1</strong> 横轴为观测序号, 圆点为残差,
+竖线为用于删除残差检验的逐点 95% 区间. 蓝色表示区间跨过零,
+红色表示应进一步核查; 这些竖线不是未来销售量的预测区间.</p>
+<p>第 16 个观测的实际销售量为 201.4, 拟合值约为 283.4245, 残差为
+-82.0245, 区间约为 [-94.9983, -69.0506], 明显不包含零.
+删除该观测后的外部学生化残差约为 -13.5600. 在本组数据和经典模型假设下,
+其双侧 <span class="math inline">\(p\)</span> 值约为 <span
+class="math inline">\(1.92\times10^{-9}\)</span>; 即使对 20 次筛查作
+Bonferroni 校正, 仍值得核查.</p>
+<p>图中仅第 16 个观测被标记. 程序保留了全部原始观测;
+实际分析应检查该地区是否存在记录差错, 特殊市场条件或遗漏变量.
+残差序号图也不能独自验证方差齐性或正态性, 还应查看残差与拟合值图,
+正态分位图, 并结合观测顺序判断相关性.</p>
+<p>进阶理解: 令帽子矩阵 <span class="math inline">\(H=X(X^{\mathsf
+T}X)^{-1}X^{\mathsf T}\)</span>, 其第 <span
+class="math inline">\(i\)</span> 个对角元为 <span
+class="math inline">\(h_{ii}\)</span>. 删除该观测后的方差估计为</p>
+<p><span class="math display">\[
+s_{(i)}^2=\frac{\mathrm{SSE}-e_i^2/(1-h_{ii})}{\nu-1},
+\]</span></p>
+<p>外部学生化残差为 <span
+class="math inline">\(e_i/[s_{(i)}\sqrt{1-h_{ii}}]\)</span>. 本图围绕
+<span class="math inline">\(e_i\)</span> 绘制半宽为 <span
+class="math inline">\(t_{0.975,\nu-1}s_{(i)}\sqrt{1-h_{ii}}\)</span>
+的区间, 用是否跨零来呈现同一个检验.</p>
+<h4 id="演示两种区间预测">4.1.4 演示两种区间预测</h4>
+<p>仅为演示计算, 取四个自变量的样本均值作为预测组合. 点预测为 <span
+class="math inline">\(\hat y^*=169.4950\)</span> 千立方米. 95%
+平均响应置信区间约为 [157.3940, 181.5960], 95% 新个体预测区间约为
+[114.0411, 224.9489].</p>
+<p>后一个区间更宽, 因为新增观测还具有自身的随机波动.
+这里没有新增真实地区的数据, 这个结果只用于说明公式和软件输出.</p>
+<h3 id="例题二-水泥凝固时的放热量">4.2 例题二: 水泥凝固时的放热量</h3>
+<h4 id="问题与数据-1">4.2.1 问题与数据</h4>
+<p>研究四种成分的比例与水泥凝固时放热量的关系. 下列 13
+组数据与经典水泥数据一致; <span class="math inline">\(x_1\)</span> 至
+<span class="math inline">\(x_4\)</span> 为四种成分的比例,
+按百分数数值记录, <span class="math inline">\(y\)</span> 为放热量,
+单位为 cal/g. 数据来源的变量说明见文末参考资料.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">序号</th>
+<th style="text-align: center;"><span
+class="math inline">\(x_1\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(x_2\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(x_3\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(x_4\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(y\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">26</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">60</td>
+<td style="text-align: center;">78.5</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">29</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: center;">52</td>
+<td style="text-align: center;">74.3</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">56</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">104.3</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">31</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">47</td>
+<td style="text-align: center;">87.6</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">52</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">33</td>
+<td style="text-align: center;">95.9</td>
+</tr>
+<tr>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">55</td>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">22</td>
+<td style="text-align: center;">109.2</td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">71</td>
+<td style="text-align: center;">17</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">102.7</td>
+</tr>
+<tr>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">31</td>
+<td style="text-align: center;">22</td>
+<td style="text-align: center;">44</td>
+<td style="text-align: center;">72.5</td>
+</tr>
+<tr>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">54</td>
+<td style="text-align: center;">18</td>
+<td style="text-align: center;">22</td>
+<td style="text-align: center;">93.1</td>
+</tr>
+<tr>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">21</td>
+<td style="text-align: center;">47</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">26</td>
+<td style="text-align: center;">115.9</td>
+</tr>
+<tr>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">40</td>
+<td style="text-align: center;">23</td>
+<td style="text-align: center;">34</td>
+<td style="text-align: center;">83.8</td>
+</tr>
+<tr>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">66</td>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">113.3</td>
+</tr>
+<tr>
+<td style="text-align: center;">13</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">68</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">109.4</td>
+</tr>
+</tbody>
+</table>
+<p>四项比例的合计接近常数, 因而自变量之间容易出现很强的线性关联.
+它们并非在每行都严格合计为 100, 含截距的完整设计矩阵仍然满列秩,
+但可能出现严重的多重共线性. 比例变量的"其他成分不变,
+某一成分增加"还应结合配方约束解释.</p>
+<h4 id="从完整模型开始">4.2.2 从完整模型开始</h4>
+<p>使用全部四个自变量, 得到</p>
+<p><span class="math display">\[
+\hat y=62.4054+1.5511x_1+0.5102x_2+0.1019x_3-0.1441x_4.
+\]</span></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">参数</th>
+<th style="text-align: center;">估计值</th>
+<th style="text-align: center;">95% 置信区间</th>
+<th style="text-align: center;">双侧 <span
+class="math inline">\(p\)</span> 值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">截距</td>
+<td style="text-align: center;">62.4054</td>
+<td style="text-align: center;">[-99.1786, 223.9893]</td>
+<td style="text-align: center;">0.399134</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(x_1\)</span></td>
+<td style="text-align: center;">1.5511</td>
+<td style="text-align: center;">[-0.1663, 3.2685]</td>
+<td style="text-align: center;">0.070822</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(x_2\)</span></td>
+<td style="text-align: center;">0.5102</td>
+<td style="text-align: center;">[-1.1589, 2.1792]</td>
+<td style="text-align: center;">0.500901</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(x_3\)</span></td>
+<td style="text-align: center;">0.1019</td>
+<td style="text-align: center;">[-1.6385, 1.8423]</td>
+<td style="text-align: center;">0.895923</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(x_4\)</span></td>
+<td style="text-align: center;">-0.1441</td>
+<td style="text-align: center;">[-1.7791, 1.4910]</td>
+<td style="text-align: center;">0.844071</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/images/MultipleLinearRegression/MLR-5.png" alt="" style="width: 100%;"></p>
+<p><strong>图 19-2</strong> 完整模型的系数区间图. 圆点为斜率估计,
+横线为逐个系数的 95% 置信区间, 虚线为零. 顶部给出模型整体统计量;
+截距列在上表中, 不放入斜率图.</p>
+<p>完整模型的 <span class="math inline">\(R^2=0.982376\)</span>,
+整体检验 <span class="math inline">\(F(4,8)=111.479172\)</span>, <span
+class="math inline">\(p=4.7562\times10^{-7}\)</span>, 但四个斜率的 <span
+class="math inline">\(p\)</span> 值均超过 0.05. 这并不矛盾:
+整体检验考察四个变量的共同解释能力,
+而单个系数检验考察控制其他变量后的额外信息. 成分比例高度相关时,
+单个系数的估计会很不稳定, 标准误差也可能变大.</p>
+<h4 id="按简单规则逐次剔除">4.2.3 按简单规则逐次剔除</h4>
+<p>从完整模型出发, 删除阈值设为 0.10. 每一步都重新拟合,
+不能一次性删掉所有暂时不显著的变量.</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">步骤</th>
+<th style="text-align: center;">当前自变量</th>
+<th style="text-align: center;">最大斜率 <span
+class="math inline">\(p\)</span> 值</th>
+<th style="text-align: center;">操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><span
+class="math inline">\(x_1,x_2,x_3,x_4\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(x_3\)</span>: 0.895923</td>
+<td style="text-align: center;">删除 <span
+class="math inline">\(x_3\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;"><span
+class="math inline">\(x_1,x_2,x_4\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(x_4\)</span>: 0.205395</td>
+<td style="text-align: center;">删除 <span
+class="math inline">\(x_4\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;"><span
+class="math inline">\(x_1,x_2\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(x_1\)</span>: <span
+class="math inline">\(2.6922\times10^{-7}\)</span></td>
+<td style="text-align: center;">两个斜率均满足保留规则, 停止</td>
+</tr>
+</tbody>
+</table>
+<p>最终候选模型为</p>
+<p><span class="math display">\[
+\hat y=52.5773+1.4683x_1+0.6623x_2.
+\]</span></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">参数</th>
+<th style="text-align: center;">估计值</th>
+<th style="text-align: center;">95% 置信区间</th>
+<th style="text-align: center;">双侧 <span
+class="math inline">\(p\)</span> 值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">截距</td>
+<td style="text-align: center;">52.5773</td>
+<td style="text-align: center;">[47.4834, 57.6713]</td>
+<td style="text-align: center;"><span
+class="math inline">\(5.4566\times10^{-10}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(x_1\)</span></td>
+<td style="text-align: center;">1.4683</td>
+<td style="text-align: center;">[1.1980, 1.7386]</td>
+<td style="text-align: center;"><span
+class="math inline">\(2.6922\times10^{-7}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(x_2\)</span></td>
+<td style="text-align: center;">0.6623</td>
+<td style="text-align: center;">[0.5601, 0.7644]</td>
+<td style="text-align: center;"><span
+class="math inline">\(5.0290\times10^{-8}\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><img src="/images/MultipleLinearRegression/MLR-6.png" alt="" style="width: 100%;"></p>
+<p><strong>图 19-3</strong> 蓝色的 <span
+class="math inline">\(x_1,x_2\)</span> 来自最终二元模型; 橙色的 <span
+class="math inline">\(x_3,x_4\)</span>
+分别来自"在二元模型中单独加入该变量"的两个试拟合模型,
+不能把橙色系数拼接进同一个最终方程.</p>
+<p>单独加入 <span class="math inline">\(x_3\)</span> 时, 该系数估计约为
+0.2500, <span class="math inline">\(p=0.208889\)</span>; 单独加入 <span
+class="math inline">\(x_4\)</span> 时, 该系数估计约为 -0.2365, <span
+class="math inline">\(p=0.205395\)</span>. 在这里的筛选阈值下,
+两者均未显示足够的额外贡献. 图中的普通 <span
+class="math inline">\(p\)</span> 值和区间不包含筛选过程的调整,
+应作为探索性结果阅读.</p>
+<h4 id="比较两个模型">4.2.4 比较两个模型</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">指标</th>
+<th style="text-align: center;">四元完整模型</th>
+<th style="text-align: center;">二元候选模型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">自变量数量</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td style="text-align: center;">残差自由度</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">10</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(R^2\)</span></td>
+<td style="text-align: center;">0.982376</td>
+<td style="text-align: center;">0.978678</td>
+</tr>
+<tr>
+<td style="text-align: center;">调整 <span
+class="math inline">\(R^2\)</span></td>
+<td style="text-align: center;">0.973563</td>
+<td style="text-align: center;">0.974414</td>
+</tr>
+<tr>
+<td style="text-align: center;">整体 <span
+class="math inline">\(F\)</span></td>
+<td style="text-align: center;">111.479172</td>
+<td style="text-align: center;">229.503697</td>
+</tr>
+<tr>
+<td style="text-align: center;">整体 <span
+class="math inline">\(F\)</span> 的 <span
+class="math inline">\(p\)</span> 值</td>
+<td style="text-align: center;"><span
+class="math inline">\(4.7562\times10^{-7}\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(4.4066\times10^{-9}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">残差平方和 SSE</td>
+<td style="text-align: center;">47.863639</td>
+<td style="text-align: center;">57.904483</td>
+</tr>
+<tr>
+<td style="text-align: center;">残差标准误差 <span
+class="math inline">\(s\)</span></td>
+<td style="text-align: center;">2.446008</td>
+<td style="text-align: center;">2.406335</td>
+</tr>
+<tr>
+<td style="text-align: center;">训练集 RMSE</td>
+<td style="text-align: center;">1.918807</td>
+<td style="text-align: center;">2.110495</td>
+</tr>
+</tbody>
+</table>
+<p>删减变量后, SSE 增大, 训练集 <span class="math inline">\(R^2\)</span>
+下降; 由于自由度增大, 残差标准误差却略有下降. 这也说明,
+残差标准误差与训练集 RMSE 必须分开报告.</p>
+<p>两个模型的整体 <span class="math inline">\(F\)</span>
+检验都以"只有截距的模型"为参照, 分子自由度不同. <strong>不能仅凭整体
+<span class="math inline">\(F\)</span> 值从 111.48 增加到 229.50,
+就认定二元模型更好.</strong> 为比较同时删除 <span
+class="math inline">\(x_3,x_4\)</span> 的影响, 可使用嵌套模型检验.</p>
+<p>进阶理解: 比较时必须使用相同响应, 相同观测行,
+且受限模型的设计列空间包含在完整模型内, 本节还要求同方差与无误差相关.
+设完整模型有 <span class="math inline">\(k_F\)</span> 个自变量,
+删减模型有 <span class="math inline">\(k_R\)</span> 个自变量, 则</p>
+<p><span class="math display">\[
+F_{\mathrm{remove}}=
+\frac{(\mathrm{SSE}_R-\mathrm{SSE}_F)/(k_F-k_R)}
+{\mathrm{SSE}_F/(n-k_F-1)}.
+\]</span></p>
+<p>本例检验 <span class="math inline">\(H_0:\beta_3=\beta_4=0\)</span>,
+得到 <span class="math inline">\(F(2,8)=0.839121\)</span>, <span
+class="math inline">\(p=0.466847\)</span>.
+在把这组待检验变量视为事先确定, 且经典模型条件成立的情况下,
+没有足够证据拒绝同时删除两项的限制. 由于本章模型来自同一组数据的筛选,
+该检验仍应作为探索性比较, 不能据此证明两个成分没有作用.</p>
+<p>二元模型用较少变量保留了接近的样本解释能力, 可以作为简洁的候选模型.
+是否适合实际预测, 还需新的数据或把整个筛选流程放入交叉验证中评估;
+这里不把它称为已经证明的"最优模型".</p>
+<h4 id="用回归平面理解模型">4.2.5 用回归平面理解模型</h4>
+<p><img src="/images/MultipleLinearRegression/MLR-7.png" alt="" style="width: 100%;"></p>
+<p><strong>图 19-4</strong> 彩色平面表示 <span
+class="math inline">\(\hat y=52.5773+1.4683x_1+0.6623x_2\)</span>,
+黑点为实际观测. 平面只绘制在样本的 <span
+class="math inline">\((x_1,x_2)\)</span> 点围成的凸包区域内,
+避免用负的成分比例或远离样本的组合展示结果.</p>
+<p>黑点与平面在竖直方向的差就是残差.
+平面的倾斜方向直观呈现两个系数的正负和大小,
+但比例约束以及未入模成分的变化仍然存在; 图形不表示任意配方组合都可实施,
+也不提供因果证明.</p>
+<h2 id="五-简单易懂的-python-实现">五, 简单易懂的 Python 实现</h2>
+<h3 id="输入矩阵与函数调用">5.1 输入矩阵与函数调用</h3>
+<p>首次使用可在终端安装所需库:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -m pip install numpy scipy matplotlib statsmodels</span><br></pre></td></tr></table></figure>
+<p>NumPy 用数组保存数据. <code>data[:, :4]</code>
+取每行前四个数作为自变量, <code>data[:, 4]</code> 取第五个数作为响应.
+因而销售例题的 <code>x</code> 为 <span
+class="math inline">\(20\times4\)</span>, <code>y</code> 为长度 20
+的一维数组. <code>sm.add_constant(x, has_constant="add")</code>
+添加截距列, 使 <code>X</code> 为 <span
+class="math inline">\(20\times5\)</span>.
+<code>sm.OLS(y, X, missing="raise").fit()</code>
+将响应与设计矩阵交给普通最小二乘模型, 返回拟合结果.
+默认使用经典同方差的系数标准误与检验; 代码同时检查有限数据和满列秩.</p>
+<p>两个例题的完整程序均包含全部数据, 可以分别保存为
+<code>sales_regression.py</code> 和 <code>cement_regression.py</code>
+运行. Python 的列编号从 0 开始, 列 <code>0,1,2,3</code> 对应数学变量
+<span class="math inline">\(x_1,x_2,x_3,x_4\)</span>.
+筛选时改变的是取出的列, 不能改变响应观测的顺序.</p>
+<h3 id="销售例题的完整代码">5.2 销售例题的完整代码</h3>
+<p>程序按"录入数据—构造矩阵—拟合—检查残差—演示预测—绘图"的顺序编写.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pathlib <span class="keyword">import</span> Path</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.stats <span class="keyword">import</span> t</span><br><span class="line"><span class="keyword">import</span> statsmodels.api <span class="keyword">as</span> sm</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 每行依次为 x1、x2、x3、x4、销售量；保留全部 20 个观测。</span></span><br><span class="line">data = np.array([</span><br><span class="line">    [<span class="number">5.5</span>, <span class="number">31</span>, <span class="number">10</span>, <span class="number">8</span>, <span class="number">79.3</span>],</span><br><span class="line">    [<span class="number">2.5</span>, <span class="number">55</span>, <span class="number">8</span>, <span class="number">6</span>, <span class="number">200.1</span>],</span><br><span class="line">    [<span class="number">8</span>, <span class="number">67</span>, <span class="number">12</span>, <span class="number">9</span>, <span class="number">163.2</span>],</span><br><span class="line">    [<span class="number">3</span>, <span class="number">50</span>, <span class="number">7</span>, <span class="number">16</span>, <span class="number">200.1</span>],</span><br><span class="line">    [<span class="number">3</span>, <span class="number">38</span>, <span class="number">8</span>, <span class="number">15</span>, <span class="number">146</span>],</span><br><span class="line">    [<span class="number">2.9</span>, <span class="number">71</span>, <span class="number">12</span>, <span class="number">17</span>, <span class="number">177.7</span>],</span><br><span class="line">    [<span class="number">8</span>, <span class="number">30</span>, <span class="number">12</span>, <span class="number">8</span>, <span class="number">30.9</span>],</span><br><span class="line">    [<span class="number">9</span>, <span class="number">56</span>, <span class="number">5</span>, <span class="number">10</span>, <span class="number">291.9</span>],</span><br><span class="line">    [<span class="number">4</span>, <span class="number">42</span>, <span class="number">8</span>, <span class="number">4</span>, <span class="number">160</span>],</span><br><span class="line">    [<span class="number">6.5</span>, <span class="number">73</span>, <span class="number">5</span>, <span class="number">16</span>, <span class="number">339.4</span>],</span><br><span class="line">    [<span class="number">5.5</span>, <span class="number">60</span>, <span class="number">11</span>, <span class="number">7</span>, <span class="number">159.6</span>],</span><br><span class="line">    [<span class="number">5</span>, <span class="number">44</span>, <span class="number">12</span>, <span class="number">12</span>, <span class="number">86.3</span>],</span><br><span class="line">    [<span class="number">6</span>, <span class="number">50</span>, <span class="number">6</span>, <span class="number">6</span>, <span class="number">237.5</span>],</span><br><span class="line">    [<span class="number">5</span>, <span class="number">39</span>, <span class="number">10</span>, <span class="number">4</span>, <span class="number">107.2</span>],</span><br><span class="line">    [<span class="number">3.5</span>, <span class="number">55</span>, <span class="number">10</span>, <span class="number">4</span>, <span class="number">155</span>],</span><br><span class="line">    [<span class="number">8</span>, <span class="number">70</span>, <span class="number">6</span>, <span class="number">14</span>, <span class="number">201.4</span>],</span><br><span class="line">    [<span class="number">6</span>, <span class="number">40</span>, <span class="number">11</span>, <span class="number">6</span>, <span class="number">100.2</span>],</span><br><span class="line">    [<span class="number">4</span>, <span class="number">50</span>, <span class="number">11</span>, <span class="number">8</span>, <span class="number">135.8</span>],</span><br><span class="line">    [<span class="number">7.5</span>, <span class="number">62</span>, <span class="number">9</span>, <span class="number">13</span>, <span class="number">223.3</span>],</span><br><span class="line">    [<span class="number">7</span>, <span class="number">59</span>, <span class="number">9</span>, <span class="number">11</span>, <span class="number">195</span>],</span><br><span class="line">], dtype=<span class="built_in">float</span>)</span><br><span class="line">x, y = data[:, :<span class="number">4</span>], data[:, <span class="number">4</span>]</span><br><span class="line">X = sm.add_constant(x, has_constant=<span class="string">&quot;add&quot;</span>)  <span class="comment"># 第一列为常数项 1。</span></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> np.isfinite(data).<span class="built_in">all</span>() <span class="keyword">or</span> np.linalg.matrix_rank(X) &lt; X.shape[<span class="number">1</span>]:</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&quot;Check missing values and dependent predictors&quot;</span>)</span><br><span class="line">model = sm.OLS(y, X, missing=<span class="string">&quot;raise&quot;</span>).fit()</span><br><span class="line"><span class="built_in">print</span>(model.summary())</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Coefficient 95% CI:\n&quot;</span>, model.conf_int())</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;[R2, F, p, MSE] =&quot;</span>, model.rsquared, model.fvalue,</span><br><span class="line">      model.f_pvalue, model.mse_resid)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 利用删除该观测后估计的方差，绘制残差区间以筛查异常观测。</span></span><br><span class="line">influence = model.get_influence()</span><br><span class="line">r = model.resid</span><br><span class="line">h = influence.hat_matrix_diag</span><br><span class="line">s_deleted = np.sqrt(influence.sigma2_not_obsi)</span><br><span class="line">half = t.ppf(<span class="number">.975</span>, model.df_resid-<span class="number">1</span>) * s_deleted * np.sqrt(<span class="number">1</span>-h)</span><br><span class="line">rint = np.column_stack((r-half, r+half))</span><br><span class="line">flag = (rint[:, <span class="number">0</span>] &gt; <span class="number">0</span>) | (rint[:, <span class="number">1</span>] &lt; <span class="number">0</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Flagged cases (numbered from 1):&quot;</span>, np.flatnonzero(flag)+<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;LOO RMSE =&quot;</span>, np.sqrt(np.mean((r/(<span class="number">1</span>-h))**<span class="number">2</span>)))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 以自变量的样本均值演示预测，不代表新增的真实地区。</span></span><br><span class="line">new_X = np.r_[<span class="number">1.</span>, x.mean(axis=<span class="number">0</span>)].reshape(<span class="number">1</span>, -<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Prediction at predictor means:\n&quot;</span>,</span><br><span class="line">      model.get_prediction(new_X).summary_frame(alpha=<span class="number">.05</span>))</span><br><span class="line"></span><br><span class="line">out = Path(__file__).resolve().parents[<span class="number">1</span>] / <span class="string">&quot;images&quot;</span> / <span class="string">&quot;MultipleLinearRegression&quot;</span></span><br><span class="line">out.mkdir(parents=<span class="literal">True</span>, exist_ok=<span class="literal">True</span>)</span><br><span class="line">fig, ax = plt.subplots(figsize=(<span class="number">10</span>, <span class="number">5</span>), constrained_layout=<span class="literal">True</span>)</span><br><span class="line"><span class="keyword">for</span> value, color, label <span class="keyword">in</span> [(<span class="literal">False</span>, <span class="string">&quot;tab:blue&quot;</span>, <span class="string">&quot;Unflagged&quot;</span>),</span><br><span class="line">                            (<span class="literal">True</span>, <span class="string">&quot;tab:red&quot;</span>, <span class="string">&quot;Investigate&quot;</span>)]:</span><br><span class="line">    idx = np.flatnonzero(flag == value)</span><br><span class="line">    ax.errorbar(idx+<span class="number">1</span>, r[idx], yerr=half[idx], fmt=<span class="string">&quot;o&quot;</span>, capsize=<span class="number">3</span>,</span><br><span class="line">                color=color, label=label)</span><br><span class="line">ax.axhline(<span class="number">0</span>, color=<span class="string">&quot;gray&quot;</span>, linestyle=<span class="string">&quot;--&quot;</span>)</span><br><span class="line">ax.<span class="built_in">set</span>(xlabel=<span class="string">&quot;Case number&quot;</span>, ylabel=<span class="string">&quot;Residual&quot;</span>, xticks=np.arange(<span class="number">1</span>,<span class="number">21</span>))</span><br><span class="line">ax.legend()</span><br><span class="line"><span class="keyword">for</span> extension <span class="keyword">in</span> (<span class="string">&quot;png&quot;</span>, <span class="string">&quot;svg&quot;</span>):</span><br><span class="line">    fig.savefig(out / <span class="string">f&quot;MLR-4.<span class="subst">&#123;extension&#125;</span>&quot;</span>, dpi=<span class="number">300</span>)</span><br><span class="line">plt.close(fig)</span><br></pre></td></tr></table></figure>
+<p><code>model.params</code> 的位置依次对应截距与输入列, 销售模型中为
+<span
+class="math inline">\((\hat\beta_0,\hat\beta_1,\ldots,\hat\beta_4)\)</span>.
+<code>model.params</code> 是系数, <code>model.conf_int()</code>
+是系数区间, <code>model.resid</code> 是残差,
+<code>model.mse_resid</code> 是 <span
+class="math inline">\(s^2\)</span>.
+<code>get_prediction(...).summary_frame()</code> 中,
+<code>mean_ci_lower/upper</code> 对应平均响应区间,
+<code>obs_ci_lower/upper</code> 对应新个体预测区间.
+<code>model.summary()</code> 中的 <code>P&gt;|t|</code> 是系数的双侧检验
+<span class="math inline">\(p\)</span> 值.</p>
+<p>程序输出的留一法 RMSE 约为 29.862919,
+用于展示固定四元模型在逐个留出观测时的误差计算. 它并不替代残差诊断,
+也不能据此断言模型已经满足预测应用要求.</p>
+<h3 id="水泥例题的完整代码">5.3 水泥例题的完整代码</h3>
+<p><code>fit_model</code> 根据指定列拟合; <code>while</code>
+循环实现后向剔除; <code>coefficient_plot</code> 负责两幅系数图.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pathlib <span class="keyword">import</span> Path</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> statsmodels.api <span class="keyword">as</span> sm</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 每行依次为 x1、x2、x3、x4、放热量。</span></span><br><span class="line">data = np.array([</span><br><span class="line">    [<span class="number">7</span>, <span class="number">26</span>, <span class="number">6</span>, <span class="number">60</span>, <span class="number">78.5</span>],</span><br><span class="line">    [<span class="number">1</span>, <span class="number">29</span>, <span class="number">15</span>, <span class="number">52</span>, <span class="number">74.3</span>],</span><br><span class="line">    [<span class="number">11</span>, <span class="number">56</span>, <span class="number">8</span>, <span class="number">20</span>, <span class="number">104.3</span>],</span><br><span class="line">    [<span class="number">11</span>, <span class="number">31</span>, <span class="number">8</span>, <span class="number">47</span>, <span class="number">87.6</span>],</span><br><span class="line">    [<span class="number">7</span>, <span class="number">52</span>, <span class="number">6</span>, <span class="number">33</span>, <span class="number">95.9</span>],</span><br><span class="line">    [<span class="number">11</span>, <span class="number">55</span>, <span class="number">9</span>, <span class="number">22</span>, <span class="number">109.2</span>],</span><br><span class="line">    [<span class="number">3</span>, <span class="number">71</span>, <span class="number">17</span>, <span class="number">6</span>, <span class="number">102.7</span>],</span><br><span class="line">    [<span class="number">1</span>, <span class="number">31</span>, <span class="number">22</span>, <span class="number">44</span>, <span class="number">72.5</span>],</span><br><span class="line">    [<span class="number">2</span>, <span class="number">54</span>, <span class="number">18</span>, <span class="number">22</span>, <span class="number">93.1</span>],</span><br><span class="line">    [<span class="number">21</span>, <span class="number">47</span>, <span class="number">4</span>, <span class="number">26</span>, <span class="number">115.9</span>],</span><br><span class="line">    [<span class="number">1</span>, <span class="number">40</span>, <span class="number">23</span>, <span class="number">34</span>, <span class="number">83.8</span>],</span><br><span class="line">    [<span class="number">11</span>, <span class="number">66</span>, <span class="number">9</span>, <span class="number">12</span>, <span class="number">113.3</span>],</span><br><span class="line">    [<span class="number">10</span>, <span class="number">68</span>, <span class="number">8</span>, <span class="number">12</span>, <span class="number">109.4</span>],</span><br><span class="line">], dtype=<span class="built_in">float</span>)</span><br><span class="line">x, y = data[:, :<span class="number">4</span>], data[:, <span class="number">4</span>]</span><br><span class="line">out = Path(__file__).resolve().parents[<span class="number">1</span>] / <span class="string">&quot;images&quot;</span> / <span class="string">&quot;MultipleLinearRegression&quot;</span></span><br><span class="line">out.mkdir(parents=<span class="literal">True</span>, exist_ok=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fit_model</span>(<span class="params">columns</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;columns 使用从 0 开始的列编号；每个模型都包含常数项。&quot;&quot;&quot;</span></span><br><span class="line">    X = sm.add_constant(x[:, columns], has_constant=<span class="string">&quot;add&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> np.isfinite(data).<span class="built_in">all</span>() <span class="keyword">or</span> np.linalg.matrix_rank(X) &lt; X.shape[<span class="number">1</span>]:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;Check missing values and dependent predictors&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> sm.OLS(y, X, missing=<span class="string">&quot;raise&quot;</span>).fit()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 后向剔除：若最大的斜率 p 值超过 0.10，就删除对应变量。</span></span><br><span class="line"><span class="comment"># 这只是简单的筛选规则，不能保证找到全局最优模型。</span></span><br><span class="line">columns = [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line">full = fit_model(columns)</span><br><span class="line"><span class="keyword">while</span> columns:</span><br><span class="line">    current = fit_model(columns)</span><br><span class="line">    j = <span class="built_in">int</span>(np.argmax(current.pvalues[<span class="number">1</span>:]))</span><br><span class="line">    largest_p = current.pvalues[j+<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">if</span> largest_p &lt;= <span class="number">.10</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    removed = columns.pop(j)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Remove x<span class="subst">&#123;removed+<span class="number">1</span>&#125;</span>: p=<span class="subst">&#123;largest_p:<span class="number">.6</span>f&#125;</span>&quot;</span>)</span><br><span class="line">reduced = fit_model(columns)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Retained variables:&quot;</span>, [<span class="string">f&quot;x<span class="subst">&#123;j+<span class="number">1</span>&#125;</span>&quot;</span> <span class="keyword">for</span> j <span class="keyword">in</span> columns])</span><br><span class="line"><span class="built_in">print</span>(reduced.summary())</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;[R2, adjusted R2, F, p, residual standard error] =&quot;</span>,</span><br><span class="line">      reduced.rsquared, reduced.rsquared_adj, reduced.fvalue,</span><br><span class="line">      reduced.f_pvalue, np.sqrt(reduced.mse_resid))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">coefficient_plot</span>(<span class="params">model, model_columns, filename, show_candidates=<span class="literal">False</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;未入模变量分别在当前模型中尝试加入，并单独计算系数和区间。&quot;&quot;&quot;</span></span><br><span class="line">    fig, ax = plt.subplots(figsize=(<span class="number">9</span>, <span class="number">5.5</span>), constrained_layout=<span class="literal">True</span>)</span><br><span class="line">    ax.axvline(<span class="number">0</span>, color=<span class="string">&quot;gray&quot;</span>, linestyle=<span class="string">&quot;--&quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>):</span><br><span class="line">        <span class="keyword">if</span> j <span class="keyword">in</span> model_columns:</span><br><span class="line">            fit = model</span><br><span class="line">            position = model_columns.index(j)+<span class="number">1</span></span><br><span class="line">            color, status = <span class="string">&quot;tab:blue&quot;</span>, <span class="string">&quot;included&quot;</span></span><br><span class="line">        <span class="keyword">elif</span> show_candidates:</span><br><span class="line">            fit = fit_model(model_columns+[j])</span><br><span class="line">            position = <span class="built_in">len</span>(fit.params)-<span class="number">1</span></span><br><span class="line">            color, status = <span class="string">&quot;tab:orange&quot;</span>, <span class="string">&quot;if added alone&quot;</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        b = fit.params[position]</span><br><span class="line">        low, high = fit.conf_int()[position]</span><br><span class="line">        ax.errorbar(b, <span class="number">4</span>-j, xerr=[[b-low], [high-b]], fmt=<span class="string">&quot;o&quot;</span>,</span><br><span class="line">                    color=color, capsize=<span class="number">4</span>)</span><br><span class="line">        ax.text(<span class="number">1.02</span>, <span class="number">4</span>-j, <span class="string">f&quot;<span class="subst">&#123;status&#125;</span>: b=<span class="subst">&#123;b:<span class="number">.4</span>f&#125;</span>, p=<span class="subst">&#123;fit.pvalues[position]:<span class="number">.4</span>g&#125;</span>&quot;</span>,</span><br><span class="line">                transform=ax.get_yaxis_transform(), va=<span class="string">&quot;center&quot;</span>, fontsize=<span class="number">9</span>)</span><br><span class="line">    ax.<span class="built_in">set</span>(yticks=[<span class="number">4</span>,<span class="number">3</span>,<span class="number">2</span>,<span class="number">1</span>], yticklabels=[<span class="string">&quot;x1&quot;</span>,<span class="string">&quot;x2&quot;</span>,<span class="string">&quot;x3&quot;</span>,<span class="string">&quot;x4&quot;</span>],</span><br><span class="line">           xlabel=<span class="string">&quot;Coefficient with pointwise 95% CI&quot;</span>, ylim=(<span class="number">.5</span>, <span class="number">4.5</span>))</span><br><span class="line">    ax.set_title(<span class="string">f&quot;R2=<span class="subst">&#123;model.rsquared:<span class="number">.6</span>f&#125;</span>, adjusted R2=<span class="subst">&#123;model.rsquared_adj:<span class="number">.6</span>f&#125;</span>\n&quot;</span></span><br><span class="line">                 <span class="string">f&quot;F=<span class="subst">&#123;model.fvalue:<span class="number">.3</span>f&#125;</span>, p=<span class="subst">&#123;model.f_pvalue:<span class="number">.4</span>g&#125;</span>, &quot;</span></span><br><span class="line">                 <span class="string">f&quot;residual standard error=<span class="subst">&#123;np.sqrt(model.mse_resid):<span class="number">.5</span>f&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> extension <span class="keyword">in</span> (<span class="string">&quot;png&quot;</span>, <span class="string">&quot;svg&quot;</span>):</span><br><span class="line">        fig.savefig(out / <span class="string">f&quot;<span class="subst">&#123;filename&#125;</span>.<span class="subst">&#123;extension&#125;</span>&quot;</span>, dpi=<span class="number">300</span>, bbox_inches=<span class="string">&quot;tight&quot;</span>)</span><br><span class="line">    plt.close(fig)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">coefficient_plot(full, [<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>], <span class="string">&quot;MLR-5&quot;</span>)</span><br><span class="line">coefficient_plot(reduced, columns, <span class="string">&quot;MLR-6&quot;</span>, show_candidates=<span class="literal">True</span>)</span><br><span class="line"><span class="comment"># 本例保留 x1、x2；只在观测点围成的区域内绘制拟合平面。</span></span><br><span class="line"><span class="keyword">if</span> columns == [<span class="number">0</span>, <span class="number">1</span>]:</span><br><span class="line">    fig = plt.figure(figsize=(<span class="number">9</span>, <span class="number">6</span>), constrained_layout=<span class="literal">True</span>)</span><br><span class="line">    ax = fig.add_subplot(<span class="number">111</span>, projection=<span class="string">&quot;3d&quot;</span>)</span><br><span class="line">    ax.plot_trisurf(x[:, <span class="number">0</span>], x[:, <span class="number">1</span>], reduced.fittedvalues,</span><br><span class="line">                    cmap=<span class="string">&quot;viridis&quot;</span>, alpha=<span class="number">.65</span>, edgecolor=<span class="string">&quot;none&quot;</span>)</span><br><span class="line">    ax.scatter(x[:, <span class="number">0</span>], x[:, <span class="number">1</span>], y, color=<span class="string">&quot;black&quot;</span>, s=<span class="number">30</span>, label=<span class="string">&quot;Observed heat&quot;</span>)</span><br><span class="line">    ax.<span class="built_in">set</span>(xlabel=<span class="string">&quot;x1&quot;</span>, ylabel=<span class="string">&quot;x2&quot;</span>, zlabel=<span class="string">&quot;Heat&quot;</span>,</span><br><span class="line">           title=<span class="string">&quot;Two-variable fitted plane and observed responses&quot;</span>)</span><br><span class="line">    ax.view_init(elev=<span class="number">25</span>, azim=-<span class="number">125</span>)</span><br><span class="line">    ax.legend()</span><br><span class="line">    <span class="keyword">for</span> extension <span class="keyword">in</span> (<span class="string">&quot;png&quot;</span>, <span class="string">&quot;svg&quot;</span>):</span><br><span class="line">        fig.savefig(out / <span class="string">f&quot;MLR-7.<span class="subst">&#123;extension&#125;</span>&quot;</span>, dpi=<span class="number">300</span>)</span><br><span class="line">    plt.close(fig)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用嵌套 F 检验比较同时删除 x3、x4 前后的模型。</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Nested F-test (full versus reduced):&quot;</span>, full.compare_f_test(reduced))</span><br></pre></td></tr></table></figure>
+<p>关键输出为: 先删除 <span class="math inline">\(x_3\)</span>, 再删除
+<span class="math inline">\(x_4\)</span>, 最终保留 <span
+class="math inline">\(x_1,x_2\)</span>. 最后的嵌套检验返回三项:
+检验统计量, <span class="math inline">\(p\)</span>
+值和两个模型的参数数量差, 约为 <code>(0.839121, 0.466847, 2)</code>.</p>
+<p>程序没有把所有不显著变量一次性删掉,
+也没有把未入模变量的试拟合系数误当成最终系数. 图 19-4
+的绘制针对本例保留的两个变量; 如果替换数据后筛选结果改变,
+应据新的模型重新设计可视化.</p>
+<h2 id="六-matlab-实现与统计工具">六, MATLAB 实现与统计工具</h2>
+<h3 id="从设计矩阵到完整求解">6.1 从设计矩阵到完整求解</h3>
+<p>下面的函数自带两组数据, 不依赖统计工具箱. 保存为
+<code>mlr_analysis.m</code>, 在 MATLAB 中调用
+<code>out = mlr_analysis();</code>. 它通过 QR 分解求解, 用基础函数
+<code>betainc</code> 计算检验概率, 用 <code>fzero</code> 求解正的双侧
+<span class="math inline">\(t\)</span> 临界值. <code>betainc</code>
+是正则化不完全 Beta 函数, 可用于计算这里的 <span
+class="math inline">\(t\)</span> 与 <span
+class="math inline">\(F\)</span> 分布尾概率; <code>fzero</code>
+在程序给定的区间内求一元方程的零点.</p>
+<p>销售数据的自变量矩阵为 <span
+class="math inline">\(20\times4\)</span>, 响应由第五列取得.
+<code>fit_ols</code> 添加常数列后按截距在前, 斜率在后的顺序计算参数.
+<code>R\(Q'*y)</code> 对应方程 <span
+class="math inline">\(R\hat\beta=Q^{\mathsf T}Y\)</span>, 其中 <span
+class="math inline">\(X=QR\)</span>, <code>\</code> 是 MATLAB
+的方程求解运算符. 水泥筛选使用列编号 <code>1:4</code>, 与 Python 的
+<code>0:3</code> 对应. <code>out.retained</code> 依次为
+<code>[1 2]</code>, 不包含截距编号.</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">out</span> = <span class="title">mlr_analysis</span><span class="params">()</span></span></span><br><span class="line"><span class="comment">% Both datasets are included. No Statistics Toolbox is required.</span></span><br><span class="line">alpha=<span class="number">0.05</span>;</span><br><span class="line">sales=[</span><br><span class="line">    <span class="number">5.5</span> <span class="number">31</span> <span class="number">10</span> <span class="number">8</span> <span class="number">79.3</span>;</span><br><span class="line">    <span class="number">2.5</span> <span class="number">55</span> <span class="number">8</span> <span class="number">6</span> <span class="number">200.1</span>;</span><br><span class="line">    <span class="number">8</span> <span class="number">67</span> <span class="number">12</span> <span class="number">9</span> <span class="number">163.2</span>;</span><br><span class="line">    <span class="number">3</span> <span class="number">50</span> <span class="number">7</span> <span class="number">16</span> <span class="number">200.1</span>;</span><br><span class="line">    <span class="number">3</span> <span class="number">38</span> <span class="number">8</span> <span class="number">15</span> <span class="number">146</span>;</span><br><span class="line">    <span class="number">2.9</span> <span class="number">71</span> <span class="number">12</span> <span class="number">17</span> <span class="number">177.7</span>;</span><br><span class="line">    <span class="number">8</span> <span class="number">30</span> <span class="number">12</span> <span class="number">8</span> <span class="number">30.9</span>;</span><br><span class="line">    <span class="number">9</span> <span class="number">56</span> <span class="number">5</span> <span class="number">10</span> <span class="number">291.9</span>;</span><br><span class="line">    <span class="number">4</span> <span class="number">42</span> <span class="number">8</span> <span class="number">4</span> <span class="number">160</span>;</span><br><span class="line">    <span class="number">6.5</span> <span class="number">73</span> <span class="number">5</span> <span class="number">16</span> <span class="number">339.4</span>;</span><br><span class="line">    <span class="number">5.5</span> <span class="number">60</span> <span class="number">11</span> <span class="number">7</span> <span class="number">159.6</span>;</span><br><span class="line">    <span class="number">5</span> <span class="number">44</span> <span class="number">12</span> <span class="number">12</span> <span class="number">86.3</span>;</span><br><span class="line">    <span class="number">6</span> <span class="number">50</span> <span class="number">6</span> <span class="number">6</span> <span class="number">237.5</span>;</span><br><span class="line">    <span class="number">5</span> <span class="number">39</span> <span class="number">10</span> <span class="number">4</span> <span class="number">107.2</span>;</span><br><span class="line">    <span class="number">3.5</span> <span class="number">55</span> <span class="number">10</span> <span class="number">4</span> <span class="number">155</span>;</span><br><span class="line">    <span class="number">8</span> <span class="number">70</span> <span class="number">6</span> <span class="number">14</span> <span class="number">201.4</span>;</span><br><span class="line">    <span class="number">6</span> <span class="number">40</span> <span class="number">11</span> <span class="number">6</span> <span class="number">100.2</span>;</span><br><span class="line">    <span class="number">4</span> <span class="number">50</span> <span class="number">11</span> <span class="number">8</span> <span class="number">135.8</span>;</span><br><span class="line">    <span class="number">7.5</span> <span class="number">62</span> <span class="number">9</span> <span class="number">13</span> <span class="number">223.3</span>;</span><br><span class="line">    <span class="number">7</span> <span class="number">59</span> <span class="number">9</span> <span class="number">11</span> <span class="number">195</span>;</span><br><span class="line">];</span><br><span class="line">cement=[</span><br><span class="line">    <span class="number">7</span> <span class="number">26</span> <span class="number">6</span> <span class="number">60</span> <span class="number">78.5</span>;</span><br><span class="line">    <span class="number">1</span> <span class="number">29</span> <span class="number">15</span> <span class="number">52</span> <span class="number">74.3</span>;</span><br><span class="line">    <span class="number">11</span> <span class="number">56</span> <span class="number">8</span> <span class="number">20</span> <span class="number">104.3</span>;</span><br><span class="line">    <span class="number">11</span> <span class="number">31</span> <span class="number">8</span> <span class="number">47</span> <span class="number">87.6</span>;</span><br><span class="line">    <span class="number">7</span> <span class="number">52</span> <span class="number">6</span> <span class="number">33</span> <span class="number">95.9</span>;</span><br><span class="line">    <span class="number">11</span> <span class="number">55</span> <span class="number">9</span> <span class="number">22</span> <span class="number">109.2</span>;</span><br><span class="line">    <span class="number">3</span> <span class="number">71</span> <span class="number">17</span> <span class="number">6</span> <span class="number">102.7</span>;</span><br><span class="line">    <span class="number">1</span> <span class="number">31</span> <span class="number">22</span> <span class="number">44</span> <span class="number">72.5</span>;</span><br><span class="line">    <span class="number">2</span> <span class="number">54</span> <span class="number">18</span> <span class="number">22</span> <span class="number">93.1</span>;</span><br><span class="line">    <span class="number">21</span> <span class="number">47</span> <span class="number">4</span> <span class="number">26</span> <span class="number">115.9</span>;</span><br><span class="line">    <span class="number">1</span> <span class="number">40</span> <span class="number">23</span> <span class="number">34</span> <span class="number">83.8</span>;</span><br><span class="line">    <span class="number">11</span> <span class="number">66</span> <span class="number">9</span> <span class="number">12</span> <span class="number">113.3</span>;</span><br><span class="line">    <span class="number">10</span> <span class="number">68</span> <span class="number">8</span> <span class="number">12</span> <span class="number">109.4</span>;</span><br><span class="line">];</span><br><span class="line">x=sales(:,<span class="number">1</span>:<span class="number">4</span>); y=sales(:,<span class="number">5</span>); sale=fit_ols(x,y,alpha);</span><br><span class="line">nu=sale.df; h=sale.h; e=sale.r;</span><br><span class="line">assert(nu&gt;<span class="number">1</span> &amp;&amp; all(<span class="number">1</span>-h&gt;<span class="number">0</span>));</span><br><span class="line">sdeleted2=(sale.SSE-e.^<span class="number">2.</span>/(<span class="number">1</span>-h))/(nu<span class="number">-1</span>);</span><br><span class="line">assert(all(sdeleted2&gt;<span class="number">0</span>));</span><br><span class="line">half=tcrit(alpha,nu<span class="number">-1</span>)*<span class="built_in">sqrt</span>(sdeleted2.*(<span class="number">1</span>-h));</span><br><span class="line">sale.rint=[e-half,e+half];</span><br><span class="line">sale.flag=sale.rint(:,<span class="number">1</span>)&gt;<span class="number">0</span> | sale.rint(:,<span class="number">2</span>)&lt;<span class="number">0</span>;</span><br><span class="line">sale.external=e./<span class="built_in">sqrt</span>(sdeleted2.*(<span class="number">1</span>-h));</span><br><span class="line">sale.outlier_p=<span class="built_in">betainc</span>((nu<span class="number">-1</span>)./(nu<span class="number">-1</span>+sale.external.^<span class="number">2</span>),(nu<span class="number">-1</span>)/<span class="number">2</span>,<span class="number">1</span>/<span class="number">2</span>);</span><br><span class="line">sale.bonferroni_p=<span class="built_in">min</span>(<span class="built_in">numel</span>(y)*sale.outlier_p,<span class="number">1</span>);</span><br><span class="line">sale.looRMSE=<span class="built_in">sqrt</span>(<span class="built_in">mean</span>((e./(<span class="number">1</span>-h)).^<span class="number">2</span>));</span><br><span class="line">z=[<span class="number">1</span> <span class="built_in">mean</span>(x,<span class="number">1</span>)]; y0=z*sale.b; h0=z*sale.C*z&#x27;;</span><br><span class="line">cm=tcrit(alpha,nu)*sale.s*<span class="built_in">sqrt</span>(h0);</span><br><span class="line">cp=tcrit(alpha,nu)*sale.s*<span class="built_in">sqrt</span>(<span class="number">1</span>+h0);</span><br><span class="line">sale.prediction=[y0,y0-cm,y0+cm,y0-cp,y0+cp];</span><br><span class="line"></span><br><span class="line">x=cement(:,<span class="number">1</span>:<span class="number">4</span>); y=cement(:,<span class="number">5</span>); cols=<span class="number">1</span>:<span class="number">4</span>;</span><br><span class="line">full=fit_ols(x,y,alpha); history=[];</span><br><span class="line"><span class="keyword">while</span> ~<span class="built_in">isempty</span>(cols)</span><br><span class="line">    current=fit_ols(x(:,cols),y,alpha);</span><br><span class="line">    [largest,<span class="built_in">j</span>]=<span class="built_in">max</span>(current.pvalues(<span class="number">2</span>:<span class="keyword">end</span>));</span><br><span class="line">    <span class="keyword">if</span> largest&lt;=<span class="number">0.10</span>, <span class="keyword">break</span>; <span class="keyword">end</span></span><br><span class="line">    history=[history;cols(<span class="built_in">j</span>),largest]; <span class="comment">%#ok&lt;AGROW&gt;</span></span><br><span class="line">    cols(<span class="built_in">j</span>)=[];</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">reduced=fit_ols(x(:,cols),y,alpha);</span><br><span class="line">q=full.k-reduced.k;</span><br><span class="line">Fnested=((reduced.SSE-full.SSE)/q)/full.mse;</span><br><span class="line">pnested=<span class="built_in">betainc</span>(full.df/(full.df+q*Fnested),full.df/<span class="number">2</span>,q/<span class="number">2</span>);</span><br><span class="line">out=struct(<span class="string">&#x27;sales&#x27;</span>,sale,<span class="string">&#x27;cement_full&#x27;</span>,full,<span class="string">&#x27;cement_reduced&#x27;</span>,reduced, ...</span><br><span class="line">    <span class="string">&#x27;retained&#x27;</span>,cols,<span class="string">&#x27;history&#x27;</span>,history,<span class="string">&#x27;nested&#x27;</span>,[Fnested,pnested,q]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Sales coefficient, lower CI, upper CI, p:&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>([sale.b,sale.bint,sale.pvalues]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Sales R2, F, p, MSE:&#x27;</span>); <span class="built_in">disp</span>([sale.R2,sale.F,sale.pF,sale.mse]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Flagged sales cases:&#x27;</span>);<span class="built_in">disp</span>(<span class="built_in">find</span>(sale.flag).&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Sales point, mean CI, observation PI:&#x27;</span>);<span class="built_in">disp</span>(sale.prediction);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Cement deletion history:&#x27;</span>);<span class="built_in">disp</span>(history);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Cement retained predictors:&#x27;</span>);<span class="built_in">disp</span>(cols);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Cement reduced coefficient, lower CI, upper CI, p:&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>([reduced.b,reduced.bint,reduced.pvalues]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Nested F, p, df difference:&#x27;</span>);<span class="built_in">disp</span>(out.nested);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">m</span> = <span class="title">fit_ols</span><span class="params">(x,y,alpha)</span></span></span><br><span class="line">y=y(:); n=<span class="built_in">numel</span>(y); X=[<span class="built_in">ones</span>(n,<span class="number">1</span>),x]; p=<span class="built_in">size</span>(X,<span class="number">2</span>); k=p<span class="number">-1</span>; df=n-p;</span><br><span class="line">assert(<span class="built_in">size</span>(x,<span class="number">1</span>)==n &amp;&amp; all(<span class="built_in">isfinite</span>(X(:))) &amp;&amp; all(<span class="built_in">isfinite</span>(y)));</span><br><span class="line">assert(rank(X)==p &amp;&amp; df&gt;<span class="number">0</span> &amp;&amp; k&gt;<span class="number">0</span>);</span><br><span class="line">[Q,R]=qr(X,<span class="number">0</span>); b=R\(Q&#x27;*y); r=y-X*b;</span><br><span class="line">SSE=sum(r.^<span class="number">2</span>); SST=sum((y-<span class="built_in">mean</span>(y)).^<span class="number">2</span>); SSR=sum((X*b-<span class="built_in">mean</span>(y)).^<span class="number">2</span>);</span><br><span class="line">assert(SST&gt;<span class="number">0</span> &amp;&amp; SSE&gt;<span class="number">0</span>); mse=SSE/df;</span><br><span class="line">Rinv=R\<span class="built_in">eye</span>(p); C=Rinv*Rinv&#x27;; se=<span class="built_in">sqrt</span>(mse*<span class="built_in">diag</span>(C));</span><br><span class="line">critical=tcrit(alpha,df); ci=[b-critical*se,b+critical*se];</span><br><span class="line">tvalue=b./se; pvalue=<span class="built_in">betainc</span>(df./(df+tvalue.^<span class="number">2</span>),df/<span class="number">2</span>,<span class="number">1</span>/<span class="number">2</span>);</span><br><span class="line">F=(SSR/k)/mse; pF=<span class="built_in">betainc</span>(df/(df+k*F),df/<span class="number">2</span>,k/<span class="number">2</span>);</span><br><span class="line">h=sum(Q.^<span class="number">2</span>,<span class="number">2</span>);</span><br><span class="line">m=struct(<span class="string">&#x27;b&#x27;</span>,b,<span class="string">&#x27;bint&#x27;</span>,ci,<span class="string">&#x27;r&#x27;</span>,r,<span class="string">&#x27;fitted&#x27;</span>,X*b,<span class="string">&#x27;X&#x27;</span>,X,<span class="string">&#x27;C&#x27;</span>,C, ...</span><br><span class="line"> <span class="string">&#x27;se&#x27;</span>,se,<span class="string">&#x27;pvalues&#x27;</span>,pvalue,<span class="string">&#x27;t&#x27;</span>,tvalue,<span class="string">&#x27;df&#x27;</span>,df,<span class="string">&#x27;k&#x27;</span>,k,<span class="string">&#x27;SSE&#x27;</span>,SSE, ...</span><br><span class="line"> <span class="string">&#x27;mse&#x27;</span>,mse,<span class="string">&#x27;s&#x27;</span>,<span class="built_in">sqrt</span>(mse),<span class="string">&#x27;R2&#x27;</span>,<span class="number">1</span>-SSE/SST, ...</span><br><span class="line"> <span class="string">&#x27;adjustedR2&#x27;</span>,<span class="number">1</span>-(SSE/df)/(SST/(n<span class="number">-1</span>)),<span class="string">&#x27;F&#x27;</span>,F,<span class="string">&#x27;pF&#x27;</span>,pF,<span class="string">&#x27;h&#x27;</span>,h);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">critical</span>=<span class="title">tcrit</span><span class="params">(alpha,df)</span></span></span><br><span class="line"><span class="comment">% For positive t: two-sided tail probability is betainc(df/(df+t^2),df/2,1/2).</span></span><br><span class="line">assert(alpha&gt;<span class="number">0</span> &amp;&amp; alpha&lt;<span class="number">1</span> &amp;&amp; df&gt;<span class="number">0</span>);</span><br><span class="line">upper=<span class="number">1</span>;</span><br><span class="line"><span class="keyword">while</span> <span class="built_in">betainc</span>(df/(df+upper^<span class="number">2</span>),df/<span class="number">2</span>,<span class="number">1</span>/<span class="number">2</span>)&gt;alpha, upper=<span class="number">2</span>*upper; <span class="keyword">end</span></span><br><span class="line">critical=fzero(@(z) <span class="built_in">betainc</span>(df/(df+z^<span class="number">2</span>),df/<span class="number">2</span>,<span class="number">1</span>/<span class="number">2</span>)-alpha,[<span class="number">0</span> upper]);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p><code>out.sales.prediction</code> 依次返回点预测, 均值区间下限与上限,
+个人预测区间下限与上限; <code>out.history</code>
+依次记录被删除的变量编号和该轮最大斜率 <span
+class="math inline">\(p\)</span> 值; <code>out.nested</code>
+返回嵌套检验的 <span class="math inline">\(F\)</span>, <span
+class="math inline">\(p\)</span> 值与参数数量差. <code>fit_ols</code> 的
+<code>mse</code> 对应误差方差估计 <span
+class="math inline">\(s^2\)</span>, 不是训练集均方误差.</p>
+<h3 id="理解-matlab-的统计工具">6.2 理解 MATLAB 的统计工具</h3>
+<p>若已安装相应统计工具箱, 可用 <code>regress</code> 完成拟合与残差诊断.
+给定因变量列向量 <code>y</code> 和包含首列 1 的设计矩阵 <code>X</code>,
+基本调用为:</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[b, bint, r, rint, stats] = regress(y, X, <span class="number">0.05</span>);</span><br><span class="line">rcoplot(r, rint);</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">输出</th>
+<th style="text-align: center;">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><code>b</code></td>
+<td style="text-align: center;">截距和斜率系数</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>bint</code></td>
+<td style="text-align: center;">系数的逐点 95% 置信区间</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>r</code></td>
+<td style="text-align: center;">残差</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>rint</code></td>
+<td style="text-align: center;">用于异常观测诊断的残差区间</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>stats</code></td>
+<td style="text-align: center;">依次为 <span
+class="math inline">\(R^2\)</span>, 整体 <span
+class="math inline">\(F\)</span>, 其 <span
+class="math inline">\(p\)</span> 值, 误差方差估计 <span
+class="math inline">\(s^2\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>旧版图形界面 <code>stepwise</code> 的结果受起始变量和筛选设置影响,
+不应只凭手动点击结果宣称最优. 需要程序化逐步回归时, 可以查阅
+<code>stepwiselm</code> 或 <code>stepwisefit</code> 的官方文档.
+它们与本章的单向后向剔除并不是同一种固定算法,
+不能假定在所有数据和默认设置下结果都相同.</p>
+<h2 id="七-结果解读与应用边界">七, 结果解读与应用边界</h2>
+<h3 id="系数的大小-符号与显著性">7.1 系数的大小, 符号与显著性</h3>
+<p>系数绝对值受自变量单位影响. 销售例题的 <span
+class="math inline">\(x_3\)</span> 系数绝对值大,
+不足以证明它比其他因素"更重要". 若需要比较作用尺度,
+可以在明确研究目的后标准化变量,
+但标准化也不能消除共线性或建立因果关系.</p>
+<p>系数符号也必须结合条件含义解释. 一个变量在完整模型中不显著,
+可能是样本较少, 噪声较大或与其他变量高度相关,
+并不必然意味着它在实际问题中没有价值.</p>
+<h3 id="多重共线性为什么值得注意">7.2 多重共线性为什么值得注意</h3>
+<p>当若干自变量携带的变化信息相近时, 模型可能很好地解释 <span
+class="math inline">\(y\)</span>, 却难以区分各变量各自贡献多少.
+这会扩大系数区间, 使系数对小幅数据变化敏感. 水泥例题就是"整体显著,
+单个斜率不显著"的典型情形.</p>
+<p>可检查自变量相关性, 设计矩阵条件数或方差膨胀因子.
+处理办法应与问题匹配: 补充信息更丰富的数据, 合并有相近含义的变量,
+保留有理论依据的变量, 或进一步学习正则化方法. 单纯依靠 <span
+class="math inline">\(p\)</span> 值逐个删除,
+不是所有问题的通用解决办法.</p>
+<h3 id="模型的优点与局限">7.3 模型的优点与局限</h3>
+<p>多元线性回归计算方便, 系数含义清晰, 能同时提供预测值, 区间和统计检验,
+适合建立易解释的基准模型. 它的效果取决于变量选择, 函数形式,
+样本代表性和误差条件. 遗漏重要因素, 异常观测, 异方差或相关误差,
+都可能使普通推断和区间不可靠.</p>
+<p>若残差随拟合值增大而明显扩散,
+应进一步研究异方差稳健推断或加权最小二乘; 若数据按时间收集,
+应考虑序列相关; 若关系明显弯曲,
+可考虑合理的变换或增加有依据的非线性特征.
+改进模型应服务于解释或预测目标, 避免只为提高训练集指标而增加复杂度.</p>
+<h3 id="阅读回归结果时的核查表">7.4 阅读回归结果时的核查表</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">常见误读</th>
+<th style="text-align: center;">正确理解</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><span class="math inline">\(R^2\)</span>
+高, 所以模型一定好</td>
+<td style="text-align: center;">还需检查残差, 假设,
+样本范围和外部预测</td>
+</tr>
+<tr>
+<td style="text-align: center;">整体显著, 所以每个因素都显著</td>
+<td style="text-align: center;">整体 <span
+class="math inline">\(F\)</span> 检验与单个系数检验回答不同问题</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(p&gt;0.05\)</span>, 所以变量没有作用</td>
+<td style="text-align: center;">当前条件下证据不足, 不能证明无作用</td>
+</tr>
+<tr>
+<td style="text-align: center;">表中 <span
+class="math inline">\(p=0.0000\)</span>, 所以概率为零</td>
+<td style="text-align: center;">显示精度有限, 应报告科学计数法</td>
+</tr>
+<tr>
+<td style="text-align: center;">整体 <span
+class="math inline">\(F\)</span> 增大, 所以删减模型更优</td>
+<td style="text-align: center;">不同维数模型需合适的比较方法与验证</td>
+</tr>
+<tr>
+<td style="text-align: center;">逐步回归找到了所有真实因素</td>
+<td style="text-align: center;">筛选结果依赖数据与规则,
+须考虑选择不确定性</td>
+</tr>
+<tr>
+<td style="text-align: center;">残差标准误差就是训练集 RMSE</td>
+<td style="text-align: center;">二者分别除以残差自由度和样本量</td>
+</tr>
+<tr>
+<td style="text-align: center;">异常点影响拟合, 直接删除即可</td>
+<td style="text-align: center;">先核查来源, 实际背景及敏感性</td>
+</tr>
+</tbody>
+</table>
+<h2 id="八-学习练习">八, 学习练习</h2>
+<ol type="1">
+<li>销售例题有四个自变量, 为什么设计矩阵有五列? 写出它,
+参数向量与响应向量的维度.</li>
+<li>在水泥完整模型中, 为什么整体显著而四个斜率均不显著并不矛盾?</li>
+<li>假设水泥四项比例每行严格合计为 100,
+同时保留截距和四个比例会遇到什么问题?</li>
+<li>水泥二元模型的整体 <span class="math inline">\(F\)</span>
+比四元模型大, 能否仅据此决定采用二元模型? 应如何比较?</li>
+<li>销售模型在样本均值处的个人预测区间为何比平均响应区间宽?</li>
+</ol>
+<h3 id="参考解答">8.1 参考解答</h3>
+<ol type="1">
+<li>第一列全为 1, 对应截距. <span class="math inline">\(X\)</span> 为
+<span class="math inline">\(20\times5\)</span>, 参数向量为 <span
+class="math inline">\(5\times1\)</span>, 响应向量为 <span
+class="math inline">\(20\times1\)</span>; Python 一维 <code>y</code>
+是软件接受的数据表示.</li>
+<li>整体检验比较四个变量联合提供的信息,
+系数检验比较控制其他变量后的额外信息. 比例高度相关时难以区分各项贡献,
+单个标准误会变大.</li>
+<li>常数列可由四列比例之和除以 100 得到, 因而设计矩阵不满列秩.
+需要结合配方意义重新参数化, 例如使用一个成分作为参照,
+不能机械地用求逆公式求所有系数.</li>
+<li>不能. 两个整体检验的分子自由度和原假设不同. 对这两个嵌套模型,
+同时删除两项的检验为 <span
+class="math inline">\(F(2,8)=0.839121\)</span>, <span
+class="math inline">\(p=0.466847\)</span>. 筛选后这只是探索性比较,
+实际预测仍须检验整个筛选流程的样本外表现.</li>
+<li>两者都包含参数估计的不确定性, 个人预测还包含新观测自身的随机误差,
+半宽中多出的 1 对应这部分波动.</li>
+</ol>
+<h2 id="九-参考资料与继续学习">九, 参考资料与继续学习</h2>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://www.statsmodels.org/stable/generated/statsmodels.regression.linear_model.OLS.html">statsmodels:
+OLS 官方文档</a>: 普通最小二乘拟合, 截距与参数说明.</li>
+<li><a
+target="_blank" rel="noopener" href="https://www.statsmodels.org/stable/generated/statsmodels.regression.linear_model.RegressionResults.compare_f_test.html">statsmodels:
+嵌套模型 F 检验</a>: 完整模型与受限模型的比较及使用条件.</li>
+<li><a
+target="_blank" rel="noopener" href="https://stat.ethz.ch/R-manual/R-patched/library/MASS/html/cement.html">R
+MASS: cement 数据说明</a>: 13 个观测, 成分比例和放热量单位.</li>
+<li><a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/stats/stepwiselm.html">MathWorks:
+stepwiselm</a> 与 <a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/stats/stepwisefit.html">stepwisefit</a>:
+逐步筛选算法和参数设置.</li>
+</ul>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

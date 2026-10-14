@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="24. 机理分析类模型: 从变化率理解系统演化 一种群的数量为什么增长? 两种动物为什么交替增减? 一个人群中的感染者为什么增加, 又在什么条件下减少? 这些问题不仅需要寻找数据中的相关关系, 还需要描述数量变化的来源. 机理建模从对象的作用过程出发, 把&quot;增加什么, 减少什么, 各以多快的速度发生&quot;写成方程. 本章围绕人口增长, 捕食与竞争, 以及几类传播模型, 逐步学习如何提出假">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/wait/MechanisticModels.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="24. 机理分析类模型: 从变化率理解系统演化 一种群的数量为什么增长? 两种动物为什么交替增减? 一个人群中的感染者为什么增加, 又在什么条件下减少? 这些问题不仅需要寻找数据中的相关关系, 还需要描述数量变化的来源. 机理建模从对象的作用过程出发, 把&quot;增加什么, 减少什么, 各以多快的速度发生&quot;写成方程. 本章围绕人口增长, 捕食与竞争, 以及几类传播模型, 逐步学习如何提出假">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-12.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-13.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-14.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-15.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-16.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-18.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-20.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-21.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-23.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-24.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-25.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-26.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-27.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-28.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-29.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-30.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-31.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-32.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-33.png">
+<meta property="article:published_time" content="2026-10-14T08:10:21.402Z">
+<meta property="article:modified_time" content="2026-10-14T03:51:54.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/MechanisticModels/Mech-12.png">
+
+
+<link rel="canonical" href="http://example.com/wait/MechanisticModels">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/wait/MechanisticModels.html","path":"wait/MechanisticModels.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%BA%E7%90%86%E5%88%86%E6%9E%90%E7%B1%BB%E6%A8%A1%E5%9E%8B-%E4%BB%8E%E5%8F%98%E5%8C%96%E7%8E%87%E7%90%86%E8%A7%A3%E7%B3%BB%E7%BB%9F%E6%BC%94%E5%8C%96"><span class="nav-number">1.</span> <span class="nav-text">24. 机理分析类模型:
+从变化率理解系统演化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E5%85%88%E8%AF%B4%E6%98%8E%E5%8F%98%E5%8C%96%E6%9D%A5%E8%87%AA%E5%93%AA%E9%87%8C"><span class="nav-number">1.1.</span> <span class="nav-text">一, 先说明变化来自哪里</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%BA%E7%90%86%E6%A8%A1%E5%9E%8B%E4%B8%8E%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 机理模型与数据模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E6%A8%A1%E5%AF%B9%E8%B1%A1%E4%B8%8E%E4%BD%BF%E7%94%A8%E8%8C%83%E5%9B%B4"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 建模对象与使用范围</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E4%B8%8E%E5%88%9D%E5%80%BC%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.</span> <span class="nav-text">二, 微分方程与初值问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E7%9F%AD%E6%97%B6%E9%97%B4%E5%A2%9E%E9%87%8F%E5%88%B0%E5%8F%98%E5%8C%96%E7%8E%87"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 从短时间增量到变化率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E7%9A%84%E4%B8%A4%E4%B8%AA%E6%B1%82%E8%A7%A3%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 Python 的两个求解接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab-%E6%B1%82%E8%A7%A3%E5%99%A8%E4%B8%8E%E5%88%9A%E6%80%A7"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 MATLAB 求解器与刚性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89-%E5%BB%BA%E7%AB%8B%E6%A8%A1%E5%9E%8B%E7%9A%84%E4%BA%94%E4%B8%AA%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.3.</span> <span class="nav-text">三, 建立模型的五个步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B-%E5%8D%95%E7%A7%8D%E7%BE%A4%E5%A2%9E%E9%95%BF-%E4%BB%8E%E6%8C%87%E6%95%B0%E5%88%B0%E7%8E%AF%E5%A2%83%E9%99%90%E5%88%B6"><span class="nav-number">1.4.</span> <span class="nav-text">四, 单种群增长:
+从指数到环境限制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A9%AC%E5%B0%94%E8%90%A8%E6%96%AF%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 马尔萨斯模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#logistic-%E9%98%BB%E6%BB%9E%E5%A2%9E%E9%95%BF"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 Logistic 阻滞增长</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94-%E4%B8%A4%E7%A7%8D%E7%BE%A4%E4%B9%8B%E9%97%B4%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">1.5.</span> <span class="nav-text">五, 两种群之间的作用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8D%95%E9%A3%9F%E8%80%85%E4%B8%8E%E7%8C%8E%E7%89%A9"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 捕食者与猎物</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%A8%E6%9C%9F%E8%BF%90%E5%8A%A8%E4%B8%8E%E5%B9%B3%E5%9D%87%E6%95%B0%E9%87%8F"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 周期运动与平均数量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E7%A7%8D%E7%BE%A4%E7%AB%9E%E4%BA%89"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 二种群竞争</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD-%E4%BC%A0%E6%92%AD%E6%A8%A1%E5%9E%8B-%E7%94%A8%E7%8A%B6%E6%80%81%E6%B5%81%E5%8A%A8%E5%86%99%E6%96%B9%E7%A8%8B"><span class="nav-number">1.6.</span> <span class="nav-text">六, 传播模型:
+用状态流动写方程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E5%AE%9A%E4%B9%89%E4%B8%8E%E4%BC%A0%E6%92%AD%E9%A1%B9"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 状态定义与传播项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BA%E5%AE%9A%E4%BA%BA%E5%8F%A3%E7%9A%84-si"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 固定人口的 SI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%8D%E4%BD%8E%E4%BC%A0%E6%92%AD%E5%8F%82%E6%95%B0"><span class="nav-number">1.6.3.</span> <span class="nav-text">6.3 降低传播参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BA%E7%94%9F%E4%B8%8E%E8%87%AA%E7%84%B6%E6%AD%BB%E4%BA%A1"><span class="nav-number">1.6.4.</span> <span class="nav-text">6.4 出生与自然死亡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AA%E6%9C%89%E5%9B%A0%E7%97%85%E6%AD%BB%E4%BA%A1"><span class="nav-number">1.6.5.</span> <span class="nav-text">6.5 只有因病死亡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E6%97%B6%E8%80%83%E8%99%91%E5%87%BA%E7%94%9F%E4%B8%8E%E4%B8%A4%E7%B1%BB%E6%AD%BB%E4%BA%A1"><span class="nav-number">1.6.6.</span> <span class="nav-text">6.6 同时考虑出生与两类死亡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sis-%E6%81%A2%E5%A4%8D%E5%90%8E%E5%9B%9E%E5%88%B0%E6%98%93%E6%84%9F%E7%8A%B6%E6%80%81"><span class="nav-number">1.6.7.</span> <span class="nav-text">6.7 SIS: 恢复后回到易感状态</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83-%E5%AE%8C%E6%95%B4%E6%95%B0%E5%80%BC%E5%AE%9E%E7%8E%B0%E4%B8%8E%E7%BB%93%E6%9E%9C%E6%A3%80%E6%9F%A5"><span class="nav-number">1.7.</span> <span class="nav-text">七, 完整数值实现与结果检查</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E9%A1%BA%E5%BA%8F-%E5%8F%82%E6%95%B0%E4%B8%8E%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 状态顺序, 参数与返回值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E5%AE%8C%E6%95%B4%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 Python 完整程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab-%E5%AF%B9%E5%BA%94%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.7.3.</span> <span class="nav-text">7.3 MATLAB 对应实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E4%BB%80%E4%B9%88-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%A3%80%E6%9F%A5"><span class="nav-number">1.7.4.</span> <span class="nav-text">7.4 检查什么, 为什么检查</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB-%E7%BB%83%E4%B9%A0%E4%B8%8E%E5%8F%82%E8%80%83%E8%A7%A3%E7%AD%94"><span class="nav-number">1.8.</span> <span class="nav-text">八, 练习与参考解答</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D-%E4%BD%BF%E7%94%A8%E6%9C%BA%E7%90%86%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%BE%B9%E7%95%8C"><span class="nav-number">1.9.</span> <span class="nav-text">九, 使用机理模型的边界</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.10.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="机理分析类模型-从变化率理解系统演化">24. 机理分析类模型:
+从变化率理解系统演化</h1>
+<p>一种群的数量为什么增长? 两种动物为什么交替增减?
+一个人群中的感染者为什么增加, 又在什么条件下减少?
+这些问题不仅需要寻找数据中的相关关系, 还需要描述数量变化的来源.</p>
+<p>机理建模从对象的作用过程出发, 把"增加什么, 减少什么,
+各以多快的速度发生"写成方程. 本章围绕人口增长, 捕食与竞争,
+以及几类传播模型, 逐步学习如何提出假设, 列方程, 求解并检查结果.
+全部仿真参数均为教学设定, 时间使用统一的模型时间单位,
+不代表实际种群调查或具体疾病的参数估计.</p>
+<h2 id="一-先说明变化来自哪里">一, 先说明变化来自哪里</h2>
+<h3 id="机理模型与数据模型">1.1 机理模型与数据模型</h3>
+<p>机理分析类模型依据物理, 化学, 生物或社会过程建立数量关系.
+若一个状态量随时间连续变化, 常采用</p>
+<p><span class="math display">\[
+\frac{\mathrm{d}x}{\mathrm{d}t}=\text{增加速率}-\text{减少速率}.
+\]</span></p>
+<p>例如, 人口变化可以分为出生, 死亡和迁移; 捕食关系涉及猎物繁殖,
+捕食损失和捕食者死亡; 传播模型涉及人群状态之间的转移.
+机理模型也可以是代数方程, 差分方程或其他形式,
+并非全部都必须采用微分方程.</p>
+<p>机理模型与回归模型可以相互补充: 方程表达作用关系,
+数据用于估计参数与检验假设. 有方程不等于机制已经被证实,
+有可解释参数也不等于该参数已经被可靠识别.</p>
+<h3 id="建模对象与使用范围">1.2 建模对象与使用范围</h3>
+<div class="line-block">对象 | 状态量 | 主要机制 | 本章模型 |<br />
+: ---: | : ---: | : ---: | : ---: |<br />
+单种群 | 数量 <span class="math inline">\(x\)</span> | 个体增加与减少,
+环境限制 | 指数增长, Logistic |<br />
+捕食关系 | 猎物 <span class="math inline">\(x_1\)</span>, 捕食者 <span
+class="math inline">\(x_2\)</span> | 相遇与捕食, 繁殖与死亡 |
+Lotka-Volterra |<br />
+种群竞争 | 两种群数量 | 种内与种间竞争 | 二种群竞争 |<br />
+传播过程 | 易感 <span class="math inline">\(S\)</span>, 感染 <span
+class="math inline">\(I\)</span> 等 | 感染, 恢复, 出生与死亡 | SI, SIS
+及扩展 |</div>
+<p>连续模型把个体数量近似为可连续变化的量. 数量很小时,
+随机事件和整数性可能很重要, 确定性微分方程未必合适.
+本章重点是学习建模结构, 不是直接制定资源配置或公共卫生措施.</p>
+<h2 id="二-微分方程与初值问题">二, 微分方程与初值问题</h2>
+<h3 id="基本概念">2.1 基本概念</h3>
+<p>含未知函数及其导数的方程称为微分方程.
+本章研究以一个自变量为基础的常微分方程, 例如</p>
+<p><span class="math display">\[
+f(t,y,y&#39;,\ldots,y^{(n)})=0.
+\]</span></p>
+<p>最高阶导数的阶数称为方程的阶. <span
+class="math inline">\(y&#39;&#39;&#39;+2y&#39;&#39;-2t=0\)</span>
+是三阶方程. 满足方程的足够光滑的函数称为解; <span
+class="math inline">\(y=t^2\)</span> 和 <span
+class="math inline">\(y=t^2+1\)</span> 都满足 <span
+class="math inline">\(y&#39;-2t=0\)</span>.</p>
+<p>在常见且满足相应正则条件的 <span class="math inline">\(n\)</span>
+阶方程中, 通解包含 <span class="math inline">\(n\)</span>
+个独立的任意常数. 指定常数得到某个特解;
+复杂方程还可能有通解族未覆盖的特殊解,
+所以不能仅靠"数出常数个数"判断所有情况.</p>
+<p>例如</p>
+<p><span class="math display">\[
+y&#39;-\mathrm{e}^t=0
+\]</span></p>
+<p>的通解为 <span class="math inline">\(y=\mathrm{e}^t+C\)</span>. 初值
+<span class="math inline">\(y(0)=1\)</span> 确定 <span
+class="math inline">\(C=0\)</span>.
+初值条件是在同一个初始时刻指定函数值及所需导数值;
+它不同于在多个端点指定条件的边值问题.</p>
+<p>方程组可写成</p>
+<p><span class="math display">\[
+\frac{\mathrm{d}\boldsymbol y}{\mathrm{d}t}=F(t,\boldsymbol y),
+\qquad \boldsymbol y(t_0)=\boldsymbol y_0,
+\qquad \boldsymbol y=(y_1,\ldots,y_m)^{\mathsf T}.
+\]</span></p>
+<p>给定初值并不自动保证解对所有时间存在且唯一. 连续性和对状态变量的局部
+Lipschitz 条件是常用的局部存在唯一性条件; 模型的定义域也要检查.</p>
+<h3 id="从短时间增量到变化率">2.2 从短时间增量到变化率</h3>
+<p>若在很短时间 <span class="math inline">\(\Delta t\)</span> 内,
+增加与减少速率近似不变, 则</p>
+<p><span class="math display">\[
+x(t+\Delta t)-x(t)=f(t,x(t))\Delta t+o(\Delta t).
+\]</span></p>
+<p>除以 <span class="math inline">\(\Delta t\)</span> 再取极限, 得到
+<span class="math inline">\(x&#39;=f(t,x)\)</span>. 这里 <span
+class="math inline">\(o(\Delta t)/\Delta t\to0\)</span>
+表示被忽略项相对步长趋于零.
+一般不能把有限时间段的增量与起点瞬时速率乘以步长写成无条件的精确等式.</p>
+<h3 id="python-的两个求解接口">2.3 Python 的两个求解接口</h3>
+<p><code>odeint</code> 和 <code>solve_ivp</code>
+都用于常微分方程初值问题. 本章保留前者的基本用法, 完整仿真主要采用后者.
+比较同一衰减方程</p>
+<p><span class="math display">\[
+y&#39;=-0.3y,\qquad y(0)=5,\qquad y(t)=5\mathrm{e}^{-0.3t}.
+\]</span></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.integrate <span class="keyword">import</span> odeint, solve_ivp</span><br><span class="line"></span><br><span class="line"><span class="comment"># odeint 默认把状态放在前面, 时间放在后面.</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decay_odeint</span>(<span class="params">y, t</span>):</span><br><span class="line">    <span class="keyword">return</span> -<span class="number">0.3</span>*y</span><br><span class="line"></span><br><span class="line">times = np.linspace(<span class="number">0.</span>, <span class="number">20.</span>, <span class="number">101</span>)</span><br><span class="line">old = odeint(decay_odeint, [<span class="number">5.</span>], times,</span><br><span class="line">             rtol=<span class="number">1e-9</span>, atol=<span class="number">1e-10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># solve_ivp 的顺序是时间, 状态.</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decay_ivp</span>(<span class="params">t, y</span>):</span><br><span class="line">    <span class="keyword">return</span> -<span class="number">0.3</span>*y</span><br><span class="line"></span><br><span class="line">new = solve_ivp(decay_ivp, (<span class="number">0.</span>, <span class="number">20.</span>), [<span class="number">5.</span>], t_eval=times,</span><br><span class="line">                rtol=<span class="number">1e-9</span>, atol=<span class="number">1e-10</span>)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> new.success:</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(new.message)</span><br><span class="line">exact = <span class="number">5</span>*np.exp(-<span class="number">0.3</span>*times)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;odeint 最大绝对误差:&quot;</span>, np.<span class="built_in">max</span>(np.<span class="built_in">abs</span>(old[:, <span class="number">0</span>]-exact)))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;solve_ivp 最大绝对误差:&quot;</span>, np.<span class="built_in">max</span>(np.<span class="built_in">abs</span>(new.y[<span class="number">0</span>]-exact)))</span><br></pre></td></tr></table></figure>
+<div class="line-block">项目 | <code>odeint</code> 默认接口 |
+<code>solve_ivp</code> |<br />
+: ---: | : ---: | : ---: |<br />
+右端函数 | <code>fun(y, t, ...)</code> | <code>fun(t, y, ...)</code>
+|<br />
+初始状态 | <code>y0</code> | <code>y0</code> |<br />
+积分时间 | 时间数组首项为初始时刻 | <code>t_span=(t0, tf)</code> |<br />
+输出时刻 | 时间数组 <code>t</code> | <code>t_eval</code> |<br />
+结果形状 | <code>(输出时刻数, 状态数)</code> | <code>sol.y</code> 为
+<code>(状态数, 输出时刻数)</code> |<br />
+方法设置 | LSODA 自动切换机制 | <code>RK45</code>, <code>DOP853</code>,
+<code>Radau</code>, <code>BDF</code>, <code>LSODA</code> 等 |</div>
+<p><code>odeint</code> 也支持用 <code>tfirst=True</code> 改变参数顺序;
+上表说明的是默认设置. <code>solve_ivp</code> 的 <code>t_eval</code>
+指定保存结果的位置, 不等于求解器的内部步长. <code>rtol</code> 与
+<code>atol</code> 控制误差尺度, 应按状态量单位和所需精度设置;
+求解完成后须检查 <code>success</code> 和结果的有限性.</p>
+<h3 id="matlab-求解器与刚性">2.4 MATLAB 求解器与刚性</h3>
+<div class="line-block">求解器 | 主要算法或特点 | 常见使用方向 |<br />
+: ---: | : ---: | : ---: |<br />
+<code>ode45</code> | 显式 Runge-Kutta 4/5 阶对 |
+一般非刚性初值问题的常用起点 |<br />
+<code>ode23</code> | Bogacki-Shampine 2/3 阶对 |
+较宽松容差下的非刚性问题 |<br />
+<code>ode113</code> | 变阶 Adams-Bashforth-Moulton 多步方法 |
+光滑非刚性问题, 严格容差或右端代价较高时 |<br />
+<code>ode15s</code> | 变阶 NDF, 也可采用 BDF |
+刚性问题及其支持形式的微分代数问题 |<br />
+<code>ode23s</code> | 二阶改进 Rosenbrock 方法 | 刚性问题的较低阶选择
+|<br />
+<code>ode23t</code> | 梯形法与插值 | 适度刚性问题 |<br />
+<code>ode23tb</code> | TR-BDF2 | 刚性问题的较低阶选择 |</div>
+<p>阶数不等于实际计算误差的固定等级. <code>ode15s</code>
+也不能简单评价为"效率不高": 对刚性问题,
+隐式方法可能远比受稳定性限制的显式方法高效.</p>
+<p>刚性不等于"变化快". 当不同时间尺度并存,
+显式方法为维持稳定必须采用远小于描述当前解变化所需的步长时,
+刚性往往成为重要因素. 不确定时可先试一般方法, 再结合步数,
+失败信息和模型结构判断. 右端在某时刻突变时, 可以分段积分并重新启动;
+不能仅凭一个时间点数组就假定求解器已妥善处理不连续性.</p>
+<h2 id="三-建立模型的五个步骤">三, 建立模型的五个步骤</h2>
+<ol type="1">
+<li>确定状态量, 初始状态, 时间单位及参数单位.</li>
+<li>列出可核查的假设, 说明封闭性, 混合方式, 资源限制等条件.</li>
+<li>按增加项与减少项写出变化率, 核对量纲, 非负性及守恒关系.</li>
+<li>先分析简单的解析解和平衡点, 再选择数值方法.</li>
+<li>检查数值误差, 与独立数据比较, 分析参数敏感性和使用范围,
+必要时修改模型.</li>
+</ol>
+<p>模型方程, 参数识别, 数值求解和现实验证是不同任务. 数值曲线很平滑,
+只能说明程序产生了一条轨线, 不能代替后三项检查.</p>
+<h2 id="四-单种群增长-从指数到环境限制">四, 单种群增长:
+从指数到环境限制</h2>
+<h3 id="马尔萨斯模型">4.1 马尔萨斯模型</h3>
+<p>马尔萨斯的《人口论》初版发表于 1798 年.
+现代教材中常用与其思想相关的指数增长模型,
+说明"增长量与已有数量成比例"的结果.</p>
+<p>假设封闭种群的净人均增长率 <span class="math inline">\(r\)</span>
+恒定, 数量 <span class="math inline">\(x(t)\)</span> 用连续量近似,
+则</p>
+<p><span class="math display">\[
+\frac{\mathrm{d}x}{\mathrm{d}t}=rx,\qquad x(0)=x_0,
+\qquad x(t)=x_0\mathrm{e}^{rt}.
+\]</span></p>
+<p><span class="math inline">\(r\)</span> 的单位为时间的倒数. <span
+class="math inline">\(r&gt;0\)</span> 时增长, <span
+class="math inline">\(r&lt;0\)</span> 时衰减, <span
+class="math inline">\(r=0\)</span> 时不变. 个体年龄,
+资源限制和迁移都被暂时省略;
+恒定的净增长率不要求现实中每个个体具有完全相同的生育经历.</p>
+<p>教学设定为 <span class="math inline">\(x_0=100,r=0.001\)</span>,
+模拟到 <span class="math inline">\(t=1000\)</span>, 得到 <span
+class="math inline">\(x(1000)=100\mathrm{e}\approx271.828183\)</span>.</p>
+<p><img src="/images/MechanisticModels/Mech-12.png" alt="" style="width: 100%;"></p>
+<p><strong>图 1.</strong> 指数模型的数值解与解析解重合.</p>
+<p>若沿用历史教材中的计算假设, 取 1961 年基数 <span
+class="math inline">\(3.06\times10^9\)</span> 和连续年增长率 0.02,
+则</p>
+<p><span class="math display">\[
+x(t)=3.06\times10^9\mathrm{e}^{0.02(t-1961)},
+\qquad T_{\mathrm{double}}=\frac{\ln2}{0.02}\approx34.6574\ \text{年}.
+\]</span></p>
+<p>这里 2% 是连续变化率, 与每年精确增长 2% 的离散复利约定不同.
+按这个假设外推到 2670 年, 计算约为 <span
+class="math inline">\(4.4057\times10^{15}\)</span>. 若仅作量级对比,
+取整个地球表面积约 <span class="math inline">\(5.1\times10^{14}\
+\mathrm{m}^2\)</span>, 均匀分摊约为每平方米 8.6 人, 并非至少 20 人.
+这种不合理的长期量级说明固定增长率不能无限外推,
+不是对真实未来人口的预测. 也不能把某个十年的增长率反推成 1700
+年以来都适用的历史规律.</p>
+<h3 id="logistic-阻滞增长">4.2 Logistic 阻滞增长</h3>
+<p>资源限制可使人均净增长率随数量下降. 采用最简单的线性近似</p>
+<p><span class="math display">\[
+r(x)=r-sx,\qquad r(K)=0,
+\]</span></p>
+<p>得到 <span class="math inline">\(s=r/K\)</span>, 从而</p>
+<p><span class="math display">\[
+\frac{\mathrm{d}x}{\mathrm{d}t}=rx\left(1-\frac{x}{K}\right),
+\qquad x(t_0)=x_0.
+\]</span></p>
+<p>当 <span class="math inline">\(r&gt;0,K&gt;0,x_0&gt;0\)</span>
+时,</p>
+<p><span class="math display">\[
+x(t)=\frac{K}{1+(K/x_0-1)\mathrm{e}^{-r(t-t_0)}}.
+\]</span></p>
+<p><span class="math inline">\(K\)</span> 是固定环境条件下的模型容量,
+不应解释为现实中永远不变的上限. 若 <span
+class="math inline">\(0&lt;x_0&lt;K\)</span>, 数量递增; 若 <span
+class="math inline">\(x_0&gt;K\)</span>, 数量递减; 若 <span
+class="math inline">\(x_0=K\)</span>, 保持不变; 若 <span
+class="math inline">\(x_0=0\)</span>, 始终为零.
+只有正初值情形才在这些条件下趋于 <span
+class="math inline">\(K\)</span>.</p>
+<p>二阶导数为</p>
+<p><span class="math display">\[
+x&#39;&#39;=r^2x\left(1-\frac{x}{K}\right)\left(1-\frac{2x}{K}\right).
+\]</span></p>
+<p>在 <span class="math inline">\(0&lt;x&lt;K\)</span> 内, <span
+class="math inline">\(x&lt;K/2\)</span> 时增长加速, <span
+class="math inline">\(x&gt;K/2\)</span> 时增长减速. 最大增加速率为 <span
+class="math inline">\(rK/4\)</span>, 出现在 <span
+class="math inline">\(x=K/2\)</span>. 若初值已经高于 <span
+class="math inline">\(K/2\)</span>, 正时间段不一定包含完整的 S
+形两阶段.</p>
+<p>本例取 <span class="math inline">\(x_0=100,r=0.04,K=1000\)</span>,
+完整模拟到 1000 时间单位; 图中放大前期变化以显示拐点. 拐点时间为 <span
+class="math inline">\(\ln9/0.04\approx54.9306\)</span>.</p>
+<p><img src="/images/MechanisticModels/Mech-13.png" alt="" style="width: 100%;"></p>
+<p><strong>图 2.</strong> Logistic 模型先加速, 再减速并趋近容量.</p>
+<h2 id="五-两种群之间的作用">五, 两种群之间的作用</h2>
+<h3 id="捕食者与猎物">5.1 捕食者与猎物</h3>
+<p>经典捕食模型与 D'Ancona 观察到的渔获组成变化有关, Volterra 在 1926
+年发表了相关数学研究. 渔获比例不等于海中真实种群比例;
+模型提供的是一个可能机制, 不能把一次仿真当作历史观测的直接证实.</p>
+<p>令 <span class="math inline">\(x_1\)</span> 表示猎物, <span
+class="math inline">\(x_2\)</span> 表示捕食者.
+假设猎物无捕食者时指数增长, 捕食者无猎物时按比例死亡, 相遇作用与 <span
+class="math inline">\(x_1x_2\)</span> 成比例, 得到</p>
+<p><span class="math display">\[
+\left\{\begin{aligned}
+\frac{\mathrm{d}x_1}{\mathrm{d}t}&amp;=x_1(r_1-\lambda_1x_2),\\
+\frac{\mathrm{d}x_2}{\mathrm{d}t}&amp;=x_2(-r_2+\lambda_2x_1).
+\end{aligned}\right.
+\]</span></p>
+<p><span class="math inline">\(r_1,r_2\)</span> 的单位为时间的倒数;
+<span class="math inline">\(\lambda_1\)</span>
+的单位为捕食者数量与时间乘积的倒数, <span
+class="math inline">\(\lambda_2\)</span> 相应以猎物数量为基础.
+捕食系数和资源转化系数不必相同.</p>
+<p>若两类种群都按同一个人均捕获强度 <span
+class="math inline">\(e\)</span> 减少, 模型变为</p>
+<p><span class="math display">\[
+\left\{\begin{aligned}
+\frac{\mathrm{d}x_1}{\mathrm{d}t}&amp;=x_1[(r_1-e)-\lambda_1x_2],\\
+\frac{\mathrm{d}x_2}{\mathrm{d}t}&amp;=x_2[-(r_2+e)+\lambda_2x_1].
+\end{aligned}\right.
+\]</span></p>
+<p>保留教学参数 <span
+class="math inline">\(r_1=1,r_2=0.5,\lambda_1=0.1,\lambda_2=0.02\)</span>,
+初值 <span class="math inline">\((x_1(0),x_2(0))=(25,2)\)</span>.
+比较较高捕获 <span class="math inline">\(e=0.3\)</span> 与较低捕获 <span
+class="math inline">\(e=0.1\)</span> 两种独立情景,
+不把它们误写成已经发生的战前与战后数据.</p>
+<h3 id="周期运动与平均数量">5.2 周期运动与平均数量</h3>
+<p>令 <span class="math inline">\(A=r_1-e&gt;0,C=r_2+e&gt;0\)</span>,
+正平衡点为</p>
+<p><span class="math display">\[
+x_1^*=\frac{C}{\lambda_2},\qquad
+x_2^*=\frac{A}{\lambda_1}.
+\]</span></p>
+<p>非平衡的正轨线在经典模型中形成周期振荡, 其守恒量可写为</p>
+<p><span class="math display">\[
+H=\lambda_2x_1-C\ln x_1+\lambda_1x_2-A\ln x_2.
+\]</span></p>
+<p>数量按本例统一计数尺度代入对数; 有物理量纲时可用参考数量归一化,
+只改变常数项. 对周期内 <span class="math inline">\(\mathrm{d}\ln
+x_1/\mathrm{d}t=A-\lambda_1x_2\)</span> 和 <span
+class="math inline">\(\mathrm{d}\ln
+x_2/\mathrm{d}t=-C+\lambda_2x_1\)</span> 积分, 得到</p>
+<p><span class="math display">\[
+\overline{x_1}=x_1^*,\qquad \overline{x_2}=x_2^*.
+\]</span></p>
+<div class="line-block">捕获强度 | 一周期平均猎物数量 |
+一周期平均捕食者数量 | 平均数量之比 <span
+class="math inline">\(\overline{x_2}/(\overline{x_1}+\overline{x_2})\)</span>
+|<br />
+: ---: | : ---: | : ---: | : ---: |<br />
+<span class="math inline">\(e=0.3\)</span> | 40 | 7 | 约 14.89% |<br />
+<span class="math inline">\(e=0.1\)</span> | 30 | 9 | 约 23.08% |</div>
+<p>这说明减小均匀捕获强度时,
+模型中的平均猎物数量下降而平均捕食者数量上升. 瞬时比例 <span
+class="math inline">\(x_2/(x_1+x_2)\)</span> 会随周期变化,
+不能断言低捕获情景在每个时刻都更高;
+"比例的时间平均"也不等于"平均数量的比例".</p>
+<p><img src="/images/MechanisticModels/Mech-14.png" alt="" style="width: 100%;"></p>
+<p><strong>图 3.</strong> 两种捕获情景的相轨线, 横轴为猎物,
+纵轴为捕食者. 轨线外形不能直接代表增长速度.</p>
+<p><img src="/images/MechanisticModels/Mech-15.png" alt="" style="width: 100%;"></p>
+<p><strong>图 4.</strong> 猎物与捕食者数量随时间交替变化.</p>
+<p><img src="/images/MechanisticModels/Mech-16.png" alt="" style="width: 100%;"></p>
+<p><strong>图 5.</strong> 两情景的瞬时捕食者比例可交叉,
+长期结论需说明采用哪种平均方式.</p>
+<h3 id="二种群竞争">5.3 二种群竞争</h3>
+<p>令 <span class="math inline">\(N_1,N_2\)</span>
+为各自单独生存时的容量, 采用</p>
+<p><span class="math display">\[
+\left\{\begin{aligned}
+\frac{\mathrm{d}x_1}{\mathrm{d}t}&amp;=r_1x_1\left(1-\frac{x_1}{N_1}-\sigma_1\frac{x_2}{N_2}\right),\\
+\frac{\mathrm{d}x_2}{\mathrm{d}t}&amp;=r_2x_2\left(1-\frac{x_2}{N_2}-\sigma_2\frac{x_1}{N_1}\right).
+\end{aligned}\right.
+\]</span></p>
+<p>这里假设 <span class="math inline">\(r_1,r_2&gt;0\)</span>, <span
+class="math inline">\(N_1,N_2&gt;0\)</span>, <span
+class="math inline">\(\sigma_1,\sigma_2\geqslant0\)</span>,
+且讨论两种群初始数量均为正的情形.</p>
+<p><span class="math inline">\(\sigma_1\)</span>
+描述按各自容量归一化后乙对甲的抑制强度, <span
+class="math inline">\(\sigma_2\)</span> 描述甲对乙的抑制强度.
+它们不应直接解释为未经归一化的"一只乙消耗多少只甲的食物".
+仅仅食物种类相同, 不能推出 <span
+class="math inline">\(\sigma_1\sigma_2=1\)</span>;
+这种关系须由额外的共享资源模型和参数约束推导.</p>
+<p>令 <span class="math inline">\(p=x_1/N_1,q=x_2/N_2\)</span>,
+共存平衡满足</p>
+<p><span class="math display">\[
+p+\sigma_1q=1,\qquad \sigma_2p+q=1.
+\]</span></p>
+<p>若 <span class="math inline">\(1-\sigma_1\sigma_2\ne0\)</span>,
+则</p>
+<p><span class="math display">\[
+p^*=\frac{1-\sigma_1}{1-\sigma_1\sigma_2},\qquad
+q^*=\frac{1-\sigma_2}{1-\sigma_1\sigma_2}.
+\]</span></p>
+<p>对正初值, 且不处于边界参数时, 主要结局为:</p>
+<div class="line-block">参数范围 | 长期结局 |<br />
+: ---: | : ---: |<br />
+<span class="math inline">\(\sigma_1&lt;1,\sigma_2&gt;1\)</span> |
+甲趋于 <span class="math inline">\(N_1\)</span>, 乙趋于零 |<br />
+<span class="math inline">\(\sigma_1&gt;1,\sigma_2&lt;1\)</span> |
+乙趋于 <span class="math inline">\(N_2\)</span>, 甲趋于零 |<br />
+<span class="math inline">\(\sigma_1&lt;1,\sigma_2&lt;1\)</span> |
+稳定共存 |<br />
+<span class="math inline">\(\sigma_1&gt;1,\sigma_2&gt;1\)</span> |
+共存点不稳定, 优势取决于初始状态 |</div>
+<p><span class="math inline">\(\sigma_j=1\)</span> 等边界情形需单独讨论.
+不能只比较两个系数谁更大就决定所有结局.</p>
+<p>保留三组仿真设定:</p>
+<div class="line-block">情景 | <span
+class="math inline">\(r_1,r_2\)</span> | <span
+class="math inline">\(N_1,N_2\)</span> | <span
+class="math inline">\(\sigma_1,\sigma_2\)</span> | 初值 |<br />
+: ---: | : ---: | : ---: | : ---: | : ---: |<br />
+A | <span class="math inline">\(0.5,0.5\)</span> | <span
+class="math inline">\(300,500\)</span> | <span
+class="math inline">\(0.5,2\)</span> | <span
+class="math inline">\((80,100)\)</span> |<br />
+B | <span class="math inline">\(0.5,0.5\)</span> | <span
+class="math inline">\(300,500\)</span> | <span
+class="math inline">\(0.5,4\)</span> | <span
+class="math inline">\((80,100)\)</span> |<br />
+C | <span class="math inline">\(0.5,0.5\)</span> | <span
+class="math inline">\(300,500\)</span> | <span
+class="math inline">\(0.4,0.2\)</span> | <span
+class="math inline">\((80,100)\)</span> |</div>
+<p><img src="/images/MechanisticModels/Mech-18.png" alt="" style="width: 100%;"></p>
+<p><strong>图 6.</strong> 情景 A 中甲趋近 300, 乙逐渐衰减.</p>
+<p><img src="/images/MechanisticModels/Mech-20.png" alt="" style="width: 100%;"></p>
+<p><strong>图 7.</strong> 情景 B 的乙衰减更快. 若用低于 1
+个数量单位作为教学阈值, A 与 B 的首次到达时间分别约为 14.4668 与 6.4020;
+阈值不是数学上的零.</p>
+<p>在正初值的连续模型中, 种群一般不会在有限时刻精确等于零.
+"约五期灭绝"既缺少阈值定义, 也不符合这组方程的重新计算结果.</p>
+<p><img src="/images/MechanisticModels/Mech-21.png" alt="" style="width: 100%;"></p>
+<p><strong>图 8.</strong> 情景 C 的共存极限为 <span
+class="math inline">\(x_1^*\approx195.652174,x_2^*\approx434.782609\)</span>.</p>
+<h2 id="六-传播模型-用状态流动写方程">六, 传播模型:
+用状态流动写方程</h2>
+<h3 id="状态定义与传播项">6.1 状态定义与传播项</h3>
+<div class="line-block">记号 | 在相应模型中的含义 |<br />
+: ---: | : ---: |<br />
+<span class="math inline">\(S\)</span> | 对所研究感染具有易感性的人群,
+不等同于所有健康人 |<br />
+<span class="math inline">\(E\)</span> |
+已感染但尚未具有传染性的潜伏状态, 不简单等同于无症状 |<br />
+<span class="math inline">\(I\)</span> | 具有传播能力的感染状态,
+不一定是确诊报告数 |<br />
+<span class="math inline">\(R\)</span> |
+按模型定义进入康复或移出状态的人群 |</div>
+<p>不同疾病和研究目标采用的状态划分不同. SI 与 SIS 是结构化的教学简化,
+本章不把它们直接当作某一具体疾病的现实模型.</p>
+<p>采用均匀混合与频率依赖传播: 每个易感者的有效传播接触速率为 <span
+class="math inline">\(\beta I/N\)</span>, 因而总感染流量为</p>
+<p><span class="math display">\[
+F=\beta\frac{SI}{N}.
+\]</span></p>
+<p><span class="math inline">\(\beta\)</span> 的单位为时间的倒数, <span
+class="math inline">\(F\)</span> 为人数每时间单位. 若采用密度依赖形式
+<span class="math inline">\(\tilde\beta SI\)</span>,
+系数单位与模型含义不同. 含出生和死亡时, 分母取当前存活人口 <span
+class="math inline">\(N(t)=S(t)+I(t)\)</span>,
+累计死亡数不计入这个分母.</p>
+<h3 id="固定人口的-si">6.2 固定人口的 SI</h3>
+<p>假设没有恢复, 死亡, 出生和迁移, 则</p>
+<p><span class="math display">\[
+\left\{\begin{aligned}
+S&#39;&amp;=-\beta SI/N,\\
+I&#39;&amp;=\beta SI/N,
+\end{aligned}\right.
+\qquad S+I=N.
+\]</span></p>
+<p><img src="/images/MechanisticModels/Mech-23.png" alt="" style="width: 100%;"></p>
+<p><strong>图 9.</strong> SI 的单向感染流动.</p>
+<p>令 <span class="math inline">\(I(0)=I_0&gt;0\)</span>, 则</p>
+<p><span class="math display">\[
+I(t)=\frac{N}{1+(N/I_0-1)\mathrm{e}^{-\beta t}},\qquad S=N-I.
+\]</span></p>
+<p>取 <span class="math inline">\(N=1000,I_0=1,\beta=0.1\)</span>,
+半数感染时刻为 <span
+class="math inline">\(\ln999/0.1\approx69.0675\)</span>. <span
+class="math inline">\(t=200\)</span> 时 <span
+class="math inline">\(S\approx0.002059,I\approx999.997941\)</span>,
+数学上仍不是在有限时刻精确全体感染.</p>
+<p><img src="/images/MechanisticModels/Mech-24.png" alt="" style="width: 100%;"></p>
+<p><strong>图 10.</strong> 基本 SI 到 200 时间单位的模拟.</p>
+<h3 id="降低传播参数">6.3 降低传播参数</h3>
+<p>保持其他假设不变, 在 <span class="math inline">\(t=60\)</span> 将
+<span class="math inline">\(\beta\)</span> 从 0.1 降为 0.01,
+即降至原来的十分之一. 作为情景分析, 这只表示传播项改变,
+不据此声称某项实际措施能精确达到同样效果.</p>
+<p>令 <span
+class="math inline">\(\Lambda(t)=\int_0^t\beta(s)\,\mathrm{d}s\)</span>,
+则</p>
+<p><span class="math display">\[
+I(t)=\frac{1000}{1+999\mathrm{e}^{-\Lambda(t)}},\qquad
+\Lambda(t)=\begin{cases}
+0.1t,&amp;t\leqslant60,\\
+6+0.01(t-60),&amp;t&gt;60.
+\end{cases}
+\]</span></p>
+<p>在参数变化处, 状态连续而导数改变. 程序在 60 时刻分段积分. <span
+class="math inline">\(I(200)\approx620.871\)</span>, <span
+class="math inline">\(I(1000)\approx999.795\)</span>.
+因为后期传播率仍为正且没有恢复, 它延缓传播,
+并不在本模型中永久消除感染.</p>
+<p><img src="/images/MechanisticModels/Mech-25.png" alt="" style="width: 100%;"></p>
+<p><strong>图 11.</strong> 200 与 1000 时间单位的情景对照.</p>
+<h3 id="出生与自然死亡">6.4 出生与自然死亡</h3>
+<p>设出生率 <span class="math inline">\(\mu\)</span>, 自然死亡率 <span
+class="math inline">\(\nu\)</span>, 新生个体进入 <span
+class="math inline">\(S\)</span>, 累计自然死亡数为 <span
+class="math inline">\(D_N\)</span>, 则</p>
+<p><span class="math display">\[
+\left\{\begin{aligned}
+S&#39;&amp;=-\beta SI/N+\mu N-\nu S,\\
+I&#39;&amp;=\beta SI/N-\nu I,\\
+D_N&#39;&amp;=\nu N,
+\end{aligned}\right.
+\qquad N=S+I.
+\]</span></p>
+<p>令累计出生数 <span class="math inline">\(B&#39;=\mu
+N,B(0)=0\)</span>, 则人数收支满足 <span
+class="math inline">\(S+I+D_N=N(0)+B\)</span>. <span
+class="math inline">\(D_N\)</span> 是累计流出,
+不等于一个仍参与传播的人群.</p>
+<p><img src="/images/MechanisticModels/Mech-26.png" alt="" style="width: 100%;"></p>
+<p><strong>图 12.</strong> 出生与自然死亡的流量关系.</p>
+<p>取 <span
+class="math inline">\(\beta=0.1,\mu=0.002,\nu=0.001\)</span>, 初始 <span
+class="math inline">\(S=999,I=1\)</span>. 有 <span
+class="math inline">\(N&#39;=0.001N\)</span>, 所以 <span
+class="math inline">\(N(t)=1000\mathrm{e}^{0.001t}\)</span>. 令 <span
+class="math inline">\(i=I/N\)</span>, 得到</p>
+<p><span class="math display">\[
+i&#39;=i[\beta(1-i)-\mu].
+\]</span></p>
+<p>本例感染比例趋于 <span
+class="math inline">\(1-\mu/\beta=0.98\)</span>, 易感比例趋于 0.02,
+不是感染比例趋于 1. <span class="math inline">\(t=200\)</span> 时 <span
+class="math inline">\(S\approx24.431658,I\approx1196.971100,D_N\approx221.402758\)</span>.
+累计自然死亡数为 <span
+class="math inline">\(1000(\mathrm{e}^{0.001t}-1)\)</span>,
+长时间尺度下并非线性增长.</p>
+<p><img src="/images/MechanisticModels/Mech-27.png" alt="" style="width: 100%;"></p>
+<p><strong>图 13.</strong> 本例自然增长情景的数量与累计流出.</p>
+<h3 id="只有因病死亡">6.5 只有因病死亡</h3>
+<p>不含出生, 自然死亡或恢复, 增加因病死亡率 <span
+class="math inline">\(d\)</span>, 累计因病死亡数为 <span
+class="math inline">\(D_I\)</span>:</p>
+<p><span class="math display">\[
+\left\{\begin{aligned}
+S&#39;&amp;=-\beta SI/N,\\
+I&#39;&amp;=\beta SI/N-dI,\\
+D_I&#39;&amp;=dI,
+\end{aligned}\right.
+\qquad N=S+I,
+\qquad S+I+D_I=1000.
+\]</span></p>
+<p><img src="/images/MechanisticModels/Mech-28.png" alt="" style="width: 100%;"></p>
+<p><strong>图 14.</strong> 当前存活人数与累计因病死亡分开记录.</p>
+<p>本例 <span class="math inline">\(\beta=0.1,d=0.01\)</span>. <span
+class="math inline">\(N&#39;=-dI\)</span>, 并有</p>
+<p><span class="math display">\[
+i&#39;=(\beta-d)i(1-i),\qquad i=I/N.
+\]</span></p>
+<p>由于 <span class="math inline">\(\beta&gt;d\)</span>,
+本例感染比例趋于 1, 存活总数趋于 0. <span
+class="math inline">\(I(t)\)</span> 虽先增后减, 减少并不表示留下了约 970
+名易感者. <span class="math inline">\(t=200\)</span> 时 <span
+class="math inline">\(S\approx0.004436,I\approx291.566100,D_I\approx708.429464\)</span>;
+长期极限为 <span class="math inline">\(S,I\to0,D_I\to1000\)</span>.</p>
+<p><img src="/images/MechanisticModels/Mech-29.png" alt="" style="width: 100%;"></p>
+<p><strong>图 15.</strong> 模型中的感染数量先上升后下降,
+同时累计因病死亡继续增加.
+这个极端长期结局反映"不恢复且持续传播"等简化假设,
+不是对真实疾病结局的推断.</p>
+<h3 id="同时考虑出生与两类死亡">6.6 同时考虑出生与两类死亡</h3>
+<p>四个主要状态满足</p>
+<p><span class="math display">\[
+\left\{\begin{aligned}
+S&#39;&amp;=-\beta SI/N+\mu N-\nu S,\\
+I&#39;&amp;=\beta SI/N-(\nu+d)I,\\
+D_I&#39;&amp;=dI,\\
+D_N&#39;&amp;=\nu N,
+\end{aligned}\right.
+\qquad N=S+I.
+\]</span></p>
+<p>仍设 <span class="math inline">\(B&#39;=\mu N\)</span>, 则 <span
+class="math inline">\(S+I+D_I+D_N=1000+B\)</span>.
+累计死亡可以超过初始人口, 因为模拟过程中还有出生,
+不能据此认定违反人数守恒.</p>
+<p><img src="/images/MechanisticModels/Mech-30.png" alt="" style="width: 100%;"></p>
+<p><strong>图 16.</strong> 同时包含出生, 自然死亡和因病死亡.</p>
+<p>本例 <span
+class="math inline">\(\beta=0.1,\mu=0.002,\nu=0.001,d=0.01\)</span>. 令
+<span class="math inline">\(i=I/N\)</span>, 则</p>
+<p><span class="math display">\[
+i&#39;=i[(\beta-d)(1-i)-\mu],\qquad
+\frac{N&#39;}{N}=\mu-\nu-di.
+\]</span></p>
+<p>感染比例趋于 <span
+class="math inline">\(1-\mu/(\beta-d)=0.977778\)</span>,
+但存活人口的长期人均变化率趋于 <span
+class="math inline">\(0.001-0.01\times0.977778&lt;0\)</span>,
+所以存活总数仍衰减. <span class="math inline">\(t=200\)</span> 时 <span
+class="math inline">\(S\approx8.260971,I\approx363.120084,D_I\approx788.822135,D_N\approx160.203190\)</span>.
+这里没有恢复项, 不能把数量下降描述成"康复效果".</p>
+<p><img src="/images/MechanisticModels/Mech-31.png" alt="" style="width: 100%;"></p>
+<p><strong>图 17.</strong> 两类累计死亡与存活人口的演变.</p>
+<h3 id="sis-恢复后回到易感状态">6.7 SIS: 恢复后回到易感状态</h3>
+<p>SIS 以恢复后重新进入易感状态为结构假设, 不要求断言"完全没有抗体",
+也不能只根据疾病会变异就确认该结构适用. 设恢复率为 <span
+class="math inline">\(\alpha\)</span>, 固定人口 <span
+class="math inline">\(N\)</span>, 则</p>
+<p><span class="math display">\[
+\left\{\begin{aligned}
+S&#39;&amp;=\alpha I-\beta SI/N,\\
+I&#39;&amp;=\beta SI/N-\alpha I,
+\end{aligned}\right.
+\qquad S+I=N.
+\]</span></p>
+<p><img src="/images/MechanisticModels/Mech-32.png" alt="" style="width: 100%;"></p>
+<p><strong>图 18.</strong> 感染与恢复形成两条反向流量.</p>
+<p>因为 <span class="math inline">\(I&#39;=I[(\beta-\alpha)-\beta
+I/N]\)</span>, 对正感染初值:</p>
+<ul>
+<li><span class="math inline">\(\beta\leqslant\alpha\)</span>
+时感染数量趋于零;</li>
+<li><span class="math inline">\(\beta&gt;\alpha\)</span> 时, <span
+class="math inline">\(I^*=N(1-\alpha/\beta),S^*=N\alpha/\beta\)</span>.</li>
+</ul>
+<p>本模型的阈值可记为 <span class="math inline">\(\mathcal
+R_0=\beta/\alpha\)</span>, 其中 <span
+class="math inline">\(\alpha&gt;0\)</span>. 取 <span
+class="math inline">\(N=1000,\beta=0.1,\alpha=0.06,I_0=1\)</span>, 得到
+<span class="math inline">\(I^*=400,S^*=600\)</span>. <span
+class="math inline">\(t=500\)</span> 数值结果约为 <span
+class="math inline">\(I=399.999671,S=600.000329\)</span>.
+平衡时仍有感染流入与恢复流出, 只是两者平衡, 并非传播活动停止.</p>
+<p><img src="/images/MechanisticModels/Mech-33.png" alt="" style="width: 100%;"></p>
+<p><strong>图 19.</strong> SIS 的两个状态趋于本例的非零平衡.</p>
+<h2 id="七-完整数值实现与结果检查">七, 完整数值实现与结果检查</h2>
+<h3 id="状态顺序-参数与返回值">7.1 状态顺序, 参数与返回值</h3>
+<div class="line-block">模型 | 初始状态 | 参数设定 | 输出状态顺序
+|<br />
+: ---: | : ---: | : ---: | : ---: |<br />
+马尔萨斯 | <span class="math inline">\(100\)</span> | <span
+class="math inline">\(r=0.001\)</span> | <span
+class="math inline">\(x\)</span> |<br />
+Logistic | <span class="math inline">\(100\)</span> | <span
+class="math inline">\(r=0.04,K=1000\)</span> | <span
+class="math inline">\(x\)</span> |<br />
+捕食 | <span class="math inline">\((25,2)^{\mathsf T}\)</span> | <span
+class="math inline">\(e=0.3\)</span> 或 <span
+class="math inline">\(0.1\)</span>, 其余按前文 | <span
+class="math inline">\(x_1,x_2\)</span> |<br />
+竞争 | <span class="math inline">\((80,100)^{\mathsf T}\)</span> | 三组
+<span class="math inline">\(\sigma\)</span>, 其余按前文 | <span
+class="math inline">\(x_1,x_2\)</span> |<br />
+传播 | <span class="math inline">\((999,1,0,0,0)^{\mathsf T}\)</span> |
+按各情景设置 | <span class="math inline">\(S,I,D_I,D_N,B\)</span>
+|</div>
+<p>传播程序统一返回五个状态. 未启用的流量为零; 增加累计出生量 <span
+class="math inline">\(B\)</span> 是为了检查人数收支, 它不进入感染分母.
+各状态与 <code>sol.y</code> 的行依次对应, 不应与 <code>odeint</code>
+的列布局混用.</p>
+<h3 id="python-完整程序">7.2 Python 完整程序</h3>
+<p>安装 <code>numpy</code> 与 <code>scipy</code>:
+<code>python -m pip install numpy scipy</code>. 将下面程序保存为
+<code>mechanistic_models.py</code>, 执行
+<code>python mechanistic_models.py</code>. 代码检查求解成功及有限性,
+在传播参数突变处明确分段求解.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;机理模型数值示例: 所有参数均为教学设定, 时间为统一模型时间单位.&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.integrate <span class="keyword">import</span> solve_ivp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">integrate</span>(<span class="params">fun, initial, end, args=(<span class="params"></span>), points=<span class="number">2001</span></span>):</span><br><span class="line">    sol = solve_ivp(fun, (<span class="number">0.</span>, <span class="built_in">float</span>(end)), initial,</span><br><span class="line">                    args=args, t_eval=np.linspace(<span class="number">0.</span>, end, points),</span><br><span class="line">                    rtol=<span class="number">1e-9</span>, atol=<span class="number">1e-10</span>, max_step=<span class="number">0.5</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> sol.success <span class="keyword">or</span> <span class="keyword">not</span> np.isfinite(sol.y).<span class="built_in">all</span>():</span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(sol.message)</span><br><span class="line">    <span class="keyword">return</span> sol</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">malthus</span>(<span class="params">t, y, r</span>):</span><br><span class="line">    <span class="keyword">return</span> r*y</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">logistic</span>(<span class="params">t, y, r, K</span>):</span><br><span class="line">    <span class="keyword">return</span> r*y*(<span class="number">1</span>-y/K)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">volterra</span>(<span class="params">t, y, e</span>):</span><br><span class="line">    prey, predator = y</span><br><span class="line">    <span class="keyword">return</span> [prey*(<span class="number">1</span>-e-<span class="number">0.1</span>*predator),</span><br><span class="line">            predator*(-<span class="number">0.5</span>-e+<span class="number">0.02</span>*prey)]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">competition</span>(<span class="params">t, y, sigma1, sigma2</span>):</span><br><span class="line">    x1, x2 = y</span><br><span class="line">    <span class="keyword">return</span> [<span class="number">0.5</span>*x1*(<span class="number">1</span>-x1/<span class="number">300</span>-sigma1*x2/<span class="number">500</span>),</span><br><span class="line">            <span class="number">0.5</span>*x2*(<span class="number">1</span>-x2/<span class="number">500</span>-sigma2*x1/<span class="number">300</span>)]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">epidemic</span>(<span class="params">t, y, beta, mu=<span class="number">0.</span>, nu=<span class="number">0.</span>, d=<span class="number">0.</span>, alpha=<span class="number">0.</span></span>):</span><br><span class="line">    <span class="comment"># 状态顺序: S, I, 累计因病死亡 D_I, 累计自然死亡 D_N, 累计出生 B.</span></span><br><span class="line">    S, I, DI, DN, births = y</span><br><span class="line">    N = S+I  <span class="comment"># 当前存活人口, 死亡累计数不进入传播分母.</span></span><br><span class="line">    infection = beta*S*I/N <span class="keyword">if</span> N &gt; <span class="number">0</span> <span class="keyword">else</span> <span class="number">0.</span></span><br><span class="line">    <span class="keyword">return</span> [-infection+alpha*I+mu*N-nu*S,</span><br><span class="line">            infection-alpha*I-(nu+d)*I,</span><br><span class="line">            d*I, nu*N, mu*N]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">intervention</span>(<span class="params">end=<span class="number">1000</span></span>):</span><br><span class="line">    <span class="comment"># 在 t=60 处分段积分, 不让单一步跨过不连续的参数变化.</span></span><br><span class="line">    before = integrate(epidemic, [<span class="number">999.</span>,<span class="number">1.</span>,<span class="number">0.</span>,<span class="number">0.</span>,<span class="number">0.</span>], <span class="number">60.</span>, args=(<span class="number">0.1</span>,))</span><br><span class="line">    times = np.linspace(<span class="number">60.</span>, end, <span class="number">1881</span>)</span><br><span class="line">    after = solve_ivp(epidemic, (<span class="number">60.</span>, <span class="built_in">float</span>(end)), before.y[:, -<span class="number">1</span>],</span><br><span class="line">                      args=(<span class="number">0.01</span>,), t_eval=times, rtol=<span class="number">1e-9</span>,</span><br><span class="line">                      atol=<span class="number">1e-10</span>, max_step=<span class="number">0.5</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> after.success:</span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(after.message)</span><br><span class="line">    <span class="keyword">return</span> np.r_[before.t,after.t[<span class="number">1</span>:]], np.column_stack((before.y,after.y[:,<span class="number">1</span>:]))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run_models</span>():</span><br><span class="line">    result = &#123;&#125;</span><br><span class="line">    result[<span class="string">&#x27;malthus&#x27;</span>] = integrate(malthus, [<span class="number">100.</span>], <span class="number">1000.</span>, args=(<span class="number">.001</span>,))</span><br><span class="line">    result[<span class="string">&#x27;logistic&#x27;</span>] = integrate(logistic, [<span class="number">100.</span>], <span class="number">1000.</span>, args=(<span class="number">.04</span>,<span class="number">1000.</span>))</span><br><span class="line">    <span class="keyword">for</span> e <span class="keyword">in</span> (<span class="number">.3</span>,<span class="number">.1</span>):</span><br><span class="line">        result[<span class="string">f&#x27;volterra_<span class="subst">&#123;e&#125;</span>&#x27;</span>] = integrate(volterra, [<span class="number">25.</span>,<span class="number">2.</span>], <span class="number">100.</span>, args=(e,),points=<span class="number">4001</span>)</span><br><span class="line">    <span class="keyword">for</span> name,values <span class="keyword">in</span> [(<span class="string">&#x27;A&#x27;</span>,(<span class="number">.5</span>,<span class="number">2.</span>)),(<span class="string">&#x27;B&#x27;</span>,(<span class="number">.5</span>,<span class="number">4.</span>)),(<span class="string">&#x27;C&#x27;</span>,(<span class="number">.4</span>,<span class="number">.2</span>))]:</span><br><span class="line">        result[<span class="string">f&#x27;competition_<span class="subst">&#123;name&#125;</span>&#x27;</span>] = integrate(competition, [<span class="number">80.</span>,<span class="number">100.</span>], <span class="number">60.</span>, args=values)</span><br><span class="line">    initial=[<span class="number">999.</span>,<span class="number">1.</span>,<span class="number">0.</span>,<span class="number">0.</span>,<span class="number">0.</span>]</span><br><span class="line">    result[<span class="string">&#x27;SI&#x27;</span>] = integrate(epidemic, initial, <span class="number">200.</span>, args=(<span class="number">.1</span>,))</span><br><span class="line">    result[<span class="string">&#x27;birth_death&#x27;</span>] = integrate(epidemic, initial, <span class="number">200.</span>,args=(<span class="number">.1</span>,<span class="number">.002</span>,<span class="number">.001</span>,<span class="number">0.</span>,<span class="number">0.</span>))</span><br><span class="line">    result[<span class="string">&#x27;disease_death&#x27;</span>] = integrate(epidemic, initial, <span class="number">1000.</span>,args=(<span class="number">.1</span>,<span class="number">0.</span>,<span class="number">0.</span>,<span class="number">.01</span>,<span class="number">0.</span>))</span><br><span class="line">    result[<span class="string">&#x27;combined&#x27;</span>] = integrate(epidemic, initial, <span class="number">1000.</span>,args=(<span class="number">.1</span>,<span class="number">.002</span>,<span class="number">.001</span>,<span class="number">.01</span>,<span class="number">0.</span>))</span><br><span class="line">    result[<span class="string">&#x27;SIS&#x27;</span>] = integrate(epidemic, initial, <span class="number">500.</span>,args=(<span class="number">.1</span>,<span class="number">0.</span>,<span class="number">0.</span>,<span class="number">0.</span>,<span class="number">.06</span>))</span><br><span class="line">    result[<span class="string">&#x27;intervention&#x27;</span>] = intervention()</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="keyword">for</span> name, sol <span class="keyword">in</span> run_models().items():</span><br><span class="line">        <span class="keyword">if</span> name==<span class="string">&#x27;intervention&#x27;</span>:</span><br><span class="line">            times,values=sol</span><br><span class="line">            <span class="built_in">print</span>(name,<span class="string">&#x27;t=&#x27;</span>,times[-<span class="number">1</span>],<span class="string">&#x27;S,I=&#x27;</span>,values[:<span class="number">2</span>,-<span class="number">1</span>])</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(name,<span class="string">&#x27;t=&#x27;</span>,sol.t[-<span class="number">1</span>],<span class="string">&#x27;state=&#x27;</span>,sol.y[:,-<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
+<p><code>integrate</code> 统一调用 <code>solve_ivp</code>,
+<code>args</code> 把模型参数传给右端函数; <code>run_models</code>
+返回各情景的求解结果. 较严格的容差用于教学数值核对,
+不能替代模型与实际数据的校准.</p>
+<h3 id="matlab-对应实现">7.3 MATLAB 对应实现</h3>
+<p>MATLAB 中可以用 <code>ode45(fun,tspan,y0,options)</code>
+求相同初值问题. 右端函数也是时间在前, 状态在后;
+返回数组每一行对应一个输出时刻. 下面完整程序不依赖专门工具箱, 保存为
+<code>mechanistic_models.m</code>, 运行
+<code>out = mechanistic_models();</code>.</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">out</span> = <span class="title">mechanistic_models</span><span class="params">()</span></span></span><br><span class="line"><span class="comment">% 完整教学例题; 时间使用统一模型时间单位, 不代表疾病实测参数.</span></span><br><span class="line">options=odeset(<span class="string">&#x27;RelTol&#x27;</span>,<span class="number">1e-9</span>,<span class="string">&#x27;AbsTol&#x27;</span>,<span class="number">1e-10</span>,<span class="string">&#x27;MaxStep&#x27;</span>,<span class="number">.5</span>);</span><br><span class="line">[t,y]=ode45(@(t,y) <span class="number">.001</span>*y,<span class="built_in">linspace</span>(<span class="number">0</span>,<span class="number">1000</span>,<span class="number">2001</span>),<span class="number">100</span>,options);</span><br><span class="line">out.malthus=struct(<span class="string">&#x27;t&#x27;</span>,t,<span class="string">&#x27;y&#x27;</span>,y);</span><br><span class="line">[t,y]=ode45(@(t,y) <span class="number">.04</span>*y.*(<span class="number">1</span>-y/<span class="number">1000</span>),<span class="built_in">linspace</span>(<span class="number">0</span>,<span class="number">1000</span>,<span class="number">2001</span>),<span class="number">100</span>,options);</span><br><span class="line">out.logistic=struct(<span class="string">&#x27;t&#x27;</span>,t,<span class="string">&#x27;y&#x27;</span>,y);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span>=<span class="number">1</span>:<span class="number">2</span></span><br><span class="line">    capture=[<span class="number">.3</span> <span class="number">.1</span>]; e=capture(<span class="built_in">j</span>);</span><br><span class="line">    [t,y]=ode45(@(t,y) [y(<span class="number">1</span>)*(<span class="number">1</span>-e<span class="number">-.1</span>*y(<span class="number">2</span>)),y(<span class="number">2</span>)*(<span class="number">-.5</span>-e+<span class="number">.02</span>*y(<span class="number">1</span>))].&#x27;, ...</span><br><span class="line">        <span class="built_in">linspace</span>(<span class="number">0</span>,<span class="number">100</span>,<span class="number">4001</span>),[<span class="number">25</span> <span class="number">2</span>].&#x27;,options);</span><br><span class="line">    out.volterra&#123;<span class="built_in">j</span>&#125;=struct(<span class="string">&#x27;e&#x27;</span>,e,<span class="string">&#x27;t&#x27;</span>,t,<span class="string">&#x27;y&#x27;</span>,y);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">sigmas=[<span class="number">.5</span> <span class="number">2</span>;<span class="number">.5</span> <span class="number">4</span>;<span class="number">.4</span> <span class="number">.2</span>];</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span>=<span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    s1=sigmas(<span class="built_in">j</span>,<span class="number">1</span>); s2=sigmas(<span class="built_in">j</span>,<span class="number">2</span>);</span><br><span class="line">    [t,y]=ode45(@(t,y) [<span class="number">.5</span>*y(<span class="number">1</span>)*(<span class="number">1</span>-y(<span class="number">1</span>)/<span class="number">300</span>-s1*y(<span class="number">2</span>)/<span class="number">500</span>), ...</span><br><span class="line">        <span class="number">.5</span>*y(<span class="number">2</span>)*(<span class="number">1</span>-y(<span class="number">2</span>)/<span class="number">500</span>-s2*y(<span class="number">1</span>)/<span class="number">300</span>)].&#x27;, ...</span><br><span class="line">        <span class="built_in">linspace</span>(<span class="number">0</span>,<span class="number">60</span>,<span class="number">2001</span>),[<span class="number">80</span> <span class="number">100</span>].&#x27;,options);</span><br><span class="line">    out.competition&#123;<span class="built_in">j</span>&#125;=struct(<span class="string">&#x27;t&#x27;</span>,t,<span class="string">&#x27;y&#x27;</span>,y);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="comment">% 每行参数: beta, mu, nu, d, alpha; 对应 SI, 自然生死, 因病死亡, 综合, SIS.</span></span><br><span class="line">parameters=[<span class="number">.1</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span>;<span class="number">.1</span> <span class="number">.002</span> <span class="number">.001</span> <span class="number">0</span> <span class="number">0</span>;<span class="number">.1</span> <span class="number">0</span> <span class="number">0</span> <span class="number">.01</span> <span class="number">0</span>; ...</span><br><span class="line">            <span class="number">.1</span> <span class="number">.002</span> <span class="number">.001</span> <span class="number">.01</span> <span class="number">0</span>;<span class="number">.1</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">.06</span>];</span><br><span class="line">names=&#123;<span class="string">&#x27;SI&#x27;</span>,<span class="string">&#x27;birth_death&#x27;</span>,<span class="string">&#x27;disease_death&#x27;</span>,<span class="string">&#x27;combined&#x27;</span>,<span class="string">&#x27;SIS&#x27;</span>&#125;;</span><br><span class="line">ends=[<span class="number">200</span> <span class="number">200</span> <span class="number">1000</span> <span class="number">1000</span> <span class="number">500</span>]; initial=[<span class="number">999</span> <span class="number">1</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span>].&#x27;;</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span>=<span class="number">1</span>:<span class="number">5</span></span><br><span class="line">    p=parameters(<span class="built_in">j</span>,:);</span><br><span class="line">    [t,y]=ode45(@(t,y) epidemic_rhs(t,y,p),<span class="built_in">linspace</span>(<span class="number">0</span>,ends(<span class="built_in">j</span>),<span class="number">2001</span>),initial,options);</span><br><span class="line">    out.(names&#123;<span class="built_in">j</span>&#125;)=struct(<span class="string">&#x27;t&#x27;</span>,t,<span class="string">&#x27;y&#x27;</span>,y);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">[t1,y1]=ode45(@(t,y) epidemic_rhs(t,y,[<span class="number">.1</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span>]),<span class="built_in">linspace</span>(<span class="number">0</span>,<span class="number">60</span>,<span class="number">2001</span>),initial,options);</span><br><span class="line">[t2,y2]=ode45(@(t,y) epidemic_rhs(t,y,[<span class="number">.01</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span>]),<span class="built_in">linspace</span>(<span class="number">60</span>,<span class="number">1000</span>,<span class="number">1881</span>),y1(<span class="keyword">end</span>,:).&#x27;,options);</span><br><span class="line">out.intervention=struct(<span class="string">&#x27;t&#x27;</span>,[t1;t2(<span class="number">2</span>:<span class="keyword">end</span>)],<span class="string">&#x27;y&#x27;</span>,[y1;y2(<span class="number">2</span>:<span class="keyword">end</span>,:)]);</span><br><span class="line"><span class="built_in">disp</span>(out.SI.y(<span class="keyword">end</span>,:)); <span class="built_in">disp</span>(out.SIS.y(<span class="keyword">end</span>,:));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">dy</span> = <span class="title">epidemic_rhs</span><span class="params">(~,y,p)</span></span></span><br><span class="line">S=y(<span class="number">1</span>); I=y(<span class="number">2</span>); N=S+I;</span><br><span class="line"><span class="built_in">beta</span>=p(<span class="number">1</span>); mu=p(<span class="number">2</span>); nu=p(<span class="number">3</span>); d=p(<span class="number">4</span>); alpha=p(<span class="number">5</span>);</span><br><span class="line"><span class="keyword">if</span> N&gt;<span class="number">0</span>, infection=<span class="built_in">beta</span>*S*I/N; <span class="keyword">else</span>, infection=<span class="number">0</span>; <span class="keyword">end</span></span><br><span class="line">dy=[-infection+alpha*I+mu*N-nu*S, ...</span><br><span class="line">    infection-alpha*I-(nu+d)*I,d*I,nu*N,mu*N].&#x27;;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<h3 id="检查什么-为什么检查">7.4 检查什么, 为什么检查</h3>
+<ul>
+<li>指数与 Logistic 解可与解析公式对比.</li>
+<li>捕食模型可检查守恒量与一周期平均,
+不能从图形包围关系推断每个时刻的大小.</li>
+<li>无出生死亡的 SI / SIS 应保持 <span
+class="math inline">\(S+I=N\)</span>.</li>
+<li>含死亡的模型应保持包含累计流出的收支式;
+含出生时还应加上累计出生.</li>
+<li>所有数量应在数值容差允许范围内非负.
+不要用强制裁剪负值掩盖步长或模型问题.</li>
+<li>缩小容差或改变求解方法后, 关键结论应基本稳定;
+数值趋近零不等于有限时间精确灭绝.</li>
+</ul>
+<h2 id="八-练习与参考解答">八, 练习与参考解答</h2>
+<ol type="1">
+<li>指数模型 <span class="math inline">\(r=0.001\)</span>
+的倍增时间是多少? 若 <span class="math inline">\(r&lt;0\)</span>,
+如何解释曲线?</li>
+<li>Logistic 初值为 <span class="math inline">\(K\)</span>
+或零时是否仍为 S 形曲线? 初值高于 <span class="math inline">\(K\)</span>
+时怎样变化?</li>
+<li>捕获强度由 0.3 降至 0.1, 捕食模型的一周期平均数量怎样变化?
+能否由此断言瞬时比例始终提高?</li>
+<li>竞争模型情景 C 的平衡数量是多少? "低于 1"与"等于零"是否相同?</li>
+<li>SI 在 60 时刻将 <span class="math inline">\(\beta\)</span>
+降为十分之一后, 为什么长期仍趋近全体感染?</li>
+<li>含出生死亡模型为什么需要区分当前存活人口与累计出生死亡? 含因病死亡的
+SI 中感染者减少是否必然表示恢复?</li>
+<li>若 SIS 的 <span
+class="math inline">\(\beta=0.04,\alpha=0.06\)</span>, 还会趋于 400
+名感染者吗?</li>
+</ol>
+<p><strong>参考解答.</strong></p>
+<ol type="1">
+<li><span class="math inline">\(\ln2/0.001\approx693.1472\)</span>
+时间单位; 负增长率对应指数衰减.</li>
+<li>初值为 <span class="math inline">\(K\)</span> 或零时分别保持 <span
+class="math inline">\(K\)</span> 或零; 高于 <span
+class="math inline">\(K\)</span> 的正初值递减至 <span
+class="math inline">\(K\)</span>.</li>
+<li>平均猎物由 40 变为 30, 平均捕食者由 7 变为 9;
+瞬时比例还受周期相位影响, 不能作全时刻比较.</li>
+<li>平衡约为 <span
+class="math inline">\((195.652174,434.782609)\)</span>; 阈值小于 1
+不等于精确灭绝.</li>
+<li>后期 <span class="math inline">\(\beta=0.01\)</span> 仍为正,
+累计传播强度继续无限增加, 且模型没有恢复机制.</li>
+<li>累计流量记录历史流入流出, 不属于仍参与传播的人口.
+感染者减少也可能来自死亡, 必须看方程中的流出项.</li>
+<li><span class="math inline">\(\beta&lt;\alpha\)</span>,
+正感染初值趋于零; 400 是另一组参数的平衡值.</li>
+</ol>
+<h2 id="九-使用机理模型的边界">九, 使用机理模型的边界</h2>
+<p>机理模型的价值在于把假设变成可推导, 可计算, 可核查的数量关系,
+并揭示平衡, 阈值和参数影响. 它的局限来自假设, 参数识别,
+数据质量与连续化近似. 求解器精度再高, 也不能补偿遗漏机制.</p>
+<p>负责任的应用应明确模型适用范围, 用独立数据检验,
+关注参数不确定性及机制变化. 生态保护与公共卫生中的科学决策,
+既需要解释清楚的模型, 也需要实际监测, 专业知识与持续修正.</p>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li>Malthus, T. R. <em>An Essay on the Principle of Population</em>,
+1798 年初版.</li>
+<li>Volterra, V. (1926). <em>Fluctuations in the Abundance of a Species
+considered Mathematically</em>. Nature, 118, 558–560.
+https://doi.org/10.1038/118558a0.</li>
+<li>Hethcote, H. W. (2000). <em>The Mathematics of Infectious
+Diseases</em>. SIAM Review, 42(4), 599–653.
+https://doi.org/10.1137/S0036144500371907.</li>
+<li><a
+target="_blank" rel="noopener" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html">SciPy
+solve_ivp</a>.</li>
+<li><a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/matlab/math/choose-an-ode-solver.html">MathWorks:
+Choose an ODE Solver</a>.</li>
+</ul>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

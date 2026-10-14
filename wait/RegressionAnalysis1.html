@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="17. 回归分析概述 回归分析把散点中的变化趋势写成一个可以计算, 检验和预测的数学模型. 本章以 16 组身高与腿长数据为主线, 依次回答三个问题: 怎样找到一条合适的直线, 怎样判断这条直线提供了多少信息, 以及怎样说明预测中的不确定性. 学习时先掌握一元回归; 多元回归, 曲线回归和似然推导可作为进一步阅读的内容. 一, 从散点到回归模型 1.1 回归分析研究什么 设 \(Y">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/wait/RegressionAnalysis1.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="17. 回归分析概述 回归分析把散点中的变化趋势写成一个可以计算, 检验和预测的数学模型. 本章以 16 组身高与腿长数据为主线, 依次回答三个问题: 怎样找到一条合适的直线, 怎样判断这条直线提供了多少信息, 以及怎样说明预测中的不确定性. 学习时先掌握一元回归; 多元回归, 曲线回归和似然推导可作为进一步阅读的内容. 一, 从散点到回归模型 1.1 回归分析研究什么 设 \(Y">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/RegressionAnalysis/height_fit.png">
+<meta property="og:image" content="http://example.com/images/RegressionAnalysis/height_diagnostics.png">
+<meta property="og:image" content="http://example.com/images/RegressionAnalysis/multiple_fit.png">
+<meta property="og:image" content="http://example.com/images/RegressionAnalysis/curve_fit.png">
+<meta property="article:published_time" content="2026-10-14T08:00:35.034Z">
+<meta property="article:modified_time" content="2026-10-14T08:00:35.034Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/RegressionAnalysis/height_fit.png">
+
+
+<link rel="canonical" href="http://example.com/wait/RegressionAnalysis1">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/wait/RegressionAnalysis1.html","path":"wait/RegressionAnalysis1.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9E%E5%BD%92%E5%88%86%E6%9E%90%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">17. 回归分析概述</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E4%BB%8E%E6%95%A3%E7%82%B9%E5%88%B0%E5%9B%9E%E5%BD%92%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text">一, 从散点到回归模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9E%E5%BD%92%E5%88%86%E6%9E%90%E7%A0%94%E7%A9%B6%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 回归分析研究什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%B1%BB%E4%B8%8E%E7%BA%BF%E6%80%A7%E7%9A%84%E5%90%AB%E4%B9%89"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 分类与&quot;线性&quot;的含义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E5%88%86%E6%9E%90%E4%B8%8E%E5%9B%9E%E5%BD%92%E5%88%86%E6%9E%90"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 相关分析与回归分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-%E4%B8%80%E5%85%83%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="nav-number">1.2.</span> <span class="nav-text">二, 一元线性回归的基本原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B-%E5%9B%9E%E5%BD%92%E6%96%B9%E7%A8%8B%E4%B8%8E%E6%AE%8B%E5%B7%AE"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 模型, 回归方程与残差</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B3%95-%E8%AE%A9%E6%80%BB%E5%81%8F%E7%A6%BB%E5%B0%BD%E9%87%8F%E5%B0%8F"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 最小二乘法: 让总偏离尽量小</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%81%87%E8%AE%BE%E5%88%86%E5%88%AB%E7%94%A8%E4%BA%8E%E4%BB%80%E4%B9%88"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 假设分别用于什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%AD%A3%E6%80%81%E8%AF%AF%E5%B7%AE%E4%BC%9A%E5%AF%BC%E5%87%BA%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E9%80%89%E8%AF%BB"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4
+为什么正态误差会导出最小二乘(选读)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89-%E6%80%8E%E6%A0%B7%E8%AF%84%E4%BB%B7%E6%8B%9F%E5%90%88-%E6%A3%80%E9%AA%8C%E4%B8%8E%E9%A2%84%E6%B5%8B"><span class="nav-number">1.3.</span> <span class="nav-text">三, 怎样评价拟合, 检验与预测</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E7%A7%8D%E5%B9%B3%E6%96%B9%E5%92%8C"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 三种平方和</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A4%E5%AE%9A%E7%B3%BB%E6%95%B0-%E8%B0%83%E6%95%B4%E5%88%A4%E5%AE%9A%E7%B3%BB%E6%95%B0%E4%B8%8E%E8%AF%AF%E5%B7%AE%E5%B0%BA%E5%BA%A6"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 判定系数,
+调整判定系数与误差尺度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9E%E5%BD%92%E7%B3%BB%E6%95%B0%E7%9A%84-t-%E6%A3%80%E9%AA%8C"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 回归系数的 \(t\) 检验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E6%95%B4%E4%BD%93%E7%9A%84-f-%E6%A3%80%E9%AA%8C"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.4 模型整体的 \(F\) 检验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%82%B9%E9%A2%84%E6%B5%8B-%E5%9D%87%E5%80%BC%E7%BD%AE%E4%BF%A1%E5%8C%BA%E9%97%B4%E4%B8%8E%E6%96%B0%E8%A7%82%E6%B5%8B%E9%A2%84%E6%B5%8B%E5%8C%BA%E9%97%B4"><span class="nav-number">1.3.5.</span> <span class="nav-text">3.5 点预测,
+均值置信区间与新观测预测区间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AE%8B%E5%B7%AE%E8%AF%8A%E6%96%AD%E4%B8%8E%E9%A2%84%E6%B5%8B%E9%AA%8C%E8%AF%81"><span class="nav-number">1.3.6.</span> <span class="nav-text">3.6 残差诊断与预测验证</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B-%E5%A4%9A%E5%85%83%E5%9B%9E%E5%BD%92-%E6%9B%B2%E7%BA%BF%E5%9B%9E%E5%BD%92%E4%B8%8E%E5%85%B1%E7%BA%BF%E6%80%A7"><span class="nav-number">1.4.</span> <span class="nav-text">四, 多元回归,
+曲线回归与共线性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E5%85%83%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E7%9A%84%E7%9F%A9%E9%98%B5%E8%A1%A8%E7%A4%BA"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 多元线性回归的矩阵表示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E9%87%8D%E5%85%B1%E7%BA%BF%E6%80%A7%E4%B8%8E-vif"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 多重共线性与 VIF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B2%E7%BA%BF%E5%9B%9E%E5%BD%92%E4%B8%8E%E5%8F%98%E9%87%8F%E5%8F%98%E6%8D%A2"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 曲线回归与变量变换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94-%E5%BB%BA%E6%A8%A1%E6%B5%81%E7%A8%8B%E4%B8%8E%E4%B8%89%E4%B8%AA%E5%AE%8C%E6%95%B4%E4%BE%8B%E9%A2%98"><span class="nav-number">1.5.</span> <span class="nav-text">五, 建模流程与三个完整例题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E6%A8%A1%E6%B5%81%E7%A8%8B"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 建模流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B%E9%A2%98%E4%B8%80-%E8%BA%AB%E9%AB%98%E4%B8%8E%E8%85%BF%E9%95%BF"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 例题一: 身高与腿长</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B%E9%A2%98%E4%BA%8C-%E5%85%AC%E5%85%B1%E6%9C%8D%E5%8A%A1%E9%9C%80%E6%B1%82%E7%9A%84%E5%A4%9A%E5%85%83%E5%9B%9E%E5%BD%92%E4%B8%8E%E5%85%B1%E7%BA%BF%E6%80%A7"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 例题二:
+公共服务需求的多元回归与共线性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B%E9%A2%98%E4%B8%89-%E6%9C%8D%E5%8A%A1%E7%AA%97%E5%8F%A3%E6%95%B0%E9%87%8F%E4%B8%8E%E7%AD%89%E5%BE%85%E6%97%B6%E9%97%B4%E7%9A%84%E5%80%92%E6%95%B0%E6%9B%B2%E7%BA%BF"><span class="nav-number">1.5.4.</span> <span class="nav-text">5.4 例题三:
+服务窗口数量与等待时间的倒数曲线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E9%9C%80%E6%B1%82%E9%A2%84%E6%B5%8B%E4%B8%8E%E8%B5%84%E6%BA%90%E9%85%8D%E7%BD%AE%E4%B8%AD%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.5.5.</span> <span class="nav-text">5.5
+在需求预测与资源配置中的使用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD-matlab-%E4%B8%8E-python-%E5%AE%8C%E6%95%B4%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.6.</span> <span class="nav-text">六, MATLAB 与 Python 完整实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E6%95%B0%E5%AD%A6%E6%A8%A1%E5%9E%8B%E5%88%B0%E6%B1%82%E8%A7%A3%E5%87%BD%E6%95%B0"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 从数学模型到求解函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E8%BF%90%E8%A1%8C%E4%B8%80%E4%B8%AA%E7%AE%80%E7%9F%AD%E7%9A%84-python-%E4%BE%8B%E5%AD%90"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 先运行一个简短的 Python
+例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E5%AE%8C%E6%95%B4%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.6.3.</span> <span class="nav-text">6.3 Python 完整实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab-%E5%AE%8C%E6%95%B4%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.6.4.</span> <span class="nav-text">6.4 MATLAB 完整实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83-%E7%BB%93%E6%9E%9C%E8%A7%A3%E8%AF%BB%E4%B8%8E%E5%B8%B8%E8%A7%81%E9%94%99%E8%AF%AF"><span class="nav-number">1.7.</span> <span class="nav-text">七, 结果解读与常见错误</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%86%99%E5%87%BA%E5%AE%8C%E6%95%B4%E7%9A%84%E7%BB%93%E6%9E%9C%E8%AF%B4%E6%98%8E"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 如何写出完整的结果说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%94%99%E8%AF%AF%E4%B8%8E%E6%94%B9%E8%BF%9B"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 常见错误与改进</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E7%9A%84%E4%BC%98%E7%82%B9%E4%B8%8E%E5%B1%80%E9%99%90"><span class="nav-number">1.7.3.</span> <span class="nav-text">7.3 方法的优点与局限</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB-%E7%BB%83%E4%B9%A0%E4%B8%8E%E8%BF%9B%E4%B8%80%E6%AD%A5%E9%98%85%E8%AF%BB"><span class="nav-number">1.8.</span> <span class="nav-text">八, 练习与进一步阅读</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 练习</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%A7%A3%E7%AD%94"><span class="nav-number">1.8.2.</span> <span class="nav-text">8.2 参考解答</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E4%B8%80%E6%AD%A5%E9%98%85%E8%AF%BB%E4%B8%8E%E5%87%BD%E6%95%B0%E6%96%87%E6%A1%A3"><span class="nav-number">1.8.3.</span> <span class="nav-text">8.3 进一步阅读与函数文档</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="回归分析概述">17. 回归分析概述</h1>
+<p>回归分析把散点中的变化趋势写成一个可以计算, 检验和预测的数学模型.
+本章以 16 组身高与腿长数据为主线, 依次回答三个问题:
+怎样找到一条合适的直线, 怎样判断这条直线提供了多少信息,
+以及怎样说明预测中的不确定性. 学习时先掌握一元回归; 多元回归,
+曲线回归和似然推导可作为进一步阅读的内容.</p>
+<h2 id="一-从散点到回归模型">一, 从散点到回归模型</h2>
+<h3 id="回归分析研究什么">1.1 回归分析研究什么</h3>
+<p>设 <span class="math inline">\(Y\)</span> 为需要解释或预测的结果,
+<span class="math inline">\(X\)</span> 为可以观测的解释变量.
+回归分析研究的是: 在给定 <span class="math inline">\(X=x\)</span> 时,
+<span class="math inline">\(Y\)</span> 的平均水平怎样变化, 即条件期望
+<span class="math inline">\(E(Y\mid X=x)\)</span>.
+实际观测值还会偏离这个平均水平, 模型用误差项描述这种偏离.</p>
+<p>例如, 身高相近的人, 腿长也可能不同.
+回归直线刻画的是给定身高时腿长的平均趋势,
+而不是要求每一个人的测量点都落在同一条直线上. 该关系描述统计关联;
+要解释为因果关系, 还需要研究设计和额外假设.</p>
+<p>公共服务中也会遇到类似问题: 根据居民数量和年龄结构预测服务需求,
+根据窗口数量估计平均等待时间, 根据历史预订信息预测运输需求.
+回归模型帮助我们把判断变成可检验的数量关系, 并为资源配置提供依据.</p>
+<h3 id="分类与线性的含义">1.2 分类与"线性"的含义</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">分类依据</th>
+<th style="text-align: center;">模型类型</th>
+<th style="text-align: center;">示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">自变量数量</td>
+<td style="text-align: center;">一元回归</td>
+<td style="text-align: center;">用身高预测腿长</td>
+</tr>
+<tr>
+<td style="text-align: center;">自变量数量</td>
+<td style="text-align: center;">多元回归</td>
+<td style="text-align: center;">用人口数量与收入水平预测服务需求</td>
+</tr>
+<tr>
+<td style="text-align: center;">响应变量数量</td>
+<td style="text-align: center;">单响应回归</td>
+<td style="text-align: center;">一个结果变量 <span
+class="math inline">\(Y\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">响应变量数量</td>
+<td style="text-align: center;">多响应回归</td>
+<td style="text-align: center;">同时建模多个结果变量; 本章不展开</td>
+</tr>
+<tr>
+<td style="text-align: center;">参数进入模型的方式</td>
+<td style="text-align: center;">线性回归</td>
+<td style="text-align: center;"><span
+class="math inline">\(\beta_0+\beta_1x\)</span> 或 <span
+class="math inline">\(\beta_0+\beta_1x+\beta_2x^2\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">参数进入模型的方式</td>
+<td style="text-align: center;">非线性回归</td>
+<td style="text-align: center;"><span
+class="math inline">\(a+b\mathrm{e}^{-cx}\)</span>, 其中 <span
+class="math inline">\(c\)</span> 未知</td>
+</tr>
+</tbody>
+</table>
+<p><strong>线性回归的"线性"指对待估参数线性.</strong> <span
+class="math inline">\(a+b/x\)</span> 关于 <span
+class="math inline">\(x\)</span> 是曲线, 但令 <span
+class="math inline">\(z=1/x\)</span> 后, 它仍是关于参数 <span
+class="math inline">\(a,b\)</span> 的线性回归. 简单回归通常指一个自变量,
+多重回归通常指多个自变量; 不能用这两个名称区分响应变量的数量.</p>
+<h3 id="相关分析与回归分析">1.3 相关分析与回归分析</h3>
+<p>相关分析概括两个变量共同变化的方向和程度.
+皮尔逊相关系数对交换两个变量保持不变, 但主要描述线性关联.
+回归分析需要确定预测方向: 用 <span class="math inline">\(X\)</span> 预测
+<span class="math inline">\(Y\)</span> 与用 <span
+class="math inline">\(Y\)</span> 预测 <span
+class="math inline">\(X\)</span> 是不同的最小二乘问题,
+所得直线一般不能互相直接倒置.</p>
+<p>高相关或高拟合优度都不能单独证明因果关系, 也不能保证对新数据预测准确.
+建模时先明确: 目标是解释关联, 预测未来, 还是评估某项措施的因果效果.
+三种目标对数据和验证方法的要求不同.</p>
+<h2 id="二-一元线性回归的基本原理">二, 一元线性回归的基本原理</h2>
+<h3 id="模型-回归方程与残差">2.1 模型, 回归方程与残差</h3>
+<p>一元线性回归模型写为</p>
+<p><span class="math display">\[
+Y_i=\beta_0+\beta_1x_i+\varepsilon_i,\qquad i=1,2,\ldots,n.
+\]</span></p>
+<p><span class="math inline">\(\beta_0\)</span> 是截距, <span
+class="math inline">\(\beta_1\)</span> 是斜率, <span
+class="math inline">\(\varepsilon_i\)</span> 是不可直接观测的误差. 在
+<span class="math inline">\(E(\varepsilon_i\mid X)=0\)</span>
+的条件下,</p>
+<p><span class="math display">\[
+E(Y_i\mid X)=\beta_0+\beta_1x_i.
+\]</span></p>
+<p>用数据估计参数后, 得到</p>
+<p><span class="math display">\[
+\widehat y_i=\widehat\beta_0+\widehat\beta_1x_i,\qquad
+e_i=y_i-\widehat y_i.
+\]</span></p>
+<p><span class="math inline">\(e_i\)</span> 是可以计算的残差,
+不能与真实误差 <span class="math inline">\(\varepsilon_i\)</span>
+混为一谈. 残差由同一批数据拟合得到, 通常相互相关.
+含截距的普通最小二乘拟合满足 <span
+class="math inline">\(\sum\limits_{i=1}^{n}e_i=0\)</span>;
+这不是残差相互独立的证据.</p>
+<p>斜率表示模型中 <span class="math inline">\(x\)</span>
+每增加一个单位时, 条件平均值的变化量. 截距是模型在 <span
+class="math inline">\(x=0\)</span> 处的值; 当 0 远离观测范围时,
+截距未必有实际解释.</p>
+<h3 id="最小二乘法-让总偏离尽量小">2.2 最小二乘法: 让总偏离尽量小</h3>
+<p>最小二乘法选择参数, 使残差平方和最小:</p>
+<p><span class="math display">\[
+S(\beta_0,\beta_1)
+=\sum\limits_{i=1}^{n}(y_i-\beta_0-\beta_1x_i)^2.
+\]</span></p>
+<p>平方使正负偏差不能相互抵消, 也使大偏差受到更强惩罚. 这里度量的是沿
+<span class="math inline">\(y\)</span> 轴方向的偏差,
+不是点到直线的最短几何距离; 若自变量也存在不可忽略的测量误差,
+需要考虑其他模型.</p>
+<p>对两个参数分别求偏导并令其为零:</p>
+<p><span class="math display">\[
+\frac{\partial S}{\partial\beta_0}
+=-2\sum\limits_{i=1}^{n}(y_i-\beta_0-\beta_1x_i)=0,
+\]</span></p>
+<p><span class="math display">\[
+\frac{\partial S}{\partial\beta_1}
+=-2\sum\limits_{i=1}^{n}x_i(y_i-\beta_0-\beta_1x_i)=0.
+\]</span></p>
+<p>整理得到正规方程:</p>
+<p><span class="math display">\[
+\begin{cases}
+\sum\limits_{i=1}^{n}y_i=n\widehat\beta_0+\widehat\beta_1\sum\limits_{i=1}^{n}x_i,\\[2mm]
+\sum\limits_{i=1}^{n}x_iy_i=\widehat\beta_0\sum\limits_{i=1}^{n}x_i+\widehat\beta_1\sum\limits_{i=1}^{n}x_i^2.
+\end{cases}
+\]</span></p>
+<p>当 <span class="math inline">\(S_{xx}&gt;0\)</span> 时, 解为</p>
+<p><span class="math display">\[
+\overline x=\frac{1}{n}\sum\limits_{i=1}^{n}x_i,\qquad
+\overline y=\frac{1}{n}\sum\limits_{i=1}^{n}y_i,
+\]</span></p>
+<p><span class="math display">\[
+S_{xx}=\sum\limits_{i=1}^{n}(x_i-\overline x)^2,\qquad
+S_{xy}=\sum\limits_{i=1}^{n}(x_i-\overline x)(y_i-\overline y),
+\]</span></p>
+<p><span class="math display">\[
+\widehat\beta_1=\frac{S_{xy}}{S_{xx}},\qquad
+\widehat\beta_0=\overline y-\widehat\beta_1\overline x.
+\]</span></p>
+<p>因此回归直线经过 <span class="math inline">\((\overline x,\overline
+y)\)</span>. 如果所有 <span class="math inline">\(x_i\)</span> 相同,
+<span class="math inline">\(S_{xx}=0\)</span>,
+数据无法单独识别截距与斜率.</p>
+<p>从几何上看, 最小二乘把观测向量投影到模型能够表达的空间,
+残差与这个空间正交. 代数中的正规方程与几何中的投影是同一件事的两种表达,
+这也是回归分析中简洁而有用的数学结构.</p>
+<h3 id="假设分别用于什么">2.3 假设分别用于什么</h3>
+<p>计算最小二乘解本身不要求误差服从正态分布. 下表中 <span
+class="math inline">\(k\)</span> 表示非截距解释列的数量, 参数总数为
+<span class="math inline">\(k+1\)</span>. 这里 <span
+class="math inline">\(X\)</span> 表示全部观测形成的设计矩阵, <span
+class="math inline">\(\boldsymbol\varepsilon=(\varepsilon_1,\ldots,\varepsilon_n)^{\mathsf
+T}\)</span> 表示误差列向量.
+下面的假设用于解释估计性质和进行经典统计推断,
+不能把它们合并为一句"数据看起来像直线".</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">条件</th>
+<th style="text-align: center;">主要作用</th>
+<th style="text-align: center;">检查与限制</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">条件平均值的模型形式合理</td>
+<td style="text-align: center;">描述系统性变化</td>
+<td style="text-align: center;">散点图与残差图可发现明显弯曲,
+但不能证明形式正确</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(E(\boldsymbol\varepsilon\mid X)=\boldsymbol
+0\)</span></td>
+<td
+style="text-align: center;">在设计矩阵满秩时支持系数的条件无偏性</td>
+<td style="text-align: center;">遗漏变量,
+反向关系或测量误差可能破坏该条件</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(\operatorname{Cov}(\boldsymbol\varepsilon\mid
+X)=\sigma^2I_n\)</span></td>
+<td
+style="text-align: center;">支持经典协方差公式与高斯—马尔可夫结论</td>
+<td style="text-align: center;">同方差且误差不相关; 独立是更强条件</td>
+</tr>
+<tr>
+<td style="text-align: center;">误差条件联合正态</td>
+<td style="text-align: center;">支持有限样本的精确 <span
+class="math inline">\(t\)</span>, <span class="math inline">\(F\)</span>
+分布及经典区间</td>
+<td style="text-align: center;">小样本下需谨慎;
+诊断图不能确认假设完全成立</td>
+</tr>
+<tr>
+<td style="text-align: center;">设计矩阵满列秩且 <span
+class="math inline">\(n&gt;k+1\)</span></td>
+<td style="text-align: center;">唯一估计参数,
+并留有估计误差方差的自由度</td>
+<td style="text-align: center;">完全共线或参数过多会使推断不可用</td>
+</tr>
+</tbody>
+</table>
+<p>本章给出的置信区间, 预测区间和显著性检验采用经典正态, 同方差,
+独立误差假设. 自变量既可以是固定设计, 也可以是随机观测;
+后一种情况可在给定设计矩阵 <span class="math inline">\(X\)</span>
+的条件下讨论.</p>
+<p>若方差随自变量变化, 可研究加权最小二乘或异方差稳健标准误;
+若观测来自时间序列, 家庭或同一机构, 需考虑相关误差或分组结构.
+不能仅凭"来自同一地区"就断言观测独立.</p>
+<h3 id="为什么正态误差会导出最小二乘选读">2.4
+为什么正态误差会导出最小二乘(选读)</h3>
+<p>若给定 <span class="math inline">\(X\)</span> 后, 误差独立且服从
+<span class="math inline">\(N(0,\sigma^2)\)</span>, 则</p>
+<p><span class="math display">\[
+f(y_i\mid x_i)=\frac{1}{\sqrt{2\pi\sigma^2}}
+\mathrm{e}^{-\frac{(y_i-\beta_0-\beta_1x_i)^2}{2\sigma^2}}.
+\]</span></p>
+<p>联合似然及其对数为</p>
+<p><span class="math display">\[
+L(\beta_0,\beta_1,\sigma^2)
+=(2\pi\sigma^2)^{-n/2}
+\mathrm{e}^{-\frac{1}{2\sigma^2}\sum\limits_{i=1}^{n}(y_i-\beta_0-\beta_1x_i)^2},
+\]</span></p>
+<p><span class="math display">\[
+\ell=-\frac{n}{2}\log(2\pi\sigma^2)
+-\frac{1}{2\sigma^2}\sum\limits_{i=1}^{n}(y_i-\beta_0-\beta_1x_i)^2.
+\]</span></p>
+<p>因此, 最大化关于回归系数的似然等价于最小化残差平方和.
+连续变量的似然使用概率密度; 不能把它理解为 <span
+class="math inline">\(P(Y_i=y_i)\)</span>,
+因为连续分布在单个点上的概率为零.</p>
+<p>正态模型中误差方差的极大似然估计是 <span
+class="math inline">\(SSE/n\)</span>;
+本章统计推断使用的无偏估计是一元情形的 <span
+class="math inline">\(SSE/(n-2)\)</span>. 二者用途与分母不同.</p>
+<h2 id="三-怎样评价拟合-检验与预测">三, 怎样评价拟合, 检验与预测</h2>
+<h3 id="三种平方和">3.1 三种平方和</h3>
+<p>对含截距的普通最小二乘模型, 定义</p>
+<p><span class="math display">\[
+SST=\sum\limits_{i=1}^{n}(y_i-\overline y)^2,
+\qquad SSR=\sum\limits_{i=1}^{n}(\widehat y_i-\overline y)^2,
+\qquad SSE=\sum\limits_{i=1}^{n}(y_i-\widehat y_i)^2.
+\]</span></p>
+<p>它们分别是总平方和, 回归平方和和残差平方和, 满足</p>
+<p><span class="math display">\[
+SST=SSR+SSE.
+\]</span></p>
+<p>文献也可能使用 TSS, ESS, RSS 等缩写, 阅读时应以定义式为准. 本章统一用
+SST, SSR, SSE, 避免 SSR 被同时用来表示"回归"与"残差".
+总平方和与回归平方和都需要减去样本均值; 直接使用 <span
+class="math inline">\(\sum\limits_i y_i^2\)</span> 会改变含义.</p>
+<h3 id="判定系数-调整判定系数与误差尺度">3.2 判定系数,
+调整判定系数与误差尺度</h3>
+<p>当 <span class="math inline">\(SST&gt;0\)</span> 时,</p>
+<p><span class="math display">\[
+R^2=1-\frac{SSE}{SST}=\frac{SSR}{SST}.
+\]</span></p>
+<p>对同一批非恒定响应数据, 含截距的普通最小二乘在训练数据上有 <span
+class="math inline">\(0\leqslant R^2\leqslant1\)</span>.
+它表示相对于"始终预测样本均值"的基线, 模型解释了多少样本波动.
+无截距模型或样本外评估中的 <span class="math inline">\(R^2\)</span>
+可能为负; 若响应变量为常数, 以上定义不可用.</p>
+<p>设有 <span class="math inline">\(k\)</span> 个非截距解释列和一个截距,
+令参数数目 <span class="math inline">\(p=k+1\)</span> (检验中的 <span
+class="math inline">\(p\)</span> 值另指尾概率), 则</p>
+<p><span class="math display">\[
+\nu=n-k-1=n-p,
+\qquad MSE=\frac{SSE}{\nu},\qquad s=\sqrt{MSE},
+\]</span></p>
+<p><span class="math display">\[
+\overline R^2=1-\frac{SSE/(n-k-1)}{SST/(n-1)}.
+\]</span></p>
+<p><span class="math inline">\(s\)</span> 是误差标准差的估计, 与 <span
+class="math inline">\(y\)</span> 同单位; 它不是平均绝对误差. 调整 <span
+class="math inline">\(R^2\)</span> 对增加变量施加自由度代价, 可以为负.
+在同一批观测上增加解释列且重新进行无约束最小二乘拟合时, 普通训练 <span
+class="math inline">\(R^2\)</span> 不会下降, 所以不能单凭它选择变量.</p>
+<p>预测任务还应报告样本外 MAE, RMSE 等指标:</p>
+<p><span class="math display">\[
+MAE=\frac{1}{m}\sum\limits_{i=1}^{m}|y_i-\widehat y_i|,
+\qquad RMSE=\sqrt{\frac{1}{m}\sum\limits_{i=1}^{m}(y_i-\widehat y_i)^2}.
+\]</span></p>
+<p>这里的 <span class="math inline">\(m\)</span> 指验证数据的观测数.
+训练残差小不代表新数据误差也小, 更不能保证模型有因果解释.</p>
+<h3 id="回归系数的-t-检验">3.3 回归系数的 <span
+class="math inline">\(t\)</span> 检验</h3>
+<p>对假设 <span class="math inline">\(H_0:\beta_j=\beta_{j,0}\)</span>,
+检验统计量为</p>
+<p><span class="math display">\[
+t_j=\frac{\widehat\beta_j-\beta_{j,0}}{SE(\widehat\beta_j)}.
+\]</span></p>
+<p>在经典正态模型及原假设下, <span class="math inline">\(t_j\)</span>
+服从自由度 <span class="math inline">\(\nu\)</span> 的 <span
+class="math inline">\(t\)</span> 分布. 常见检验取 <span
+class="math inline">\(\beta_{j,0}=0\)</span>. 双侧 <span
+class="math inline">\(p\)</span> 值是相应分布在 <span
+class="math inline">\(|t_j|\)</span> 之外的两侧尾概率.</p>
+<p>给定显著性水平 <span class="math inline">\(\alpha\)</span>, 若 <span
+class="math inline">\(p&lt;\alpha\)</span>, 拒绝原假设; 若 <span
+class="math inline">\(p\geqslant\alpha\)</span>, 不拒绝原假设.
+不拒绝不表示证明系数等于零. <span class="math inline">\(p\)</span>
+值也不是"原假设为真的概率", 更不能代替效应大小与置信区间.</p>
+<p>一元模型中,</p>
+<p><span class="math display">\[
+SE(\widehat\beta_1)=\frac{s}{\sqrt{S_{xx}}},\qquad
+SE(\widehat\beta_0)=s\sqrt{\frac{1}{n}+\frac{\overline x^2}{S_{xx}}}.
+\]</span></p>
+<p>系数的双侧 <span class="math inline">\(100(1-\alpha)\%\)</span>
+置信区间为</p>
+<p><span class="math display">\[
+\widehat\beta_j\pm t_{1-\alpha/2,\nu}\,SE(\widehat\beta_j),
+\]</span></p>
+<p>其中 <span class="math inline">\(t_{1-\alpha/2,\nu}\)</span> 表示
+<span class="math inline">\(t\)</span> 分布的左侧累积概率为 <span
+class="math inline">\(1-\alpha/2\)</span> 的分位数.</p>
+<h3 id="模型整体的-f-检验">3.4 模型整体的 <span
+class="math inline">\(F\)</span> 检验</h3>
+<p>整体检验比较含 <span class="math inline">\(k\)</span>
+个自变量的模型与仅含截距的模型:</p>
+<p><span class="math display">\[
+H_0:\beta_1=\cdots=\beta_k=0,
+\qquad H_1:\text{至少一个斜率系数不为零}.
+\]</span></p>
+<p><span class="math display">\[
+F=\frac{SSR/k}{SSE/(n-k-1)}.
+\]</span></p>
+<p>在原假设和经典模型假设下, <span class="math inline">\(F\)</span>
+服从自由度为 <span class="math inline">\((k,\nu)\)</span> 的 <span
+class="math inline">\(F\)</span> 分布.
+它检验这些变量整体是否比常数基线提供更多线性均值信息; 不能验证正态性,
+同方差性或模型形式本身正确.</p>
+<p>在一元回归中, 检验斜率为零时 <span
+class="math inline">\(F=t_1^2\)</span>, 整体 <span
+class="math inline">\(F\)</span> 检验与斜率的双侧 <span
+class="math inline">\(t\)</span> 检验给出相同 <span
+class="math inline">\(p\)</span> 值. 多元回归中,
+整体检验与单个系数检验回答不同问题, 不能互相代替.</p>
+<h3 id="点预测-均值置信区间与新观测预测区间">3.5 点预测,
+均值置信区间与新观测预测区间</h3>
+<p>在新位置 <span class="math inline">\(x_0\)</span>, 点预测为</p>
+<p><span class="math display">\[
+\widehat y_0=\widehat\beta_0+\widehat\beta_1x_0,
+\qquad h_0=\frac{1}{n}+\frac{(x_0-\overline x)^2}{S_{xx}}.
+\]</span></p>
+<p>给定 <span class="math inline">\(x_0\)</span> 时,
+平均响应的置信区间为</p>
+<p><span class="math display">\[
+\widehat y_0\pm t_{1-\alpha/2,n-2}s\sqrt{h_0}.
+\]</span></p>
+<p>对一名新的, 与原样本独立且来自相同误差机制的个体,
+其响应预测区间为</p>
+<p><span class="math display">\[
+\widehat y_0\pm t_{1-\alpha/2,n-2}s\sqrt{1+h_0}.
+\]</span></p>
+<p>预测区间中的 <span class="math inline">\(1\)</span>
+对应新个体自身的随机波动, 因此它比均值置信区间宽. 两种区间不能混用.
+这里给出的是固定位置的逐点区间, 不是对整条回归曲线的同时置信带.</p>
+<p>95% 置信水平描述的是构造区间的方法:
+如果在相同机制下反复抽样并重复构造区间, 约 95%
+的均值置信区间会包含真实条件均值. 预测区间则针对新的随机观测,
+将参数估计误差与新观测波动一并计入.
+不能将已经计算好的均值置信区间理解为"样本中 95% 的个体都在其中".</p>
+<p><span class="math inline">\(h_0\)</span> 随 <span
+class="math inline">\(x_0\)</span> 远离 <span
+class="math inline">\(\overline x\)</span> 而增大,
+反映远离数据中心时参数估计带来的不确定性增加. 然而,
+公式不包含模型在外推区域可能失效的偏差,
+因此外推不能仅凭区间宽度判断可靠性.</p>
+<h3 id="残差诊断与预测验证">3.6 残差诊断与预测验证</h3>
+<p>先看散点图, 再看残差—拟合值图. 明显弯曲提示模型可能遗漏非线性;
+漏斗形提示异方差; 少数极端残差提示需要核查数据或考察异常观测.
+按时间收集的数据还要看残差随时间的变化.</p>
+<p>正态 Q–Q 图比较残差分位数与正态分位数, 适合发现明显偏离.
+残差并非独立同分布的真实误差, 图形接近直线也不等于证明正态假设成立.
+异常点需先核实, 不能只为提高 <span class="math inline">\(R^2\)</span>
+就删除.</p>
+<p>小样本可使用留一法: 每次留出一条观测, 用其余数据拟合后预测被留出的值.
+对普通最小二乘, 若每次删除后仍可唯一拟合, 有</p>
+<p><span class="math display">\[
+e_i^{(-i)}=\frac{e_i}{1-h_{ii}},\qquad
+RMSE_{\mathrm{LOO}}=\sqrt{\frac{1}{n}\sum\limits_{i=1}^{n}\left(\frac{e_i}{1-h_{ii}}\right)^2}.
+\]</span></p>
+<p><span class="math inline">\(h_{ii}\)</span> 是帽子矩阵 <span
+class="math inline">\(H=X(X^{\mathsf T}X)^{-1}X^{\mathsf T}\)</span>
+的对角元. 当 <span class="math inline">\(h_{ii}=1\)</span> 时,
+该留一预测不可用. 留一法适合本章的小型示例, 但若反复用它挑选模型,
+最终仍需独立评估; 它也不能验证观测范围之外的外推.</p>
+<p>时间序列宜按时间留出, 具有群组结构的数据宜按群组留出. 缺失值处理,
+标准化和特征筛选应在每个训练折内完成,
+避免将验证数据的信息提前带入模型.</p>
+<h2 id="四-多元回归-曲线回归与共线性">四, 多元回归,
+曲线回归与共线性</h2>
+<h3 id="多元线性回归的矩阵表示">4.1 多元线性回归的矩阵表示</h3>
+<p>有 <span class="math inline">\(k\)</span> 个自变量时,</p>
+<p><span class="math display">\[
+Y_i=\beta_0+\beta_1x_{i1}+\cdots+\beta_kx_{ik}+\varepsilon_i.
+\]</span></p>
+<p>令</p>
+<p><span class="math display">\[
+\boldsymbol y=(y_1,\ldots,y_n)^{\mathsf T},\quad
+X=\begin{pmatrix}
+1&amp;x_{11}&amp;\cdots&amp;x_{1k}\\
+\vdots&amp;\vdots&amp;&amp;\vdots\\
+1&amp;x_{n1}&amp;\cdots&amp;x_{nk}
+\end{pmatrix},\quad
+\boldsymbol\beta=(\beta_0,\ldots,\beta_k)^{\mathsf T}.
+\]</span></p>
+<p>误差列向量为 <span
+class="math inline">\(\boldsymbol\varepsilon=(\varepsilon_1,\ldots,\varepsilon_n)^{\mathsf
+T}\)</span>. 设计矩阵 <span class="math inline">\(X\)</span> 有 <span
+class="math inline">\(n\)</span> 行和 <span
+class="math inline">\(p=k+1\)</span> 列, 每行对应一次观测,
+第一列为截距项. 模型写为 <span class="math inline">\(\boldsymbol
+y=X\boldsymbol\beta+\boldsymbol\varepsilon\)</span>. 满列秩时,
+理论表达式为</p>
+<p><span class="math display">\[
+\widehat{\boldsymbol\beta}=(X^{\mathsf T}X)^{-1}X^{\mathsf T}\boldsymbol
+y,
+\qquad
+\widehat{\operatorname{Cov}}(\widehat{\boldsymbol\beta})=s^2(X^{\mathsf
+T}X)^{-1}.
+\]</span></p>
+<p>编程时不建议直接求 <span class="math inline">\(X^{\mathsf
+T}X\)</span> 的逆矩阵. 设计矩阵存在近似共线性时,
+形成正规方程通常会进一步放大数值误差, 可优先使用 QR 分解, MATLAB 左除或
+NumPy 最小二乘. 采用简化 QR 分解 <span
+class="math inline">\(X=QR\)</span> 时, <span
+class="math inline">\(Q\)</span> 为 <span class="math inline">\(n\times
+p\)</span> 矩阵且 <span class="math inline">\(Q^{\mathsf
+T}Q=I_p\)</span>, <span class="math inline">\(R\)</span> 为可逆的 <span
+class="math inline">\(p\times p\)</span> 上三角矩阵. 随后解三角方程</p>
+<p><span class="math display">\[
+R\widehat{\boldsymbol\beta}=Q^{\mathsf T}\boldsymbol y,
+\qquad (X^{\mathsf T}X)^{-1}=R^{-1}R^{-\mathsf T}.
+\]</span></p>
+<p>代码通过三角方程计算所需矩阵, 而不调用显式求逆函数. 对于秩亏问题,
+伪逆可以给出一种最小范数解, 但它不代表系数已被唯一识别;
+本章的推断程序明确拒绝秩亏设计矩阵.</p>
+<p>给定预测行向量 <span class="math inline">\(\boldsymbol x_0^{\mathsf
+T}=(1,x_{01},\ldots,x_{0k})\)</span>,</p>
+<p><span class="math display">\[
+\widehat y_0=\boldsymbol x_0^{\mathsf
+T}\widehat{\boldsymbol\beta},\qquad
+h_0=\boldsymbol x_0^{\mathsf T}(X^{\mathsf T}X)^{-1}\boldsymbol x_0.
+\]</span></p>
+<p>均值置信区间与新观测预测区间分别使用 <span
+class="math inline">\(s\sqrt{h_0}\)</span> 和 <span
+class="math inline">\(s\sqrt{1+h_0}\)</span>, 自由度为 <span
+class="math inline">\(n-k-1\)</span>.
+多元系数表示在其他入模变量取值固定时的条件关联,
+不能自动解释为政策干预的因果效果.</p>
+<h3 id="多重共线性与-vif">4.2 多重共线性与 VIF</h3>
+<p>多重共线性指解释变量之间存在完全或近似的线性依赖.
+它既可能来自两列高度相关, 也可能来自某一列接近其他多列的线性组合,
+不能只看两两相关系数.</p>
+<p>完全共线性使参数没有唯一最小二乘解;
+近似共线性可能使系数对数据微小变化敏感, 标准误增大. 整体拟合较好,
+并不意味着每个系数都能稳定解释.</p>
+<p>对第 <span class="math inline">\(j\)</span> 个解释变量, 以它为响应,
+其他解释变量为自变量并包含截距, 得到辅助回归的判定系数 <span
+class="math inline">\(R_j^2\)</span>. 定义</p>
+<p><span class="math display">\[
+VIF_j=\frac{1}{1-R_j^2}.
+\]</span></p>
+<p>这里的 <span class="math inline">\(R_j^2\)</span>
+是辅助回归的判定系数, 不是一个带正负号的相关系数. <span
+class="math inline">\(VIF_j=1\)</span>
+表示该列在样本中与其他解释变量没有线性关联; 接近完全依赖时, VIF 很大.
+常用的 5 或 10 只是经验提醒, 不是适用于所有场景的硬性判据.</p>
+<p>处理方法应结合目标: 删除明显重复的指标, 重新设计变量,
+增加有辨别力的观测, 或为预测考虑岭回归等正则化方法.
+中心化能改善某些数值条件, 但不会消除真实的线性依赖.
+不能为了得到显著结果, 机械删去有明确理论依据的控制变量.</p>
+<h3 id="曲线回归与变量变换">4.3 曲线回归与变量变换</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">函数形式</th>
+<th style="text-align: center;">变换方式</th>
+<th style="text-align: center;">需要注意的条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(y=a+b/x+\varepsilon\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(z=1/x\)</span>, 拟合 <span
+class="math inline">\(y=a+bz+\varepsilon\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(x\neq0\)</span>; 本章示例取 <span
+class="math inline">\(x&gt;0\)</span>, 响应尺度不变</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span class="math inline">\(y=a+b\log
+x+\varepsilon\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(z=\log
+x\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(x&gt;0\)</span>, 响应尺度不变</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(y=\beta_0+\beta_1x+\beta_2x^2+\varepsilon\)</span></td>
+<td style="text-align: center;">构造 <span
+class="math inline">\(x,x^2\)</span> 两列</td>
+<td style="text-align: center;">仍是参数线性模型,
+注意高阶项的共线性</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span class="math inline">\(\log
+y=a+bx+\varepsilon\)</span></td>
+<td style="text-align: center;">对正响应取对数</td>
+<td style="text-align: center;"><span
+class="math inline">\(y&gt;0\)</span>, 误差假设建立在对数尺度</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span class="math inline">\(\log
+y=a+b\log x+\varepsilon\)</span></td>
+<td style="text-align: center;">两侧取对数</td>
+<td style="text-align: center;"><span
+class="math inline">\(x&gt;0,y&gt;0\)</span>, 适合研究乘性关系</td>
+</tr>
+</tbody>
+</table>
+<p>只变换自变量时, 最小二乘仍拟合原响应尺度. 变换响应后,
+最小化的是变换尺度上的误差, 误差模型和解释也随之改变.</p>
+<p>例如, 若 <span class="math inline">\(\log Y=a+bx+\varepsilon\)</span>
+且给定 <span class="math inline">\(x\)</span> 时 <span
+class="math inline">\(\varepsilon\mid x\sim N(0,\sigma^2)\)</span>,
+则</p>
+<p><span class="math display">\[
+\operatorname{median}(Y\mid x)=\mathrm{e}^{a+bx},\qquad
+E(Y\mid x)=\mathrm{e}^{a+bx+\sigma^2/2}.
+\]</span></p>
+<p>直接对拟合值取指数对应条件中位数; 估计条件均值需考虑回变换修正,
+其不确定性也需处理. 对数尺度上的均值置信区间直接取指数,
+并不自动成为原尺度条件均值的置信区间.
+单调回变换后的新观测预测区间则有不同的解释.</p>
+<p>并非所有非线性模型都必须线性化. 例如 <span
+class="math inline">\(a+b\mathrm{e}^{-cx}\)</span> 中 <span
+class="math inline">\(c\)</span> 未知时, 可直接使用非线性最小二乘; 初值,
+参数约束和局部最优都需要额外检查. 本章代码演示只变换自变量的倒数曲线,
+以保持基本推断的清晰性.</p>
+<h2 id="五-建模流程与三个完整例题">五, 建模流程与三个完整例题</h2>
+<h3 id="建模流程">5.1 建模流程</h3>
+<ol type="1">
+<li>明确预测对象, 变量单位, 数据来源和使用范围, 检查缺失,
+重复和测量异常.</li>
+<li>绘制散点图, 结合领域知识选择函数形式;
+避免只根据拟合优度反复试式子.</li>
+<li>构造含截距的设计矩阵, 检查样本数与矩阵秩, 再用稳定数值方法求解.</li>
+<li>报告系数, 误差尺度, 拟合优度和适当的检验,
+结合残差图检查模型缺陷.</li>
+<li>根据数据结构设计留出或交叉验证,
+分别说明训练拟合与样本外预测表现.</li>
+<li>对新输入给出点预测, 并区分均值置信区间与新观测预测区间;
+明确外推和模型假设.</li>
+<li>用单位, 效应大小, 局限和实际问题解释结果,
+保留可复现的数据与代码.</li>
+</ol>
+<h3 id="例题一-身高与腿长">5.2 例题一: 身高与腿长</h3>
+<p>给定 16 名成年女性的身高 <span class="math inline">\(x\)</span>
+与腿长 <span class="math inline">\(y\)</span>, 单位均为 cm. 数据如下.
+原始材料未说明抽样方式, 也未明确腿长的解剖测量端点.
+不同测量口径可能得到不同的腿长, 不能混用. 本例缺少完整的抽样和测量说明,
+因此仅用于回归计算与推断教学, 不用于推断一般人群的身体比例.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">编号</th>
+<th style="text-align: center;">身高 <span
+class="math inline">\(x\)</span></th>
+<th style="text-align: center;">腿长 <span
+class="math inline">\(y\)</span></th>
+<th style="text-align: center;">编号</th>
+<th style="text-align: center;">身高 <span
+class="math inline">\(x\)</span></th>
+<th style="text-align: center;">腿长 <span
+class="math inline">\(y\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">143</td>
+<td style="text-align: center;">88</td>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">155</td>
+<td style="text-align: center;">96</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">145</td>
+<td style="text-align: center;">85</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">156</td>
+<td style="text-align: center;">98</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">146</td>
+<td style="text-align: center;">88</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">157</td>
+<td style="text-align: center;">97</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">147</td>
+<td style="text-align: center;">91</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">158</td>
+<td style="text-align: center;">96</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">149</td>
+<td style="text-align: center;">92</td>
+<td style="text-align: center;">13</td>
+<td style="text-align: center;">159</td>
+<td style="text-align: center;">98</td>
+</tr>
+<tr>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">150</td>
+<td style="text-align: center;">93</td>
+<td style="text-align: center;">14</td>
+<td style="text-align: center;">160</td>
+<td style="text-align: center;">99</td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">153</td>
+<td style="text-align: center;">93</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: center;">162</td>
+<td style="text-align: center;">100</td>
+</tr>
+<tr>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">154</td>
+<td style="text-align: center;">95</td>
+<td style="text-align: center;">16</td>
+<td style="text-align: center;">164</td>
+<td style="text-align: center;">102</td>
+</tr>
+</tbody>
+</table>
+<p><strong>第一步: 计算基本量.</strong></p>
+<p><span class="math display">\[
+\sum\limits_i x_i=2458,\quad \sum\limits_i y_i=1511,\quad
+\sum\limits_i x_i^2=378220,\quad \sum\limits_i x_iy_i=232566,
+\]</span></p>
+<p><span class="math display">\[
+\overline x=153.625,\quad \overline y=94.4375,\quad
+S_{xx}=609.75,\quad S_{xy}=438.625.
+\]</span></p>
+<p><strong>第二步: 求回归直线.</strong></p>
+<p><span class="math display">\[
+\widehat\beta_1=\frac{3509}{4878}\approx0.7193521935,\qquad
+\widehat\beta_0=-\frac{39202}{2439}\approx-16.0729807298,
+\]</span></p>
+<p><span class="math display">\[
+\widehat y=-16.0729807298+0.7193521935x.
+\]</span></p>
+<p>计算与预测均使用未舍入系数. 模型中身高每增加 1 cm,
+平均腿长的拟合值增加约 0.719352 cm;
+不能把这个样本关联理解成增加身高的干预效果.
+负截距处在没有观测支持的位置, 不宜作人体含义解释.</p>
+<p><strong>第三步: 评价拟合并检验斜率.</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">指标</th>
+<th style="text-align: center;">计算结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(SST\)</span></td>
+<td style="text-align: center;">339.937500</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(SSR\)</span></td>
+<td style="text-align: center;">315.525856</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(SSE\)</span></td>
+<td style="text-align: center;">24.411644</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(MSE=SSE/14\)</span></td>
+<td style="text-align: center;">1.743689</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(s\)</span>(cm)</td>
+<td style="text-align: center;">1.320488</td>
+</tr>
+<tr>
+<td style="text-align: center;">留一法 RMSE(cm)</td>
+<td style="text-align: center;">1.449757</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(R^2\)</span></td>
+<td style="text-align: center;">0.9281878460</td>
+</tr>
+<tr>
+<td style="text-align: center;">调整 <span
+class="math inline">\(R^2\)</span></td>
+<td style="text-align: center;">0.9230584064</td>
+</tr>
+<tr>
+<td style="text-align: center;">斜率 <span
+class="math inline">\(t\)</span> 值, 自由度 14</td>
+<td style="text-align: center;">13.451880</td>
+</tr>
+<tr>
+<td style="text-align: center;">整体 <span
+class="math inline">\(F\)</span> 值, 自由度 <span
+class="math inline">\((1,14)\)</span></td>
+<td style="text-align: center;">180.953071</td>
+</tr>
+<tr>
+<td style="text-align: center;">斜率双侧检验及整体检验的 <span
+class="math inline">\(p\)</span> 值</td>
+<td style="text-align: center;"><span
+class="math inline">\(2.131163\times10^{-9}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(t_{0.975,14}\)</span></td>
+<td style="text-align: center;">2.144787</td>
+</tr>
+</tbody>
+</table>
+<p>在经典假设下, <span class="math inline">\(\alpha=0.05\)</span>
+时拒绝斜率为零的原假设. <span class="math inline">\(R^2\)</span>
+表示这条直线解释了约 92.82% 的样本腿长波动. 它没有证明模型形式正确,
+也没有证明对所有人群有效. 代码另计算留一法 RMSE,
+作为观测范围内预测验证的一个补充.</p>
+<p><strong>第四步: 预测身高 170 cm 时的腿长.</strong></p>
+<p><span class="math display">\[
+\widehat y_0=\frac{259063}{2439}\approx106.216892\ \mathrm{cm},\qquad
+h_0\approx0.502255.
+\]</span></p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">预测对象</th>
+<th style="text-align: center;">95% 区间(cm)</th>
+<th style="text-align: center;">区间含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">给定身高时的平均腿长</td>
+<td style="text-align: center;"><span
+class="math inline">\([104.209738,108.224046]\)</span></td>
+<td style="text-align: center;">模型条件均值的置信区间</td>
+</tr>
+<tr>
+<td style="text-align: center;">新的一名个体的腿长</td>
+<td style="text-align: center;"><span
+class="math inline">\([102.745606,109.688178]\)</span></td>
+<td style="text-align: center;">新观测的预测区间</td>
+</tr>
+</tbody>
+</table>
+<p>样本身高范围为 <span class="math inline">\([143,164]\)</span> cm, 170
+cm 属于外推. 上述数值是模型假设成立时的计算结果,
+不能涵盖外推区域可能出现的系统性失配.
+更稳妥的实际应用需要该身高附近的数据, 并核实抽样对象和测量方法.</p>
+<p><img src="/images/RegressionAnalysis/height_fit.png" alt="" style="width: 100%;"></p>
+<p>图 1 身高与腿长的拟合直线及逐点区间. 164 cm 右侧为外推区域.</p>
+<p><img src="/images/RegressionAnalysis/height_diagnostics.png" alt="" style="width: 100%;"></p>
+<p>图 2 身高例题的残差诊断. 左图检查系统性形状,
+右图检查明显的正态偏离.</p>
+<h3 id="例题二-公共服务需求的多元回归与共线性">5.3 例题二:
+公共服务需求的多元回归与共线性</h3>
+<p>以下数据为<strong>人工构造的教学数据</strong>. 设 <span
+class="math inline">\(x_1\)</span> 为老年人口数量, 单位为万人; <span
+class="math inline">\(x_2\)</span> 为月人均收入, 单位为千元; <span
+class="math inline">\(y\)</span> 为某类服务的周平均需求, 单位为百人次.
+平均需求允许为小数. 设定其他影响因素已被暂时合并为噪声,
+研究两项指标如何共同描述需求.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">地区编号</th>
+<th style="text-align: center;"><span
+class="math inline">\(x_1\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(x_2\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(y\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">3.0</td>
+<td style="text-align: center;">22.90</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">3.4</td>
+<td style="text-align: center;">25.56</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">3.1</td>
+<td style="text-align: center;">29.69</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">2.8</td>
+<td style="text-align: center;">22.82</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">14</td>
+<td style="text-align: center;">4.0</td>
+<td style="text-align: center;">34.40</td>
+</tr>
+<tr>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">3.6</td>
+<td style="text-align: center;">27.84</td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: center;">3.2</td>
+<td style="text-align: center;">35.38</td>
+</tr>
+<tr>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">13</td>
+<td style="text-align: center;">4.2</td>
+<td style="text-align: center;">31.48</td>
+</tr>
+<tr>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">16</td>
+<td style="text-align: center;">3.8</td>
+<td style="text-align: center;">37.62</td>
+</tr>
+<tr>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">2.9</td>
+<td style="text-align: center;">25.71</td>
+</tr>
+<tr>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">17</td>
+<td style="text-align: center;">4.4</td>
+<td style="text-align: center;">38.96</td>
+</tr>
+<tr>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">3.5</td>
+<td style="text-align: center;">29.95</td>
+</tr>
+</tbody>
+</table>
+<p>为便于复现, 代码中通过 <span
+class="math inline">\(y=5+1.8x_1+0.9x_2+u\)</span> 生成上述数据, 其中
+<span class="math inline">\(u\)</span> 按行依次为 <span
+class="math inline">\(0.8,-0.5,0.3,-0.9,0.6,-0.2,0.5,-0.7,0.4,0.1,-0.6,0.2\)</span>.
+这只是已知的构造方式, 不表示估计程序应该直接使用这些系数.</p>
+<p>拟合得到</p>
+<p><span class="math display">\[
+\widehat y=5.935954+1.892572x_1+0.307170x_2.
+\]</span></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">指标</th>
+<th style="text-align: center;">结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(R^2\)</span></td>
+<td style="text-align: center;">0.9910123553</td>
+</tr>
+<tr>
+<td style="text-align: center;">调整 <span
+class="math inline">\(R^2\)</span></td>
+<td style="text-align: center;">0.9890151009</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span class="math inline">\(F\)</span>,
+自由度 <span class="math inline">\((2,9)\)</span></td>
+<td style="text-align: center;">496.187348</td>
+</tr>
+<tr>
+<td style="text-align: center;">整体检验 <span
+class="math inline">\(p\)</span> 值</td>
+<td style="text-align: center;"><span
+class="math inline">\(6.185952\times10^{-10}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;"><span class="math inline">\(x_1\)</span>
+系数双侧检验 <span class="math inline">\(p\)</span> 值</td>
+<td style="text-align: center;"><span
+class="math inline">\(5.889406\times10^{-9}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;"><span class="math inline">\(x_2\)</span>
+系数双侧检验 <span class="math inline">\(p\)</span> 值</td>
+<td style="text-align: center;">0.544649</td>
+</tr>
+<tr>
+<td style="text-align: center;">两个解释变量的 VIF</td>
+<td style="text-align: center;">均约 2.152832</td>
+</tr>
+</tbody>
+</table>
+<p>整体模型显著, 而收入系数在此小样本中未达到 0.05 水平,
+说明整体检验与单个系数检验不能混用.
+不应据此断言现实中的收入与服务需求没有关系.</p>
+<p>对 <span class="math inline">\(x_1=13,x_2=3.7\)</span>, 点预测为
+31.675923 百人次, 平均需求的 95% 置信区间为 <span
+class="math inline">\([31.267616,32.084230]\)</span>,
+新地区在同一模型下的观测预测区间为 <span
+class="math inline">\([30.308560,33.043286]\)</span>.
+这些区间仍依赖同方差, 正态等假设;
+教学数据不能用于实际设施数量或资金配置决策.</p>
+<p>为了演示共线性, 将第二列替换为 <span
+class="math inline">\(x_2^{\mathrm{near}}=2x_1+0.02u\)</span>, 两个 VIF
+均约为 <span class="math inline">\(2.531986\times10^5\)</span>.
+若直接使用 <span
+class="math inline">\(x_2^{\mathrm{exact}}=2x_1\)</span>, 设计矩阵秩降为
+2, 而参数数目为 3, 程序应拒绝常规系数推断.
+两种情况分别展示"近似依赖"与"完全依赖".</p>
+<p><img src="/images/RegressionAnalysis/multiple_fit.png" alt="" style="width: 100%;"></p>
+<p>图 3 多元例题的观测值与拟合值. 虚线表示两者相等的位置.</p>
+<h3 id="例题三-服务窗口数量与等待时间的倒数曲线">5.4 例题三:
+服务窗口数量与等待时间的倒数曲线</h3>
+<p>以下同样是<strong>人工构造的教学数据</strong>. 假设窗口数量 <span
+class="math inline">\(x&gt;0\)</span>, <span
+class="math inline">\(y\)</span> 为平均等待时间, 单位为 min;
+客流与服务过程的其他条件在该示例中视为近似稳定.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><span
+class="math inline">\(x\)</span>(窗口数)</th>
+<th style="text-align: center;">1</th>
+<th style="text-align: center;">2</th>
+<th style="text-align: center;">3</th>
+<th style="text-align: center;">4</th>
+<th style="text-align: center;">5</th>
+<th style="text-align: center;">6</th>
+<th style="text-align: center;">8</th>
+<th style="text-align: center;">10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(y\)</span>(min)</td>
+<td style="text-align: center;">12.1</td>
+<td style="text-align: center;">8.0</td>
+<td style="text-align: center;">6.9</td>
+<td style="text-align: center;">6.0</td>
+<td style="text-align: center;">5.7</td>
+<td style="text-align: center;">5.2</td>
+<td style="text-align: center;">5.1</td>
+<td style="text-align: center;">4.7</td>
+</tr>
+</tbody>
+</table>
+<p>散点显示下降趋势逐渐变缓, 试用</p>
+<p><span class="math display">\[
+y=a+\frac{b}{x}+\varepsilon.
+\]</span></p>
+<p>令 <span class="math inline">\(z=1/x\)</span>, 再对 <span
+class="math inline">\(y=a+bz+\varepsilon\)</span> 作普通最小二乘,
+得到</p>
+<p><span class="math display">\[
+\widehat y=3.995744+\frac{8.124876}{x},\qquad R^2\approx0.9977842503.
+\]</span></p>
+<p>当 <span class="math inline">\(x&gt;0\)</span> 且 <span
+class="math inline">\(b&gt;0\)</span> 时,</p>
+<p><span class="math display">\[
+\frac{\mathrm{d}\widehat y}{\mathrm{d}x}=-\frac{\widehat b}{x^2}&lt;0,
+\]</span></p>
+<p>描述增加窗口与平均等待时间下降的拟合关联, 且变化逐渐变缓. <span
+class="math inline">\(x\to\infty\)</span> 时模型趋于 <span
+class="math inline">\(a\)</span>,
+但有限数据不能验证无限窗口下的实际等待时间.</p>
+<p>对 7 个窗口, 点预测为 5.156441 min, 平均等待时间的 95% 置信区间为
+<span class="math inline">\([5.027021,5.285861]\)</span>,
+一个新的同类平均等待时间观测的预测区间为 <span
+class="math inline">\([4.828079,5.484803]\)</span>.
+因本例响应是每次采样所得的平均等待时间,
+这个预测区间不等于某一位顾客的个人等待时间区间.</p>
+<p>实际窗口配置还取决于客流, 服务时间分布, 排队规则和人员成本.
+倒数回归可以描述数据趋势, 但不能替代排队模型或完整的资源优化模型.</p>
+<p><img src="/images/RegressionAnalysis/curve_fit.png" alt="" style="width: 100%;"></p>
+<p>图 4 窗口数量与平均等待时间的倒数曲线及逐点区间.</p>
+<h3 id="在需求预测与资源配置中的使用">5.5
+在需求预测与资源配置中的使用</h3>
+<p>运输预订预测可把航行日期, 剩余售票时间, 价格和季节等作为候选解释变量.
+价格往往随预期需求调整, 普通回归中的价格系数未必表示因果价格弹性.
+预测人数时还应注意结果非负, 必要时考虑适合计数数据的广义线性模型.
+预测是定价优化的输入; 价格涨幅等限制属于后续优化约束.</p>
+<p>养老服务需求预测可考虑人口年龄结构, 服务可及性和收入等因素.
+机构数量还受到容量, 服务半径与预算约束,
+不能仅把回归点预测四舍五入为最终建设数量. 数据采集应保护个人信息,
+资源安排要结合实际需求与公平可及性, 并说明预测不确定性.</p>
+<h2 id="六-matlab-与-python-完整实现">六, MATLAB 与 Python 完整实现</h2>
+<h3 id="从数学模型到求解函数">6.1 从数学模型到求解函数</h3>
+<p>普通最小二乘求解的是</p>
+<p><span class="math display">\[
+\min_{\boldsymbol\beta}\ \|\boldsymbol y-X\boldsymbol\beta\|_2^2.
+\]</span></p>
+<p>本章模型没有另设系数上下界或符号约束. 设计矩阵每一行是一条观测,
+每一列是一个待估系数对应的函数. 含截距时, 第一列必须全为 1.</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">例题</th>
+<th style="text-align: center;">设计矩阵的一行</th>
+<th style="text-align: center;">系数顺序</th>
+<th style="text-align: center;">新观测的一行</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">身高与腿长</td>
+<td style="text-align: center;"><span
+class="math inline">\((1,x_i)\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\((\beta_0,\beta_1)^{\mathsf T}\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\((1,170)\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">公共服务需求</td>
+<td style="text-align: center;"><span
+class="math inline">\((1,x_{i1},x_{i2})\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\((\beta_0,\beta_1,\beta_2)^{\mathsf
+T}\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\((1,13,3.7)\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">倒数曲线</td>
+<td style="text-align: center;"><span
+class="math inline">\((1,1/x_i)\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\((a,b)^{\mathsf T}\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\((1,1/7)\)</span></td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">步骤</th>
+<th style="text-align: center;">Python</th>
+<th style="text-align: center;">MATLAB</th>
+<th style="text-align: center;">作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">直接求最小二乘系数</td>
+<td
+style="text-align: center;"><code>np.linalg.lstsq(X, y, rcond=None)[0]</code></td>
+<td style="text-align: center;"><code>X \ y</code></td>
+<td style="text-align: center;">不需要显式求逆</td>
+</tr>
+<tr>
+<td style="text-align: center;">QR 分解</td>
+<td
+style="text-align: center;"><code>np.linalg.qr(X, mode="reduced")</code></td>
+<td style="text-align: center;"><code>[Q,R] = qr(X,0)</code></td>
+<td style="text-align: center;">建立稳定求解与推断所需的矩阵</td>
+</tr>
+<tr>
+<td style="text-align: center;">解三角方程</td>
+<td
+style="text-align: center;"><code>np.linalg.solve(R, Q.T @ y)</code></td>
+<td style="text-align: center;"><code>R \ (Q'*y)</code></td>
+<td style="text-align: center;">按设计矩阵列顺序返回系数</td>
+</tr>
+<tr>
+<td style="text-align: center;">本章完整模型函数</td>
+<td style="text-align: center;"><code>ols_model(X, y, alpha)</code></td>
+<td style="text-align: center;"><code>ols_model(X,y,alpha)</code></td>
+<td style="text-align: center;">返回系数, 平方和, 检验与诊断量</td>
+</tr>
+<tr>
+<td style="text-align: center;">本章预测函数</td>
+<td
+style="text-align: center;"><code>predict_intervals(model, X0)</code></td>
+<td
+style="text-align: center;"><code>predict_intervals(model,X0)</code></td>
+<td style="text-align: center;">返回点预测, 均值区间与新观测区间</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span class="math inline">\(t\)</span>
+分位数与双侧尾概率</td>
+<td style="text-align: center;"><code>stats.t.ppf(...)</code>,
+<code>stats.t.sf(...)</code></td>
+<td style="text-align: center;"><code>betainc</code> 配合
+<code>fzero</code></td>
+<td style="text-align: center;">计算临界值与系数检验</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span class="math inline">\(F\)</span>
+上尾概率</td>
+<td style="text-align: center;"><code>stats.f.sf(...)</code></td>
+<td style="text-align: center;"><code>betainc(...)</code></td>
+<td style="text-align: center;">计算模型整体检验</td>
+</tr>
+</tbody>
+</table>
+<p><code>ols_model</code> 和 <code>predict_intervals</code>
+是下面定义的教学函数, 不是软件自带的函数. <code>alpha=0.05</code> 对应
+95% 区间. 返回对象中, <code>beta</code> 是系数, <code>fitted</code>
+是训练拟合值, <code>residual</code> 是残差; 预测对象中的
+<code>mean</code> 是点预测, <code>mean_CI</code> 是均值置信区间,
+<code>prediction_PI</code> 是新观测预测区间.</p>
+<p>本章的完整推断函数要求第一列为全 1, 至少一个解释变量, <span
+class="math inline">\(n&gt;p\)</span>, 有限输入及满列秩.
+它还拒绝常数响应, 数值上为零的残差方差和无法进行留一预测的情形.
+这是同时返回本章全部指标的实现边界,
+不表示这些数据完全不能进行最小二乘拟合.</p>
+<h3 id="先运行一个简短的-python-例子">6.2 先运行一个简短的 Python
+例子</h3>
+<p>在终端安装 <code>numpy</code> 与 <code>scipy</code>:
+<code>python -m pip install numpy scipy</code>.
+下面程序只计算身高例题的系数与点预测, 可先运行它,
+再阅读完整推断程序.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy <span class="keyword">import</span> stats</span><br><span class="line"></span><br><span class="line">x = np.array([<span class="number">143</span>,<span class="number">145</span>,<span class="number">146</span>,<span class="number">147</span>,<span class="number">149</span>,<span class="number">150</span>,<span class="number">153</span>,<span class="number">154</span>,<span class="number">155</span>,<span class="number">156</span>,<span class="number">157</span>,<span class="number">158</span>,<span class="number">159</span>,<span class="number">160</span>,<span class="number">162</span>,<span class="number">164.</span>])</span><br><span class="line">y = np.array([<span class="number">88</span>,<span class="number">85</span>,<span class="number">88</span>,<span class="number">91</span>,<span class="number">92</span>,<span class="number">93</span>,<span class="number">93</span>,<span class="number">95</span>,<span class="number">96</span>,<span class="number">98</span>,<span class="number">97</span>,<span class="number">96</span>,<span class="number">98</span>,<span class="number">99</span>,<span class="number">100</span>,<span class="number">102.</span>])</span><br><span class="line"><span class="comment"># 第一列对应截距, 第二列对应身高.</span></span><br><span class="line">X = np.column_stack((np.ones(x.size), x))</span><br><span class="line">beta = np.linalg.lstsq(X, y, rcond=<span class="literal">None</span>)[<span class="number">0</span>]</span><br><span class="line">fitted = X @ beta</span><br><span class="line">SSE = np.<span class="built_in">sum</span>((y - fitted) ** <span class="number">2</span>)</span><br><span class="line">SST = np.<span class="built_in">sum</span>((y - y.mean()) ** <span class="number">2</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;截距与斜率:&quot;</span>, beta)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;训练 R2:&quot;</span>, <span class="number">1</span> - SSE / SST)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;170 cm 的点预测:&quot;</span>, np.array([<span class="number">1.</span>, <span class="number">170.</span>]) @ beta)</span><br><span class="line"><span class="comment"># linregress 专用于一元回归, 可独立核对.</span></span><br><span class="line">reference = stats.linregress(x, y)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;斜率双侧检验 p 值:&quot;</span>, reference.pvalue)</span><br></pre></td></tr></table></figure>
+<p>系数按截距, 斜率的顺序输出, 约为 <span
+class="math inline">\((-16.072981,0.719352)^{\mathsf T}\)</span>,
+点预测约为 106.216892 cm. <code>linregress</code> 的 <code>pvalue</code>
+检验斜率为零; 它不会直接返回本章所需的新观测预测区间.</p>
+<h3 id="python-完整实现">6.3 Python 完整实现</h3>
+<p>将下一段完整代码保存为 <code>regression_examples.py</code>, 运行
+<code>python regression_examples.py</code>. 程序依次计算三个例题,
+输出主要结果, 并保存结果 JSON. 要改变例题数据, 先修改对应数组,
+同时检查设计矩阵的列顺序和新输入行.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;三个 OLS 教学例题; 依赖 NumPy 与 SciPy.&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">from</span> pathlib <span class="keyword">import</span> Path</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy <span class="keyword">import</span> stats</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">ols_model</span>(<span class="params">X, y, alpha=<span class="number">0.05</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;X 的第一列必须为全 1; 返回系数, 检验, 区间和诊断量.&quot;&quot;&quot;</span></span><br><span class="line">    X = np.asarray(X, dtype=<span class="built_in">float</span>)</span><br><span class="line">    y = np.asarray(y, dtype=<span class="built_in">float</span>).reshape(-<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">if</span> X.ndim != <span class="number">2</span> <span class="keyword">or</span> X.shape[<span class="number">0</span>] != y.size:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;X and y have incompatible dimensions&quot;</span>)</span><br><span class="line">    n, p = X.shape</span><br><span class="line">    <span class="keyword">if</span> p &lt; <span class="number">2</span> <span class="keyword">or</span> n &lt;= p <span class="keyword">or</span> <span class="keyword">not</span> <span class="number">0</span> &lt; alpha &lt; <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;Need at least one predictor, n &gt; p and 0 &lt; alpha &lt; 1&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> np.<span class="built_in">all</span>(np.isfinite(X)) <span class="keyword">or</span> <span class="keyword">not</span> np.<span class="built_in">all</span>(np.isfinite(y)):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;Input contains NaN or infinity&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> np.<span class="built_in">all</span>(X[:, <span class="number">0</span>] == <span class="number">1</span>):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;First column of X must be ones&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> np.linalg.matrix_rank(X) &lt; p:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;Design matrix is rank deficient&quot;</span>)</span><br><span class="line">    SST = <span class="built_in">float</span>(np.<span class="built_in">sum</span>((y - y.mean()) ** <span class="number">2</span>))</span><br><span class="line">    <span class="keyword">if</span> SST &lt;= <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;R-squared is undefined for a constant response&quot;</span>)</span><br><span class="line">    <span class="comment"># 用 QR 分解求解, 避免直接对 X.T @ X 求逆.</span></span><br><span class="line">    Q, R = np.linalg.qr(X, mode=<span class="string">&quot;reduced&quot;</span>)</span><br><span class="line">    beta = np.linalg.solve(R, Q.T @ y)</span><br><span class="line">    fitted = X @ beta</span><br><span class="line">    residual = y - fitted</span><br><span class="line">    SSE = <span class="built_in">float</span>(residual @ residual)</span><br><span class="line">    SSR = <span class="built_in">float</span>(np.<span class="built_in">sum</span>((fitted - y.mean()) ** <span class="number">2</span>))</span><br><span class="line">    df, k = n - p, p - <span class="number">1</span></span><br><span class="line">    MSE = SSE / df</span><br><span class="line">    <span class="keyword">if</span> SSE &lt;= (<span class="number">100</span>*np.finfo(<span class="built_in">float</span>).eps)**<span class="number">2</span> * <span class="built_in">max</span>(<span class="built_in">float</span>(y @ y), <span class="number">1.0</span>):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;Residual variance is numerically zero: conventional t/F tests degenerate&quot;</span>)</span><br><span class="line">    Rinv = np.linalg.solve(R, np.eye(p))</span><br><span class="line">    C = Rinv @ Rinv.T  <span class="comment"># (X.T @ X)^(-1), obtained without inversion</span></span><br><span class="line">    se = np.sqrt(MSE * np.diag(C))</span><br><span class="line">    t_value = beta / se  <span class="comment"># H0: beta_j = 0</span></span><br><span class="line">    p_t = <span class="number">2</span> * stats.t.sf(np.<span class="built_in">abs</span>(t_value), df)</span><br><span class="line">    F = (SSR / k) / MSE</span><br><span class="line">    p_F = <span class="built_in">float</span>(stats.f.sf(F, k, df))</span><br><span class="line">    critical_t = <span class="built_in">float</span>(stats.t.ppf(<span class="number">1</span> - alpha / <span class="number">2</span>, df))</span><br><span class="line">    leverage = np.<span class="built_in">sum</span>(Q ** <span class="number">2</span>, axis=<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">if</span> np.<span class="built_in">any</span>(<span class="number">1</span> - leverage &lt;= <span class="number">1e-12</span>):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;A leverage of one makes leave-one-out prediction undefined&quot;</span>)</span><br><span class="line">    loo_residual = residual / (<span class="number">1</span> - leverage)</span><br><span class="line">    <span class="comment"># Internal standardized residuals are diagnostics, not independent N(0,1) data.</span></span><br><span class="line">    standardized = residual / np.sqrt(MSE * (<span class="number">1</span> - leverage))</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">dict</span>(beta=beta, fitted=fitted, residual=residual, SSE=SSE,</span><br><span class="line">                SST=SST, SSR=SSR, MSE=MSE, s=np.sqrt(MSE), df=df, k=k,</span><br><span class="line">                R2=<span class="number">1</span>-SSE/SST, adjusted_R2=<span class="number">1</span>-(SSE/df)/(SST/(n-<span class="number">1</span>)),</span><br><span class="line">                se=se, t=t_value, p_t=p_t, F=F, p_F=p_F,</span><br><span class="line">                critical_t=critical_t, C=C,</span><br><span class="line">                coefficient_CI=np.column_stack((beta-critical_t*se,</span><br><span class="line">                                                beta+critical_t*se)),</span><br><span class="line">                leverage=leverage, standardized=standardized,</span><br><span class="line">                loo_RMSE=np.sqrt(np.mean(loo_residual ** <span class="number">2</span>)))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">predict_intervals</span>(<span class="params">model, X0</span>):</span><br><span class="line">    X0 = np.atleast_2d(np.asarray(X0, dtype=<span class="built_in">float</span>))</span><br><span class="line">    <span class="keyword">if</span> X0.shape[<span class="number">1</span>] != model[<span class="string">&quot;beta&quot;</span>].size <span class="keyword">or</span> <span class="keyword">not</span> np.<span class="built_in">all</span>(np.isfinite(X0)):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;Invalid prediction design matrix&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> np.<span class="built_in">all</span>(X0[:, <span class="number">0</span>] == <span class="number">1</span>):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;Prediction rows must also contain the intercept&quot;</span>)</span><br><span class="line">    mean = X0 @ model[<span class="string">&quot;beta&quot;</span>]</span><br><span class="line">    h = np.maximum(np.einsum(<span class="string">&quot;ij,jk,ik-&gt;i&quot;</span>, X0, model[<span class="string">&quot;C&quot;</span>], X0), <span class="number">0</span>)</span><br><span class="line">    mean_half = model[<span class="string">&quot;critical_t&quot;</span>] * model[<span class="string">&quot;s&quot;</span>] * np.sqrt(h)</span><br><span class="line">    individual_half = model[<span class="string">&quot;critical_t&quot;</span>] * model[<span class="string">&quot;s&quot;</span>] * np.sqrt(<span class="number">1</span> + h)</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">dict</span>(mean=mean, mean_CI=np.column_stack((mean-mean_half, mean+mean_half)),</span><br><span class="line">                prediction_PI=np.column_stack((mean-individual_half,</span><br><span class="line">                                                mean+individual_half)), h=h)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">vif_values</span>(<span class="params">features</span>):</span><br><span class="line">    features = np.asarray(features, dtype=<span class="built_in">float</span>)</span><br><span class="line">    <span class="keyword">if</span> features.ndim != <span class="number">2</span> <span class="keyword">or</span> <span class="keyword">not</span> np.<span class="built_in">all</span>(np.isfinite(features)):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;Predictors must form a finite two-dimensional array&quot;</span>)</span><br><span class="line">    n, k = features.shape</span><br><span class="line">    <span class="keyword">if</span> k &lt; <span class="number">1</span> <span class="keyword">or</span> n &lt;= k:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;Need at least one predictor and n &gt; k&quot;</span>)</span><br><span class="line">    values = np.empty(k)</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(k):</span><br><span class="line">        target = features[:, j]</span><br><span class="line">        total = np.<span class="built_in">sum</span>((target - target.mean()) ** <span class="number">2</span>)</span><br><span class="line">        <span class="keyword">if</span> total &lt;= <span class="number">0</span>:</span><br><span class="line">            values[j] = np.inf</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        others = np.delete(features, j, axis=<span class="number">1</span>)</span><br><span class="line">        A = np.column_stack((np.ones(n), others))</span><br><span class="line">        coef = np.linalg.lstsq(A, target, rcond=<span class="literal">None</span>)[<span class="number">0</span>]</span><br><span class="line">        unexplained = np.<span class="built_in">sum</span>((target - A @ coef) ** <span class="number">2</span>)</span><br><span class="line">        values[j] = np.inf <span class="keyword">if</span> unexplained &lt;= <span class="number">1e-12</span>*total <span class="keyword">else</span> total/unexplained</span><br><span class="line">    <span class="keyword">return</span> values</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">plain</span>(<span class="params">value</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Convert NumPy output to JSON-compatible objects.&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">isinstance</span>(value, <span class="built_in">dict</span>):</span><br><span class="line">        <span class="keyword">return</span> &#123;key: plain(item) <span class="keyword">for</span> key, item <span class="keyword">in</span> value.items()&#125;</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">isinstance</span>(value, np.ndarray):</span><br><span class="line">        <span class="keyword">return</span> value.tolist()</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">isinstance</span>(value, np.generic):</span><br><span class="line">        <span class="keyword">return</span> value.item()</span><br><span class="line">    <span class="keyword">return</span> value</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">regression_examples</span>(<span class="params">output_dir=<span class="string">&quot;regression_output&quot;</span></span>):</span><br><span class="line">    alpha = <span class="number">0.05</span></span><br><span class="line">    x = np.array([<span class="number">143</span>,<span class="number">145</span>,<span class="number">146</span>,<span class="number">147</span>,<span class="number">149</span>,<span class="number">150</span>,<span class="number">153</span>,<span class="number">154</span>,<span class="number">155</span>,<span class="number">156</span>,<span class="number">157</span>,<span class="number">158</span>,<span class="number">159</span>,<span class="number">160</span>,<span class="number">162</span>,<span class="number">164.</span>])</span><br><span class="line">    y = np.array([<span class="number">88</span>,<span class="number">85</span>,<span class="number">88</span>,<span class="number">91</span>,<span class="number">92</span>,<span class="number">93</span>,<span class="number">93</span>,<span class="number">95</span>,<span class="number">96</span>,<span class="number">98</span>,<span class="number">97</span>,<span class="number">96</span>,<span class="number">98</span>,<span class="number">99</span>,<span class="number">100</span>,<span class="number">102.</span>])</span><br><span class="line">    X = np.column_stack((np.ones(x.size), x))</span><br><span class="line">    height = ols_model(X, y, alpha)</span><br><span class="line">    height[<span class="string">&quot;prediction&quot;</span>] = predict_intervals(height, [[<span class="number">1</span>, <span class="number">170</span>]])</span><br><span class="line">    <span class="comment"># Independent checks: closed-form slope and SciPy&#x27;s separate implementation.</span></span><br><span class="line">    closed_slope = np.<span class="built_in">sum</span>((x-x.mean())*(y-y.mean())) / np.<span class="built_in">sum</span>((x-x.mean())**<span class="number">2</span>)</span><br><span class="line">    closed_beta = [y.mean()-closed_slope*x.mean(), closed_slope]</span><br><span class="line">    reference = stats.linregress(x, y)</span><br><span class="line">    np.testing.assert_allclose(height[<span class="string">&quot;beta&quot;</span>], closed_beta, atol=<span class="number">1e-10</span>, rtol=<span class="number">0</span>)</span><br><span class="line">    np.testing.assert_allclose(height[<span class="string">&quot;beta&quot;</span>], [reference.intercept, reference.slope],</span><br><span class="line">                               atol=<span class="number">1e-10</span>, rtol=<span class="number">0</span>)</span><br><span class="line">    np.testing.assert_allclose(height[<span class="string">&quot;p_t&quot;</span>][<span class="number">1</span>], reference.pvalue, rtol=<span class="number">1e-10</span>)</span><br><span class="line">    <span class="keyword">assert</span> <span class="built_in">abs</span>(height[<span class="string">&quot;SST&quot;</span>]-height[<span class="string">&quot;SSR&quot;</span>]-height[<span class="string">&quot;SSE&quot;</span>]) &lt; <span class="number">1e-9</span></span><br><span class="line">    <span class="keyword">assert</span> <span class="built_in">abs</span>(height[<span class="string">&quot;F&quot;</span>]-height[<span class="string">&quot;t&quot;</span>][<span class="number">1</span>]**<span class="number">2</span>) &lt; <span class="number">1e-9</span></span><br><span class="line">    <span class="keyword">assert</span> <span class="built_in">abs</span>(height[<span class="string">&quot;prediction&quot;</span>][<span class="string">&quot;mean&quot;</span>][<span class="number">0</span>]-<span class="number">259063</span>/<span class="number">2439</span>) &lt; <span class="number">1e-9</span></span><br><span class="line">    <span class="comment"># Explicit refitting validates the leave-one-out shortcut.</span></span><br><span class="line">    loo = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(x.size):</span><br><span class="line">        keep = np.arange(x.size) != i</span><br><span class="line">        b = np.linalg.lstsq(X[keep], y[keep], rcond=<span class="literal">None</span>)[<span class="number">0</span>]</span><br><span class="line">        loo.append(y[i]-X[i]@b)</span><br><span class="line">    <span class="keyword">assert</span> <span class="built_in">abs</span>(height[<span class="string">&quot;loo_RMSE&quot;</span>]-np.sqrt(np.mean(np.array(loo)**<span class="number">2</span>))) &lt; <span class="number">1e-9</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Synthetic public-service example; these are not survey observations.</span></span><br><span class="line">    x1 = np.array([<span class="number">8</span>,<span class="number">10</span>,<span class="number">12</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">11</span>,<span class="number">15</span>,<span class="number">13</span>,<span class="number">16</span>,<span class="number">10</span>,<span class="number">17</span>,<span class="number">12.</span>])</span><br><span class="line">    x2 = np.array([<span class="number">3</span>,<span class="number">3.4</span>,<span class="number">3.1</span>,<span class="number">2.8</span>,<span class="number">4</span>,<span class="number">3.6</span>,<span class="number">3.2</span>,<span class="number">4.2</span>,<span class="number">3.8</span>,<span class="number">2.9</span>,<span class="number">4.4</span>,<span class="number">3.5</span>])</span><br><span class="line">    noise = np.array([<span class="number">.8</span>,-<span class="number">.5</span>,<span class="number">.3</span>,-<span class="number">.9</span>,<span class="number">.6</span>,-<span class="number">.2</span>,<span class="number">.5</span>,-<span class="number">.7</span>,<span class="number">.4</span>,<span class="number">.1</span>,-<span class="number">.6</span>,<span class="number">.2</span>])</span><br><span class="line">    demand = <span class="number">5</span> + <span class="number">1.8</span>*x1 + <span class="number">.9</span>*x2 + noise</span><br><span class="line">    features = np.column_stack((x1, x2))</span><br><span class="line">    multiple = ols_model(np.column_stack((np.ones(x1.size), features)), demand, alpha)</span><br><span class="line">    multiple[<span class="string">&quot;VIF&quot;</span>] = vif_values(features)</span><br><span class="line">    multiple[<span class="string">&quot;prediction&quot;</span>] = predict_intervals(multiple, [[<span class="number">1</span>, <span class="number">13</span>, <span class="number">3.7</span>]])</span><br><span class="line">    multiple[<span class="string">&quot;near_VIF&quot;</span>] = vif_values(np.column_stack((x1, <span class="number">2</span>*x1+<span class="number">.02</span>*noise)))</span><br><span class="line">    <span class="keyword">assert</span> np.<span class="built_in">all</span>(multiple[<span class="string">&quot;near_VIF&quot;</span>] &gt; <span class="number">10000</span>)</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        ols_model(np.column_stack((np.ones(x1.size), x1, <span class="number">2</span>*x1)), demand)</span><br><span class="line">    <span class="keyword">except</span> ValueError <span class="keyword">as</span> exc:</span><br><span class="line">        <span class="keyword">assert</span> <span class="string">&quot;rank deficient&quot;</span> <span class="keyword">in</span> <span class="built_in">str</span>(exc)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">raise</span> AssertionError(<span class="string">&quot;A rank-deficient matrix was not rejected&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Synthetic curve example: x &gt; 0, y remains on its original scale.</span></span><br><span class="line">    resource = np.array([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">8</span>,<span class="number">10.</span>])</span><br><span class="line">    waiting = np.array([<span class="number">12.1</span>,<span class="number">8.0</span>,<span class="number">6.9</span>,<span class="number">6.0</span>,<span class="number">5.7</span>,<span class="number">5.2</span>,<span class="number">5.1</span>,<span class="number">4.7</span>])</span><br><span class="line">    <span class="keyword">if</span> np.<span class="built_in">any</span>(resource &lt;= <span class="number">0</span>):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;The reciprocal model requires x &gt; 0&quot;</span>)</span><br><span class="line">    curve = ols_model(np.column_stack((np.ones(resource.size), <span class="number">1</span>/resource)), waiting, alpha)</span><br><span class="line">    curve[<span class="string">&quot;prediction&quot;</span>] = predict_intervals(curve, [[<span class="number">1</span>, <span class="number">1</span>/<span class="number">7</span>]])</span><br><span class="line">    <span class="keyword">for</span> model <span class="keyword">in</span> (height, multiple, curve):</span><br><span class="line">        pred = model[<span class="string">&quot;prediction&quot;</span>]</span><br><span class="line">        <span class="keyword">assert</span> np.<span class="built_in">all</span>(pred[<span class="string">&quot;prediction_PI&quot;</span>][:, <span class="number">0</span>] &lt; pred[<span class="string">&quot;mean_CI&quot;</span>][:, <span class="number">0</span>])</span><br><span class="line">        <span class="keyword">assert</span> np.<span class="built_in">all</span>(pred[<span class="string">&quot;prediction_PI&quot;</span>][:, <span class="number">1</span>] &gt; pred[<span class="string">&quot;mean_CI&quot;</span>][:, <span class="number">1</span>])</span><br><span class="line">        <span class="keyword">assert</span> np.<span class="built_in">max</span>(np.<span class="built_in">abs</span>(model[<span class="string">&quot;residual&quot;</span>].<span class="built_in">sum</span>())) &lt; <span class="number">1e-9</span></span><br><span class="line"></span><br><span class="line">    out = <span class="built_in">dict</span>(height=height, multiple=multiple, curve=curve)</span><br><span class="line">    folder = Path(output_dir)</span><br><span class="line">    folder.mkdir(parents=<span class="literal">True</span>, exist_ok=<span class="literal">True</span>)</span><br><span class="line">    (folder/<span class="string">&quot;python_results.json&quot;</span>).write_text(</span><br><span class="line">        json.dumps(plain(out), ensure_ascii=<span class="literal">False</span>, indent=<span class="number">2</span>, allow_nan=<span class="literal">False</span>), encoding=<span class="string">&quot;utf-8&quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> name, model <span class="keyword">in</span> out.items():</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;name&#125;</span>: beta=<span class="subst">&#123;model[<span class="string">&#x27;beta&#x27;</span>]&#125;</span>, R2=<span class="subst">&#123;model[<span class="string">&#x27;R2&#x27;</span>]:<span class="number">.10</span>f&#125;</span>, &quot;</span></span><br><span class="line">              <span class="string">f&quot;F=<span class="subst">&#123;model[<span class="string">&#x27;F&#x27;</span>]:<span class="number">.6</span>f&#125;</span>, p=<span class="subst">&#123;model[<span class="string">&#x27;p_F&#x27;</span>]:<span class="number">.6</span>g&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot; prediction:&quot;</span>, plain(model[<span class="string">&quot;prediction&quot;</span>]))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;All built-in numerical checks passed.&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> out</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    regression_examples()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="matlab-完整实现">6.4 MATLAB 完整实现</h3>
+<p>将下面的函数文件保存为 <code>regression_examples.m</code>,
+在该目录运行 <code>out = regression_examples();</code>. 例如
+<code>out.height.beta</code> 可查看身高例题的系数,
+<code>out.height.prediction</code> 可查看预测结果.</p>
+<p>程序使用 MATLAB 基础函数, 不依赖 Statistics and Machine Learning
+Toolbox. 双侧 <span class="math inline">\(t\)</span> 尾概率和 <span
+class="math inline">\(F\)</span> 上尾概率由正则化不完全 Beta 函数计算,
+正的 <span class="math inline">\(t\)</span> 临界值通过
+<code>fzero</code> 求解. QR 分解后的三角方程与 Python 实现对应.</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">out</span> = <span class="title">regression_examples</span><span class="params">(output_dir)</span></span></span><br><span class="line"><span class="comment">% OLS examples using base MATLAB functions; save as regression_examples.m.</span></span><br><span class="line"><span class="keyword">if</span> nargin &lt; <span class="number">1</span>, output_dir = <span class="string">&#x27;regression_output&#x27;</span>; <span class="keyword">end</span></span><br><span class="line">alpha = <span class="number">0.05</span>;</span><br><span class="line">x = [<span class="number">143</span> <span class="number">145</span> <span class="number">146</span> <span class="number">147</span> <span class="number">149</span> <span class="number">150</span> <span class="number">153</span> <span class="number">154</span> <span class="number">155</span> <span class="number">156</span> <span class="number">157</span> <span class="number">158</span> <span class="number">159</span> <span class="number">160</span> <span class="number">162</span> <span class="number">164</span>].&#x27;;</span><br><span class="line">y = [<span class="number">88</span> <span class="number">85</span> <span class="number">88</span> <span class="number">91</span> <span class="number">92</span> <span class="number">93</span> <span class="number">93</span> <span class="number">95</span> <span class="number">96</span> <span class="number">98</span> <span class="number">97</span> <span class="number">96</span> <span class="number">98</span> <span class="number">99</span> <span class="number">100</span> <span class="number">102</span>].&#x27;;</span><br><span class="line">X = [<span class="built_in">ones</span>(<span class="built_in">length</span>(x),<span class="number">1</span>), x];</span><br><span class="line">height = ols_model(X, y, alpha);</span><br><span class="line">height.prediction = predict_intervals(height, [<span class="number">1</span>,<span class="number">170</span>]);</span><br><span class="line"><span class="comment">% Independent check using the centered closed-form formula.</span></span><br><span class="line">closed_slope = sum((x-<span class="built_in">mean</span>(x)).*(y-<span class="built_in">mean</span>(y))) / sum((x-<span class="built_in">mean</span>(x)).^<span class="number">2</span>);</span><br><span class="line">closed_beta = [<span class="built_in">mean</span>(y)-closed_slope*<span class="built_in">mean</span>(x), closed_slope].&#x27;;</span><br><span class="line">assert(<span class="built_in">max</span>(<span class="built_in">abs</span>(height.<span class="built_in">beta</span>-closed_beta)) &lt; <span class="number">1e-10</span>);</span><br><span class="line">assert(<span class="built_in">abs</span>(height.SST-height.SSR-height.SSE) &lt; <span class="number">1e-9</span>);</span><br><span class="line">assert(<span class="built_in">abs</span>(height.F-height.t(<span class="number">2</span>)^<span class="number">2</span>) &lt; <span class="number">1e-9</span>);</span><br><span class="line">assert(<span class="built_in">abs</span>(height.prediction.<span class="built_in">mean</span><span class="number">-259063</span>/<span class="number">2439</span>) &lt; <span class="number">1e-9</span>);</span><br><span class="line">loo = <span class="built_in">zeros</span>(<span class="built_in">length</span>(x),<span class="number">1</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="built_in">length</span>(x)</span><br><span class="line">    keep = <span class="built_in">true</span>(<span class="built_in">length</span>(x),<span class="number">1</span>); keep(<span class="built_in">i</span>) = <span class="built_in">false</span>;</span><br><span class="line">    b = X(keep,:) \ y(keep);</span><br><span class="line">    loo(<span class="built_in">i</span>) = y(<span class="built_in">i</span>)-X(<span class="built_in">i</span>,:)*b;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">assert(<span class="built_in">abs</span>(height.loo_RMSE-<span class="built_in">sqrt</span>(<span class="built_in">mean</span>(loo.^<span class="number">2</span>))) &lt; <span class="number">1e-9</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">% Synthetic public-service example, not survey observations.</span></span><br><span class="line">x1 = [<span class="number">8</span> <span class="number">10</span> <span class="number">12</span> <span class="number">9</span> <span class="number">14</span> <span class="number">11</span> <span class="number">15</span> <span class="number">13</span> <span class="number">16</span> <span class="number">10</span> <span class="number">17</span> <span class="number">12</span>].&#x27;;</span><br><span class="line">x2 = [<span class="number">3</span> <span class="number">3.4</span> <span class="number">3.1</span> <span class="number">2.8</span> <span class="number">4</span> <span class="number">3.6</span> <span class="number">3.2</span> <span class="number">4.2</span> <span class="number">3.8</span> <span class="number">2.9</span> <span class="number">4.4</span> <span class="number">3.5</span>].&#x27;;</span><br><span class="line">noise = [<span class="number">.8</span> <span class="number">-.5</span> <span class="number">.3</span> <span class="number">-.9</span> <span class="number">.6</span> <span class="number">-.2</span> <span class="number">.5</span> <span class="number">-.7</span> <span class="number">.4</span> <span class="number">.1</span> <span class="number">-.6</span> <span class="number">.2</span>].&#x27;;</span><br><span class="line">demand = <span class="number">5</span>+<span class="number">1.8</span>*x1+<span class="number">.9</span>*x2+noise;</span><br><span class="line">features = [x1,x2];</span><br><span class="line">multiple = ols_model([<span class="built_in">ones</span>(<span class="built_in">length</span>(x1),<span class="number">1</span>),features], demand, alpha);</span><br><span class="line">multiple.VIF = vif_values(features);</span><br><span class="line">multiple.prediction = predict_intervals(multiple, [<span class="number">1</span>,<span class="number">13</span>,<span class="number">3.7</span>]);</span><br><span class="line">multiple.near_VIF = vif_values([x1,<span class="number">2</span>*x1+<span class="number">.02</span>*noise]);</span><br><span class="line">assert(all(multiple.near_VIF &gt; <span class="number">10000</span>));</span><br><span class="line">caught_rank = <span class="built_in">false</span>;</span><br><span class="line"><span class="keyword">try</span></span><br><span class="line">    ols_model([<span class="built_in">ones</span>(<span class="built_in">length</span>(x1),<span class="number">1</span>),x1,<span class="number">2</span>*x1], demand, alpha);</span><br><span class="line"><span class="keyword">catch</span> err</span><br><span class="line">    caught_rank = strcmp(err.identifier,<span class="string">&#x27;regression:Rank&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">assert(caught_rank);</span><br><span class="line"></span><br><span class="line"><span class="comment">% Synthetic reciprocal curve; response remains on its original scale.</span></span><br><span class="line">resource = [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span> <span class="number">6</span> <span class="number">8</span> <span class="number">10</span>].&#x27;;</span><br><span class="line">waiting = [<span class="number">12.1</span> <span class="number">8.0</span> <span class="number">6.9</span> <span class="number">6.0</span> <span class="number">5.7</span> <span class="number">5.2</span> <span class="number">5.1</span> <span class="number">4.7</span>].&#x27;;</span><br><span class="line">assert(all(resource &gt; <span class="number">0</span>));</span><br><span class="line">curve = ols_model([<span class="built_in">ones</span>(<span class="built_in">length</span>(resource),<span class="number">1</span>),<span class="number">1.</span>/resource], waiting, alpha);</span><br><span class="line">curve.prediction = predict_intervals(curve, [<span class="number">1</span>,<span class="number">1</span>/<span class="number">7</span>]);</span><br><span class="line">models = &#123;height,multiple,curve&#125;;</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="built_in">length</span>(models)</span><br><span class="line">    model = models&#123;<span class="built_in">i</span>&#125;; pred = model.prediction;</span><br><span class="line">    assert(all(pred.prediction_PI(:,<span class="number">1</span>) &lt; pred.mean_CI(:,<span class="number">1</span>)));</span><br><span class="line">    assert(all(pred.prediction_PI(:,<span class="number">2</span>) &gt; pred.mean_CI(:,<span class="number">2</span>)));</span><br><span class="line">    assert(<span class="built_in">abs</span>(sum(model.residual)) &lt; <span class="number">1e-9</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">out = struct(<span class="string">&#x27;height&#x27;</span>,height,<span class="string">&#x27;multiple&#x27;</span>,multiple,<span class="string">&#x27;curve&#x27;</span>,curve);</span><br><span class="line"><span class="keyword">if</span> ~exist(output_dir,<span class="string">&#x27;dir&#x27;</span>), mkdir(output_dir); <span class="keyword">end</span></span><br><span class="line">fid = fopen(fullfile(output_dir,<span class="string">&#x27;matlab_results.json&#x27;</span>),<span class="string">&#x27;w&#x27;</span>);</span><br><span class="line">assert(fid &gt;= <span class="number">0</span>);</span><br><span class="line">cleanup = onCleanup(@() fclose(fid));</span><br><span class="line">fprintf(fid,<span class="string">&#x27;%s&#x27;</span>,jsonencode(out));</span><br><span class="line">clear cleanup;</span><br><span class="line">names = &#123;<span class="string">&#x27;height&#x27;</span>,<span class="string">&#x27;multiple&#x27;</span>,<span class="string">&#x27;curve&#x27;</span>&#125;;</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="built_in">length</span>(names)</span><br><span class="line">    model = out.(names&#123;<span class="built_in">i</span>&#125;);</span><br><span class="line">    fprintf(<span class="string">&#x27;%s: beta=&#x27;</span>,names&#123;<span class="built_in">i</span>&#125;); fprintf(<span class="string">&#x27; %.10f&#x27;</span>,model.<span class="built_in">beta</span>);</span><br><span class="line">    fprintf(<span class="string">&#x27;, R2=%.10f, F=%.6f, p=%.6g\n&#x27;</span>,model.R2,model.F,model.p_F);</span><br><span class="line">    fprintf(<span class="string">&#x27; prediction=%.10f, mean CI=[%.10f, %.10f], PI=[%.10f, %.10f]\n&#x27;</span>, ...</span><br><span class="line">        model.prediction.<span class="built_in">mean</span>,model.prediction.mean_CI,model.prediction.prediction_PI);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">fprintf(<span class="string">&#x27;All built-in numerical checks passed.\n&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">model</span> = <span class="title">ols_model</span><span class="params">(X,y,alpha)</span></span></span><br><span class="line">y = y(:); [n,p] = <span class="built_in">size</span>(X);</span><br><span class="line"><span class="keyword">if</span> n ~= <span class="built_in">length</span>(y) || p &lt; <span class="number">2</span> || n &lt;= p || ~(alpha &gt; <span class="number">0</span> &amp;&amp; alpha &lt; <span class="number">1</span>)</span><br><span class="line">    error(<span class="string">&#x27;regression:Input&#x27;</span>,<span class="string">&#x27;Need compatible dimensions, n &gt; p, 0 &lt; alpha &lt; 1.&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">if</span> any(~<span class="built_in">isfinite</span>(X(:))) || any(~<span class="built_in">isfinite</span>(y)) || any(X(:,<span class="number">1</span>) ~= <span class="number">1</span>)</span><br><span class="line">    error(<span class="string">&#x27;regression:Input&#x27;</span>,<span class="string">&#x27;Finite inputs and an intercept column are required.&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">if</span> rank(X) &lt; p</span><br><span class="line">    error(<span class="string">&#x27;regression:Rank&#x27;</span>,<span class="string">&#x27;Design matrix is rank deficient.&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">SST = sum((y-<span class="built_in">mean</span>(y)).^<span class="number">2</span>);</span><br><span class="line"><span class="keyword">if</span> SST &lt;= <span class="number">0</span>, error(<span class="string">&#x27;regression:Constant&#x27;</span>,<span class="string">&#x27;R-squared undefined for constant y.&#x27;</span>); <span class="keyword">end</span></span><br><span class="line">[Q,R] = qr(X,<span class="number">0</span>);</span><br><span class="line"><span class="built_in">beta</span> = R \ (Q&#x27;*y);</span><br><span class="line">fitted = X*<span class="built_in">beta</span>; residual = y-fitted;</span><br><span class="line">SSE = sum(residual.^<span class="number">2</span>); SSR = sum((fitted-<span class="built_in">mean</span>(y)).^<span class="number">2</span>);</span><br><span class="line">df = n-p; k = p<span class="number">-1</span>; MSE = SSE/df;</span><br><span class="line"><span class="keyword">if</span> SSE &lt;= (<span class="number">100</span>*<span class="built_in">eps</span>)^<span class="number">2</span>*<span class="built_in">max</span>(sum(y.^<span class="number">2</span>),<span class="number">1</span>)</span><br><span class="line">    error(<span class="string">&#x27;regression:Variance&#x27;</span>,<span class="string">&#x27;Residual variance is numerically zero.&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">Rinv = R \ <span class="built_in">eye</span>(p); C = Rinv*Rinv&#x27;;</span><br><span class="line">se = <span class="built_in">sqrt</span>(MSE*<span class="built_in">diag</span>(C)); t_value = <span class="built_in">beta</span>./se;</span><br><span class="line"><span class="comment">% Two-sided t tail and upper F tail, computed through the regularized beta function.</span></span><br><span class="line">p_t = <span class="built_in">betainc</span>(df./(df+t_value.^<span class="number">2</span>),df/<span class="number">2</span>,<span class="number">1</span>/<span class="number">2</span>);</span><br><span class="line">F = (SSR/k)/MSE;</span><br><span class="line">p_F = <span class="built_in">betainc</span>(df/(df+k*F),df/<span class="number">2</span>,k/<span class="number">2</span>);</span><br><span class="line"><span class="comment">% Find positive t critical value without the Statistics Toolbox.</span></span><br><span class="line">upper = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">while</span> <span class="built_in">betainc</span>(df/(df+upper^<span class="number">2</span>),df/<span class="number">2</span>,<span class="number">1</span>/<span class="number">2</span>) &gt; alpha</span><br><span class="line">    upper = <span class="number">2</span>*upper;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">critical_t = fzero(@(q) <span class="built_in">betainc</span>(df/(df+q^<span class="number">2</span>),df/<span class="number">2</span>,<span class="number">1</span>/<span class="number">2</span>)-alpha,[<span class="number">0</span>,upper]);</span><br><span class="line">leverage = sum(Q.^<span class="number">2</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">if</span> any(<span class="number">1</span>-leverage &lt;= <span class="number">1e-12</span>)</span><br><span class="line">    error(<span class="string">&#x27;regression:Leverage&#x27;</span>,<span class="string">&#x27;Leave-one-out prediction undefined at leverage one.&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">loo_residual = residual./(<span class="number">1</span>-leverage);</span><br><span class="line">standardized = residual./<span class="built_in">sqrt</span>(MSE*(<span class="number">1</span>-leverage));</span><br><span class="line">model = struct(<span class="string">&#x27;beta&#x27;</span>,<span class="built_in">beta</span>,<span class="string">&#x27;fitted&#x27;</span>,fitted,<span class="string">&#x27;residual&#x27;</span>,residual, ...</span><br><span class="line">    <span class="string">&#x27;SSE&#x27;</span>,SSE,<span class="string">&#x27;SST&#x27;</span>,SST,<span class="string">&#x27;SSR&#x27;</span>,SSR,<span class="string">&#x27;MSE&#x27;</span>,MSE,<span class="string">&#x27;s&#x27;</span>,<span class="built_in">sqrt</span>(MSE), ...</span><br><span class="line">    <span class="string">&#x27;df&#x27;</span>,df,<span class="string">&#x27;k&#x27;</span>,k,<span class="string">&#x27;R2&#x27;</span>,<span class="number">1</span>-SSE/SST, ...</span><br><span class="line">    <span class="string">&#x27;adjusted_R2&#x27;</span>,<span class="number">1</span>-(SSE/df)/(SST/(n<span class="number">-1</span>)), ...</span><br><span class="line">    <span class="string">&#x27;se&#x27;</span>,se,<span class="string">&#x27;t&#x27;</span>,t_value,<span class="string">&#x27;p_t&#x27;</span>,p_t,<span class="string">&#x27;F&#x27;</span>,F,<span class="string">&#x27;p_F&#x27;</span>,p_F, ...</span><br><span class="line">    <span class="string">&#x27;critical_t&#x27;</span>,critical_t,<span class="string">&#x27;C&#x27;</span>,C, ...</span><br><span class="line">    <span class="string">&#x27;coefficient_CI&#x27;</span>,[<span class="built_in">beta</span>-critical_t*se,<span class="built_in">beta</span>+critical_t*se], ...</span><br><span class="line">    <span class="string">&#x27;leverage&#x27;</span>,leverage,<span class="string">&#x27;standardized&#x27;</span>,standardized, ...</span><br><span class="line">    <span class="string">&#x27;loo_RMSE&#x27;</span>,<span class="built_in">sqrt</span>(<span class="built_in">mean</span>(loo_residual.^<span class="number">2</span>)));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">pred</span> = <span class="title">predict_intervals</span><span class="params">(model,X0)</span></span></span><br><span class="line"><span class="keyword">if</span> <span class="built_in">size</span>(X0,<span class="number">2</span>) ~= <span class="built_in">length</span>(model.<span class="built_in">beta</span>) || any(~<span class="built_in">isfinite</span>(X0(:))) || any(X0(:,<span class="number">1</span>) ~= <span class="number">1</span>)</span><br><span class="line">    error(<span class="string">&#x27;regression:Prediction&#x27;</span>,<span class="string">&#x27;Invalid prediction design matrix.&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">m = X0*model.<span class="built_in">beta</span>;</span><br><span class="line">h = <span class="built_in">max</span>(sum((X0*model.C).*X0,<span class="number">2</span>),<span class="number">0</span>);</span><br><span class="line">mean_half = model.critical_t*model.s*<span class="built_in">sqrt</span>(h);</span><br><span class="line">individual_half = model.critical_t*model.s*<span class="built_in">sqrt</span>(<span class="number">1</span>+h);</span><br><span class="line">pred = struct(<span class="string">&#x27;mean&#x27;</span>,m,<span class="string">&#x27;mean_CI&#x27;</span>,[m-mean_half,m+mean_half], ...</span><br><span class="line">    <span class="string">&#x27;prediction_PI&#x27;</span>,[m-individual_half,m+individual_half],<span class="string">&#x27;h&#x27;</span>,h);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">values</span> = <span class="title">vif_values</span><span class="params">(features)</span></span></span><br><span class="line">[n,k] = <span class="built_in">size</span>(features);</span><br><span class="line"><span class="keyword">if</span> k &lt; <span class="number">1</span> || n &lt;= k || any(~<span class="built_in">isfinite</span>(features(:)))</span><br><span class="line">    error(<span class="string">&#x27;regression:VIF&#x27;</span>,<span class="string">&#x27;Need finite predictors and n &gt; k.&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">values = <span class="built_in">zeros</span>(k,<span class="number">1</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:k</span><br><span class="line">    target = features(:,<span class="built_in">j</span>); total = sum((target-<span class="built_in">mean</span>(target)).^<span class="number">2</span>);</span><br><span class="line">    <span class="keyword">if</span> total &lt;= <span class="number">0</span>, values(<span class="built_in">j</span>) = Inf; <span class="keyword">continue</span>; <span class="keyword">end</span></span><br><span class="line">    cols = [<span class="number">1</span>:<span class="built_in">j</span><span class="number">-1</span>,<span class="built_in">j</span>+<span class="number">1</span>:k];</span><br><span class="line">    A = [<span class="built_in">ones</span>(n,<span class="number">1</span>),features(:,cols)];</span><br><span class="line">    coef = pinv(A)*target; <span class="comment">% VIF remains defined when auxiliary columns are redundant.</span></span><br><span class="line">    unexplained = sum((target-A*coef).^<span class="number">2</span>);</span><br><span class="line">    <span class="keyword">if</span> unexplained &lt;= <span class="number">1e-12</span>*total</span><br><span class="line">        values(<span class="built_in">j</span>) = Inf;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        values(<span class="built_in">j</span>) = total/unexplained;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<h2 id="七-结果解读与常见错误">七, 结果解读与常见错误</h2>
+<h3 id="如何写出完整的结果说明">7.1 如何写出完整的结果说明</h3>
+<p>一份有用的回归结论应同时包含研究对象和单位, 模型表达式, 效应大小,
+误差尺度, 验证方式及适用范围. 例题一可表述为: 在给定的 16 组数据中,
+身高每增加 1 cm, 平均腿长的拟合值增加约 0.719352 cm; 模型训练 <span
+class="math inline">\(R^2\)</span> 为 0.928188, 误差标准差估计为
+1.320488 cm. 经典模型下斜率显著, 但抽样信息不足, 且 170 cm
+的计算属于外推, 需要新增数据验证.</p>
+<p>如果以预测为目标, 应优先比较验证误差, 而不是要求每个系数都显著.
+若以解释关联为目标, 则要进一步关注变量选择依据, 混杂因素与系数稳定性.
+统计显著, 实际意义和预测质量是不同维度, 需要分别说明.</p>
+<h3 id="常见错误与改进">7.2 常见错误与改进</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">常见做法</th>
+<th style="text-align: center;">问题</th>
+<th style="text-align: center;">改进</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">把 <span
+class="math inline">\(E(Y)\)</span> 写成依赖 <span
+class="math inline">\(x\)</span> 的回归方程</td>
+<td style="text-align: center;">混淆无条件与条件平均值</td>
+<td style="text-align: center;">使用 <span class="math inline">\(E(Y\mid
+X=x)\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">用 <span
+class="math inline">\(\sum\limits_i y_i^2\)</span> 作为 SST</td>
+<td style="text-align: center;">漏掉中心化, 平方和分解含义改变</td>
+<td style="text-align: center;">使用 <span
+class="math inline">\(\sum\limits_i(y_i-\overline y)^2\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">预测前把参数保留两位小数</td>
+<td style="text-align: center;">大自变量值会放大舍入误差</td>
+<td style="text-align: center;">内部计算保留全精度, 展示时再舍入</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span class="math inline">\(F\)</span>
+检验显著就认定模型正确</td>
+<td style="text-align: center;">没有检验误差假设与模型形式</td>
+<td style="text-align: center;">联合诊断, 领域知识和样本外验证</td>
+</tr>
+<tr>
+<td style="text-align: center;">把不显著解释成没有关系</td>
+<td style="text-align: center;">小样本, 共线性等也会降低检验能力</td>
+<td style="text-align: center;">报告效应及区间, 使用"不拒绝"表述</td>
+</tr>
+<tr>
+<td style="text-align: center;">把均值置信区间当作个人预测区间</td>
+<td style="text-align: center;">少计新观测自身的随机波动</td>
+<td style="text-align: center;">新观测使用 <span
+class="math inline">\(\sqrt{1+h_0}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">仅凭 <span
+class="math inline">\(R^2\)</span> 不断加变量</td>
+<td style="text-align: center;">容易过拟合</td>
+<td style="text-align: center;">结合调整 <span
+class="math inline">\(R^2\)</span> 与适当交叉验证</td>
+</tr>
+<tr>
+<td style="text-align: center;">对所有数据先做标准化再交叉验证</td>
+<td style="text-align: center;">验证数据的信息泄漏到训练步骤</td>
+<td style="text-align: center;">在每个训练折内估计预处理参数</td>
+</tr>
+<tr>
+<td style="text-align: center;">把辅助回归 <span
+class="math inline">\(R_j^2\)</span> 当成负相关系数</td>
+<td style="text-align: center;">误读 VIF 的定义</td>
+<td style="text-align: center;">回归第 <span
+class="math inline">\(j\)</span> 列对其他解释变量并含截距</td>
+</tr>
+<tr>
+<td style="text-align: center;">对数拟合后直接取指数预测均值</td>
+<td style="text-align: center;">忽略回变换偏差</td>
+<td style="text-align: center;">区分条件中位数与条件均值</td>
+</tr>
+<tr>
+<td style="text-align: center;">高相关即因果, 把系数当政策收益</td>
+<td style="text-align: center;">可能存在混杂, 选择偏差与反向关系</td>
+<td
+style="text-align: center;">对因果问题采用相应研究设计与识别方法</td>
+</tr>
+<tr>
+<td style="text-align: center;">样本范围外仍照搬模型结论</td>
+<td style="text-align: center;">区间未涵盖模型失配风险</td>
+<td style="text-align: center;">标记外推并补充相应范围的数据</td>
+</tr>
+</tbody>
+</table>
+<h3 id="方法的优点与局限">7.3 方法的优点与局限</h3>
+<p>回归分析形式简洁, 计算成本较低, 便于说明变量与结果之间的数量关联,
+并能在假设明确时报告估计和预测不确定性.
+它适合作为许多建模任务的基线方法.</p>
+<p>局限主要来自模型形式, 数据质量和研究设计. 遗漏变量, 异常观测, 异方差,
+相关误差与共线性会影响估计或推断;
+复杂非线性可能需要更合适的函数或其他模型.
+高质量应用的重点不是找到一个漂亮的 <span
+class="math inline">\(R^2\)</span>, 而是让数据, 假设,
+验证和结论相互一致.</p>
+<h2 id="八-练习与进一步阅读">八, 练习与进一步阅读</h2>
+<h3 id="练习">8.1 练习</h3>
+<ol type="1">
+<li>将例题一的预测身高改为 154 cm. 比较两种区间,
+并解释为什么其区间一般比 170 cm 处窄.</li>
+<li>在相同数据上交换身高和腿长, 重新拟合.
+检验两条回归直线是否能通过直接代数倒置互相得到.</li>
+<li>在例题二中使用近似共线性数据, 观察系数与标准误变化.
+再使用完全共线性数据, 说明为什么常规参数推断被拒绝.</li>
+<li>在例题三中直接拟合直线 <span class="math inline">\(a+bx\)</span>,
+比较残差图与留一法 RMSE. 不要仅凭训练 <span
+class="math inline">\(R^2\)</span> 判断哪种模型更适合预测.</li>
+</ol>
+<p>练习应保留原始数据, 分别记录模型, 检验假设和验证方式. 对变换模型,
+要说明预测回到哪个尺度, 以及区间对应平均响应还是新观测.</p>
+<h3 id="参考解答">8.2 参考解答</h3>
+<p><strong>第 1 题.</strong> 身高为 154 cm 时, 点预测为 94.707257 cm.
+95% 均值置信区间为 <span
+class="math inline">\([93.997911,95.416604]\)</span> cm,
+新个体预测区间为 <span
+class="math inline">\([91.787611,97.626903]\)</span> cm. 154 cm
+接近样本均值 153.625 cm, 此时 <span
+class="math inline">\(h_0\approx0.062731\)</span>, 小于 170 cm 时的
+0.502255, 因而两种区间都更窄. 这里比较的是同一模型中的区间,
+不能将窄区间当作抽样代表性已被确认的证据.</p>
+<p><strong>第 2 题.</strong> 用腿长预测身高, 得到</p>
+<p><span class="math display">\[
+\widehat x=31.771281+1.290311y.
+\]</span></p>
+<p>原直线代数倒置后的斜率约为 1.390140, 与 1.290311 不同.
+两种回归分别最小化不同方向的残差平方和.
+在两个变量都非常数的一元含截距模型中,
+两个斜率的乘积等于皮尔逊相关系数的平方; 除非相关系数的绝对值为 1,
+它们不能互相直接倒置.</p>
+<p><strong>第 3 题.</strong> 将第二列替换为 <span
+class="math inline">\(2x_1+0.02u\)</span> 后, 两个 VIF 均约为 <span
+class="math inline">\(2.531986\times10^5\)</span>. 拟合系数按截距,
+第一列, 第二列的顺序约为 <span
+class="math inline">\((6.620056,-76.684027,39.304154)^{\mathsf
+T}\)</span>, 后两个系数的标准误约为 17.608921 和 8.803346. 与原模型相比,
+这种巨大且相互抵消的系数说明两列很难分别解释.
+这里同时改变了第二个解释变量的含义,
+因而不能把不同模型的系数变化全部归因于共线性. 若第二列恰为 <span
+class="math inline">\(2x_1\)</span>, 秩亏使两个斜率无法单独识别,
+常规系数推断应被拒绝.</p>
+<p><strong>第 4 题.</strong> 在相同八组数据上拟合直线, 训练 <span
+class="math inline">\(R^2\approx0.644137\)</span>, 留一法 RMSE 约为
+2.067358 min; 倒数曲线的留一法 RMSE 约为 0.134372 min.
+直线难以刻画下降逐渐变缓的形状, 在本例给定范围内倒数模型更合适.
+这是教学数据上的比较, 不能直接推广为所有服务系统中的普遍规律.</p>
+<h3 id="进一步阅读与函数文档">8.3 进一步阅读与函数文档</h3>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://www.itl.nist.gov/div898/handbook/pmd/section4/pmd431.htm">NIST:
+最小二乘法概述</a>.</li>
+<li><a
+target="_blank" rel="noopener" href="https://numpy.org/doc/stable/reference/generated/numpy.linalg.lstsq.html">NumPy:
+linalg.lstsq</a>.</li>
+<li><a
+target="_blank" rel="noopener" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.linregress.html">SciPy:
+linregress</a>, <a
+target="_blank" rel="noopener" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.t.html">t
+分布</a>, <a
+target="_blank" rel="noopener" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.f.html">F
+分布</a>.</li>
+<li><a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/matlab/ref/betainc.html">MathWorks:
+betainc</a>, <a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/matlab/ref/fzero.html">fzero</a>.</li>
+<li><a target="_blank" rel="noopener" href="https://www.mathworks.com/help/stats/fitlm.html">MathWorks:
+fitlm</a> 与 <a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/stats/linearmodel.predict.html">LinearModel.predict</a>,
+供具有统计工具箱的读者进一步学习; 本章程序不依赖它们.</li>
+</ul>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

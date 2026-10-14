@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="最小生成树：用最小总代价连接所有顶点 六座城市计划建设一张基础通信网络，让居民共享公共服务信息。可施工的线路及其长度已经测得。如果要求每个城市都能与其他城市通信，怎样选择线路，才能使建设总长度最小？ 这与“从城市 1 到城市 6 怎样走最短”不同。通信线路可以经过其他城市中转，不必为每一对城市单独铺设线缆；建设费用则按每条实际选中的线路计入一次。最小生成树模型正是从整体连接结构出发，在连通要">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/wait/MinimumSpanningTree1.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="最小生成树：用最小总代价连接所有顶点 六座城市计划建设一张基础通信网络，让居民共享公共服务信息。可施工的线路及其长度已经测得。如果要求每个城市都能与其他城市通信，怎样选择线路，才能使建设总长度最小？ 这与“从城市 1 到城市 6 怎样走最短”不同。通信线路可以经过其他城市中转，不必为每一对城市单独铺设线缆；建设费用则按每条实际选中的线路计入一次。最小生成树模型正是从整体连接结构出发，在连通要">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/wait/images/MinimumSpanningTree/candidate_network.png">
+<meta property="og:image" content="http://example.com/wait/images/MinimumSpanningTree/kruskal_steps.png">
+<meta property="og:image" content="http://example.com/wait/images/MinimumSpanningTree/prim_steps.png">
+<meta property="og:image" content="http://example.com/wait/images/MinimumSpanningTree/tree_comparison.png">
+<meta property="article:published_time" content="2026-10-14T03:07:54.069Z">
+<meta property="article:modified_time" content="2026-10-14T03:07:54.069Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/wait/images/MinimumSpanningTree/candidate_network.png">
+
+
+<link rel="canonical" href="http://example.com/wait/MinimumSpanningTree1">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/wait/MinimumSpanningTree1.html","path":"wait/MinimumSpanningTree1.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91%E7%94%A8%E6%9C%80%E5%B0%8F%E6%80%BB%E4%BB%A3%E4%BB%B7%E8%BF%9E%E6%8E%A5%E6%89%80%E6%9C%89%E9%A1%B6%E7%82%B9"><span class="nav-number">1.</span> <span class="nav-text">最小生成树：用最小总代价连接所有顶点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%BB%8E%E9%80%9A%E4%BF%A1%E9%97%AE%E9%A2%98%E5%88%B0%E5%9B%BE%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text">一、从通信问题到图模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E6%A8%A1%E5%AF%B9%E8%B1%A1%E4%B8%8E%E5%81%87%E8%AE%BE"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 建模对象与假设</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E5%9F%8E%E5%B8%82%E6%95%B0%E6%8D%AE"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 六城市数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E9%80%9A%E6%A0%91%E4%B8%8E%E7%94%9F%E6%88%90%E6%A0%91"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 连通、树与生成树</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E7%9B%AE%E6%A0%87%E6%9D%A1%E4%BB%B6%E4%B8%8E%E6%9C%80%E7%9F%AD%E8%B7%AF%E5%BE%84%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.2.</span> <span class="nav-text">二、目标、条件与最短路径的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E5%AD%A6%E7%9B%AE%E6%A0%87"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 数学目标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%B7%A5%E7%A8%8B%E4%B8%AD%E7%9A%84%E6%9C%80%E4%BC%98%E8%BF%9E%E6%8E%A5%E5%8F%AF%E4%BB%A5%E5%8F%96%E4%B8%BA%E6%A0%91"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2
+为什么工程中的最优连接可以取为树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91%E4%B9%9F%E5%85%81%E8%AE%B8%E8%B4%9F%E6%9D%83"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 最小生成树也允许负权</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E%E6%9C%80%E7%9F%AD%E8%B7%AF%E5%BE%84%E6%AF%94%E8%BE%83"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 与最短路径比较</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E9%80%9A%E7%BA%A6%E6%9D%9F%E7%9A%84%E5%BD%A2%E5%BC%8F%E5%8C%96%E8%A1%A8%E8%BE%BE%E8%BF%9B%E9%98%B6"><span class="nav-number">1.2.5.</span> <span class="nav-text">2.5 连通约束的形式化表达（进阶）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E8%B4%AA%E5%BF%83%E9%80%89%E6%8B%A9%E4%B8%BA%E4%BB%80%E4%B9%88%E6%AD%A3%E7%A1%AE"><span class="nav-number">1.3.</span> <span class="nav-text">三、贪心选择为什么正确</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%B2%E4%B8%8E%E6%9C%80%E8%BD%BB%E8%B7%A8%E5%89%B2%E8%BE%B9"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 割与最轻跨割边</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E4%BA%A4%E6%8D%A2%E8%AE%BA%E8%AF%81"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 一个交换论证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E7%A7%8D%E7%AE%97%E6%B3%95%E5%A6%82%E4%BD%95%E8%BF%90%E7%94%A8%E5%89%B2%E6%80%A7%E8%B4%A8"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 两种算法如何运用割性质</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9Bkruskal%E4%BB%8E%E4%BE%BF%E5%AE%9C%E7%9A%84%E8%BE%B9%E5%BC%80%E5%A7%8B%E5%90%88%E5%B9%B6"><span class="nav-number">1.4.</span> <span class="nav-text">四、Kruskal：从便宜的边开始合并</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 算法步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E5%9F%8E%E5%B8%82%E9%80%90%E6%AD%A5%E6%8E%A8%E6%BC%94"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 六城市逐步推演</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E5%B9%B6%E6%9F%A5%E9%9B%86%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E6%88%90%E7%8E%AF"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 用并查集判断是否成环</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94prim%E4%BB%8E%E4%B8%80%E4%B8%AA%E5%9F%8E%E5%B8%82%E9%80%90%E6%AD%A5%E6%89%A9%E5%B1%95"><span class="nav-number">1.5.</span> <span class="nav-text">五、Prim：从一个城市逐步扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E6%AD%A5%E9%AA%A4-1"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 算法步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E5%9F%8E%E5%B8%82-1-%E5%BC%80%E5%A7%8B%E7%9A%84%E6%8E%A8%E6%BC%94"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 从城市 1 开始的推演</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E-dijkstra-%E7%9A%84%E8%B7%9D%E7%A6%BB%E5%8C%BA%E5%88%86"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 与 Dijkstra 的“距离”区分</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E7%BB%93%E6%9E%9C%E9%AA%8C%E8%AF%81%E4%B8%8E%E5%94%AF%E4%B8%80%E6%80%A7"><span class="nav-number">1.6.</span> <span class="nav-text">六、结果验证与唯一性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E7%A1%AE%E8%AE%A4%E7%BB%93%E6%9E%9C%E6%98%AF%E4%B8%80%E6%A3%B5%E7%94%9F%E6%88%90%E6%A0%91"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 先确认结果是一棵生成树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%89%E5%90%8C%E6%9D%83%E8%BE%B9%E4%B9%9F%E5%8F%AF%E4%BB%A5%E6%9C%89%E5%94%AF%E4%B8%80%E6%9C%80%E4%BC%98%E8%A7%A3"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2
+有同权边，也可以有唯一最优解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E5%94%AF%E4%B8%80%E6%9C%80%E8%BD%BB%E8%B7%A8%E5%89%B2%E8%BE%B9%E8%AF%81%E6%98%8E%E6%9C%AC%E4%BE%8B%E5%94%AF%E4%B8%80"><span class="nav-number">1.6.3.</span> <span class="nav-text">6.3
+用唯一最轻跨割边证明本例唯一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E4%B8%80%E5%BC%A0%E5%9B%BE%E5%8F%AF%E4%BB%A5%E6%9C%89%E5%A4%9A%E6%A3%B5%E7%94%9F%E6%88%90%E6%A0%91"><span class="nav-number">1.6.4.</span> <span class="nav-text">6.4 同一张图可以有多棵生成树</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83python%E5%8F%AF%E7%8B%AC%E7%AB%8B%E8%BF%90%E8%A1%8C%E7%9A%84%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.7.</span> <span class="nav-text">七、Python：可独立运行的算法实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#kruskal-%E4%B8%8E%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A3%AE%E6%9E%97"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 Kruskal 与最小生成森林</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%AB%E6%8F%8F%E7%89%88%E6%9C%AC%E7%9A%84-prim"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 扫描版本的 Prim</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#networkx-%E6%B1%82%E8%A7%A3%E4%B8%8E%E7%8B%AC%E7%AB%8B%E6%9E%9A%E4%B8%BE"><span class="nav-number">1.7.3.</span> <span class="nav-text">7.3 NetworkX 求解与独立枚举</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%ABmatlab%E4%BF%9D%E7%95%99%E4%B8%8A%E4%B8%89%E8%A7%92%E6%9E%84%E5%9B%BE%E5%B9%B6%E6%A0%B8%E5%AF%B9%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%B3%95"><span class="nav-number">1.8.</span> <span class="nav-text">八、MATLAB：保留上三角构图并核对两种方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%82%BB%E6%8E%A5%E7%9F%A9%E9%98%B5%E7%9A%84%E5%90%AB%E4%B9%89"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 邻接矩阵的含义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E8%BE%B9%E6%9D%83%E6%95%B0%E6%8D%AE%E5%88%B0%E5%87%BD%E6%95%B0%E8%BE%93%E5%85%A5"><span class="nav-number">1.8.2.</span> <span class="nav-text">8.2 从边权数据到函数输入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E5%9F%8E%E5%B8%82%E5%AE%8C%E6%95%B4%E8%84%9A%E6%9C%AC"><span class="nav-number">1.8.3.</span> <span class="nav-text">8.3 六城市完整脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%BB%98%E8%AE%A4%E5%8F%82%E6%95%B0%E4%B8%8E%E4%B8%8D%E8%BF%9E%E9%80%9A%E5%9B%BE"><span class="nav-number">1.8.4.</span> <span class="nav-text">8.4 默认参数与不连通图</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D%E7%AE%97%E6%B3%95%E9%80%89%E6%8B%A9%E5%B1%80%E9%99%90%E4%B8%8E%E5%BB%BA%E6%A8%A1%E6%A3%80%E6%9F%A5"><span class="nav-number">1.9.</span> <span class="nav-text">九、算法选择、局限与建模检查</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B9%E6%8D%AE%E6%95%B0%E6%8D%AE%E8%A1%A8%E7%A4%BA%E5%92%8C%E5%AE%9E%E7%8E%B0%E9%80%89%E6%8B%A9%E7%AE%97%E6%B3%95"><span class="nav-number">1.9.1.</span> <span class="nav-text">9.1 根据数据表示和实现选择算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E8%BF%9E%E9%80%9A%E6%97%B6%E5%BE%97%E5%88%B0%E5%A4%9A%E5%B0%91%E6%9D%A1%E6%A3%AE%E6%9E%97%E8%BE%B9"><span class="nav-number">1.9.2.</span> <span class="nav-text">9.2 不连通时得到多少条森林边</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E7%A8%8B%E7%BA%A6%E6%9D%9F%E8%B6%85%E5%87%BA%E6%A8%A1%E5%9E%8B%E6%97%B6"><span class="nav-number">1.9.3.</span> <span class="nav-text">9.3 工程约束超出模型时</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%94%99%E8%AF%AF%E4%B8%8E%E4%BF%AE%E6%AD%A3"><span class="nav-number">1.9.4.</span> <span class="nav-text">9.4 常见错误与修正</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E7%BB%83%E4%B9%A0%E4%B8%8E%E5%8F%82%E8%80%83%E8%A7%A3%E7%AD%94"><span class="nav-number">1.10.</span> <span class="nav-text">十、练习与参考解答</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.10.1.</span> <span class="nav-text">10.1 练习</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%A7%A3%E7%AD%94"><span class="nav-number">1.10.2.</span> <span class="nav-text">10.2 参考解答</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1
+id="最小生成树用最小总代价连接所有顶点">最小生成树：用最小总代价连接所有顶点</h1>
+<p>六座城市计划建设一张基础通信网络，让居民共享公共服务信息。可施工的线路及其长度已经测得。如果要求每个城市都能与其他城市通信，怎样选择线路，才能使建设总长度最小？</p>
+<p>这与“从城市 1 到城市 6
+怎样走最短”不同。通信线路可以经过其他城市中转，不必为每一对城市单独铺设线缆；建设费用则按每条实际选中的线路计入一次。最小生成树模型正是从整体连接结构出发，在连通要求下节约资源。</p>
+<p>本章围绕同一个六城市例子，先理解树与生成树，再手工推演 Kruskal 与
+Prim 两种算法，解释贪心选择为什么正确，最后用 Python 与 MATLAB
+求解并检查总权重、唯一性和边界情况。</p>
+<h2 id="一从通信问题到图模型">一、从通信问题到图模型</h2>
+<h3 id="建模对象与假设">1.1 建模对象与假设</h3>
+<p>用顶点表示城市，用无向边表示允许施工的线路，用边权表示该线路的长度或建设费用。只有边表中的线路可被选择，不能直接增添一条未给出的“捷径”。</p>
+<p>若用长度作为权重，应假设单位长度的建设费用相同，才能将“总长度最小”解释为“总费用最小”。若地形和材料导致单位造价不同，应直接采用相应的建设费用作为权重。</p>
+<p>本例假设线路可双向通信，选中线路的代价可以相加，不另外限制线路容量、城市连接数量或通信绕行长度。权重使用统一的教学长度单位，不代表实际城市工程测量。</p>
+<h3 id="六城市数据">1.2 六城市数据</h3>
+<p>顶点统一编号为 <span class="math inline">\(1,2,\ldots,6\)</span>。共
+10 条候选线路，数据如下。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">候选线路</th>
+<th style="text-align: center;">权重</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1—2</td>
+<td style="text-align: center;">14</td>
+</tr>
+<tr>
+<td style="text-align: center;">1—3</td>
+<td style="text-align: center;">18</td>
+</tr>
+<tr>
+<td style="text-align: center;">2—3</td>
+<td style="text-align: center;">13</td>
+</tr>
+<tr>
+<td style="text-align: center;">2—4</td>
+<td style="text-align: center;">18</td>
+</tr>
+<tr>
+<td style="text-align: center;">2—5</td>
+<td style="text-align: center;">16</td>
+</tr>
+<tr>
+<td style="text-align: center;">3—4</td>
+<td style="text-align: center;">12</td>
+</tr>
+<tr>
+<td style="text-align: center;">3—5</td>
+<td style="text-align: center;">16</td>
+</tr>
+<tr>
+<td style="text-align: center;">4—5</td>
+<td style="text-align: center;">14</td>
+</tr>
+<tr>
+<td style="text-align: center;">4—6</td>
+<td style="text-align: center;">19</td>
+</tr>
+<tr>
+<td style="text-align: center;">5—6</td>
+<td style="text-align: center;">10</td>
+</tr>
+</tbody>
+</table>
+<p>每条无向边只代表一条候选线路，例如 1—2 与 2—1
+是同一条边。示意图中的位置和线长只用于展示，真正参与优化的是连接关系及边权。</p>
+<figure>
+<img src="images/MinimumSpanningTree/candidate_network.png"
+alt="图 1 六城市候选通信网络. 数字是线路权重, 图上位置不表示实际距离。" />
+<figcaption aria-hidden="true">图 1 六城市候选通信网络. 数字是线路权重,
+图上位置不表示实际距离。</figcaption>
+</figure>
+<p>图 1 六城市候选通信网络。数字是线路权重，图上位置不表示实际距离。</p>
+<h3 id="连通树与生成树">1.3 连通、树与生成树</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">概念</th>
+<th style="text-align: center;">准确含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">连通无向图</td>
+<td style="text-align: center;">任意两个顶点之间都有路径</td>
+</tr>
+<tr>
+<td style="text-align: center;">树</td>
+<td style="text-align: center;">连通且无环的无向图</td>
+</tr>
+<tr>
+<td style="text-align: center;">生成树</td>
+<td
+style="text-align: center;">包含原图全部顶点，只选择原图部分边，并且构成树的子图</td>
+</tr>
+<tr>
+<td style="text-align: center;">最小生成树</td>
+<td
+style="text-align: center;">所有生成树中，所选边权之和最小的一棵</td>
+</tr>
+<tr>
+<td style="text-align: center;">最小生成森林</td>
+<td
+style="text-align: center;">不连通图中，各连通分量分别取最小生成树，合起来形成的森林</td>
+</tr>
+</tbody>
+</table>
+<p>若一棵树有 <span class="math inline">\(n\)</span> 个顶点，它恰有
+<span class="math inline">\(n-1\)</span>
+条边，任意两顶点之间恰有一条简单路径。注意，生成树保留的是<strong>全部顶点与部分边</strong>，不是原图的全部边。</p>
+<p>对于包含 <span class="math inline">\(n\geqslant1\)</span>
+个顶点的无向图，以下条件可以用来确认一棵树：连通且无环；或连通且有 <span
+class="math inline">\(n-1\)</span> 条边；或无环且有 <span
+class="math inline">\(n-1\)</span>
+条边。不能只数边而忽略连通性或环。</p>
+<p>树上两点之间的路径虽然唯一，却未必是原图中的最短路径。最小生成树的“最小”，针对的是全部选中边的总和。</p>
+<h2 id="二目标条件与最短路径的区别">二、目标、条件与最短路径的区别</h2>
+<h3 id="数学目标">2.1 数学目标</h3>
+<p>给定有限的连通无向带权图 <span
+class="math inline">\(G=(V,E,w)\)</span>，求生成树 <span
+class="math inline">\(T=(V,E_T)\)</span>，使</p>
+<p><span class="math display">\[
+L(T)=\sum\limits_{e\in E_T}w(e)
+\]</span></p>
+<p>在所有生成树中最小。最优权重记为 <span
+class="math inline">\(L^*\)</span>。不同生成树可能达到同一个最优值，因此最优边集不一定唯一，但最优总权重是一个确定的数值。</p>
+<p>单个顶点本身就是一棵树，边数为 0，总权重为
+0。若输入图不连通，就不存在覆盖全部顶点的一棵生成树；不能把森林误报为已经连接所有城市。</p>
+<h3 id="为什么工程中的最优连接可以取为树">2.2
+为什么工程中的最优连接可以取为树</h3>
+<p>本例权重严格为正。若一套连通建设方案含有一个环，删除环上的任意一条边仍能保持连通，而且降低总费用。反复删去环，最终得到一棵树。</p>
+<p>当边权仅要求非负时，删去零权边可能不降低总费用，但至少存在一棵与最优连通方案同样便宜的生成树。因此，在非负建设费用、没有额外可靠性或容量约束时，最小生成树能回答“最低总代价连接”的问题。</p>
+<h3 id="最小生成树也允许负权">2.3 最小生成树也允许负权</h3>
+<p>作为数学问题，最小生成树不要求边权非负；Kruskal 和 Prim
+都允许有限的零权、负权。树只有固定的 <span
+class="math inline">\(n-1\)</span>
+条边，不允许反复绕圈，因而不存在最短游走中通过负权圈无限降低总代价的问题。</p>
+<p>但负权场景下，“最小生成树”与“不要求无环的最小费用连通子图”必须区分。比如三角形的三条边权都为
+<span class="math inline">\(-1\)</span>：最小生成树总权重为 <span
+class="math inline">\(-2\)</span>；若允许保留环，选全部三条边反而得到更小的
+<span
+class="math inline">\(-3\)</span>。工程建模不能忽略这个目标差别。</p>
+<h3 id="与最短路径比较">2.4 与最短路径比较</h3>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">问题</th>
+<th style="text-align: center;">优化对象</th>
+<th style="text-align: center;">要求</th>
+<th style="text-align: center;">本例中的结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">城市 1 到 6 的最短路径</td>
+<td style="text-align: center;">一条行驶或传输路线的边权之和</td>
+<td style="text-align: center;">只需连接指定起终点</td>
+<td style="text-align: center;"><span
+class="math inline">\(1\to2\to5\to6\)</span>，长度 <span
+class="math inline">\(14+16+10=40\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">最小生成树</td>
+<td style="text-align: center;">所有选中建设线路的权重总和</td>
+<td style="text-align: center;">全部顶点连通且无环</td>
+<td style="text-align: center;"><span
+class="math inline">\(1—2—3—4—5—6\)</span>，总权重 63</td>
+</tr>
+</tbody>
+</table>
+<p>本例最小生成树中，城市 1 到 6 的唯一路径长度为
+63，而原图中两点的最短距离是
+40。这正说明，最低建设费用与最短传输距离是两个不同目标。</p>
+<h3 id="连通约束的形式化表达进阶">2.5 连通约束的形式化表达（进阶）</h3>
+<p>令 <span class="math inline">\(x_e\in\{0,1\}\)</span> 表示是否选取边
+<span class="math inline">\(e\)</span>。对非空真子集 <span
+class="math inline">\(S\subset V\)</span>，记 <span
+class="math inline">\(\delta(S)\)</span> 为一端在 <span
+class="math inline">\(S\)</span> 内、另一端在 <span
+class="math inline">\(V\setminus S\)</span>
+内的边集。可将生成树问题写为</p>
+<p><span class="math display">\[
+\begin{gathered}
+\min\quad \sum\limits_{e\in E}w(e)x_e,\\[4pt]
+\text{s.t.}\quad
+\left\{\begin{aligned}
+&amp;\sum\limits_{e\in E}x_e=n-1,\\
+&amp;\sum\limits_{e\in\delta(S)}x_e\geqslant1,
+\quad\varnothing\ne S\subsetneq V,\\
+&amp;x_e\in\{0,1\},\quad e\in E.
+\end{aligned}\right.
+\end{gathered}
+\]</span></p>
+<p>第二类约束保证每一组顶点都能与其余顶点相连。连通加上 <span
+class="math inline">\(n-1\)</span>
+条边就保证所选图为树。本章的数据没有自环，这个模型中的边也连接两个不同顶点。</p>
+<p>上述模型帮助说明约束，却无需逐条列出全部子集再调用通用优化器；最小生成树的专门算法可以更直接地求解。</p>
+<h2 id="三贪心选择为什么正确">三、贪心选择为什么正确</h2>
+<h3 id="割与最轻跨割边">3.1 割与最轻跨割边</h3>
+<p>将全部顶点分成非空的 <span class="math inline">\(S\)</span> 与 <span
+class="math inline">\(V\setminus
+S\)</span>，就得到一个割。连接两侧的边叫跨割边。任何生成树都必须至少选取一条跨割边，否则两侧无法通信。</p>
+<p><strong>割性质：割上的一条最轻边，至少属于某棵最小生成树；若它是这个割上唯一最轻的边，则属于所有最小生成树。</strong></p>
+<h3 id="一个交换论证">3.2 一个交换论证</h3>
+<p>设最轻跨割边为 <span
+class="math inline">\(e\)</span>，取一棵最小生成树 <span
+class="math inline">\(T\)</span>。若 <span
+class="math inline">\(e\)</span> 已在 <span
+class="math inline">\(T\)</span> 中，结论成立。否则把 <span
+class="math inline">\(e\)</span> 加入 <span
+class="math inline">\(T\)</span>，会产生一个环。由于 <span
+class="math inline">\(e\)</span> 跨越割，这个环中至少还有另一条跨割边
+<span class="math inline">\(f\)</span>。</p>
+<p>删去 <span class="math inline">\(f\)</span> 得到新的生成树 <span
+class="math inline">\(T&#39;\)</span>，并有</p>
+<p><span class="math display">\[
+L(T&#39;)=L(T)+w(e)-w(f)\leqslant L(T).
+\]</span></p>
+<p>因为 <span class="math inline">\(T\)</span> 已经最优，<span
+class="math inline">\(T&#39;\)</span> 也必须最优。若 <span
+class="math inline">\(e\)</span> 是唯一最轻跨割边，则 <span
+class="math inline">\(w(e)&lt;w(f)\)</span>，假设 <span
+class="math inline">\(T\)</span> 不含 <span
+class="math inline">\(e\)</span> 就会导致 <span
+class="math inline">\(L(T&#39;)&lt;L(T)\)</span>，矛盾，所以所有最小生成树都包含
+<span class="math inline">\(e\)</span>。</p>
+<p>算法逐步加边时，还需要保证当前已经选择的边可以保留：若当前边集没有跨越这个割，就可以对一棵包含当前边集的最小生成树进行上述交换，删去的跨割边不会属于当前边集。于是新边也是安全选择。</p>
+<h3 id="两种算法如何运用割性质">3.3 两种算法如何运用割性质</h3>
+<p>Prim
+维护一棵逐步扩大的树，选择“已加入顶点集合与外部顶点集合之间”的最轻边。当前树边均在集合内部，满足安全加边的条件。</p>
+<p>Kruskal
+维护若干互不连接的树，按边权顺序考察连接不同分量的边。对于其中一个分量形成的割，若有更轻的跨割边，它早已被考察并连接该分量；因此本次加入的边是安全的。</p>
+<p>两种算法在各自正确的选边规则下都得到全局最优解。“采用贪心策略”并不等于“只能得到局部最优”。</p>
+<h2
+id="四kruskal从便宜的边开始合并">四、Kruskal：从便宜的边开始合并</h2>
+<h3 id="算法步骤">4.1 算法步骤</h3>
+<ol type="1">
+<li>保留所有顶点，初始没有选中边，每个顶点独自构成一个分量。</li>
+<li>将全部候选边按权重从小到大排序。</li>
+<li>依次考察边 <span
+class="math inline">\(u—v\)</span>：若两端属于不同分量，加入该边并合并分量；若已在同一分量，加入会成环，跳过。</li>
+<li>连通图中选满 <span class="math inline">\(n-1\)</span>
+条边即可停止。不连通图中必须考察完边集，并报告各分量的最小生成森林。</li>
+</ol>
+<p>这里的“清空边集”指初始化结果图，不是删除输入图的数据。跳过一条边后应继续考察后面的边，不能反复取同一条最轻边。</p>
+<h3 id="六城市逐步推演">4.2 六城市逐步推演</h3>
+<p>为固定展示顺序，同权边按端点编号排序。每一行都表示加入该边之后的分量情况。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">步骤</th>
+<th style="text-align: center;">考察边</th>
+<th style="text-align: center;">权重</th>
+<th style="text-align: center;">是否加入</th>
+<th style="text-align: center;">当前分量</th>
+<th style="text-align: center;">累计权重</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">5—6</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">加入</td>
+<td style="text-align: center;"><span
+class="math inline">\(\{1\},\{2\},\{3\},\{4\},\{5,6\}\)</span></td>
+<td style="text-align: center;">10</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">3—4</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">加入</td>
+<td style="text-align: center;"><span
+class="math inline">\(\{1\},\{2\},\{3,4\},\{5,6\}\)</span></td>
+<td style="text-align: center;">22</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">2—3</td>
+<td style="text-align: center;">13</td>
+<td style="text-align: center;">加入</td>
+<td style="text-align: center;"><span
+class="math inline">\(\{1\},\{2,3,4\},\{5,6\}\)</span></td>
+<td style="text-align: center;">35</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">1—2</td>
+<td style="text-align: center;">14</td>
+<td style="text-align: center;">加入</td>
+<td style="text-align: center;"><span
+class="math inline">\(\{1,2,3,4\},\{5,6\}\)</span></td>
+<td style="text-align: center;">49</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">4—5</td>
+<td style="text-align: center;">14</td>
+<td style="text-align: center;">加入</td>
+<td style="text-align: center;"><span
+class="math inline">\(\{1,2,3,4,5,6\}\)</span></td>
+<td style="text-align: center;">63</td>
+</tr>
+</tbody>
+</table>
+<p>此时选中 5 条边，六个顶点全部连通，算法停止。最小生成树为链状结构</p>
+<p><span class="math display">\[
+1—2—3—4—5—6,
+\]</span></p>
+<p>总权重为</p>
+<p><span class="math display">\[
+L^*=10+12+13+14+14=\boxed{63}.
+\]</span></p>
+<p>本例前五条被考察的边恰好都不会成环，这不是所有图都具有的特点。若继续检查其余边，例如
+2—5，已有路径 <span
+class="math inline">\(2—3—4—5\)</span>，再加入它就形成环，所以不能加入生成树。</p>
+<figure>
+<img src="images/MinimumSpanningTree/kruskal_steps.png"
+alt="图 2 Kruskal 的五次分量合并. 红色边是已选择线路。" />
+<figcaption aria-hidden="true">图 2 Kruskal 的五次分量合并.
+红色边是已选择线路。</figcaption>
+</figure>
+<p>图 2 Kruskal 的五次分量合并。红色边是已选择线路。</p>
+<h3 id="用并查集判断是否成环">4.3 用并查集判断是否成环</h3>
+<p>并查集维护“哪些顶点属于同一个连通分量”。<code>find(v)</code>
+返回分量代表；<code>union(u,v)</code> 合并两个不同分量。</p>
+<p>若
+<code>find(u)==find(v)</code>，说明已选边已经连接了两端，新边会形成环。若代表不同，加入新边恰好将两个分量合并，不会成环。路径压缩与按规模合并可以加速这一操作。</p>
+<h2 id="五prim从一个城市逐步扩展">五、Prim：从一个城市逐步扩展</h2>
+<h3 id="算法步骤-1">5.1 算法步骤</h3>
+<ol type="1">
+<li>任选起点，把它加入顶点集合 <span
+class="math inline">\(U\)</span>，初始没有树边。</li>
+<li>只考察一端在 <span class="math inline">\(U\)</span> 内、另一端在
+<span class="math inline">\(U\)</span>
+外的边，从中选取权重最小的一条。</li>
+<li>加入这条边及其外部端点，扩大 <span
+class="math inline">\(U\)</span>。</li>
+<li>重复直到全部顶点被加入。若尚有外部顶点但不存在跨割边，则图不连通，不能报告完整生成树。</li>
+</ol>
+<p>第二步选择的是与<strong>整个已加入集合</strong>相连的最轻跨割边，不能仅从上一步新增的顶点挑一条最轻边，也不能选取两端均已在集合内的边。</p>
+<h3 id="从城市-1-开始的推演">5.2 从城市 1 开始的推演</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">轮次</th>
+<th style="text-align: center;">加入前的 <span
+class="math inline">\(U\)</span></th>
+<th style="text-align: center;">最轻跨割边</th>
+<th style="text-align: center;">新加入城市</th>
+<th style="text-align: center;">累计权重</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><span
+class="math inline">\(\{1\}\)</span></td>
+<td style="text-align: center;">1—2(14)</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">14</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;"><span
+class="math inline">\(\{1,2\}\)</span></td>
+<td style="text-align: center;">2—3(13)</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">27</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;"><span
+class="math inline">\(\{1,2,3\}\)</span></td>
+<td style="text-align: center;">3—4(12)</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">39</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;"><span
+class="math inline">\(\{1,2,3,4\}\)</span></td>
+<td style="text-align: center;">4—5(14)</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">53</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;"><span
+class="math inline">\(\{1,2,3,4,5\}\)</span></td>
+<td style="text-align: center;">5—6(10)</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">63</td>
+</tr>
+</tbody>
+</table>
+<p>每轮只比较跨割边。例如，加入城市 3 后，3—4 的权重 12 比 2—4 的权重 18
+更小；加入城市 4 后，4—5 的权重 14 比 2—5、3—5 的 16 和 4—6 的 19
+更小。</p>
+<p>Prim 的选边权重顺序为 <span
+class="math inline">\(14,13,12,14,10\)</span>，并不单调递增。它只要求每一轮在当前跨割候选中选最轻边，不要求遵循全图统一排序。</p>
+<figure>
+<img src="images/MinimumSpanningTree/prim_steps.png"
+alt="图 3 从城市 1 开始的 Prim 扩展过程. 蓝色顶点组成当前集合, 红色边是已选择线路。" />
+<figcaption aria-hidden="true">图 3 从城市 1 开始的 Prim 扩展过程.
+蓝色顶点组成当前集合, 红色边是已选择线路。</figcaption>
+</figure>
+<p>图 3 从城市 1 开始的 Prim
+扩展过程。蓝色顶点组成当前集合，红色边是已选择线路。</p>
+<h3 id="与-dijkstra-的距离区分">5.3 与 Dijkstra 的“距离”区分</h3>
+<p>扫描版本的 Prim 可维护 <code>key[v]</code>：当前集合 <span
+class="math inline">\(U\)</span> 通过一条边接入 <span
+class="math inline">\(v\)</span>
+的最小边权，同时记录相应前驱。它不是起点到 <span
+class="math inline">\(v\)</span> 的累计最短距离。</p>
+<p>更新时，Prim 比较 <span class="math inline">\(w(u,v)\)</span> 与
+<code>key[v]</code>；Dijkstra 比较的是 <span
+class="math inline">\(d[u]+w(u,v)\)</span> 与 <span
+class="math inline">\(d[v]\)</span>。两种算法虽然都可以逐个选顶点，目标与更新公式不同，不能混用。</p>
+<h2 id="六结果验证与唯一性">六、结果验证与唯一性</h2>
+<h3 id="先确认结果是一棵生成树">6.1 先确认结果是一棵生成树</h3>
+<p>选中边集为</p>
+<p><span class="math display">\[
+E_T=\{1—2,\ 2—3,\ 3—4,\ 4—5,\ 5—6\}.
+\]</span></p>
+<p>它包含全部六个顶点，只有五条边，结构为连通链，因此是一棵生成树。求和得到
+63，验证路线数据与所报目标值一致；割性质或算法正确性保证它的最优性。</p>
+<p>只验证“六个点，五条边”不能独立证明最优；任意生成树都满足这个计数条件。</p>
+<h3 id="有同权边也可以有唯一最优解">6.2
+有同权边，也可以有唯一最优解</h3>
+<p>本例存在权重为 14、16、18
+的重复值，但最小生成树仍然唯一。判断唯一性不能只看是否存在相等权重。</p>
+<p>边权两两不同是唯一性的充分条件，却不是必要条件。全为权重 1
+的三角形有三棵不同的最小生成树，说明同权也确实可能带来多个最优方案。</p>
+<h3 id="用唯一最轻跨割边证明本例唯一">6.3
+用唯一最轻跨割边证明本例唯一</h3>
+<p>考虑以下五个割。每个割上的最轻边都严格比其他跨割边更轻。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">割的一侧 <span
+class="math inline">\(S\)</span></th>
+<th style="text-align: center;">跨割边及权重</th>
+<th style="text-align: center;">唯一最轻边</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(\{1\}\)</span></td>
+<td style="text-align: center;">1—2(14), 1—3(18)</td>
+<td style="text-align: center;">1—2</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(\{1,2\}\)</span></td>
+<td style="text-align: center;">1—3(18), 2—3(13), 2—4(18), 2—5(16)</td>
+<td style="text-align: center;">2—3</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(\{1,2,3\}\)</span></td>
+<td style="text-align: center;">2—4(18), 2—5(16), 3—4(12), 3—5(16)</td>
+<td style="text-align: center;">3—4</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(\{1,2,3,4\}\)</span></td>
+<td style="text-align: center;">2—5(16), 3—5(16), 4—5(14), 4—6(19)</td>
+<td style="text-align: center;">4—5</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(\{1,2,3,4,5\}\)</span></td>
+<td style="text-align: center;">4—6(19), 5—6(10)</td>
+<td style="text-align: center;">5—6</td>
+</tr>
+</tbody>
+</table>
+<p>由割性质，五条边分别属于所有最小生成树；它们已经组成一棵生成树，因此不能再有另一组最优边集。这证明本例的最小生成树唯一。</p>
+<h3 id="同一张图可以有多棵生成树">6.4 同一张图可以有多棵生成树</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">方案</th>
+<th style="text-align: center;">选择的边</th>
+<th style="text-align: center;">总权重</th>
+<th style="text-align: center;">结论</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">方案一</td>
+<td style="text-align: center;">1—2, 2—3, 3—4, 4—5, 5—6</td>
+<td style="text-align: center;">63</td>
+<td style="text-align: center;">本例唯一的最小生成树</td>
+</tr>
+<tr>
+<td style="text-align: center;">方案二</td>
+<td style="text-align: center;">1—2, 1—3, 3—4, 4—5, 5—6</td>
+<td style="text-align: center;">68</td>
+<td style="text-align: center;">生成树，但不是最小生成树</td>
+</tr>
+<tr>
+<td style="text-align: center;">方案三</td>
+<td style="text-align: center;">1—2, 2—4, 4—6, 1—3, 3—5</td>
+<td style="text-align: center;">85</td>
+<td style="text-align: center;">生成树，但不是最小生成树</td>
+</tr>
+</tbody>
+</table>
+<p>这三种方案均包含六个顶点、五条边且连通，但总代价不同。“生成树”只解决结构可行性，“最小生成树”还要比较目标值。图
+4 在同一个顶点布局下展示三种方案，便于比较它们的连接结构。</p>
+<figure>
+<img src="images/MinimumSpanningTree/tree_comparison.png"
+alt="图 4 候选网络与三棵生成树. 连通结构都可行, 总权重却不同。" />
+<figcaption aria-hidden="true">图 4 候选网络与三棵生成树.
+连通结构都可行, 总权重却不同。</figcaption>
+</figure>
+<p>图 4 候选网络与三棵生成树。连通结构都可行，总权重却不同。</p>
+<h2
+id="七python可独立运行的算法实现">七、Python：可独立运行的算法实现</h2>
+<h3 id="kruskal-与最小生成森林">7.1 Kruskal 与最小生成森林</h3>
+<p>下面程序只使用 Python 标准库。<code>n</code> 为正整数，顶点编号为
+<code>1</code> 到 <code>n</code>，每个三元组 <code>(u,v,weight)</code>
+表示一条无向边，输入边权必须有限。默认要求得到完整生成树；设置
+<code>require_connected=False</code>
+时，返回所有分量的最小生成森林。</p>
+<p>函数返回选中边、总权重与分量数。显式指定顶点数可保留孤立顶点；自环不可能用于连接两个分量，因此不会加入结果。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> isfinite</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DisjointSet</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, n</span>):</span><br><span class="line">        <span class="variable language_">self</span>.parent = <span class="built_in">list</span>(<span class="built_in">range</span>(n + <span class="number">1</span>))</span><br><span class="line">        <span class="variable language_">self</span>.size = [<span class="number">1</span>] * (n + <span class="number">1</span>)</span><br><span class="line">        <span class="variable language_">self</span>.components = n</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">find</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="keyword">while</span> <span class="variable language_">self</span>.parent[x] != x:</span><br><span class="line">            <span class="variable language_">self</span>.parent[x] = <span class="variable language_">self</span>.parent[<span class="variable language_">self</span>.parent[x]]</span><br><span class="line">            x = <span class="variable language_">self</span>.parent[x]</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">union</span>(<span class="params">self, u, v</span>):</span><br><span class="line">        ru, rv = <span class="variable language_">self</span>.find(u), <span class="variable language_">self</span>.find(v)</span><br><span class="line">        <span class="keyword">if</span> ru == rv:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.size[ru] &lt; <span class="variable language_">self</span>.size[rv]:</span><br><span class="line">            ru, rv = rv, ru</span><br><span class="line">        <span class="variable language_">self</span>.parent[rv] = ru</span><br><span class="line">        <span class="variable language_">self</span>.size[ru] += <span class="variable language_">self</span>.size[rv]</span><br><span class="line">        <span class="variable language_">self</span>.components -= <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">kruskal</span>(<span class="params">n, edges, require_connected=<span class="literal">True</span></span>):</span><br><span class="line">    <span class="keyword">if</span> n &lt; <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;顶点数必须为正&quot;</span>)</span><br><span class="line">    ordered = []</span><br><span class="line">    <span class="keyword">for</span> u, v, weight <span class="keyword">in</span> edges:</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> (<span class="number">1</span> &lt;= u &lt;= n <span class="keyword">and</span> <span class="number">1</span> &lt;= v &lt;= n):</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;边的端点超出编号范围&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> isfinite(weight):</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;边权必须有限&quot;</span>)</span><br><span class="line">        a, b = <span class="built_in">sorted</span>((u, v))</span><br><span class="line">        ordered.append((a, b, weight))</span><br><span class="line">    ordered.sort(key=<span class="keyword">lambda</span> edge: (edge[<span class="number">2</span>], edge[<span class="number">0</span>], edge[<span class="number">1</span>]))</span><br><span class="line"></span><br><span class="line">    dsu = DisjointSet(n)</span><br><span class="line">    selected = []</span><br><span class="line">    total = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> u, v, weight <span class="keyword">in</span> ordered:</span><br><span class="line">        <span class="keyword">if</span> dsu.union(u, v):</span><br><span class="line">            selected.append((u, v, weight))</span><br><span class="line">            total += weight</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(selected) == n - <span class="number">1</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> require_connected <span class="keyword">and</span> dsu.components != <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;图不连通，不存在覆盖全部顶点的生成树&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> selected, total, dsu.components</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">EDGES = [</span><br><span class="line">    (<span class="number">1</span>, <span class="number">2</span>, <span class="number">14</span>), (<span class="number">1</span>, <span class="number">3</span>, <span class="number">18</span>), (<span class="number">2</span>, <span class="number">3</span>, <span class="number">13</span>), (<span class="number">2</span>, <span class="number">4</span>, <span class="number">18</span>),</span><br><span class="line">    (<span class="number">2</span>, <span class="number">5</span>, <span class="number">16</span>), (<span class="number">3</span>, <span class="number">4</span>, <span class="number">12</span>), (<span class="number">3</span>, <span class="number">5</span>, <span class="number">16</span>), (<span class="number">4</span>, <span class="number">5</span>, <span class="number">14</span>),</span><br><span class="line">    (<span class="number">4</span>, <span class="number">6</span>, <span class="number">19</span>), (<span class="number">5</span>, <span class="number">6</span>, <span class="number">10</span>),</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">selected, total, components = kruskal(<span class="number">6</span>, EDGES)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;选边顺序:&quot;</span>, selected)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;总权重:&quot;</span>, total, <span class="string">&quot;分量数:&quot;</span>, components)</span><br><span class="line">expected = &#123;(<span class="number">1</span>, <span class="number">2</span>, <span class="number">14</span>), (<span class="number">2</span>, <span class="number">3</span>, <span class="number">13</span>), (<span class="number">3</span>, <span class="number">4</span>, <span class="number">12</span>), (<span class="number">4</span>, <span class="number">5</span>, <span class="number">14</span>), (<span class="number">5</span>, <span class="number">6</span>, <span class="number">10</span>)&#125;</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">set</span>(selected) == expected</span><br><span class="line"><span class="keyword">assert</span> total == <span class="number">63</span> <span class="keyword">and</span> <span class="built_in">len</span>(selected) == <span class="number">5</span> <span class="keyword">and</span> components == <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 零权、负权、自环：自环即使权重更小，也不能加入树。</span></span><br><span class="line">z_edges = [(<span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>), (<span class="number">2</span>, <span class="number">3</span>, -<span class="number">2</span>), (<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>), (<span class="number">1</span>, <span class="number">1</span>, -<span class="number">100</span>)]</span><br><span class="line">z_tree, z_total, z_count = kruskal(<span class="number">3</span>, z_edges)</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">set</span>(z_tree) == &#123;(<span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>), (<span class="number">2</span>, <span class="number">3</span>, -<span class="number">2</span>)&#125;</span><br><span class="line"><span class="keyword">assert</span> z_total == -<span class="number">2</span> <span class="keyword">and</span> z_count == <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 三个分量：&#123;1,2&#125;、&#123;3,4&#125;、孤立点 &#123;5&#125;。</span></span><br><span class="line">forest, forest_total, count = kruskal(</span><br><span class="line">    <span class="number">5</span>, [(<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>), (<span class="number">3</span>, <span class="number">4</span>, <span class="number">3</span>)], require_connected=<span class="literal">False</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">assert</span> count == <span class="number">3</span> <span class="keyword">and</span> <span class="built_in">len</span>(forest) == <span class="number">5</span> - count <span class="keyword">and</span> forest_total == <span class="number">5</span></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    kruskal(<span class="number">5</span>, [(<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>), (<span class="number">3</span>, <span class="number">4</span>, <span class="number">3</span>)])</span><br><span class="line"><span class="keyword">except</span> ValueError:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;不连通输入已按生成树要求拒绝；可改求生成森林&quot;</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="keyword">raise</span> AssertionError(<span class="string">&quot;不应将森林报告为完整生成树&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">assert</span> kruskal(<span class="number">1</span>, []) == ([], <span class="number">0</span>, <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<p>排序规则只用于固定同权边的处理顺序；同权候选仍需检查是否成环。即使换一个同权排序，得到的最优边集也可能改变，但最优总权重不会改变。本例由于最优边集唯一，最终选边不会改变。</p>
+<h3 id="扫描版本的-prim">7.2 扫描版本的 Prim</h3>
+<p>下面是一段可单独运行的程序，不依赖上一段的变量。<code>key[v]</code>
+存储接入当前树的最小单边权重，<code>parent[v]</code>
+存储这条边的内侧端点。接入边权相同时按顶点编号选点，以便复现。</p>
+<p>本实现要求输入连通；无法接入剩余顶点时立即报错。如需处理不连通图，可用上一节
+Kruskal 的森林模式，或在每个未覆盖分量中重新启动 Prim。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> inf, isfinite</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">prim</span>(<span class="params">n, edges, start=<span class="number">1</span></span>):</span><br><span class="line">    <span class="keyword">if</span> n &lt; <span class="number">1</span> <span class="keyword">or</span> <span class="keyword">not</span> <span class="number">1</span> &lt;= start &lt;= n:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;顶点数或起点不合法&quot;</span>)</span><br><span class="line">    adjacency = [[] <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(n + <span class="number">1</span>)]</span><br><span class="line">    <span class="keyword">for</span> u, v, weight <span class="keyword">in</span> edges:</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> (<span class="number">1</span> &lt;= u &lt;= n <span class="keyword">and</span> <span class="number">1</span> &lt;= v &lt;= n):</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;边的端点超出编号范围&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> isfinite(weight):</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;边权必须有限&quot;</span>)</span><br><span class="line">        adjacency[u].append((v, weight))</span><br><span class="line">        adjacency[v].append((u, weight))</span><br><span class="line"></span><br><span class="line">    key = [inf] * (n + <span class="number">1</span>)</span><br><span class="line">    parent = [<span class="literal">None</span>] * (n + <span class="number">1</span>)</span><br><span class="line">    used = [<span class="literal">False</span>] * (n + <span class="number">1</span>)</span><br><span class="line">    key[start] = <span class="number">0</span></span><br><span class="line">    selected = []</span><br><span class="line">    total = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">        u = <span class="built_in">min</span>(</span><br><span class="line">            (v <span class="keyword">for</span> v <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, n + <span class="number">1</span>) <span class="keyword">if</span> <span class="keyword">not</span> used[v]),</span><br><span class="line">            key=<span class="keyword">lambda</span> v: (key[v], v),</span><br><span class="line">        )</span><br><span class="line">        <span class="keyword">if</span> key[u] == inf:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;图不连通，无法构造完整生成树&quot;</span>)</span><br><span class="line">        used[u] = <span class="literal">True</span></span><br><span class="line">        <span class="keyword">if</span> parent[u] <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            a, b = <span class="built_in">sorted</span>((parent[u], u))</span><br><span class="line">            selected.append((a, b, key[u]))</span><br><span class="line">            total += key[u]</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> v, weight <span class="keyword">in</span> adjacency[u]:</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> used[v] <span class="keyword">and</span> weight &lt; key[v]:</span><br><span class="line">                key[v] = weight</span><br><span class="line">                parent[v] = u</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> selected, total</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">EDGES = [</span><br><span class="line">    (<span class="number">1</span>, <span class="number">2</span>, <span class="number">14</span>), (<span class="number">1</span>, <span class="number">3</span>, <span class="number">18</span>), (<span class="number">2</span>, <span class="number">3</span>, <span class="number">13</span>), (<span class="number">2</span>, <span class="number">4</span>, <span class="number">18</span>),</span><br><span class="line">    (<span class="number">2</span>, <span class="number">5</span>, <span class="number">16</span>), (<span class="number">3</span>, <span class="number">4</span>, <span class="number">12</span>), (<span class="number">3</span>, <span class="number">5</span>, <span class="number">16</span>), (<span class="number">4</span>, <span class="number">5</span>, <span class="number">14</span>),</span><br><span class="line">    (<span class="number">4</span>, <span class="number">6</span>, <span class="number">19</span>), (<span class="number">5</span>, <span class="number">6</span>, <span class="number">10</span>),</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">selected, total = prim(<span class="number">6</span>, EDGES, start=<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;选边顺序:&quot;</span>, selected)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;总权重:&quot;</span>, total)</span><br><span class="line">expected = &#123;(<span class="number">1</span>, <span class="number">2</span>, <span class="number">14</span>), (<span class="number">2</span>, <span class="number">3</span>, <span class="number">13</span>), (<span class="number">3</span>, <span class="number">4</span>, <span class="number">12</span>), (<span class="number">4</span>, <span class="number">5</span>, <span class="number">14</span>), (<span class="number">5</span>, <span class="number">6</span>, <span class="number">10</span>)&#125;</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">set</span>(selected) == expected <span class="keyword">and</span> total == <span class="number">63</span></span><br><span class="line"><span class="keyword">assert</span> [w <span class="keyword">for</span> u, v, w <span class="keyword">in</span> selected] == [<span class="number">14</span>, <span class="number">13</span>, <span class="number">12</span>, <span class="number">14</span>, <span class="number">10</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 改变起点可能改变加入顺序；本例的唯一最优边集保持一致。</span></span><br><span class="line"><span class="keyword">for</span> start <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, <span class="number">7</span>):</span><br><span class="line">    tree, cost = prim(<span class="number">6</span>, EDGES, start=start)</span><br><span class="line">    <span class="keyword">assert</span> <span class="built_in">set</span>(tree) == expected <span class="keyword">and</span> cost == <span class="number">63</span></span><br><span class="line"></span><br><span class="line">z_tree, z_total = prim(</span><br><span class="line">    <span class="number">3</span>, [(<span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>), (<span class="number">2</span>, <span class="number">3</span>, -<span class="number">2</span>), (<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>), (<span class="number">1</span>, <span class="number">1</span>, -<span class="number">100</span>)]</span><br><span class="line">)</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">set</span>(z_tree) == &#123;(<span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>), (<span class="number">2</span>, <span class="number">3</span>, -<span class="number">2</span>)&#125; <span class="keyword">and</span> z_total == -<span class="number">2</span></span><br><span class="line"><span class="keyword">assert</span> prim(<span class="number">1</span>, []) == ([], <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    prim(<span class="number">3</span>, [(<span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>)])</span><br><span class="line"><span class="keyword">except</span> ValueError:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;孤立顶点已检测，不报告完整生成树&quot;</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="keyword">raise</span> AssertionError(<span class="string">&quot;应检测到不连通&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>这里 <code>key[start]=0</code>
+只用于先取出起点，并不表示它有一条零权建设边。起点没有前驱，不会向总权重中贡献边。</p>
+<h3 id="networkx-求解与独立枚举">7.3 NetworkX 求解与独立枚举</h3>
+<p>先在终端运行
+<code>python -m pip install networkx matplotlib</code>，再运行以下程序。它分别调用两种算法，验证连通、无环、边数、总权重，并在这个小图上枚举生成树独立核对最优值及唯一性。</p>
+<p>枚举不是大规模求解方法。本例只需考察 <span
+class="math inline">\(\binom{10}{5}=252\)</span>
+个五边子集，适合做教学核验；更大的图应使用专门算法。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> itertools <span class="keyword">import</span> combinations</span><br><span class="line"><span class="keyword">import</span> networkx <span class="keyword">as</span> nx</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">EDGES = [</span><br><span class="line">    (<span class="number">1</span>, <span class="number">2</span>, <span class="number">14</span>), (<span class="number">1</span>, <span class="number">3</span>, <span class="number">18</span>), (<span class="number">2</span>, <span class="number">3</span>, <span class="number">13</span>), (<span class="number">2</span>, <span class="number">4</span>, <span class="number">18</span>),</span><br><span class="line">    (<span class="number">2</span>, <span class="number">5</span>, <span class="number">16</span>), (<span class="number">3</span>, <span class="number">4</span>, <span class="number">12</span>), (<span class="number">3</span>, <span class="number">5</span>, <span class="number">16</span>), (<span class="number">4</span>, <span class="number">5</span>, <span class="number">14</span>),</span><br><span class="line">    (<span class="number">4</span>, <span class="number">6</span>, <span class="number">19</span>), (<span class="number">5</span>, <span class="number">6</span>, <span class="number">10</span>),</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">G = nx.Graph()</span><br><span class="line">G.add_nodes_from(<span class="built_in">range</span>(<span class="number">1</span>, <span class="number">7</span>))</span><br><span class="line">G.add_weighted_edges_from(EDGES)</span><br><span class="line">Tk = nx.minimum_spanning_tree(G, weight=<span class="string">&quot;weight&quot;</span>, algorithm=<span class="string">&quot;kruskal&quot;</span>)</span><br><span class="line">Tp = nx.minimum_spanning_tree(G, weight=<span class="string">&quot;weight&quot;</span>, algorithm=<span class="string">&quot;prim&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">total_weight</span>(<span class="params">H</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">sum</span>(data[<span class="string">&quot;weight&quot;</span>] <span class="keyword">for</span> u, v, data <span class="keyword">in</span> H.edges(data=<span class="literal">True</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edge_set</span>(<span class="params">H</span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="built_in">tuple</span>(<span class="built_in">sorted</span>((u, v))) <span class="keyword">for</span> u, v <span class="keyword">in</span> H.edges()&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> T <span class="keyword">in</span> (Tk, Tp):</span><br><span class="line">    <span class="keyword">assert</span> <span class="built_in">set</span>(T.nodes()) == <span class="built_in">set</span>(G.nodes())</span><br><span class="line">    <span class="keyword">assert</span> T.number_of_edges() == <span class="number">5</span> <span class="keyword">and</span> nx.is_tree(T)</span><br><span class="line">    <span class="keyword">assert</span> total_weight(T) == <span class="number">63</span></span><br><span class="line"><span class="keyword">assert</span> edge_set(Tk) == edge_set(Tp) == &#123;(<span class="number">1</span>, <span class="number">2</span>), (<span class="number">2</span>, <span class="number">3</span>), (<span class="number">3</span>, <span class="number">4</span>), (<span class="number">4</span>, <span class="number">5</span>), (<span class="number">5</span>, <span class="number">6</span>)&#125;</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最小生成树:&quot;</span>, <span class="built_in">sorted</span>(Tk.edges(data=<span class="string">&quot;weight&quot;</span>)), <span class="string">&quot;总权重&quot;</span>, total_weight(Tk))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用直接连通检查枚举五边子集，独立核对最优权重与唯一性。</span></span><br><span class="line">feasible = []</span><br><span class="line"><span class="keyword">for</span> subset <span class="keyword">in</span> combinations(EDGES, <span class="number">5</span>):</span><br><span class="line">    reached = &#123;<span class="number">1</span>&#125;</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">6</span>):</span><br><span class="line">        <span class="keyword">for</span> u, v, weight <span class="keyword">in</span> subset:</span><br><span class="line">            <span class="keyword">if</span> u <span class="keyword">in</span> reached <span class="keyword">or</span> v <span class="keyword">in</span> reached:</span><br><span class="line">                reached.update((u, v))</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(reached) == <span class="number">6</span>:</span><br><span class="line">        <span class="comment"># 六个点、五条边且连通，必为树。</span></span><br><span class="line">        feasible.append((<span class="built_in">sum</span>(w <span class="keyword">for</span> u, v, w <span class="keyword">in</span> subset), subset))</span><br><span class="line">best = <span class="built_in">min</span>(cost <span class="keyword">for</span> cost, subset <span class="keyword">in</span> feasible)</span><br><span class="line">optimal = [subset <span class="keyword">for</span> cost, subset <span class="keyword">in</span> feasible <span class="keyword">if</span> cost == best]</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">len</span>(feasible) == <span class="number">100</span> <span class="keyword">and</span> best == <span class="number">63</span> <span class="keyword">and</span> <span class="built_in">len</span>(optimal) == <span class="number">1</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;生成树数量:&quot;</span>, <span class="built_in">len</span>(feasible), <span class="string">&quot;最优权重:&quot;</span>, best, <span class="string">&quot;最优方案数量:&quot;</span>, <span class="built_in">len</span>(optimal))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 比较原图最短路径与树上唯一路径。</span></span><br><span class="line"><span class="keyword">assert</span> nx.shortest_path_length(G, <span class="number">1</span>, <span class="number">6</span>, weight=<span class="string">&quot;weight&quot;</span>) == <span class="number">40</span></span><br><span class="line"><span class="keyword">assert</span> nx.shortest_path_length(Tk, <span class="number">1</span>, <span class="number">6</span>, weight=<span class="string">&quot;weight&quot;</span>) == <span class="number">63</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 库函数在不连通图中返回全体分量的森林，并保留孤立点。</span></span><br><span class="line">H = nx.Graph()</span><br><span class="line">H.add_nodes_from(<span class="built_in">range</span>(<span class="number">1</span>, <span class="number">6</span>))</span><br><span class="line">H.add_weighted_edges_from([(<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>), (<span class="number">3</span>, <span class="number">4</span>, <span class="number">3</span>)])</span><br><span class="line">F = nx.minimum_spanning_tree(H, algorithm=<span class="string">&quot;kruskal&quot;</span>, weight=<span class="string">&quot;weight&quot;</span>)</span><br><span class="line">c = nx.number_connected_components(H)</span><br><span class="line"><span class="keyword">assert</span> c == <span class="number">3</span> <span class="keyword">and</span> F.number_of_nodes() == <span class="number">5</span></span><br><span class="line"><span class="keyword">assert</span> nx.is_forest(F) <span class="keyword">and</span> F.number_of_edges() == <span class="number">5</span> - c</span><br><span class="line"><span class="keyword">assert</span> total_weight(F) == <span class="number">5</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 同权三角形：三棵生成树都达到最优值 2。</span></span><br><span class="line">triangle = [(<span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>), (<span class="number">1</span>, <span class="number">3</span>, <span class="number">1</span>), (<span class="number">2</span>, <span class="number">3</span>, <span class="number">1</span>)]</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">all</span>(<span class="built_in">sum</span>(w <span class="keyword">for</span> u, v, w <span class="keyword">in</span> subset) == <span class="number">2</span> <span class="keyword">for</span> subset <span class="keyword">in</span> combinations(triangle, <span class="number">2</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除桥接城市 6 的便宜候选后，需要改用权重 19 的线路。</span></span><br><span class="line">changed = G.copy()</span><br><span class="line">changed.remove_edge(<span class="number">5</span>, <span class="number">6</span>)</span><br><span class="line"><span class="keyword">assert</span> total_weight(nx.minimum_spanning_tree(changed)) == <span class="number">72</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 三棵不同生成树；权重从原图读取，不重新编造。</span></span><br><span class="line">T2 = G.edge_subgraph([(<span class="number">1</span>, <span class="number">2</span>), (<span class="number">1</span>, <span class="number">3</span>), (<span class="number">3</span>, <span class="number">4</span>), (<span class="number">4</span>, <span class="number">5</span>), (<span class="number">5</span>, <span class="number">6</span>)]).copy()</span><br><span class="line">T3 = G.edge_subgraph([(<span class="number">1</span>, <span class="number">2</span>), (<span class="number">2</span>, <span class="number">4</span>), (<span class="number">4</span>, <span class="number">6</span>), (<span class="number">1</span>, <span class="number">3</span>), (<span class="number">3</span>, <span class="number">5</span>)]).copy()</span><br><span class="line"><span class="keyword">assert</span> nx.is_tree(T2) <span class="keyword">and</span> total_weight(T2) == <span class="number">68</span></span><br><span class="line"><span class="keyword">assert</span> nx.is_tree(T3) <span class="keyword">and</span> total_weight(T3) == <span class="number">85</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>枚举结果为：原图共有 100 棵生成树，其中恰好一棵达到最优总权重
+63。</p>
+<p>本例输入是简单图。NetworkX 的 <code>Graph</code>
+对同一对端点重复加边会更新属性，不能用它保存多条平行线路；需要保留平行边时，应采用
+<code>MultiGraph</code>
+并记录边标识。无论使用哪种表示，都应先核对顶点、边和权重。</p>
+<h2
+id="八matlab保留上三角构图并核对两种方法">八、MATLAB：保留上三角构图并核对两种方法</h2>
+<h3 id="邻接矩阵的含义">8.1 邻接矩阵的含义</h3>
+<p>本例所有边权严格为正，所以可以用数值矩阵的非零元素表示存在的边，用 0
+表示无边。仅填写上三角，再用 <code>graph(A,names,'upper')</code>
+构图。</p>
+<p>这是该接口的表示约定，不是“无边的真实代价为
+0”。零权边在这种数值矩阵中会消失；若输入存在零权边，应使用显式的
+<code>s</code>、<code>t</code>、<code>w</code>
+边列表。本例不把最短路径初始化矩阵中的无穷大输入到建图接口。</p>
+<h3 id="从边权数据到函数输入">8.2 从边权数据到函数输入</h3>
+<p>求解本例时，函数接收的是无向图对象，而不是通用线性规划的约束矩阵。先明确候选线路及权重，再构造图，最后读取生成树和总权重。</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">数学对象或步骤</th>
+<th style="text-align: center;">Python / NetworkX</th>
+<th style="text-align: center;">MATLAB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">顶点集合</td>
+<td
+style="text-align: center;"><code>G.add_nodes_from(range(1, 7))</code></td>
+<td style="text-align: center;"><code>A = zeros(6)</code>
+确定顶点数</td>
+</tr>
+<tr>
+<td style="text-align: center;">无向边与权重</td>
+<td
+style="text-align: center;"><code>G.add_weighted_edges_from(EDGES)</code></td>
+<td style="text-align: center;">上三角矩阵 <code>A</code>
+或显式边列表</td>
+</tr>
+<tr>
+<td style="text-align: center;">带权无向图</td>
+<td style="text-align: center;"><code>nx.Graph()</code></td>
+<td
+style="text-align: center;"><code>graph(A, names, 'upper')</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">Kruskal 求解</td>
+<td
+style="text-align: center;"><code>nx.minimum_spanning_tree(G, algorithm="kruskal")</code></td>
+<td
+style="text-align: center;"><code>minspantree(G, 'Method', 'sparse')</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">Prim 求解</td>
+<td
+style="text-align: center;"><code>nx.minimum_spanning_tree(G, algorithm="prim")</code></td>
+<td
+style="text-align: center;"><code>minspantree(G, 'Method', 'dense')</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">结果</td>
+<td style="text-align: center;">树对象及其边属性</td>
+<td style="text-align: center;">图对象 <code>T</code> 及
+<code>T.Edges.Weight</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">目标值</td>
+<td style="text-align: center;">对树边的 <code>weight</code> 求和</td>
+<td style="text-align: center;"><code>sum(T.Edges.Weight)</code></td>
+</tr>
+</tbody>
+</table>
+<p>Python 两个标准库实现则直接接收 <code>n</code>
+和三元组边列表。它们与库函数求解的是同一个模型，输入形式不同。</p>
+<h3 id="六城市完整脚本">8.3 六城市完整脚本</h3>
+<p>以下代码可保存为 <code>.m</code> 脚本或放入 Live Script
+的代码单元。城市编号、MATLAB 节点索引和 Python 编号均保持为 <span
+class="math inline">\(1,\ldots,6\)</span>。</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 六个顶点：数值矩阵中的 0 仅表示未建边。</span></span><br><span class="line">A = <span class="built_in">zeros</span>(<span class="number">6</span>);</span><br><span class="line">A(<span class="number">1</span>,[<span class="number">2</span> <span class="number">3</span>]) = [<span class="number">14</span> <span class="number">18</span>];</span><br><span class="line">A(<span class="number">2</span>,<span class="number">3</span>:<span class="number">5</span>) = [<span class="number">13</span> <span class="number">18</span> <span class="number">16</span>];  <span class="comment">% 城市 2 到城市 3、4、5。</span></span><br><span class="line">A(<span class="number">3</span>,[<span class="number">4</span> <span class="number">5</span>]) = [<span class="number">12</span> <span class="number">16</span>];</span><br><span class="line">A(<span class="number">4</span>,[<span class="number">5</span> <span class="number">6</span>]) = [<span class="number">14</span> <span class="number">19</span>];</span><br><span class="line">A(<span class="number">5</span>,<span class="number">6</span>) = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">names = &#123;<span class="string">&#x27;城市1&#x27;</span>,<span class="string">&#x27;城市2&#x27;</span>,<span class="string">&#x27;城市3&#x27;</span>,<span class="string">&#x27;城市4&#x27;</span>,<span class="string">&#x27;城市5&#x27;</span>,<span class="string">&#x27;城市6&#x27;</span>&#125;;</span><br><span class="line">G = graph(A, names, <span class="string">&#x27;upper&#x27;</span>);</span><br><span class="line">assert(numnodes(G) == <span class="number">6</span> &amp;&amp; numedges(G) == <span class="number">10</span>);</span><br><span class="line">assert(all(conncomp(G) == <span class="number">1</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">% dense 使用 Prim，sparse 使用 Kruskal。</span></span><br><span class="line">Tp = minspantree(G, <span class="string">&#x27;Method&#x27;</span>, <span class="string">&#x27;dense&#x27;</span>, <span class="string">&#x27;Root&#x27;</span>, <span class="number">1</span>);</span><br><span class="line">Tk = minspantree(G, <span class="string">&#x27;Method&#x27;</span>, <span class="string">&#x27;sparse&#x27;</span>);</span><br><span class="line">Lp = sum(Tp.Edges.Weight);</span><br><span class="line">Lk = sum(Tk.Edges.Weight);</span><br><span class="line">assert(Lp == <span class="number">63</span> &amp;&amp; Lk == <span class="number">63</span>);</span><br><span class="line">assert(numedges(Tp) == <span class="number">5</span> &amp;&amp; numedges(Tk) == <span class="number">5</span>);</span><br><span class="line">assert(all(conncomp(Tp) == <span class="number">1</span>) &amp;&amp; all(conncomp(Tk) == <span class="number">1</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">% 本例最小生成树唯一：五条相邻城市线路全部保留。</span></span><br><span class="line">assert(all(findedge(Tp, <span class="number">1</span>:<span class="number">5</span>, <span class="number">2</span>:<span class="number">6</span>) &gt; <span class="number">0</span>));</span><br><span class="line">assert(all(findedge(Tk, <span class="number">1</span>:<span class="number">5</span>, <span class="number">2</span>:<span class="number">6</span>) &gt; <span class="number">0</span>));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Prim 结果：&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>(Tp.Edges);</span><br><span class="line"><span class="built_in">disp</span>(Lp);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Kruskal 结果：&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>(Tk.Edges);</span><br><span class="line"><span class="built_in">disp</span>(Lk);</span><br><span class="line"></span><br><span class="line"><span class="comment">% 保留绘图句柄，在同一幅候选网络图上高亮生成树。</span></span><br><span class="line">x = [<span class="number">0</span> <span class="number">1.7</span> <span class="number">1.5</span> <span class="number">3.5</span> <span class="number">3.7</span> <span class="number">5.4</span>];</span><br><span class="line">y = [<span class="number">0</span> <span class="number">1.2</span> <span class="number">-1.2</span> <span class="number">1.2</span> <span class="number">-1.2</span> <span class="number">0</span>];</span><br><span class="line"><span class="built_in">figure</span>;</span><br><span class="line">p = <span class="built_in">plot</span>(G, <span class="string">&#x27;XData&#x27;</span>, x, <span class="string">&#x27;YData&#x27;</span>, y, ...</span><br><span class="line">    <span class="string">&#x27;EdgeLabel&#x27;</span>, G.Edges.Weight, <span class="string">&#x27;LineWidth&#x27;</span>, <span class="number">1.2</span>);</span><br><span class="line">highlight(p, Tk, <span class="string">&#x27;EdgeColor&#x27;</span>, <span class="string">&#x27;r&#x27;</span>, <span class="string">&#x27;LineWidth&#x27;</span>, <span class="number">3</span>);</span><br><span class="line">title(sprintf(<span class="string">&#x27;六城市通信网络：最小总长度 %g&#x27;</span>, Lk));</span><br><span class="line">axis off;</span><br></pre></td></tr></table></figure>
+<p><code>G.Edges.Weight</code>
+是图对象当前边顺序下的权重，适合用于边标签。<code>sum(T.Edges.Weight)</code>
+求的是树边总权重，不是某一对城市的路线长度。<code>highlight(p,T,...)</code>
+使用已有绘图句柄即可高亮结果。</p>
+<h3 id="默认参数与不连通图">8.4 默认参数与不连通图</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">接口或参数</th>
+<th style="text-align: center;">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><code>minspantree(G)</code></td>
+<td style="text-align: center;">默认 <code>Method</code> 为
+<code>dense</code>，使用 Prim；默认根节点索引为 1</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>'Method','sparse'</code></td>
+<td style="text-align: center;">使用 Kruskal</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>'Type','tree'</code></td>
+<td
+style="text-align: center;">默认模式，只选择根节点所在连通分量的树边</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>'Type','forest'</code></td>
+<td style="text-align: center;">求全部连通分量的最小生成森林</td>
+</tr>
+<tr>
+<td style="text-align: center;">NetworkX
+<code>minimum_spanning_tree</code></td>
+<td style="text-align: center;">默认使用
+Kruskal；不连通时返回全部分量的森林</td>
+</tr>
+</tbody>
+</table>
+<p>不同软件的默认算法和不连通输入处理方式不一致。若业务目标是连接全部城市，应先验证图连通；若目标是分量内分别优化，应明确选择森林模式，不能仅凭函数名判断覆盖范围。</p>
+<p>下面是两个独立的边界示例，数据是教学扩展，不改变六城市原例。</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 例一：三个分量，包含孤立顶点 5。</span></span><br><span class="line">H = graph([<span class="number">1</span> <span class="number">3</span>], [<span class="number">2</span> <span class="number">4</span>], [<span class="number">2</span> <span class="number">3</span>], <span class="number">5</span>);</span><br><span class="line">F = minspantree(H, <span class="string">&#x27;Method&#x27;</span>, <span class="string">&#x27;sparse&#x27;</span>, <span class="string">&#x27;Type&#x27;</span>, <span class="string">&#x27;forest&#x27;</span>);</span><br><span class="line">c = <span class="built_in">max</span>(conncomp(H));</span><br><span class="line">assert(c == <span class="number">3</span>);</span><br><span class="line">assert(numnodes(F) == <span class="number">5</span> &amp;&amp; numedges(F) == <span class="number">5</span> - c);</span><br><span class="line">assert(sum(F.Edges.Weight) == <span class="number">5</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;各分量的最小生成森林：&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>(F.Edges);</span><br><span class="line"></span><br><span class="line"><span class="comment">% 例二：显式边列表保留零权边，并允许负权。</span></span><br><span class="line">Z = graph([<span class="number">1</span> <span class="number">2</span> <span class="number">1</span>], [<span class="number">2</span> <span class="number">3</span> <span class="number">3</span>], [<span class="number">0</span> <span class="number">-2</span> <span class="number">5</span>], <span class="number">3</span>);</span><br><span class="line">assert(numedges(Z) == <span class="number">3</span> &amp;&amp; findedge(Z,<span class="number">1</span>,<span class="number">2</span>) &gt; <span class="number">0</span>);</span><br><span class="line">TZ = minspantree(Z, <span class="string">&#x27;Method&#x27;</span>, <span class="string">&#x27;sparse&#x27;</span>);</span><br><span class="line">assert(numedges(TZ) == <span class="number">2</span> &amp;&amp; sum(TZ.Edges.Weight) == <span class="number">-2</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;零权与负权例子的生成树：&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>(TZ.Edges);</span><br></pre></td></tr></table></figure>
+<p>如果输入存在多重边，绘图高亮还应留意具体边的身份。本章主例没有平行边，不会出现这一歧义。</p>
+<h2 id="九算法选择局限与建模检查">九、算法选择、局限与建模检查</h2>
+<h3 id="根据数据表示和实现选择算法">9.1 根据数据表示和实现选择算法</h3>
+<p>设顶点数为 <span class="math inline">\(n\)</span>，边数为 <span
+class="math inline">\(m\)</span>。Kruskal
+的主要工作是边排序与分量合并；Prim
+的计算量与邻接结构、优先队列实现有关。不能把“点多边少”或“边多点少”当作不附条件的硬性规则。</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">实现</th>
+<th style="text-align: center;">典型时间复杂度</th>
+<th style="text-align: center;">主要空间</th>
+<th style="text-align: center;">常见用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">Kruskal + 排序 + 并查集</td>
+<td style="text-align: center;"><span class="math inline">\(O(n+m\log
+m)\)</span>，合并操作近似线性</td>
+<td style="text-align: center;"><span
+class="math inline">\(O(n+m)\)</span></td>
+<td style="text-align: center;">边列表输入，尤其适合稀疏图</td>
+</tr>
+<tr>
+<td style="text-align: center;">Prim：扫描顶点版本</td>
+<td style="text-align: center;"><span
+class="math inline">\(O(n^2+m)\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(O(n+m)\)</span>，含邻接表</td>
+<td style="text-align: center;">便于手工推演；稠密图也常用矩阵版本</td>
+</tr>
+<tr>
+<td style="text-align: center;">Prim：二叉堆版本</td>
+<td style="text-align: center;">常用简单图实现为 <span
+class="math inline">\(O((n+m)\log n)\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(O(n+m)\)</span>，含图存储</td>
+<td style="text-align: center;">也适合较大稀疏图</td>
+</tr>
+</tbody>
+</table>
+<p>表中的排序复杂度针对非平凡边集；没有边或只有一个顶点时应按初始化开销理解。并查集使用路径压缩与按规模合并后，单次操作具有极小的摊还开销。本章扫描
+Prim 的代码与手算一致，未使用二叉堆。</p>
+<h3 id="不连通时得到多少条森林边">9.2 不连通时得到多少条森林边</h3>
+<p>若图共有 <span class="math inline">\(c\)</span> 个连通分量，第 <span
+class="math inline">\(i\)</span> 个分量有 <span
+class="math inline">\(n_i\)</span> 个顶点，其生成树有 <span
+class="math inline">\(n_i-1\)</span> 条边。合起来为</p>
+<p><span class="math display">\[
+\sum\limits_{i=1}^{c}(n_i-1)=n-c.
+\]</span></p>
+<p>孤立顶点本身是一个分量，贡献 0
+条边。程序必须保留这些顶点，否则会错误地低估分量数或假称已经连接全部对象。</p>
+<h3 id="工程约束超出模型时">9.3 工程约束超出模型时</h3>
+<p>一棵树中的每条边都是桥，删除任何一条都会使树断开。若通信网络要求线路故障后仍能保持连通，就必须加入冗余建设要求，最小生成树只能作为基础参考方案。</p>
+<p>对单向网络，应研究有向生成树或最小树形图；对线路容量、节点度数、最长传输距离、必须经过指定站点等要求，也应建立相应的扩展模型。不能宣称无约束的最小生成树已经满足所有工程需求。</p>
+<p>生成树要求全部给定顶点都被覆盖。如果只连接指定终端，允许另外选取中转节点，可能进入
+Steiner 树问题，目标与可行集合都发生变化。</p>
+<h3 id="常见错误与修正">9.4 常见错误与修正</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">常见错误</th>
+<th style="text-align: center;">修正方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td
+style="text-align: center;">把最小生成树说成所有点对的“总路径最短”</td>
+<td style="text-align: center;">明确目标是选中建设边的总权重最小</td>
+</tr>
+<tr>
+<td style="text-align: center;">把树上唯一路径当作原图最短路径</td>
+<td style="text-align: center;">分别计算建设结构与点对最短路径</td>
+</tr>
+<tr>
+<td style="text-align: center;">生成树包含原图所有边</td>
+<td style="text-align: center;">保留全部顶点，只选部分边</td>
+</tr>
+<tr>
+<td style="text-align: center;">只看边数为 <span
+class="math inline">\(n-1\)</span> 就认为结果正确</td>
+<td
+style="text-align: center;">同时核对顶点覆盖、连通、无环和目标值</td>
+</tr>
+<tr>
+<td style="text-align: center;">Kruskal 加入连接同一分量的边</td>
+<td
+style="text-align: center;">用并查集检测环，已连通两端的候选跳过</td>
+</tr>
+<tr>
+<td style="text-align: center;">Prim 只比较上一个新增点的邻边</td>
+<td
+style="text-align: center;">比较整个已加入集合与外部之间的跨割边</td>
+</tr>
+<tr>
+<td style="text-align: center;">把 Prim 的 <code>key</code>
+当作累计距离</td>
+<td style="text-align: center;"><code>key</code>
+表示最轻接入单边，不加起点累计距离</td>
+</tr>
+<tr>
+<td style="text-align: center;">存在同权边就断言不唯一</td>
+<td
+style="text-align: center;">通过割性质、替换检查或小图枚举核对唯一性</td>
+</tr>
+<tr>
+<td style="text-align: center;">认为零权、负权不适用于最小生成树</td>
+<td
+style="text-align: center;">区分树的目标与允许绕圈的最短游走目标</td>
+</tr>
+<tr>
+<td style="text-align: center;">用数值邻接矩阵的 0
+同时表示无边与零权边</td>
+<td style="text-align: center;">零权数据改用显式边列表</td>
+</tr>
+<tr>
+<td style="text-align: center;">不连通输入仍报告已连接全体顶点</td>
+<td style="text-align: center;">报告不可行或明确求最小生成森林</td>
+</tr>
+<tr>
+<td style="text-align: center;">默认所有软件都自动求全部分量的森林</td>
+<td style="text-align: center;">核对接口，MATLAB 明确设置
+<code>Type</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">线路故障后的冗余要求被忽略</td>
+<td style="text-align: center;">增加可靠性约束，重新定义模型</td>
+</tr>
+</tbody>
+</table>
+<h2 id="十练习与参考解答">十、练习与参考解答</h2>
+<h3 id="练习">10.1 练习</h3>
+<ol type="1">
+<li>在六城市图中，为什么 Kruskal 选中五条边后停止？若继续加入
+2—5，会发生什么？</li>
+<li>从城市 6 开始运行 Prim，写出每一轮加入的边与总权重。</li>
+<li>删除候选线路 5—6 后，新的最小生成树总权重是多少？</li>
+<li>用本例解释最小生成树不保证每对城市通信路线最短。</li>
+<li>三角形三条边权都为
+1，它有多少棵最小生成树？总权重是多少？本例的同权边为什么不导致多个最优方案？</li>
+<li>一个七顶点图有三个连通分量，最小生成森林有多少条边？它能否保证全体七个顶点互相可达？</li>
+<li>三角形的边权分别为 <span
+class="math inline">\(-2\)</span>、0、5，求最小生成树总权重，并说明数值邻接矩阵表示的注意事项。</li>
+<li>若通信要求任意一条已建线路损坏后所有城市仍能互通，六城市最小生成树是否已经满足要求？</li>
+</ol>
+<h3 id="参考解答">10.2 参考解答</h3>
+<p><strong>第 1 题。</strong>
+六个顶点的生成树恰有五条边。本例已选边连接全部顶点且无环，所以可以停止。两端
+2、5 已经通过 <span class="math inline">\(2—3—4—5\)</span> 连通，加入
+2—5 会形成环 <span
+class="math inline">\(2—3—4—5—2\)</span>；它不属于这棵生成树。</p>
+<p><strong>第 2 题。</strong> 从城市 6 出发，依次加入
+6—5(10)、5—4(14)、4—3(12)、3—2(13)、2—1(14)。每轮选择的是当前集合的最轻跨割边；累计值依次为
+10、24、36、49、63。起点改变了加入顺序，但本例唯一的最优边集不变。</p>
+<p><strong>第 3 题。</strong> 删除 5—6 后，城市 6 只能通过
+4—6(19)接入。城市 1 到 5 的最小连接边仍为
+1—2(14)、2—3(13)、3—4(12)、4—5(14)，故新总权重为 <span
+class="math inline">\(14+13+12+14+19=72\)</span>。删除候选线路后应在剩余图上重新求解；这里城市
+6 的接入方式被唯一剩余线路强制确定。</p>
+<p><strong>第 4 题。</strong> 原图城市 1 到 6 的最短路线为 <span
+class="math inline">\(1\to2\to5\to6\)</span>，长度
+40；最小生成树中只能沿 <span
+class="math inline">\(1\to2\to3\to4\to5\to6\)</span>，长度
+63。最小生成树优化全部建设边的代价，不优化指定点对的路线。</p>
+<p><strong>第 5 题。</strong>
+等权三角形删除任意一条边后都得到一棵生成树，共三棵，权重均为
+2。本例第六节的五个割分别强制保留五条唯一最轻边，这些边已经组成生成树，所以即使其他权重有重复，也没有另一组最优边集。</p>
+<p><strong>第 6 题。</strong> 森林边数为 <span
+class="math inline">\(n-c=7-3=4\)</span>。森林只保证每个原有分量内部连通，不保证不同分量互相可达；若要连接全部七个顶点，必须增加允许连接分量的候选线路，再重建模型。</p>
+<p><strong>第 7 题。</strong> 选择权重 <span
+class="math inline">\(-2\)</span> 与 0
+的两条边，连接三个顶点且不成环，总权重为 <span
+class="math inline">\(-2\)</span>。最小生成树允许负权，但 0
+权重在“非零元素建边”的数值邻接矩阵中会被当成无边，应采用显式边列表保存。</p>
+<p><strong>第 8 题。</strong>
+不满足。树中每条边都是桥，删除任意一条都会将它分为两个分量。需要考虑冗余线路与故障后的连通要求，不能只求普通最小生成树。</p>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

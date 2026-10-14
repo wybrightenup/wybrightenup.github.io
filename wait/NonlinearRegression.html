@@ -1,0 +1,1599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="20. 非线性回归 一, 为什么需要拟合曲线 钢包随着使用次数增加, 耐火材料受到侵蚀, 容积逐渐增大; 物体运动的距离随时间加速增长; 商品需求可能同时受到收入和价格的影响. 这些关系在散点图上往往是一条曲线, 而不是一条直线. 拟合合适的曲线, 有助于描述变化规律, 为设备维护, 实验分析和供需安排提供参考. 但&quot;图像弯曲&quot;和&quot;参数非线性&quot;是两个概念. 统计学中的线性回归, 指模">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/wait/NonlinearRegression.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="20. 非线性回归 一, 为什么需要拟合曲线 钢包随着使用次数增加, 耐火材料受到侵蚀, 容积逐渐增大; 物体运动的距离随时间加速增长; 商品需求可能同时受到收入和价格的影响. 这些关系在散点图上往往是一条曲线, 而不是一条直线. 拟合合适的曲线, 有助于描述变化规律, 为设备维护, 实验分析和供需安排提供参考. 但&quot;图像弯曲&quot;和&quot;参数非线性&quot;是两个概念. 统计学中的线性回归, 指模">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/NonlinearRegression/NLR-5.png">
+<meta property="og:image" content="http://example.com/images/NonlinearRegression/NLR-6.png">
+<meta property="og:image" content="http://example.com/images/NonlinearRegression/NLR-7.png">
+<meta property="og:image" content="http://example.com/images/NonlinearRegression/NLR-8.png">
+<meta property="og:image" content="http://example.com/images/NonlinearRegression/NLR-9.png">
+<meta property="og:image" content="http://example.com/images/NonlinearRegression/NLR-10.png">
+<meta property="og:image" content="http://example.com/images/NonlinearRegression/NLR-4.png">
+<meta property="og:image" content="http://example.com/images/NonlinearRegression/NLR-12.png">
+<meta property="og:image" content="http://example.com/images/NonlinearRegression/NLR-13.png">
+<meta property="og:image" content="http://example.com/images/NonlinearRegression/NLR-14.png">
+<meta property="og:image" content="http://example.com/images/NonlinearRegression/NLR-11.png">
+<meta property="article:published_time" content="2026-10-14T03:32:11.184Z">
+<meta property="article:modified_time" content="2026-10-14T03:14:52.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/NonlinearRegression/NLR-5.png">
+
+
+<link rel="canonical" href="http://example.com/wait/NonlinearRegression">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/wait/NonlinearRegression.html","path":"wait/NonlinearRegression.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92"><span class="nav-number">1.</span> <span class="nav-text">20. 非线性回归</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E6%8B%9F%E5%90%88%E6%9B%B2%E7%BA%BF"><span class="nav-number">1.1.</span> <span class="nav-text">一, 为什么需要拟合曲线</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-%E7%BA%BF%E6%80%A7%E5%8C%96%E9%85%8D%E6%9B%B2%E7%BA%BF-%E6%8A%8A%E5%BC%AF%E6%9B%B2%E7%9A%84%E5%85%B3%E7%B3%BB%E5%8F%98%E5%BE%97%E5%AE%B9%E6%98%93%E8%AE%A1%E7%AE%97"><span class="nav-number">1.2.</span> <span class="nav-text">二, 线性化配曲线:
+把弯曲的关系变得容易计算</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E6%95%A3%E7%82%B9%E5%9B%BE%E5%88%B0%E5%80%99%E9%80%89%E6%96%B9%E7%A8%8B"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 从散点图到候选方程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8C%E6%9B%B2%E5%9E%8B%E6%9B%B2%E7%BA%BF"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 双曲型曲线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%82%E5%87%BD%E6%95%B0%E6%9B%B2%E7%BA%BF"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 幂函数曲线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E6%95%B0%E5%87%BD%E6%95%B0%E6%9B%B2%E7%BA%BF"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 指数函数曲线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%80%92%E6%8C%87%E6%95%B0%E6%9B%B2%E7%BA%BF"><span class="nav-number">1.2.5.</span> <span class="nav-text">2.5 倒指数曲线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E6%95%B0%E5%87%BD%E6%95%B0%E6%9B%B2%E7%BA%BF"><span class="nav-number">1.2.6.</span> <span class="nav-text">2.6 对数函数曲线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#logistic-%E7%94%9F%E9%95%BF%E6%9B%B2%E7%BA%BF"><span class="nav-number">1.2.7.</span> <span class="nav-text">2.7 Logistic 生长曲线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E5%8C%96%E6%94%B9%E5%8F%98%E4%BA%86%E4%BB%80%E4%B9%88"><span class="nav-number">1.2.8.</span> <span class="nav-text">2.8 线性化改变了什么</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%9B%9E%E5%BD%92%E4%B8%8E%E4%B8%80%E8%88%AC%E9%9D%9E%E7%BA%BF%E6%80%A7%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98"><span class="nav-number">1.3.</span> <span class="nav-text">三,
+多项式回归与一般非线性最小二乘</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E5%85%83%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%9B%9E%E5%BD%92"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 一元多项式回归</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E5%85%83%E4%BA%8C%E6%AC%A1%E5%9B%9E%E5%BD%92-%E5%B9%B3%E6%96%B9%E9%A1%B9%E4%B8%8E%E4%BA%A4%E4%BA%92%E9%A1%B9"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 多元二次回归:
+平方项与交互项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E8%88%AC%E9%9D%9E%E7%BA%BF%E6%80%A7%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 一般非线性最小二乘</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E6%B5%8B%E5%8C%BA%E9%97%B4%E8%A6%81%E8%AF%B4%E6%98%8E%E9%A2%84%E6%B5%8B%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.4 预测区间要说明预测对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B-%E5%85%B8%E5%9E%8B%E4%BE%8B%E9%A2%98%E4%B8%8E%E7%BB%93%E6%9E%9C%E8%A7%A3%E8%AF%BB"><span class="nav-number">1.4.</span> <span class="nav-text">四, 典型例题与结果解读</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%92%A2%E5%8C%85%E4%BD%BF%E7%94%A8%E6%AC%A1%E6%95%B0%E4%B8%8E%E5%AE%B9%E7%A7%AF%E5%A2%9E%E5%A4%A7%E9%87%8F-%E7%BA%BF%E6%80%A7%E5%8C%96%E9%85%8D%E6%9B%B2%E7%BA%BF"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1
+钢包使用次数与容积增大量: 线性化配曲线</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E4%B8%8E%E5%80%99%E9%80%89%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">4.1.1 数据与候选模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%B0%E8%AE%A1%E4%B8%8E%E8%BF%98%E5%8E%9F"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">4.1.2 估计与还原</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%9D%E7%A6%BB%E4%B8%8E%E6%97%B6%E9%97%B4-%E4%BA%8C%E6%AC%A1%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%9B%9E%E5%BD%92"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 距离与时间: 二次多项式回归</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E4%B8%8E%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">4.2.1 数据与模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8B%9F%E5%90%88%E7%BB%93%E6%9E%9C"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">4.2.2 拟合结果</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%95%86%E5%93%81%E9%9C%80%E6%B1%82-%E7%BA%AF%E4%BA%8C%E6%AC%A1%E5%9B%9E%E5%BD%92%E4%B8%8E%E5%8C%BA%E9%97%B4%E9%A2%84%E6%B5%8B"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 商品需求:
+纯二次回归与区间预测</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E4%B8%8E%E8%AE%BE%E8%AE%A1%E7%9F%A9%E9%98%B5"><span class="nav-number">1.4.3.1.</span> <span class="nav-text">4.3.1 数据与设计矩阵</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B3%BB%E6%95%B0%E7%B2%BE%E5%BA%A6%E4%B8%8E%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%9C"><span class="nav-number">1.4.3.2.</span> <span class="nav-text">4.3.2 系数精度与模型结果</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%87%E5%AE%9A%E7%82%B9%E7%9A%84%E9%A2%84%E6%B5%8B%E4%B8%8E%E4%B8%89%E7%A7%8D%E5%8C%BA%E9%97%B4"><span class="nav-number">1.4.3.3.</span> <span class="nav-text">4.3.3 指定点的预测与三种区间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E5%8F%AA%E7%9C%8B%E4%B8%80%E6%AC%A1%E9%A1%B9%E7%9A%84%E6%AD%A3%E8%B4%9F"><span class="nav-number">1.4.3.4.</span> <span class="nav-text">4.3.4
+为什么不能只看一次项的正负</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E4%B8%80%E9%92%A2%E5%8C%85%E6%95%B0%E6%8D%AE-%E7%9B%B4%E6%8E%A5%E9%9D%9E%E7%BA%BF%E6%80%A7%E6%8B%9F%E5%90%88"><span class="nav-number">1.4.4.</span> <span class="nav-text">4.4 同一钢包数据:
+直接非线性拟合</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%9F%E5%B0%BA%E5%BA%A6%E7%9A%84%E5%8F%82%E6%95%B0%E4%BC%B0%E8%AE%A1"><span class="nav-number">1.4.4.1.</span> <span class="nav-text">4.4.1 原尺度的参数估计</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%91%E4%BC%BC%E5%8C%BA%E9%97%B4%E6%BC%94%E7%A4%BA"><span class="nav-number">1.4.4.2.</span> <span class="nav-text">4.4.2 近似区间演示</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94-%E5%B0%BD%E9%87%8F%E7%AE%80%E5%8D%95%E6%98%93%E6%87%82%E7%9A%84-python-%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.5.</span> <span class="nav-text">五, 尽量简单易懂的 Python
+实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E7%9F%A9%E9%98%B5%E4%B8%8E%E6%B1%82%E8%A7%A3%E5%87%BD%E6%95%B0"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 设计矩阵与求解函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%92%A2%E5%8C%85-%E4%B8%A4%E6%9D%A1%E6%8B%9F%E5%90%88%E8%B7%AF%E7%BA%BF%E5%8F%8A%E8%BF%91%E4%BC%BC%E5%8C%BA%E9%97%B4"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 钢包:
+两条拟合路线及近似区间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%9D%E7%A6%BB%E6%97%B6%E9%97%B4-%E4%BA%8C%E6%AC%A1%E5%A4%9A%E9%A1%B9%E5%BC%8F%E4%B8%8E%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E5%AF%B9%E7%85%A7"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 距离—时间:
+二次多项式与线性回归对照</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%95%86%E5%93%81%E9%9C%80%E6%B1%82-%E7%BA%AF%E4%BA%8C%E6%AC%A1%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%90%8C%E6%97%B6%E5%9D%87%E5%80%BC%E7%BD%AE%E4%BF%A1%E5%B8%A6"><span class="nav-number">1.5.4.</span> <span class="nav-text">5.4 商品需求:
+纯二次模型与同时均值置信带</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E%E5%85%B6%E4%BB%96%E6%8B%9F%E5%90%88%E6%96%B9%E6%B3%95%E7%9A%84%E8%81%94%E7%B3%BB"><span class="nav-number">1.5.5.</span> <span class="nav-text">5.5 与其他拟合方法的联系</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD-matlab-%E6%B1%82%E8%A7%A3%E4%B8%8E%E5%87%BD%E6%95%B0%E5%AF%B9%E5%BA%94"><span class="nav-number">1.6.</span> <span class="nav-text">六, MATLAB 求解与函数对应</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0%E7%9A%84%E8%BE%93%E5%85%A5%E4%B8%8E%E5%8C%BA%E9%97%B4%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 常用函数的输入与区间设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E4%BE%9D%E8%B5%96%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7%E7%AE%B1%E7%9A%84%E5%AE%8C%E6%95%B4%E6%95%B0%E5%80%BC%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2
+不依赖统计工具箱的完整数值实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83-%E6%A8%A1%E5%9E%8B%E8%AF%84%E4%BB%B7%E4%B8%8E%E5%B8%B8%E8%A7%81%E8%AF%AF%E8%AF%BB"><span class="nav-number">1.7.</span> <span class="nav-text">七, 模型评价与常见误读</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%84%E4%BB%B7%E6%97%B6%E5%BA%94%E6%A3%80%E6%9F%A5%E4%BB%80%E4%B9%88"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 评价时应检查什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E6%9D%A1%E8%B7%AF%E7%BA%BF%E7%9A%84%E4%BC%98%E7%82%B9%E4%B8%8E%E5%B1%80%E9%99%90"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 三条路线的优点与局限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%85%E8%AF%BB%E4%B8%8E%E4%BD%BF%E7%94%A8%E7%BB%93%E6%9E%9C%E7%9A%84%E6%A0%B8%E6%9F%A5%E8%A1%A8"><span class="nav-number">1.7.3.</span> <span class="nav-text">7.3 阅读与使用结果的核查表</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB-%E7%BB%83%E4%B9%A0%E4%B8%8E%E6%80%9D%E8%80%83"><span class="nav-number">1.8.</span> <span class="nav-text">八, 练习与思考</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%A7%A3%E7%AD%94"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 参考解答</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D-%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.9.</span> <span class="nav-text">九, 参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="非线性回归">20. 非线性回归</h1>
+<h2 id="一-为什么需要拟合曲线">一, 为什么需要拟合曲线</h2>
+<p>钢包随着使用次数增加, 耐火材料受到侵蚀, 容积逐渐增大;
+物体运动的距离随时间加速增长; 商品需求可能同时受到收入和价格的影响.
+这些关系在散点图上往往是一条曲线, 而不是一条直线. 拟合合适的曲线,
+有助于描述变化规律, 为设备维护, 实验分析和供需安排提供参考.</p>
+<p>但"图像弯曲"和"参数非线性"是两个概念. 统计学中的线性回归,
+指模型对待估参数是线性的, 并不要求它对自变量是一次函数. 例如</p>
+<p><span class="math display">\[
+y=\beta_0+\beta_1x+\beta_2x^2+\varepsilon
+\]</span></p>
+<p>的图像是抛物线, 但它对 <span
+class="math inline">\(\beta_0,\beta_1,\beta_2\)</span> 仍是线性的,
+可以用普通最小二乘法求解. 另一方面, <span
+class="math inline">\(y=a\mathrm{e}^{b/x}+\varepsilon\)</span> 中的参数
+<span class="math inline">\(b\)</span> 位于指数里,
+属于参数非线性模型.</p>
+<p>本章在广义的"曲线回归"框架下介绍三条路线:</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">路线</th>
+<th style="text-align: center;">基本思路</th>
+<th style="text-align: center;">典型例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">线性化配曲线</td>
+<td style="text-align: center;">变换变量, 使趋势方程变为线性形式</td>
+<td style="text-align: center;">取对数拟合倒指数曲线</td>
+</tr>
+<tr>
+<td style="text-align: center;">多项式回归</td>
+<td style="text-align: center;">把平方项, 交互项作为新的自变量</td>
+<td style="text-align: center;">距离—时间二次回归, 需求纯二次回归</td>
+</tr>
+<tr>
+<td style="text-align: center;">非线性最小二乘</td>
+<td style="text-align: center;">在原始响应尺度上直接迭代估计参数</td>
+<td style="text-align: center;">直接拟合钢包容积增大量</td>
+</tr>
+</tbody>
+</table>
+<p>三条路线各有适用条件. 选模型时, 应同时考虑曲线形状, 实际机制,
+误差特点和使用范围,
+而不是把常见曲线挨个套入后只选择训练误差最小的一条.</p>
+<h2 id="二-线性化配曲线-把弯曲的关系变得容易计算">二, 线性化配曲线:
+把弯曲的关系变得容易计算</h2>
+<h3 id="从散点图到候选方程">2.1 从散点图到候选方程</h3>
+<p>配曲线的一般过程是: 先画散点图, 结合实际背景确定候选函数,
+再估计参数并检查残差. 例如, 本章钢包数据表现为前期容积增长较快,
+后期趋缓, 可以把具有上限的曲线作为候选,
+但仅凭一幅图不能证明某个函数就是唯一正确的关系.</p>
+<p>为了直观认识形状, 以下六类图均使用明确的示意参数绘制.
+它们用于说明数学特征, 不是由例题数据拟合得到的结果. 本章用"增长加速,
+增长减速"和二阶导数符号描述弯曲方向, 避免只用凹, 凸两字产生歧义.</p>
+<h3 id="双曲型曲线">2.2 双曲型曲线</h3>
+<p>常见形式有</p>
+<p><span class="math display">\[
+y=\frac{x}{a+bx},\qquad y=a+\frac{b}{x},\qquad y=\frac{1}{a+bx}.
+\]</span></p>
+<p>以第一种为例, 其导数为</p>
+<p><span class="math display">\[
+y&#39;=\frac{a}{(a+bx)^2},\qquad
+y&#39;&#39;=-\frac{2ab}{(a+bx)^3}.
+\]</span></p>
+<p>当 <span class="math inline">\(a&gt;0,b&gt;0,x\geqslant0\)</span> 时,
+曲线通过原点, 递增但增速减小, 且 <span
+class="math inline">\(x\to\infty\)</span> 时趋于 <span
+class="math inline">\(1/b\)</span>. 当 <span
+class="math inline">\(a&gt;0,b&lt;0\)</span> 时, 只考察 <span
+class="math inline">\(0\leqslant x&lt;-a/b\)</span> 的正值分支,
+曲线递增且增速增大, 在 <span class="math inline">\(x=-a/b\)</span>
+处有竖直渐近线. 分母为零的地方不在定义域内,
+不能把两侧分支当作一条连续曲线.</p>
+<p><img src="/images/NonlinearRegression/NLR-5.png" alt="" style="width: 100%;"></p>
+<p><strong>图 1</strong> 左图取 <span
+class="math inline">\(a=2,b=1\)</span>, 显示水平渐近线 <span
+class="math inline">\(y=1\)</span>; 右图取 <span
+class="math inline">\(a=2,b=-1\)</span>, 只绘制竖直渐近线 <span
+class="math inline">\(x=2\)</span> 左侧的分支.</p>
+<p>三种形式对应的线性化方法为:</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">原曲线</th>
+<th style="text-align: center;">线性形式</th>
+<th style="text-align: center;">变换条件及说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(y=x/(a+bx)\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(x/y=a+bx\)</span></td>
+<td style="text-align: center;">对参与变换的观测要求 <span
+class="math inline">\(y\ne0\)</span>; 原点不能用 <span
+class="math inline">\(0/0\)</span> 参与拟合</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(y=a+b/x\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(y=a+bz\)</span>, <span
+class="math inline">\(z=1/x\)</span></td>
+<td style="text-align: center;">要求 <span
+class="math inline">\(x\ne0\)</span>; 只变换自变量, 原响应尺度不变</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(y=1/(a+bx)\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(1/y=a+bx\)</span></td>
+<td style="text-align: center;">要求 <span
+class="math inline">\(y\ne0\)</span>; 原函数还要求 <span
+class="math inline">\(a+bx\ne0\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>这些等式首先说明趋势方程怎样变换. 若观测包含随机误差,
+改变响应变量通常也会改变误差结构与拟合目标,
+不能直接认为变换前后的最小二乘问题完全相同.</p>
+<h3 id="幂函数曲线">2.3 幂函数曲线</h3>
+<p>幂函数为</p>
+<p><span class="math display">\[
+y=ax^b,\qquad a&gt;0,\quad x&gt;0.
+\]</span></p>
+<p>当 <span class="math inline">\(b&gt;1\)</span> 时,
+函数递增且增速增大; 当 <span class="math inline">\(0&lt;b&lt;1\)</span>
+时, 函数递增但增速减小; 当 <span class="math inline">\(b&lt;0\)</span>
+时, 函数递减, <span class="math inline">\(x\to\infty\)</span> 时趋于零.
+由于 <span class="math inline">\(y&#39;&#39;=ab(b-1)x^{b-2}\)</span>,
+后者的二阶导数仍大于零.</p>
+<p><img src="/images/NonlinearRegression/NLR-6.png" alt="" style="width: 100%;"></p>
+<p><strong>图 2</strong> 左图比较 <span
+class="math inline">\(a=1\)</span> 时的 <span
+class="math inline">\(b=2\)</span> 与 <span
+class="math inline">\(b=0.5\)</span>; 右图展示 <span
+class="math inline">\(b=-1.5\)</span> 的衰减.
+正指数的示意曲线可连续延伸到原点, 负指数曲线在原点无定义.</p>
+<p>对正的观测值取对数:</p>
+<p><span class="math display">\[
+\ln y=\ln a+b\ln x.
+\]</span></p>
+<p>令 <span class="math inline">\(u=\ln x\)</span>, <span
+class="math inline">\(v=\ln y\)</span>, <span
+class="math inline">\(A=\ln a\)</span>, 就得到 <span
+class="math inline">\(v=A+bu\)</span>. 拟合后通过 <span
+class="math inline">\(a=\mathrm{e}^A\)</span> 还原参数.
+对数变换要求参与拟合的 <span class="math inline">\(x,y\)</span>
+均为正.</p>
+<h3 id="指数函数曲线">2.4 指数函数曲线</h3>
+<p>指数函数为</p>
+<p><span class="math display">\[
+y=a\mathrm{e}^{bx},\qquad a&gt;0.
+\]</span></p>
+<p>当 <span class="math inline">\(b&gt;0\)</span> 时,
+函数递增且增速增大; 当 <span class="math inline">\(b&lt;0\)</span> 时,
+函数递减, 衰减速度的绝对值逐渐减小; <span
+class="math inline">\(b=0\)</span> 时为常数. 两种非平凡情形都满足 <span
+class="math inline">\(y&#39;&#39;=ab^2\mathrm{e}^{bx}&gt;0\)</span>.</p>
+<p><img src="/images/NonlinearRegression/NLR-7.png" alt="" style="width: 100%;"></p>
+<p><strong>图 3</strong> 两条曲线均取 <span
+class="math inline">\(a=1\)</span>, 分别取 <span
+class="math inline">\(b=0.6\)</span> 和 <span
+class="math inline">\(b=-0.6\)</span>, 因此都通过 <span
+class="math inline">\((0,1)\)</span>.</p>
+<p>取对数得 <span class="math inline">\(\ln y=\ln a+bx\)</span>. 若使用
+<span class="math inline">\(y=ac^x\)</span> 的写法, 底数应满足 <span
+class="math inline">\(c&gt;0\)</span>, 且 <span
+class="math inline">\(c=\mathrm{e}^b\)</span>; 此时 <span
+class="math inline">\(c&gt;1\)</span> 表示增长, <span
+class="math inline">\(0&lt;c&lt;1\)</span> 表示衰减.
+不要把两种写法中的参数符号混为一谈.</p>
+<h3 id="倒指数曲线">2.5 倒指数曲线</h3>
+<p>本章所称倒指数曲线为</p>
+<p><span class="math display">\[
+y=a\mathrm{e}^{b/x},\qquad a&gt;0,\quad x&gt;0.
+\]</span></p>
+<p>它的指数中出现的是 <span class="math inline">\(1/x\)</span>. 当 <span
+class="math inline">\(b&gt;0\)</span> 时, 函数递减, 并从上方趋近 <span
+class="math inline">\(a\)</span>; 当 <span
+class="math inline">\(b&lt;0\)</span> 时, 函数递增, 从下方趋近 <span
+class="math inline">\(a\)</span>.</p>
+<p><img src="/images/NonlinearRegression/NLR-8.png" alt="" style="width: 100%;"></p>
+<p><strong>图 4</strong> 左图取 <span
+class="math inline">\(a=1,b=1.5\)</span>; 右图取 <span
+class="math inline">\(a=1,b=-2\)</span>, 标出了拐点 <span
+class="math inline">\((1,\mathrm{e}^{-2})\)</span>. 两图的水平渐近线均为
+<span class="math inline">\(y=a=1\)</span>.</p>
+<p>进阶理解: 导数为</p>
+<p><span class="math display">\[
+y&#39;=-\frac{ab}{x^2}\mathrm{e}^{b/x},\qquad
+y&#39;&#39;=\frac{ab(b+2x)}{x^4}\mathrm{e}^{b/x}.
+\]</span></p>
+<p>当 <span class="math inline">\(b&lt;0\)</span> 时, 拐点为 <span
+class="math inline">\(x=-b/2\)</span>; 其左侧增长加速, 右侧增长减速.
+实际样本如果全部位于拐点右侧, 散点图就只表现为增长趋缓,
+不能要求它呈现完整的两阶段形状.</p>
+<p>取对数得</p>
+<p><span class="math display">\[
+\ln y=\ln a+\frac{b}{x}.
+\]</span></p>
+<p>令 <span class="math inline">\(u=1/x\)</span>, <span
+class="math inline">\(v=\ln y\)</span>, <span
+class="math inline">\(A=\ln a\)</span>, 得到 <span
+class="math inline">\(v=A+bu\)</span>. 这是钢包例题的线性化路线.</p>
+<h3 id="对数函数曲线">2.6 对数函数曲线</h3>
+<p>对数函数为</p>
+<p><span class="math display">\[
+y=a+b\ln x,\qquad x&gt;0.
+\]</span></p>
+<p>当 <span class="math inline">\(b&gt;0\)</span> 时,
+函数递增但增速减小; 当 <span class="math inline">\(b&lt;0\)</span> 时,
+函数递减且 <span class="math inline">\(y&#39;&#39;=-b/x^2&gt;0\)</span>.
+<span class="math inline">\(b&lt;0\)</span> 的对数曲线并不以 <span
+class="math inline">\(x\)</span> 轴为水平渐近线, 因为 <span
+class="math inline">\(x\to\infty\)</span> 时 <span
+class="math inline">\(y\to-\infty\)</span>.</p>
+<p><img src="/images/NonlinearRegression/NLR-9.png" alt="" style="width: 100%;"></p>
+<p><strong>图 5</strong> 两条曲线取 <span
+class="math inline">\(a=3\)</span>, 分别取 <span
+class="math inline">\(b=1\)</span> 和 <span
+class="math inline">\(b=-1\)</span>, 因此在 <span
+class="math inline">\(x=1\)</span> 时都等于 3.</p>
+<p>这里只需令 <span class="math inline">\(u=\ln x\)</span>, 用 <span
+class="math inline">\(y=a+bu\)</span> 做线性回归; 无需对 <span
+class="math inline">\(y\)</span> 取对数, 故 <span
+class="math inline">\(y\)</span> 不必为正. 实际应用中, 如果 <span
+class="math inline">\(x\)</span> 有物理单位, 可把对数写为 <span
+class="math inline">\(\ln(x/x_0)\)</span>, 其中 <span
+class="math inline">\(x_0\)</span> 为具有同一单位的参考量.</p>
+<h3 id="logistic-生长曲线">2.7 Logistic 生长曲线</h3>
+<p>Logistic 曲线可描述具有容量限制的增长过程,
+例如在一定条件下的植物生长:</p>
+<p><span class="math display">\[
+y=\frac{k}{1+a\mathrm{e}^{-bx}},\qquad a&gt;0,\ b&gt;0,\ k&gt;0.
+\]</span></p>
+<p><span class="math inline">\(k\)</span> 表示上限, <span
+class="math inline">\(y(0)=k/(1+a)\)</span> 表示初值. 拐点为</p>
+<p><span class="math display">\[
+x_* = \frac{\ln a}{b},\qquad y(x_*)=\frac{k}{2}.
+\]</span></p>
+<p>拐点前增长加速, 拐点后增长减速. 若只观察 <span
+class="math inline">\(x\geqslant0\)</span>, 要在该范围内看到两阶段,
+拐点还需位于观察范围; 例如 <span
+class="math inline">\(0&lt;a\leqslant1\)</span> 时拐点不在严格正半轴,
+正时间段可能只显示减速增长.</p>
+<p><img src="/images/NonlinearRegression/NLR-10.png" alt="" style="width: 100%;"></p>
+<p><strong>图 6</strong> 取 <span
+class="math inline">\(k=10,a=\mathrm{e}^4,b=1\)</span>, 上限为 10,
+拐点为 <span class="math inline">\((4,5)\)</span>, 初值为 <span
+class="math inline">\(10/(1+\mathrm{e}^4)\)</span>.</p>
+<p>当 <span class="math inline">\(k\)</span> 已知, 且观测满足 <span
+class="math inline">\(0&lt;y&lt;k\)</span> 时, 可以变换为</p>
+<p><span class="math display">\[
+\ln\frac{k-y}{y}=\ln a-bx.
+\]</span></p>
+<p><strong>上限 <span class="math inline">\(k\)</span> 未知时,
+这个变换本身仍含未知参数,
+不能直接当作一次普通线性回归来估计全部三个参数.</strong>
+可以依据背景确定 <span class="math inline">\(k\)</span>,
+或把三个参数共同放入非线性最小二乘程序. 若样本尚未接近平台,
+上限往往难以稳定估计, 也应避免把最大的观测值直接当作确定的 <span
+class="math inline">\(k\)</span>.</p>
+<h3 id="线性化改变了什么">2.8 线性化改变了什么</h3>
+<p>在不含误差的趋势方程中, 取对数是一个可逆变换.
+但对包含误差的观测取对数以后, 最小化的残差平方和,
+误差分布以及各观测的相对权重都可能改变. 这是误差模型的选择,
+不是简单的代数换个写法, 也不宜笼统称为"丢失信息".</p>
+<p>以倒指数模型为例, 两条路线分别最小化</p>
+<p><span class="math display">\[
+Q_{\log}(A,b)=\sum\limits_{i=1}^{n}
+\left(\ln y_i-A-\frac{b}{x_i}\right)^2,
+\]</span></p>
+<p>和</p>
+<p><span class="math display">\[
+Q_y(a,b)=\sum\limits_{i=1}^{n}
+\left(y_i-a\mathrm{e}^{b/x_i}\right)^2.
+\]</span></p>
+<p>前者侧重对数尺度的差异, 后者侧重原响应尺度的差异.
+若原始误差的标准差大致恒定, 原尺度拟合通常更符合这一假设;
+若误差大小与响应量级近似成比例, 对数尺度模型可能更合理.
+应结合残差和实际测量过程判断.</p>
+<p>进阶提示: 若假设 <span class="math inline">\(\ln
+Y=A+b/x+\eta\)</span>, 且 <span class="math inline">\(\eta\mid x\sim
+N(0,\tau^2)\)</span>, 则直接反变换 <span
+class="math inline">\(\mathrm{e}^{A+b/x}\)</span> 对应条件中位数;
+条件均值为 <span
+class="math inline">\(\mathrm{e}^{A+b/x+\tau^2/2}\)</span>. 因此,
+"对数预测后取指数"并不自动得到原尺度的条件均值.</p>
+<h2 id="三-多项式回归与一般非线性最小二乘">三,
+多项式回归与一般非线性最小二乘</h2>
+<h3 id="一元多项式回归">3.1 一元多项式回归</h3>
+<p>对给定次数 <span class="math inline">\(d\)</span>, 设</p>
+<p><span class="math display">\[
+Y_i=\beta_0+\beta_1x_i+\cdots+\beta_dx_i^d+\varepsilon_i.
+\]</span></p>
+<p>令新的自变量为 <span class="math inline">\(x,x^2,\ldots,x^d\)</span>,
+就把问题写成线性回归. 设计矩阵的每行是 <span
+class="math inline">\((1,x_i,x_i^2,\ldots,x_i^d)\)</span>,
+因此可以用最小二乘法直接求系数.</p>
+<p>在给定设计矩阵的条件下, 经典推断还要求误差条件均值为零,
+同方差且不相关. 对于精确的经典区间, 可假设给定设计矩阵后误差向量 <span
+class="math inline">\(\boldsymbol\varepsilon=(\varepsilon_1,\ldots,\varepsilon_n)^{\mathsf
+T}\)</span> 服从 <span
+class="math inline">\(N(\boldsymbol0,\sigma^2I_n)\)</span>.
+该假设同时包含正态, 同方差和误差独立;
+正态分布第二个参数在这里是协方差矩阵.</p>
+<p>多项式不必等到常见六类曲线都失败后才使用. 它是一种灵活的局部近似;
+次数过高容易过拟合, 且远离样本时可能出现剧烈振荡. 较低次数,
+合理的解释和验证通常比一味增加次数更有价值. 自变量数值很大时,
+中心化或缩放有助于数值稳定.</p>
+<h3 id="多元二次回归-平方项与交互项">3.2 多元二次回归:
+平方项与交互项</h3>
+<p>两个或更多自变量的二次模型也对参数线性. 这里称为"多元二次回归",
+避免与二项分布, 二项式检验混淆. 设自变量为 <span
+class="math inline">\(x_1,\ldots,x_m\)</span>, 常见四种模型为:</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">类型</th>
+<th style="text-align: center;">MATLAB 模型字符串</th>
+<th style="text-align: center;">趋势方程</th>
+<th style="text-align: center;">参数个数(含截距)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">线性</td>
+<td style="text-align: center;"><code>linear</code></td>
+<td style="text-align: center;"><span
+class="math inline">\(\beta_0+\sum\limits_{j=1}^{m}\beta_jx_j\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(1+m\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">纯二次</td>
+<td style="text-align: center;"><code>purequadratic</code></td>
+<td style="text-align: center;"><span
+class="math inline">\(\beta_0+\sum\limits_{j=1}^{m}\beta_jx_j+\sum\limits_{j=1}^{m}\beta_{jj}x_j^2\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(1+2m\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">交互</td>
+<td style="text-align: center;"><code>interaction</code></td>
+<td style="text-align: center;"><span
+class="math inline">\(\beta_0+\sum\limits_{j=1}^{m}\beta_jx_j+\sum\limits_{1\leqslant
+j&lt;\ell\leqslant m}\beta_{j\ell}x_jx_\ell\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(1+m+m(m-1)/2\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">完全二次</td>
+<td style="text-align: center;"><code>quadratic</code></td>
+<td style="text-align: center;"><span
+class="math inline">\(\beta_0+\sum\limits_{j=1}^{m}\beta_jx_j+\sum\limits_{j=1}^{m}\beta_{jj}x_j^2+\sum\limits_{1\leqslant
+j&lt;\ell\leqslant m}\beta_{j\ell}x_jx_\ell\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(1+2m+m(m-1)/2\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>交互项只按 <span class="math inline">\(j&lt;\ell\)</span> 计一次,
+因为 <span class="math inline">\(x_jx_\ell=x_\ell x_j\)</span>.
+完全二次模型应把平方项与不同变量之间的交互项分开列出, 避免重复计算.</p>
+<p>例如, 两个自变量的纯二次模型为</p>
+<p><span class="math display">\[
+\hat y=\beta_0+\beta_1x_1+\beta_2x_2+\beta_{11}x_1^2+\beta_{22}x_2^2,
+\]</span></p>
+<p>其设计矩阵有五列. 完全二次模型还要增加第六列 <span
+class="math inline">\(x_1x_2\)</span>.
+参数的唯一最小二乘估计要求设计矩阵满列秩;
+若还要估计误差方差并进行本章的统计推断, 样本量应超过参数个数.</p>
+<h3 id="一般非线性最小二乘">3.3 一般非线性最小二乘</h3>
+<p>对无法或不便线性化的模型, 直接设</p>
+<p><span class="math display">\[
+Y_i=f(x_i;\theta)+\varepsilon_i,
+\qquad \theta=(\theta_1,\ldots,\theta_q)^{\mathsf T},
+\]</span></p>
+<p>并求</p>
+<p><span class="math display">\[
+\hat\theta=\operatorname*{arg\,min}_{\theta}
+\sum\limits_{i=1}^{n}[y_i-f(x_i;\theta)]^2.
+\]</span></p>
+<p>其求解通常需要迭代. 先给初值, 计算当前预测和残差, 再根据算法更新参数,
+直到达到停止条件. 初值可以来自线性化拟合或实际背景; 参数有明确限制时,
+应把限制写入求解问题, 而不是拟合后才判断是否合理.</p>
+<p>Python 的 <code>curve_fit</code> 接收模型函数, 数据和初值,
+返回估计参数及近似协方差矩阵. 非线性求解可能只找到局部解, 也可能不收敛;
+应检查停止信息, 残差, 并尝试不同合理初值.
+协方差矩阵依赖最优点附近的局部线性近似,
+不能在所有非线性模型中都当作精确结果.</p>
+<h3 id="预测区间要说明预测对象">3.4 预测区间要说明预测对象</h3>
+<p>线性或多项式模型中, 设设计矩阵为 <span
+class="math inline">\(X\)</span>, 新点的特征列向量为 <span
+class="math inline">\(z=(z_1,\ldots,z_q)^{\mathsf T}\)</span>,
+参数个数为 <span class="math inline">\(q\)</span>, 残差自由度为 <span
+class="math inline">\(\nu=n-q\)</span>, 且</p>
+<p><span class="math display">\[
+s_e^2=\frac{\mathrm{SSE}}{\nu},\qquad C=(X^{\mathsf T}X)^{-1}.
+\]</span></p>
+<p>点预测为 <span class="math inline">\(\hat y=z^{\mathsf
+T}\hat\beta\)</span>. 在经典正态线性模型下, 逐点 <span
+class="math inline">\(1-\alpha\)</span> 均值置信区间为</p>
+<p><span class="math display">\[
+\hat y\pm t_{1-\alpha/2,\nu}s_e\sqrt{z^{\mathsf T}Cz},
+\]</span></p>
+<p>一个新的独立观测的逐点预测区间为</p>
+<p><span class="math display">\[
+\hat y\pm t_{1-\alpha/2,\nu}s_e\sqrt{1+z^{\mathsf T}Cz}.
+\]</span></p>
+<p>两者多出的"1"表示新观测自身的随机波动, 故个体预测区间更宽. 这里 <span
+class="math inline">\(t_{1-\alpha/2,\nu}\)</span>
+使用累积概率分位数约定; 95% 区间使用 <span
+class="math inline">\(t_{0.975,\nu}\)</span>.</p>
+<p>若希望同时覆盖模型的均值函数, 可使用 Scheffé 同时均值置信带,
+将上述均值区间的 <span class="math inline">\(t\)</span> 乘数替换为</p>
+<p><span class="math display">\[
+\sqrt{qF_{1-\alpha;q,\nu}}.
+\]</span></p>
+<p>其中 <span class="math inline">\(F_{1-\alpha;q,\nu}\)</span> 是 <span
+class="math inline">\(F(q,\nu)\)</span> 分布的分位数.
+这种同时置信带与单个新观测的预测区间回答不同问题,
+不能只比较宽窄便把二者混称为"预测误差".</p>
+<p>一般非线性模型可在拟合参数附近使用局部线性近似. 令 <span
+class="math inline">\(J\)</span> 为 <span class="math inline">\(n\times
+q\)</span> 的样本预测函数对参数的雅可比矩阵, <span
+class="math inline">\(g=(\partial f/\partial\theta_1,\ldots,\partial
+f/\partial\theta_q)^{\mathsf T}\)</span> 为新点预测函数对参数的梯度,
+近似有</p>
+<p><span class="math display">\[
+\widehat{\operatorname{Cov}}(\hat\theta)\approx s_e^2(J^{\mathsf
+T}J)^{-1},
+\qquad
+\widehat{\operatorname{Var}}(\hat y)\approx
+g^{\mathsf T}\widehat{\operatorname{Cov}}(\hat\theta)g.
+\]</span></p>
+<p>在 <span class="math inline">\(n&gt;q\)</span>, <span
+class="math inline">\(J\)</span> 满列秩且误差条件合适时,
+可据此构造近似区间; 新观测还需加上误差方差. 模型强烈非线性,
+参数接近边界或数据不足时, 近似可能较差.</p>
+<h2 id="四-典型例题与结果解读">四, 典型例题与结果解读</h2>
+<h3 id="钢包使用次数与容积增大量-线性化配曲线">4.1
+钢包使用次数与容积增大量: 线性化配曲线</h3>
+<h4 id="数据与候选模型">4.1.1 数据与候选模型</h4>
+<p>钢水对耐火材料的侵蚀会使钢包容积增大. 下面记录使用次数与容积增大量,
+目的是理解变化趋势, 为进一步检查与维护分析提供依据.
+表中容积增大量按给定数值口径计算, 不作实际体积单位的换算.
+数据的采集来源和体积单位未明确, 因而本例只用于方法演示,
+不据此制定实际设备维护标准.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">使用次数 <span
+class="math inline">\(x\)</span></th>
+<th style="text-align: center;">容积增大量 <span
+class="math inline">\(y\)</span></th>
+<th style="text-align: center;">使用次数 <span
+class="math inline">\(x\)</span></th>
+<th style="text-align: center;">容积增大量 <span
+class="math inline">\(y\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">缺失</td>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">9.99</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">6.42</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">10.49</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">8.20</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">10.59</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">9.58</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">10.60</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">9.50</td>
+<td style="text-align: center;">13</td>
+<td style="text-align: center;">10.80</td>
+</tr>
+<tr>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">9.70</td>
+<td style="text-align: center;">14</td>
+<td style="text-align: center;">10.60</td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">10.00</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: center;">10.90</td>
+</tr>
+<tr>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">9.93</td>
+<td style="text-align: center;">16</td>
+<td style="text-align: center;">10.76</td>
+</tr>
+</tbody>
+</table>
+<p>第 1 次使用的记录缺失, 程序用 <code>nan</code> 表示, 不把它填成零.
+拟合只使用 <span class="math inline">\(x=2,\ldots,16\)</span> 的 15
+组有效观测.</p>
+<p><img src="/images/NonlinearRegression/NLR-4.png" alt="" style="width: 100%;"></p>
+<p><strong>图 7</strong> 钢包的 15 组有效观测.
+容积增大量总体递增但增速趋缓, 个别相邻值有波动.</p>
+<p>选择倒指数函数 <span
+class="math inline">\(y=a\mathrm{e}^{b/x}\)</span> 作为候选.
+对有效数据取 <span class="math inline">\(u=1/x\)</span>, <span
+class="math inline">\(v=\ln y\)</span>, 拟合 <span
+class="math inline">\(v=A+bu\)</span>.</p>
+<h4 id="估计与还原">4.1.2 估计与还原</h4>
+<p>用最小二乘法得到</p>
+<p><span class="math display">\[
+\hat A=2.4577846855,\qquad \hat b=-1.1106713598,
+\]</span></p>
+<p>因此 <span class="math inline">\(\hat a=\mathrm{e}^{\hat
+A}=11.6789104013\)</span>, 还原曲线为</p>
+<p><span class="math display">\[
+\hat y_{\log}=11.6789\mathrm{e}^{-1.1107/x}.
+\]</span></p>
+<p>这里 <span class="math inline">\(\hat a\)</span> 是该候选曲线在 <span
+class="math inline">\(x\to\infty\)</span> 时的上限,
+不是对无限使用寿命的保证. 按照曲线公式, 它的连续曲线拐点约为 <span
+class="math inline">\(x=0.5553\)</span>, 位于样本范围之外,
+所以本例只观察到拐点后的减速增长阶段.</p>
+<p>原尺度的训练 SSE 约为 0.891281, 训练 RMSE 约为 0.243760.
+这两个量用于描述还原曲线对当前数据的拟合差异;
+参数实际上是通过最小化对数尺度残差得到的.</p>
+<h3 id="距离与时间-二次多项式回归">4.2 距离与时间: 二次多项式回归</h3>
+<h4 id="数据与模型">4.2.1 数据与模型</h4>
+<p>本例按每隔 <span class="math inline">\(1/30\)</span>
+秒采样一次的教学设定, 时间为 <span
+class="math inline">\(t_i=i/30\)</span>, <span
+class="math inline">\(i=1,\ldots,14\)</span>. 距离单位为 cm.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">序号 <span
+class="math inline">\(i\)</span></th>
+<th style="text-align: center;">时间 <span
+class="math inline">\(t\)</span>(s)</th>
+<th style="text-align: center;">距离 <span
+class="math inline">\(s\)</span>(cm)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><span
+class="math inline">\(1/30\)</span></td>
+<td style="text-align: center;">11.86</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;"><span
+class="math inline">\(2/30\)</span></td>
+<td style="text-align: center;">15.67</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;"><span
+class="math inline">\(3/30\)</span></td>
+<td style="text-align: center;">20.60</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;"><span
+class="math inline">\(4/30\)</span></td>
+<td style="text-align: center;">26.69</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;"><span
+class="math inline">\(5/30\)</span></td>
+<td style="text-align: center;">33.71</td>
+</tr>
+<tr>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;"><span
+class="math inline">\(6/30\)</span></td>
+<td style="text-align: center;">41.93</td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;"><span
+class="math inline">\(7/30\)</span></td>
+<td style="text-align: center;">51.13</td>
+</tr>
+<tr>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;"><span
+class="math inline">\(8/30\)</span></td>
+<td style="text-align: center;">61.49</td>
+</tr>
+<tr>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;"><span
+class="math inline">\(9/30\)</span></td>
+<td style="text-align: center;">72.90</td>
+</tr>
+<tr>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;"><span
+class="math inline">\(10/30\)</span></td>
+<td style="text-align: center;">85.44</td>
+</tr>
+<tr>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;"><span
+class="math inline">\(11/30\)</span></td>
+<td style="text-align: center;">99.08</td>
+</tr>
+<tr>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;"><span
+class="math inline">\(12/30\)</span></td>
+<td style="text-align: center;">113.77</td>
+</tr>
+<tr>
+<td style="text-align: center;">13</td>
+<td style="text-align: center;"><span
+class="math inline">\(13/30\)</span></td>
+<td style="text-align: center;">129.54</td>
+</tr>
+<tr>
+<td style="text-align: center;">14</td>
+<td style="text-align: center;"><span
+class="math inline">\(14/30\)</span></td>
+<td style="text-align: center;">146.48</td>
+</tr>
+</tbody>
+</table>
+<p>选择 <span class="math inline">\(\hat s=a+bt+ct^2\)</span>.
+一条求解路线是直接拟合二次多项式; 另一条是按行构造设计矩阵, 第 <span
+class="math inline">\(i\)</span> 行为 <span
+class="math inline">\((1,t_i,t_i^2)\)</span>,
+作为三个参数的线性最小二乘问题. 两条路线仅系数排列不同,
+应得到相同拟合曲线.</p>
+<h4 id="拟合结果">4.2.2 拟合结果</h4>
+<p>计算得到</p>
+<p><span class="math display">\[
+\hat s=9.13291209+65.88960165t+489.29464286t^2.
+\]</span></p>
+<p>训练 SSE 为 0.013375, 训练 RMSE 为 0.030909 cm, 残差标准误差为
+0.034870 cm. 这里残差标准误差的自由度分母为 <span
+class="math inline">\(14-3=11\)</span>, 训练 RMSE 的分母为 14,
+二者不能混写.</p>
+<p><img src="/images/NonlinearRegression/NLR-12.png" alt="" style="width: 100%;"></p>
+<p><strong>图 8</strong> 黑色加号为原始观测, 红线为二次拟合曲线.
+横轴明确使用秒, 纵轴使用厘米.</p>
+<p>若采用匀加速运动形式 <span
+class="math inline">\(s=s_0+v_0t+\tfrac12gt^2\)</span>, 则二次系数给出
+<span class="math inline">\(g\approx978.5893\)</span> cm/s<span
+class="math inline">\(^2=9.7859\)</span> m/s<span
+class="math inline">\(^2\)</span>. 但拟合还具有非零截距和一次项,
+不能解释为物体在计时零点恰好从距离零, 速度零开始运动;
+也不能仅凭图像重合就证明实际过程完全符合某个物理机制.</p>
+<p>在 <span class="math inline">\(t=0.25\)</span> 秒处, 点预测约为
+56.186228 cm, 95% 逐点均值置信区间约为 <span
+class="math inline">\([56.155327,56.217129]\)</span> cm,
+新观测预测区间约为 <span
+class="math inline">\([56.103492,56.268963]\)</span> cm.
+预测使用未舍入系数.</p>
+<h3 id="商品需求-纯二次回归与区间预测">4.3 商品需求:
+纯二次回归与区间预测</h3>
+<h4 id="数据与设计矩阵">4.3.1 数据与设计矩阵</h4>
+<p>用平均收入 <span class="math inline">\(x_1\)</span> 和商品价格 <span
+class="math inline">\(x_2\)</span> 解释需求量 <span
+class="math inline">\(y\)</span>, 并预测 <span
+class="math inline">\(x_1=1000,x_2=6\)</span> 时的需求.
+各变量按表中给定的数值口径计算, 不作具体货币或商品单位的换算.
+这组数据用于回归方法演示; 用于实际供需安排前须核实数据来源, 单位,
+样本代表性和市场背景.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">序号</th>
+<th style="text-align: center;">平均收入 <span
+class="math inline">\(x_1\)</span></th>
+<th style="text-align: center;">价格 <span
+class="math inline">\(x_2\)</span></th>
+<th style="text-align: center;">需求量 <span
+class="math inline">\(y\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1000</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">100</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">600</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">75</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">1200</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">80</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">500</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">70</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">300</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">50</td>
+</tr>
+<tr>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">400</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">65</td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">1300</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">90</td>
+</tr>
+<tr>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">1100</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">100</td>
+</tr>
+<tr>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">1300</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">110</td>
+</tr>
+<tr>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">300</td>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">60</td>
+</tr>
+</tbody>
+</table>
+<p>选择纯二次模型</p>
+<p><span class="math display">\[
+\hat y=\beta_0+\beta_1x_1+\beta_2x_2+\beta_{11}x_1^2+\beta_{22}x_2^2,
+\]</span></p>
+<p>构造设计矩阵 <span class="math inline">\(X\)</span>, 第 <span
+class="math inline">\(i\)</span> 行为 <span
+class="math inline">\((1,x_{i1},x_{i2},x_{i1}^2,x_{i2}^2)\)</span>.
+样本量为 10, 参数数目为 5, 残差自由度为 5.</p>
+<h4 id="系数精度与模型结果">4.3.2 系数精度与模型结果</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">项</th>
+<th style="text-align: center;">系数估计</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">截距</td>
+<td style="text-align: center;">110.531273898</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(x_1\)</span></td>
+<td style="text-align: center;">0.146430657121</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(x_2\)</span></td>
+<td style="text-align: center;">-26.570936511</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(x_1^2\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(-7.5566932591\times10^{-5}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(x_2^2\)</span></td>
+<td style="text-align: center;">1.84749311995</td>
+</tr>
+</tbody>
+</table>
+<p>回归方程可写为</p>
+<p><span class="math display">\[
+\hat y=110.531273898+0.146430657121x_1-26.570936511x_2
+-7.5566932591\times10^{-5}x_1^2+1.84749311995x_2^2.
+\]</span></p>
+<p>平方项可能放大系数舍入误差. 例如, 在 <span
+class="math inline">\(x_1=1000\)</span> 时, 把 <span
+class="math inline">\(x_1^2\)</span> 的系数草率写成 -0.0001,
+会使这一项与完整精度的结果相差约 24.43. 因此,
+不能用这种低精度方程去复算原程序的预测值.</p>
+<p>完整计算得到 <span class="math inline">\(R^2=0.970178\)</span>, <span
+class="math inline">\(F(4,5)=40.665569\)</span>, <span
+class="math inline">\(p=0.000526082\)</span>, 残差标准误差为 4.536197,
+训练 RMSE 为 3.207575. <span class="math inline">\(R^2\)</span>
+是决定系数, 不是复相关系数本身. 较高的样本拟合优度和较小的训练误差,
+不能单独证明新样本预测准确.</p>
+<h4 id="指定点的预测与三种区间">4.3.3 指定点的预测与三种区间</h4>
+<p>代入 <span class="math inline">\(z=(1,1000,6,1000^2,6^2)^{\mathsf
+T}\)</span>, 得到</p>
+<p><span class="math display">\[
+\hat y(1000,6)=88.4791316811.
+\]</span></p>
+<p>在经典正态线性模型条件下, 对应区间为:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">区间类型</th>
+<th style="text-align: center;">95% 区间</th>
+<th style="text-align: center;">半宽</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">指定点的平均需求逐点置信区间</td>
+<td style="text-align: center;">[80.1211, 96.8372]</td>
+<td style="text-align: center;">8.3580</td>
+</tr>
+<tr>
+<td style="text-align: center;">指定条件下一个新观测的逐点预测区间</td>
+<td style="text-align: center;">[74.1324, 102.8258]</td>
+<td style="text-align: center;">14.3467</td>
+</tr>
+<tr>
+<td style="text-align: center;">Scheffé 同时均值置信带在该点的截面</td>
+<td style="text-align: center;">[72.1404, 104.8179]</td>
+<td style="text-align: center;">16.3387</td>
+</tr>
+</tbody>
+</table>
+<p>第三行使用 <span class="math inline">\(\sqrt{5F_{0.95;5,5}}\)</span>
+作为乘数, 给出数值 <span
+class="math inline">\(88.4791\pm16.3387\)</span>. 它描述同时均值置信带,
+不应直接解释成一个新需求观测的逐点预测区间.</p>
+<p><img src="/images/NonlinearRegression/NLR-13.png" alt="" style="width: 100%;"></p>
+<p><strong>图 9</strong> 左图保持价格为 6, 改变收入; 右图保持收入为
+1000, 改变价格. 蓝线是模型的条件均值, 橙色区域是 95% 同时均值置信带;
+黑点为指定预测组合. 两幅图是同一个二维响应曲面的截面,
+不是分别对两组单变量数据做回归.</p>
+<p>图中覆盖自变量各自的样本范围, 但并非每个收入—价格组合都有实测支持.
+使用条件截面作解释或预测时, 还应检查联合取值范围.</p>
+<h4 id="为什么不能只看一次项的正负">4.3.4
+为什么不能只看一次项的正负</h4>
+<p>模型含有平方项, 其变化率为</p>
+<p><span class="math display">\[
+\frac{\partial\hat y}{\partial x_1}=\hat\beta_1+2\hat\beta_{11}x_1,
+\qquad
+\frac{\partial\hat y}{\partial x_2}=\hat\beta_2+2\hat\beta_{22}x_2.
+\]</span></p>
+<p>因此, "收入一次项为正, 所以收入越高需求一定越大"并不成立.
+本例收入截面的驻点约为 968.88, 价格截面的驻点约为 7.1911.
+二次曲线在观测区间内可能改变方向, 这反映经验拟合的形状,
+不能直接视为普遍经济规律或因果效应.</p>
+<p>如果这些转折与实际背景不相符, 应重新检查数据, 变量选择和模型形式;
+不能只因为 <span class="math inline">\(R^2\)</span>
+高就接受任意外推.</p>
+<h3 id="同一钢包数据-直接非线性拟合">4.4 同一钢包数据:
+直接非线性拟合</h3>
+<h4 id="原尺度的参数估计">4.4.1 原尺度的参数估计</h4>
+<p>沿用 4.1 节的 15 组有效数据, 直接最小化</p>
+<p><span class="math display">\[
+Q_y(a,b)=\sum\limits_{i=1}^{15}\left(y_i-a\mathrm{e}^{b/x_i}\right)^2.
+\]</span></p>
+<p>包含参数约束的求解模型为</p>
+<p><span class="math display">\[
+\begin{gathered}
+\min_{a,b}\quad
+\sum\limits_{i=1}^{15}\left(y_i-a\mathrm{e}^{b/x_i}\right)^2,\\[3pt]
+\text{s.t.}\quad
+\left\{\begin{aligned}
+&amp;a\geqslant0,\\
+&amp;b\leqslant0.
+\end{aligned}\right.
+\end{gathered}
+\]</span></p>
+<p>本例依据增长趋缓的背景, 在计算中使用 <span
+class="math inline">\(a\geqslant0,b\leqslant0\)</span> 的参数约束,
+并以线性化估计为初值; 本例得到的 <span class="math inline">\(a\)</span>
+为正. Python 计算得到</p>
+<p><span class="math display">\[
+\hat a\approx11.6036675,\qquad \hat b\approx-1.0641295,
+\]</span></p>
+<p>因此拟合曲线约为</p>
+<p><span class="math display">\[
+\hat y_{\mathrm{NLS}}=11.6037\mathrm{e}^{-1.0641/x}.
+\]</span></p>
+<p><img src="/images/NonlinearRegression/NLR-14.png" alt="" style="width: 100%;"></p>
+<p><strong>图 10</strong> 黑色加号为观测, 红色实线为原尺度非线性拟合,
+蓝色虚线为对数尺度拟合后还原的曲线. 两条曲线很接近, 但优化目标不同.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">拟合路线</th>
+<th style="text-align: center;"><span
+class="math inline">\(a\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(b\)</span></th>
+<th style="text-align: center;">原尺度训练 SSE</th>
+<th style="text-align: center;">原尺度训练 RMSE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">对数线性化后还原</td>
+<td style="text-align: center;">11.6789104</td>
+<td style="text-align: center;">-1.1106714</td>
+<td style="text-align: center;">0.891281</td>
+<td style="text-align: center;">0.243760</td>
+</tr>
+<tr>
+<td style="text-align: center;">原尺度非线性最小二乘</td>
+<td style="text-align: center;">11.6036675</td>
+<td style="text-align: center;">-1.0641295</td>
+<td style="text-align: center;">0.862665</td>
+<td style="text-align: center;">0.239814</td>
+</tr>
+</tbody>
+</table>
+<p>直接拟合的原尺度 SSE 较小, 与它使用的目标函数一致,
+但不能由此断言它在所有新数据上更准确, 也不能替代对误差模型的判断. 参数
+<span class="math inline">\(a\)</span> 所表示的渐近上限尤其需要谨慎外推:
+有限次使用的观测不足以保证长期过程一定保持这一形态.</p>
+<h4 id="近似区间演示">4.4.2 近似区间演示</h4>
+<p>程序还在 <span class="math inline">\(x=10\)</span>
+处计算点预测及两类近似 95% 区间. 协方差矩阵来自最优点附近的局部线性近似,
+误差方差使用 <span class="math inline">\(15-2=13\)</span> 个残差自由度.
+均值区间仅描述拟合函数的不确定性, 新观测区间另外加入随机误差方差.</p>
+<p>本例 <span class="math inline">\(x=10\)</span> 的点预测约为
+10.432316, 近似 95% 均值区间为 <span
+class="math inline">\([10.271252,10.593379]\)</span>, 新观测预测区间为
+<span class="math inline">\([9.852962,11.011670]\)</span>.
+这些区间依赖模型形式, 误差条件以及局部近似质量;
+它们不能当作设备安全寿命或长期容积变化的保证.</p>
+<h2 id="五-尽量简单易懂的-python-实现">五, 尽量简单易懂的 Python
+实现</h2>
+<h3 id="设计矩阵与求解函数">5.1 设计矩阵与求解函数</h3>
+<p>先在终端安装依赖:
+<code>python -m pip install numpy scipy statsmodels</code>.
+下面三个例题程序分别保存为 <code>ladle_regression.py</code>,
+<code>falling_regression.py</code>, <code>demand_regression.py</code>,
+均可独立运行. 例如, 运行 <code>python ladle_regression.py</code>
+即可计算钢包例题的两条拟合路线与近似区间.</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">模型或步骤</th>
+<th style="text-align: center;">输入形式</th>
+<th style="text-align: center;">求解函数</th>
+<th style="text-align: center;">参数顺序</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">钢包对数线性化</td>
+<td style="text-align: center;">自变量 <span
+class="math inline">\(1/x\)</span>, 响应 <span class="math inline">\(\ln
+y\)</span></td>
+<td
+style="text-align: center;"><code>linregress(1/x, np.log(y))</code></td>
+<td style="text-align: center;"><code>intercept</code> 为 <span
+class="math inline">\(\ln a\)</span>, <code>slope</code> 为 <span
+class="math inline">\(b\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">钢包原尺度拟合</td>
+<td style="text-align: center;"><code>curve(x, a, b)</code>, 原始 <span
+class="math inline">\(x,y\)</span>, 初值与边界</td>
+<td style="text-align: center;"><code>curve_fit(...)</code></td>
+<td style="text-align: center;"><span
+class="math inline">\((a,b)^{\mathsf T}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">距离二次多项式</td>
+<td style="text-align: center;">时间与距离, 多项式次数 2</td>
+<td
+style="text-align: center;"><code>np.polyfit(t, distance, 2)</code></td>
+<td style="text-align: center;"><span
+class="math inline">\((c,b,a)^{\mathsf T}\)</span>, 按降幂排列</td>
+</tr>
+<tr>
+<td style="text-align: center;">距离特征回归</td>
+<td style="text-align: center;">行特征 <span
+class="math inline">\((1,t,t^2)\)</span></td>
+<td
+style="text-align: center;"><code>sm.OLS(distance, X).fit()</code></td>
+<td style="text-align: center;"><span
+class="math inline">\((a,b,c)^{\mathsf T}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">需求纯二次回归</td>
+<td style="text-align: center;">行特征 <span
+class="math inline">\((1,x_1,x_2,x_1^2,x_2^2)\)</span></td>
+<td
+style="text-align: center;"><code>sm.OLS(demand, X).fit()</code></td>
+<td style="text-align: center;"><span
+class="math inline">\((\beta_0,\beta_1,\beta_2,\beta_{11},\beta_{22})^{\mathsf
+T}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">线性模型逐点区间</td>
+<td style="text-align: center;">与训练列顺序一致的新特征行</td>
+<td
+style="text-align: center;"><code>model.get_prediction(new_X).summary_frame(alpha=.05)</code></td>
+<td style="text-align: center;">均值与新观测区间分别返回</td>
+</tr>
+</tbody>
+</table>
+<p><code>sm.OLS</code> 接收的是已经构造好的设计矩阵,
+默认不会自动添加截距. 截距列, 平方项和交互项都须明确准备.
+<code>curve_fit</code> 则通过模型函数计算预测值,
+无需手工把指数中的参数展开成线性特征.</p>
+<h3 id="钢包-两条拟合路线及近似区间">5.2 钢包:
+两条拟合路线及近似区间</h3>
+<p><code>linregress</code> 用于拟合 <span class="math inline">\(\ln
+y\)</span> 与 <span class="math inline">\(1/x\)</span> 的直线,
+<code>curve_fit</code> 用于原尺度非线性拟合. <code>curve(x, a, b)</code>
+的第一个参数是自变量, 后两个是待估参数. <code>beta</code> 是估计结果,
+<code>covariance</code> 是近似参数协方差矩阵. 本例未提供已知观测标准差,
+采用等权拟合及 <code>absolute_sigma=False</code>,
+协方差已按残差方差缩放. 计算预测均值方差时不应再乘一次 <span
+class="math inline">\(s_e^2\)</span>.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.stats <span class="keyword">import</span> linregress, t <span class="keyword">as</span> student_t</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> curve_fit</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第 1 次使用的容积增大量缺失；用 nan 表示，不当作 0。</span></span><br><span class="line">x_all = np.arange(<span class="number">1.</span>, <span class="number">17.</span>)</span><br><span class="line">y_all = np.array([np.nan, <span class="number">6.42</span>, <span class="number">8.20</span>, <span class="number">9.58</span>, <span class="number">9.50</span>, <span class="number">9.70</span>, <span class="number">10.00</span>, <span class="number">9.93</span>,</span><br><span class="line">                  <span class="number">9.99</span>, <span class="number">10.49</span>, <span class="number">10.59</span>, <span class="number">10.60</span>, <span class="number">10.80</span>, <span class="number">10.60</span>, <span class="number">10.90</span>, <span class="number">10.76</span>])</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> np.isfinite(x_all).<span class="built_in">all</span>() <span class="keyword">or</span> np.isinf(y_all).<span class="built_in">any</span>():</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&quot;使用次数必须有限, 容积数据不能含无穷值&quot;</span>)</span><br><span class="line">valid = ~np.isnan(y_all)</span><br><span class="line">x, y = x_all[valid], y_all[valid]</span><br><span class="line"><span class="keyword">if</span> np.<span class="built_in">any</span>(x &lt;= <span class="number">0</span>) <span class="keyword">or</span> np.<span class="built_in">any</span>(y &lt;= <span class="number">0</span>):</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&quot;本例的倒数和对数变换要求 x、y 均为正&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 路线一：拟合 ln(y) = ln(a) + b/x。</span></span><br><span class="line">linear = linregress(<span class="number">1</span>/x, np.log(y))</span><br><span class="line">a_log, b_log = np.exp(linear.intercept), linear.slope</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">curve</span>(<span class="params">x, a, b</span>):</span><br><span class="line">    <span class="keyword">return</span> a * np.exp(b/x)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 路线二：在原始 y 尺度上直接拟合，初值来自路线一。</span></span><br><span class="line"><span class="comment"># 结合本例增长趋缓的背景，限制 a&gt;=0、b&lt;=0；本例估计得到 a&gt;0。</span></span><br><span class="line">beta, covariance, information, message, status = curve_fit(</span><br><span class="line">    curve, x, y, p0=[a_log, b_log],</span><br><span class="line">    bounds=([<span class="number">0.</span>, -np.inf], [np.inf, <span class="number">0.</span>]),</span><br><span class="line">    absolute_sigma=<span class="literal">False</span>, full_output=<span class="literal">True</span>,</span><br><span class="line">    ftol=<span class="number">1e-12</span>, xtol=<span class="number">1e-12</span>, gtol=<span class="number">1e-12</span>, max_nfev=<span class="number">10000</span>)</span><br><span class="line"><span class="keyword">if</span> status <span class="keyword">not</span> <span class="keyword">in</span> (<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>) <span class="keyword">or</span> <span class="keyword">not</span> np.isfinite(covariance).<span class="built_in">all</span>():</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(<span class="string">&quot;非线性拟合或协方差估计未成功&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;求解停止信息:&quot;</span>, message)</span><br><span class="line">y_log = curve(x, a_log, b_log)</span><br><span class="line">y_direct = curve(x, *beta)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;对数拟合 [ln(a), b]：&quot;</span>, linear.intercept, b_log)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;还原参数 [a, b]：&quot;</span>, a_log, b_log)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;直接拟合 [a, b]：&quot;</span>, beta)</span><br><span class="line"><span class="keyword">for</span> name, fitted <span class="keyword">in</span> [(<span class="string">&quot;对数拟合还原&quot;</span>, y_log), (<span class="string">&quot;直接非线性拟合&quot;</span>, y_direct)]:</span><br><span class="line">    residual = y-fitted</span><br><span class="line">    <span class="built_in">print</span>(name, <span class="string">&quot;原尺度 SSE =&quot;</span>, np.<span class="built_in">sum</span>(residual**<span class="number">2</span>),</span><br><span class="line">          <span class="string">&quot;训练集 RMSE =&quot;</span>, np.sqrt(np.mean(residual**<span class="number">2</span>)))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在 x=10 处演示近似区间；非线性区间依赖局部线性近似。</span></span><br><span class="line">x_new = <span class="number">10.</span></span><br><span class="line">y_new = curve(x_new, *beta)</span><br><span class="line">gradient = np.array([np.exp(beta[<span class="number">1</span>]/x_new), y_new/x_new])</span><br><span class="line">mean_variance = gradient @ covariance @ gradient</span><br><span class="line">s2 = np.<span class="built_in">sum</span>((y-y_direct)**<span class="number">2</span>)/(<span class="built_in">len</span>(y)-<span class="built_in">len</span>(beta))</span><br><span class="line">critical = student_t.ppf(<span class="number">.975</span>, <span class="built_in">len</span>(y)-<span class="built_in">len</span>(beta))</span><br><span class="line">mean_half = critical*np.sqrt(mean_variance)</span><br><span class="line">observation_half = critical*np.sqrt(mean_variance+s2)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;x=10 的点预测：&quot;</span>, y_new)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;近似 95% 均值区间：&quot;</span>, y_new+np.array([-<span class="number">1</span>, <span class="number">1</span>])*mean_half)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;近似 95% 新观测预测区间：&quot;</span>, y_new+np.array([-<span class="number">1</span>, <span class="number">1</span>])*observation_half)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><code>np.isfinite</code> 在这里用于排除已经明确标记为
+<code>nan</code> 的缺失记录. 函数和数组对应同一批 15 个有效观测,
+不把横向或纵向数组的形状混用. 若更换数据, 应先核查其他缺失,
+无穷值及变量定义, 而不是把所有异常值自动过滤掉.</p>
+<h3 id="距离时间-二次多项式与线性回归对照">5.3 距离—时间:
+二次多项式与线性回归对照</h3>
+<p><code>np.polyfit(t, distance, 2)</code> 返回降幂顺序的系数, 即二次项,
+一次项, 常数项; 设计矩阵方法的系数则是常数项, 一次项, 二次项. 代码用
+<code>p[::-1]</code> 反转顺序后核对.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> statsmodels.api <span class="keyword">as</span> sm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 每隔 1/30 秒记录一次；时间单位 s，距离单位 cm。</span></span><br><span class="line">t = np.arange(<span class="number">1.</span>, <span class="number">15.</span>)/<span class="number">30</span></span><br><span class="line">distance = np.array([<span class="number">11.86</span>, <span class="number">15.67</span>, <span class="number">20.60</span>, <span class="number">26.69</span>, <span class="number">33.71</span>, <span class="number">41.93</span>, <span class="number">51.13</span>,</span><br><span class="line">                     <span class="number">61.49</span>, <span class="number">72.90</span>, <span class="number">85.44</span>, <span class="number">99.08</span>, <span class="number">113.77</span>, <span class="number">129.54</span>, <span class="number">146.48</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># polyfit 按降幂顺序返回系数：[二次项，一次项，常数项]。</span></span><br><span class="line">p = np.polyfit(t, distance, <span class="number">2</span>)</span><br><span class="line">fitted = np.polyval(p, t)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;polyfit [c, b, a]：&quot;</span>, p)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;SSE =&quot;</span>, np.<span class="built_in">sum</span>((distance-fitted)**<span class="number">2</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;训练集 RMSE =&quot;</span>, np.sqrt(np.mean((distance-fitted)**<span class="number">2</span>)))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;残差标准误差 =&quot;</span>, np.sqrt(np.<span class="built_in">sum</span>((distance-fitted)**<span class="number">2</span>)/(<span class="built_in">len</span>(t)-<span class="number">3</span>)))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;若作匀加速运动解释，加速度约为&quot;</span>, <span class="number">2</span>*p[<span class="number">0</span>]/<span class="number">100</span>, <span class="string">&quot;m/s^2&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用扩展自变量 [1, t, t^2] 再拟合，核对结果。</span></span><br><span class="line">X = np.column_stack((np.ones(<span class="built_in">len</span>(t)), t, t**<span class="number">2</span>))</span><br><span class="line">model = sm.OLS(distance, X).fit()</span><br><span class="line">beta = model.params</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最小二乘 [a, b, c]：&quot;</span>, beta)</span><br><span class="line"><span class="keyword">assert</span> np.allclose(beta, p[::-<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在采样范围内的 t=0.25 秒处，区分均值和新观测的区间。</span></span><br><span class="line">new_X = np.array([[<span class="number">1.</span>, <span class="number">.25</span>, <span class="number">.25</span>**<span class="number">2</span>]])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;t=0.25 的预测与逐点 95% 区间：&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(model.get_prediction(new_X).summary_frame().to_string(index=<span class="literal">False</span>))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><code>model.get_prediction(...).summary_frame()</code> 中,
+<code>mean</code> 是点预测, <code>mean_ci_lower/upper</code>
+是逐点均值区间, <code>obs_ci_lower/upper</code>
+是一个新观测的逐点预测区间. 计算时使用全部精度,
+输出表的小数显示只是展示方式.</p>
+<h3 id="商品需求-纯二次模型与同时均值置信带">5.4 商品需求:
+纯二次模型与同时均值置信带</h3>
+<p><code>design</code> 明确构造五列特征, 避免漏掉截距或重复加入交互项.
+纯二次模型没有 <span class="math inline">\(x_1x_2\)</span> 项;
+如需要完全二次模型, 应单独增加该列并检查数据是否足够.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.stats <span class="keyword">import</span> f</span><br><span class="line"><span class="keyword">import</span> statsmodels.api <span class="keyword">as</span> sm</span><br><span class="line"></span><br><span class="line">income = np.array([<span class="number">1000.</span>, <span class="number">600</span>, <span class="number">1200</span>, <span class="number">500</span>, <span class="number">300</span>, <span class="number">400</span>, <span class="number">1300</span>, <span class="number">1100</span>, <span class="number">1300</span>, <span class="number">300</span>])</span><br><span class="line">price = np.array([<span class="number">5.</span>, <span class="number">7</span>, <span class="number">6</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">7</span>, <span class="number">5</span>, <span class="number">4</span>, <span class="number">3</span>, <span class="number">9</span>])</span><br><span class="line">demand = np.array([<span class="number">100.</span>, <span class="number">75</span>, <span class="number">80</span>, <span class="number">70</span>, <span class="number">50</span>, <span class="number">65</span>, <span class="number">90</span>, <span class="number">100</span>, <span class="number">110</span>, <span class="number">60</span>])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">design</span>(<span class="params">x1, x2</span>):</span><br><span class="line">    <span class="comment"># 纯二次模型：常数、两个一次项、两个平方项，不含交互项。</span></span><br><span class="line">    x1, x2 = np.broadcast_arrays(np.asarray(x1), np.asarray(x2))</span><br><span class="line">    <span class="keyword">return</span> np.column_stack((np.ones(x1.size), x1.ravel(), x2.ravel(),</span><br><span class="line">                            x1.ravel()**<span class="number">2</span>, x2.ravel()**<span class="number">2</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">X = design(income, price)</span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">not</span> np.isfinite(X).<span class="built_in">all</span>() <span class="keyword">or</span> <span class="keyword">not</span> np.isfinite(demand).<span class="built_in">all</span>()</span><br><span class="line">        <span class="keyword">or</span> <span class="built_in">len</span>(demand) &lt;= X.shape[<span class="number">1</span>]</span><br><span class="line">        <span class="keyword">or</span> np.linalg.matrix_rank(X) &lt; X.shape[<span class="number">1</span>]):</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&quot;设计矩阵必须有限且满列秩&quot;</span>)</span><br><span class="line">model = sm.OLS(demand, X, missing=<span class="string">&quot;raise&quot;</span>).fit()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;系数 [常数, x1, x2, x1^2, x2^2]：&quot;</span>)</span><br><span class="line"><span class="keyword">for</span> value <span class="keyword">in</span> model.params:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;value:<span class="number">.12</span>g&#125;</span>&quot;</span>)  <span class="comment"># 小系数保留足够精度，避免平方项放大舍入误差。</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;[R2, F, p, 残差标准误差]：&quot;</span>, model.rsquared, model.fvalue,</span><br><span class="line">      model.f_pvalue, np.sqrt(model.mse_resid))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;训练集 RMSE =&quot;</span>, np.sqrt(np.mean(model.resid**<span class="number">2</span>)))</span><br><span class="line">new_X = design([<span class="number">1000.</span>], [<span class="number">6.</span>])</span><br><span class="line">point = model.get_prediction(new_X).summary_frame(alpha=<span class="number">.05</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;指定点的预测与逐点 95% 区间：\n&quot;</span>, point.to_string(index=<span class="literal">False</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># Scheffe 同时均值置信带的乘数；包含截距在内共有 5 个参数。</span></span><br><span class="line">parameter_count = X.shape[<span class="number">1</span>]</span><br><span class="line">sim_multiplier = np.sqrt(parameter_count*f.ppf(<span class="number">.95</span>, parameter_count, model.df_resid))</span><br><span class="line">sim_half = sim_multiplier*point[<span class="string">&quot;mean_se&quot;</span>].iloc[<span class="number">0</span>]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;95% 同时均值区间半宽：&quot;</span>, sim_half)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>程序会输出完整精度的系数, 指定点的逐点区间, 以及 16.3387
+左右的同时均值区间半宽. 曲线图使用同一个模型的两个条件截面,
+不要求手动导出交互界面的变量, 重复运行即可复现.</p>
+<h3 id="与其他拟合方法的联系">5.5 与其他拟合方法的联系</h3>
+<p>多项式和这些经验函数之外, 还可以研究支持向量回归或神经网络.
+这些方法也需要合理的数据划分与验证,
+不能因为模型更复杂就认为一定更好.</p>
+<p><img src="/images/NonlinearRegression/NLR-11.png" alt="" style="width: 100%;"></p>
+<p><strong>图 11</strong> 一个包含 4 个输入节点, 两层各 3 个隐藏节点和 1
+个输出节点的网络结构示意. 图中没有进行训练,
+不能作为本章任何例题的拟合结果.</p>
+<h2 id="六-matlab-求解与函数对应">六, MATLAB 求解与函数对应</h2>
+<h3 id="常用函数的输入与区间设置">6.1 常用函数的输入与区间设置</h3>
+<p>若安装了相应统计工具箱, 也可以使用原有工具. 调用时应明确区间类型,
+而不是只写"预测误差".</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">工具</th>
+<th style="text-align: center;">用途</th>
+<th style="text-align: center;">需要注意的地方</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><code>polyfit</code>,
+<code>polyval</code></td>
+<td style="text-align: center;">多项式拟合与求值</td>
+<td style="text-align: center;">系数按降幂排列;
+二维特征方法通常按常数项开始排列</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>polyconf</code></td>
+<td style="text-align: center;">多项式区间</td>
+<td style="text-align: center;">区分 <code>PredOpt</code> 的
+<code>curve</code>, <code>observation</code>, 以及 <code>SimOpt</code>
+的 <code>off</code>, <code>on</code></td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>rstool</code></td>
+<td style="text-align: center;">交互查看响应曲面的截面</td>
+<td style="text-align: center;">本例的 16.3387 对应同时均值置信带半宽;
+不能无条件当作逐点个体预测半宽</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>nlinfit</code></td>
+<td style="text-align: center;">非线性参数拟合</td>
+<td style="text-align: center;">明确模型函数, 初值和列向量形状;
+检查迭代结果</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>nlpredci</code></td>
+<td style="text-align: center;">非线性近似区间</td>
+<td style="text-align: center;">默认 <code>curve</code>
+表示函数均值区间, <code>observation</code> 表示新观测预测区间</td>
+</tr>
+</tbody>
+</table>
+<p>下面列出完整钢包有效数据, 演示模型函数与区间类型的设置:</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% 需要 Statistics and Machine Learning Toolbox; 使用 15 组有效观测.</span></span><br><span class="line">x = (<span class="number">2</span>:<span class="number">16</span>).&#x27;;</span><br><span class="line">y = [<span class="number">6.42</span> <span class="number">8.20</span> <span class="number">9.58</span> <span class="number">9.50</span> <span class="number">9.70</span> <span class="number">10.00</span> <span class="number">9.93</span> <span class="number">9.99</span> <span class="number">10.49</span> <span class="number">10.59</span> <span class="number">10.60</span> <span class="number">10.80</span> <span class="number">10.60</span> <span class="number">10.90</span> <span class="number">10.76</span>].&#x27;;</span><br><span class="line">model = @(<span class="built_in">beta</span>, x) <span class="built_in">beta</span>(<span class="number">1</span>)*<span class="built_in">exp</span>(<span class="built_in">beta</span>(<span class="number">2</span>)./x);</span><br><span class="line">[<span class="built_in">beta</span>, residual, J] = nlinfit(x(:), y(:), model, [<span class="number">12</span> <span class="number">-1</span>].&#x27;);</span><br><span class="line">[mean_value, mean_half] = nlpredci(model, <span class="number">10</span>, <span class="built_in">beta</span>, residual, ...</span><br><span class="line">    <span class="string">&#x27;Jacobian&#x27;</span>, J, <span class="string">&#x27;Alpha&#x27;</span>, <span class="number">0.05</span>, <span class="string">&#x27;PredOpt&#x27;</span>, <span class="string">&#x27;curve&#x27;</span>, <span class="string">&#x27;SimOpt&#x27;</span>, <span class="string">&#x27;off&#x27;</span>);</span><br><span class="line">[obs_value, obs_half] = nlpredci(model, <span class="number">10</span>, <span class="built_in">beta</span>, residual, ...</span><br><span class="line">    <span class="string">&#x27;Jacobian&#x27;</span>, J, <span class="string">&#x27;Alpha&#x27;</span>, <span class="number">0.05</span>, <span class="string">&#x27;PredOpt&#x27;</span>, <span class="string">&#x27;observation&#x27;</span>, <span class="string">&#x27;SimOpt&#x27;</span>, <span class="string">&#x27;off&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<p><code>nlinfit</code> 没有直接施加本章 <span
+class="math inline">\(a\geqslant0,b\leqslant0\)</span> 的箱式约束,
+不能把这一无约束调用与 Python 的有界求解视为完全相同的优化问题.
+需要约束时可使用参数变换, 或选择支持约束的求解器. 两种
+<code>nlpredci</code> 调用均采用逐点近似区间, 前者针对均值函数,
+后者针对新观测.</p>
+<h3 id="不依赖统计工具箱的完整数值实现">6.2
+不依赖统计工具箱的完整数值实现</h3>
+<p>下面程序同时计算钢包, 距离与时间, 需求三个例题. 保存为
+<code>nonlinear_examples.m</code> 后运行
+<code>out = nonlinear_examples();</code>.</p>
+<p>钢包求解使用 <span
+class="math inline">\(a=\mathrm{e}^{u},b=-\mathrm{e}^{v}\)</span>
+的参数变换, 在严格正负约束的内部搜索. 本例最优估计位于内部,
+程序还分别比较 <span class="math inline">\(a=0\)</span> 和 <span
+class="math inline">\(b=0\)</span> 的边界目标值.
+参数变换本身不能表示边界, 也不能代替一般约束问题的全局最优检查.</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">out</span> = <span class="title">nonlinear_examples</span><span class="params">()</span></span></span><br><span class="line"><span class="comment">% 三组完整教学数据. MATLAB 基础函数实现; 不依赖统计工具箱.</span></span><br><span class="line">x = (<span class="number">2</span>:<span class="number">16</span>).&#x27;;</span><br><span class="line">y = [<span class="number">6.42</span> <span class="number">8.20</span> <span class="number">9.58</span> <span class="number">9.50</span> <span class="number">9.70</span> <span class="number">10.00</span> <span class="number">9.93</span> <span class="number">9.99</span> <span class="number">10.49</span> <span class="number">10.59</span> <span class="number">10.60</span> <span class="number">10.80</span> <span class="number">10.60</span> <span class="number">10.90</span> <span class="number">10.76</span>].&#x27;;</span><br><span class="line">B = [<span class="built_in">ones</span>(<span class="built_in">length</span>(x),<span class="number">1</span>), <span class="number">1.</span>/x] \ <span class="built_in">log</span>(y);</span><br><span class="line">a_log = <span class="built_in">exp</span>(B(<span class="number">1</span>)); b_log = B(<span class="number">2</span>);</span><br><span class="line"><span class="comment">% 参数变换用于内部解: a=exp(u)&gt;0, b=-exp(v)&lt;0.</span></span><br><span class="line">objective = @(uv) sum((y-<span class="built_in">exp</span>(uv(<span class="number">1</span>))*<span class="built_in">exp</span>(-<span class="built_in">exp</span>(uv(<span class="number">2</span>))./x)).^<span class="number">2</span>);</span><br><span class="line">options = optimset(<span class="string">&#x27;TolX&#x27;</span>,<span class="number">1e-10</span>,<span class="string">&#x27;TolFun&#x27;</span>,<span class="number">1e-12</span>,<span class="string">&#x27;MaxIter&#x27;</span>,<span class="number">10000</span>,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;off&#x27;</span>);</span><br><span class="line">[uv,~,exitflag] = fminsearch(objective,<span class="built_in">log</span>([a_log,-b_log]),options);</span><br><span class="line"><span class="keyword">if</span> exitflag &lt;= <span class="number">0</span>, error(<span class="string">&#x27;Nonlinear fit failed to converge.&#x27;</span>); <span class="keyword">end</span></span><br><span class="line"><span class="built_in">beta</span> = [<span class="built_in">exp</span>(uv(<span class="number">1</span>)), -<span class="built_in">exp</span>(uv(<span class="number">2</span>))].&#x27;;</span><br><span class="line">yhat = <span class="built_in">beta</span>(<span class="number">1</span>)*<span class="built_in">exp</span>(<span class="built_in">beta</span>(<span class="number">2</span>)./x); SSE = sum((y-yhat).^<span class="number">2</span>);</span><br><span class="line"><span class="comment">% 原箱式约束允许 a=0 或 b=0, 单独比较两类边界.</span></span><br><span class="line">assert(SSE &lt; sum(y.^<span class="number">2</span>) &amp;&amp; SSE &lt; sum((y-<span class="built_in">mean</span>(y)).^<span class="number">2</span>));</span><br><span class="line">J = [<span class="built_in">exp</span>(<span class="built_in">beta</span>(<span class="number">2</span>)./x), yhat./x];</span><br><span class="line">[~,R] = qr(J,<span class="number">0</span>); A = R \ <span class="built_in">eye</span>(<span class="number">2</span>); s2 = SSE/(<span class="built_in">length</span>(y)<span class="number">-2</span>); covariance = s2*(A*A&#x27;);</span><br><span class="line">y0 = <span class="built_in">beta</span>(<span class="number">1</span>)*<span class="built_in">exp</span>(<span class="built_in">beta</span>(<span class="number">2</span>)/<span class="number">10</span>); gradient = [<span class="built_in">exp</span>(<span class="built_in">beta</span>(<span class="number">2</span>)/<span class="number">10</span>), y0/<span class="number">10</span>].&#x27;;</span><br><span class="line">q = tcritical(<span class="built_in">length</span>(y)<span class="number">-2</span>,<span class="number">.05</span>);</span><br><span class="line">mean_half = q*<span class="built_in">sqrt</span>(gradient&#x27;*covariance*gradient);</span><br><span class="line">obs_half = q*<span class="built_in">sqrt</span>(gradient&#x27;*covariance*gradient+s2);</span><br><span class="line">out.ladle = struct(<span class="string">&#x27;log_beta&#x27;</span>,[a_log,b_log].&#x27;,<span class="string">&#x27;beta&#x27;</span>,<span class="built_in">beta</span>,<span class="string">&#x27;SSE&#x27;</span>,SSE, ...</span><br><span class="line">    <span class="string">&#x27;mean&#x27;</span>,y0,<span class="string">&#x27;mean_CI&#x27;</span>,y0+[<span class="number">-1</span> <span class="number">1</span>]*mean_half,<span class="string">&#x27;prediction_PI&#x27;</span>,y0+[<span class="number">-1</span> <span class="number">1</span>]*obs_half);</span><br><span class="line"></span><br><span class="line">t = ((<span class="number">1</span>:<span class="number">14</span>)/<span class="number">30</span>).&#x27;;</span><br><span class="line">distance = [<span class="number">11.86</span> <span class="number">15.67</span> <span class="number">20.60</span> <span class="number">26.69</span> <span class="number">33.71</span> <span class="number">41.93</span> <span class="number">51.13</span> <span class="number">61.49</span> <span class="number">72.90</span> <span class="number">85.44</span> <span class="number">99.08</span> <span class="number">113.77</span> <span class="number">129.54</span> <span class="number">146.48</span>].&#x27;;</span><br><span class="line">out.falling = linear_result([<span class="built_in">ones</span>(<span class="built_in">length</span>(t),<span class="number">1</span>),t,t.^<span class="number">2</span>],distance,[<span class="number">1</span>,<span class="number">.25</span>,<span class="number">.25</span>^<span class="number">2</span>]);</span><br><span class="line"></span><br><span class="line">income = [<span class="number">1000</span> <span class="number">600</span> <span class="number">1200</span> <span class="number">500</span> <span class="number">300</span> <span class="number">400</span> <span class="number">1300</span> <span class="number">1100</span> <span class="number">1300</span> <span class="number">300</span>].&#x27;;</span><br><span class="line">price = [<span class="number">5</span> <span class="number">7</span> <span class="number">6</span> <span class="number">6</span> <span class="number">8</span> <span class="number">7</span> <span class="number">5</span> <span class="number">4</span> <span class="number">3</span> <span class="number">9</span>].&#x27;;</span><br><span class="line">demand = [<span class="number">100</span> <span class="number">75</span> <span class="number">80</span> <span class="number">70</span> <span class="number">50</span> <span class="number">65</span> <span class="number">90</span> <span class="number">100</span> <span class="number">110</span> <span class="number">60</span>].&#x27;;</span><br><span class="line">X = [<span class="built_in">ones</span>(<span class="built_in">length</span>(income),<span class="number">1</span>),income,price,income.^<span class="number">2</span>,price.^<span class="number">2</span>];</span><br><span class="line">out.demand = linear_result(X,demand,[<span class="number">1</span>,<span class="number">1000</span>,<span class="number">6</span>,<span class="number">1000</span>^<span class="number">2</span>,<span class="number">6</span>^<span class="number">2</span>]);</span><br><span class="line"><span class="built_in">disp</span>(out.ladle); <span class="built_in">disp</span>(out.falling); <span class="built_in">disp</span>(out.demand);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">model</span> = <span class="title">linear_result</span><span class="params">(X,y,z)</span></span></span><br><span class="line">[n,p] = <span class="built_in">size</span>(X);</span><br><span class="line"><span class="keyword">if</span> n&lt;=p || rank(X)&lt;p || any(~<span class="built_in">isfinite</span>(X(:))) || any(~<span class="built_in">isfinite</span>(y))</span><br><span class="line">    error(<span class="string">&#x27;Need finite data, full column rank and n&gt;p.&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">[Q,R] = qr(X,<span class="number">0</span>); <span class="built_in">beta</span> = R \ (Q&#x27;*y); residual = y-X*<span class="built_in">beta</span>;</span><br><span class="line">SSE = sum(residual.^<span class="number">2</span>); df=n-p; s2=SSE/df;</span><br><span class="line">A = R \ <span class="built_in">eye</span>(p); C = A*A&#x27;; h = z*C*z&#x27;; prediction=z*<span class="built_in">beta</span>;</span><br><span class="line">q=tcritical(df,<span class="number">.05</span>); mean_half=q*<span class="built_in">sqrt</span>(s2*h); obs_half=q*<span class="built_in">sqrt</span>(s2*(<span class="number">1</span>+h));</span><br><span class="line"><span class="comment">% F_&#123;.95;p,df&#125; 通过正则化不完全 Beta 函数求分位数.</span></span><br><span class="line">hi=<span class="number">1</span>;</span><br><span class="line"><span class="keyword">while</span> <span class="built_in">betainc</span>(p*hi/(p*hi+df),p/<span class="number">2</span>,df/<span class="number">2</span>)&lt;<span class="number">.95</span>, hi=<span class="number">2</span>*hi; <span class="keyword">end</span></span><br><span class="line">Fcrit=fzero(@(v) <span class="built_in">betainc</span>(p*v/(p*v+df),p/<span class="number">2</span>,df/<span class="number">2</span>)<span class="number">-.95</span>,[<span class="number">0</span> hi]);</span><br><span class="line">sim_half=<span class="built_in">sqrt</span>(p*Fcrit)*<span class="built_in">sqrt</span>(s2*h);</span><br><span class="line">model=struct(<span class="string">&#x27;beta&#x27;</span>,<span class="built_in">beta</span>,<span class="string">&#x27;SSE&#x27;</span>,SSE,<span class="string">&#x27;s&#x27;</span>,<span class="built_in">sqrt</span>(s2),<span class="string">&#x27;mean&#x27;</span>,prediction, ...</span><br><span class="line">    <span class="string">&#x27;mean_CI&#x27;</span>,prediction+[<span class="number">-1</span> <span class="number">1</span>]*mean_half, ...</span><br><span class="line">    <span class="string">&#x27;prediction_PI&#x27;</span>,prediction+[<span class="number">-1</span> <span class="number">1</span>]*obs_half, ...</span><br><span class="line">    <span class="string">&#x27;simultaneous_mean_half&#x27;</span>,sim_half);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">q</span> = <span class="title">tcritical</span><span class="params">(df,alpha)</span></span></span><br><span class="line">hi=<span class="number">1</span>;</span><br><span class="line"><span class="keyword">while</span> <span class="built_in">betainc</span>(df/(df+hi^<span class="number">2</span>),df/<span class="number">2</span>,<span class="number">.5</span>)&gt;alpha, hi=<span class="number">2</span>*hi; <span class="keyword">end</span></span><br><span class="line">q=fzero(@(v) <span class="built_in">betainc</span>(df/(df+v^<span class="number">2</span>),df/<span class="number">2</span>,<span class="number">.5</span>)-alpha,[<span class="number">0</span> hi]);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p><code>out.ladle</code>, <code>out.falling</code>,
+<code>out.demand</code> 分别保存三个例题的结果.
+统计区间采用与前文相同的公式;
+非线性例题的协方差与区间仍依赖局部线性近似.</p>
+<h2 id="七-模型评价与常见误读">七, 模型评价与常见误读</h2>
+<h3 id="评价时应检查什么">7.1 评价时应检查什么</h3>
+<p>拟合后应查看残差与自变量, 拟合值之间的关系. 残差如果存在明显弯曲,
+可能说明函数形式不合适; 如果波动随着响应量级变化, 应检查误差方差假设;
+如果观测按时间或使用次序排列, 还应考虑相关性.</p>
+<p>即使计算收敛, 也要检查参数是否贴近边界,
+雅可比是否满列秩及协方差是否病态. 数据按使用次序或时间排列时,
+误差独立不能仅凭拟合曲线推定.</p>
+<p>训练 SSE 或 RMSE 表示对当前数据的拟合误差.
+残差标准误差使用参数数量调整分母; 它与训练 RMSE 不同,
+也不直接代表未来预测误差. 模型需要预测新数据时,
+应使用合适的留出或交叉验证; 小样本下尤其要关注结论的稳定性.</p>
+<p>解释系数时, 应同时考虑一次项, 平方项, 交互项和单位.
+拟合曲线是根据数据和模型条件建立的关系, 不能自动变成因果结论.
+对于具有明显物理约束的过程, 还要检查模型是否保持非负,
+单调或容量限制等必要条件.</p>
+<h3 id="三条路线的优点与局限">7.2 三条路线的优点与局限</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">路线</th>
+<th style="text-align: center;">优点</th>
+<th style="text-align: center;">局限</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">线性化</td>
+<td style="text-align: center;">计算简便, 便于给出初值与理解形状</td>
+<td style="text-align: center;">变换有定义域要求,
+会改变响应误差结构与拟合目标</td>
+</tr>
+<tr>
+<td style="text-align: center;">多项式</td>
+<td style="text-align: center;">特征构造直接, 对参数线性,
+容易做区间计算</td>
+<td style="text-align: center;">高次项易过拟合,
+量纲悬殊可能影响数值稳定, 外推风险大</td>
+</tr>
+<tr>
+<td style="text-align: center;">直接非线性最小二乘</td>
+<td
+style="text-align: center;">可把模型形式与参数约束明确写入原尺度目标</td>
+<td style="text-align: center;">依赖初值与求解器, 可能局部收敛,
+区间通常依赖近似</td>
+</tr>
+</tbody>
+</table>
+<p>这些方法之间没有无条件的优劣次序. 合适的模型应与研究目的, 实际背景,
+误差结构和数据支持范围相匹配.</p>
+<h3 id="阅读与使用结果的核查表">7.3 阅读与使用结果的核查表</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">常见误读</th>
+<th style="text-align: center;">正确理解</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">图像弯曲, 所以不能用线性回归</td>
+<td style="text-align: center;">多项式对参数线性, 可用扩展特征求解</td>
+</tr>
+<tr>
+<td style="text-align: center;">Logistic 可以一次线性回归求全部参数</td>
+<td style="text-align: center;">该线性化要求先知道上限 <span
+class="math inline">\(k\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">变换前后拟合参数应完全相同</td>
+<td style="text-align: center;">响应变换通常改变残差目标与误差结构</td>
+</tr>
+<tr>
+<td style="text-align: center;">原尺度 SSE 更小, 所以所有预测都更好</td>
+<td style="text-align: center;">还要核查误差条件和新数据表现</td>
+</tr>
+<tr>
+<td style="text-align: center;">平方项系数很小, 可以只留四位小数</td>
+<td style="text-align: center;">大的平方特征会放大舍入误差</td>
+</tr>
+<tr>
+<td style="text-align: center;">收入一次项为正,
+需求就一定随收入递增</td>
+<td style="text-align: center;">二次模型的变化率取决于当前位置</td>
+</tr>
+<tr>
+<td style="text-align: center;">图中 <span
+class="math inline">\(\pm\Delta\)</span> 都是一个新观测的预测区间</td>
+<td style="text-align: center;">必须区分均值, 个体, 逐点和同时区间</td>
+</tr>
+<tr>
+<td
+style="text-align: center;">有上限的曲线能保证长期过程到达该上限</td>
+<td style="text-align: center;">上限可能只是经验拟合参数,
+需要数据与机制支持</td>
+</tr>
+<tr>
+<td style="text-align: center;">神经网络结构图说明它已经拟合成功</td>
+<td style="text-align: center;">结构示意不等于训练结果,
+也不等于验证结果</td>
+</tr>
+</tbody>
+</table>
+<h2 id="八-练习与思考">八, 练习与思考</h2>
+<ol type="1">
+<li>模型 <span class="math inline">\(y=a+b\ln x\)</span> 与 <span
+class="math inline">\(y=a\mathrm{e}^{bx}\)</span> 中,
+哪一个对待估参数线性? 各自需要怎样的输入特征?</li>
+<li>已知 Logistic 上限 <span class="math inline">\(k=10\)</span>, 观测为
+<span class="math inline">\(x=4,y=5\)</span>, 变换后的响应值是多少? 如果
+<span class="math inline">\(k\)</span> 未知,
+为什么不能直接使用一次普通线性回归估计所有参数?</li>
+<li>钢包第 1 条记录缺失, 如果把它填成零再取对数, 会出现什么问题?
+为什么应保留缺失状态?</li>
+<li>需求例题中, 为什么原尺度数值很小的平方项系数仍不能过度舍入?
+为什么收入一次项为正不代表需求始终随收入增加?</li>
+<li>逐点均值区间, 新观测预测区间与同时均值置信带分别针对什么对象?
+同时均值置信带在某点比新观测区间更宽, 是否意味着它们回答同一个问题?</li>
+</ol>
+<h3 id="参考解答">8.1 参考解答</h3>
+<ol type="1">
+<li><span class="math inline">\(a+b\ln x\)</span> 对参数线性, 特征行为
+<span class="math inline">\((1,\ln x)\)</span>. <span
+class="math inline">\(a\mathrm{e}^{bx}\)</span> 对参数非线性;
+若观测为正, 可选择对数尺度线性拟合, 也可在原尺度直接求解,
+但两者误差模型不同.</li>
+<li>变换后为 <span class="math inline">\(\ln[(10-5)/5]=0\)</span>.
+上限未知时变换后的响应仍依赖未知 <span class="math inline">\(k\)</span>,
+不能预先得到一列确定的响应数据.</li>
+<li><span class="math inline">\(\ln0\)</span> 不是有限实数;
+零也不代表真实测量结果. 缺失值填零会改变数据含义与拟合对象.
+应核查缺失原因, 明确本例使用的有效样本,
+不声称有效观测代表了全部过程.</li>
+<li>在收入数值为 1000 时, 平方项特征为 <span
+class="math inline">\(10^6\)</span>, 系数微小误差会被放大.
+收入方向的变化率为 <span
+class="math inline">\(\hat\beta_1+2\hat\beta_{11}x_1\)</span>,
+其符号随位置改变.</li>
+<li>均值区间针对一个指定位置的条件均值, 新观测区间额外包含观测波动,
+同时置信带覆盖一组位置的均值函数. 它们的覆盖对象不同,
+不能用宽度互相替代.</li>
+</ol>
+<h2 id="九-参考资料">九, 参考资料</h2>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html">SciPy:
+curve_fit 官方文档</a>: 非线性最小二乘, 参数约束,
+初值和近似协方差矩阵.</li>
+<li><a
+target="_blank" rel="noopener" href="https://numpy.org/doc/stable/reference/generated/numpy.polyfit.html">NumPy:
+polyfit</a> 与 <a
+target="_blank" rel="noopener" href="https://numpy.org/doc/stable/reference/generated/numpy.linalg.lstsq.html">lstsq</a>:
+多项式拟合与线性最小二乘.</li>
+<li><a
+target="_blank" rel="noopener" href="https://www.statsmodels.org/stable/generated/statsmodels.regression.linear_model.OLS.html">statsmodels:
+OLS 官方文档</a>: 扩展特征线性回归与拟合结果.</li>
+<li><a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/stats/responsesurfacetool.html">MathWorks:
+响应曲面工具</a>: 交互查看模型截面与区间.</li>
+<li><a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/stats/polyconf.html">MathWorks:
+polyconf</a>, <a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/stats/nlinfit.html">nlinfit</a>, <a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/stats/nlpredci.html">nlpredci</a>:
+拟合与不同预测对象的区间设置.</li>
+</ul>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

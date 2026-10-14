@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="非线性规划：从模型建立到结果判断  学习目标：识别决策变量中的非线性关系，正确编写目标与约束，使用 Python 或 MATLAB 求解，并区分可行方案、驻点、局部最优和全局最优。 阅读路线：第一至四节介绍原理与二次函数例题；第五节从固定料场运输过渡到选址；第六节利用本例的特殊结构核验全局结果，属于选读内容。  一、非线性规划从哪里来 1.1 变量进入距离、比例与曲线关系 在线性">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/wait/NonlinearProgramming1.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="非线性规划：从模型建立到结果判断  学习目标：识别决策变量中的非线性关系，正确编写目标与约束，使用 Python 或 MATLAB 求解，并区分可行方案、驻点、局部最优和全局最优。 阅读路线：第一至四节介绍原理与二次函数例题；第五节从固定料场运输过渡到选址；第六节利用本例的特殊结构核验全局结果，属于选读内容。  一、非线性规划从哪里来 1.1 变量进入距离、比例与曲线关系 在线性">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/NonlinearProgramming/NLP-1.png">
+<meta property="og:image" content="http://example.com/images/NonlinearProgramming/NLP-2.png">
+<meta property="og:image" content="http://example.com/images/NonlinearProgramming/NLP-3.png">
+<meta property="article:published_time" content="2026-10-14T00:51:27.657Z">
+<meta property="article:modified_time" content="2026-10-14T00:51:27.657Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/NonlinearProgramming/NLP-1.png">
+
+
+<link rel="canonical" href="http://example.com/wait/NonlinearProgramming1">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/wait/NonlinearProgramming1.html","path":"wait/NonlinearProgramming1.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E4%BB%8E%E6%A8%A1%E5%9E%8B%E5%BB%BA%E7%AB%8B%E5%88%B0%E7%BB%93%E6%9E%9C%E5%88%A4%E6%96%AD"><span class="nav-number">1.</span> <span class="nav-text">非线性规划：从模型建立到结果判断</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E4%BB%8E%E5%93%AA%E9%87%8C%E6%9D%A5"><span class="nav-number">1.1.</span> <span class="nav-text">一、非线性规划从哪里来</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E8%BF%9B%E5%85%A5%E8%B7%9D%E7%A6%BB%E6%AF%94%E4%BE%8B%E4%B8%8E%E6%9B%B2%E7%BA%BF%E5%85%B3%E7%B3%BB"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1
+变量进入距离、比例与曲线关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E4%B8%8E%E5%BB%BA%E6%A8%A1%E4%B8%89%E8%A6%81%E7%B4%A0"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 定义与建模三要素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92%E7%9A%84%E8%81%94%E7%B3%BB%E5%92%8C%E5%8C%BA%E5%88%AB"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 与线性规划的联系和区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%B1%80%E9%83%A8%E6%9C%80%E4%BC%98%E5%87%B8%E6%80%A7%E4%B8%8E%E4%B8%80%E9%98%B6%E6%9D%A1%E4%BB%B6"><span class="nav-number">1.2.</span> <span class="nav-text">二、局部最优、凸性与一阶条件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E8%A1%8C%E8%A7%A3%E9%A9%BB%E7%82%B9%E4%B8%8E%E6%9C%80%E4%BC%98%E8%A7%A3"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 可行解、驻点与最优解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%80%BC%E4%B8%BA%E4%BD%95%E9%87%8D%E8%A6%81"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 初值为何重要</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%8E%E6%A0%B7%E5%88%A4%E6%96%AD%E5%87%B8%E7%BB%93%E6%9E%84"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 怎样判断凸结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#kkt-%E6%9D%A1%E4%BB%B6%E9%80%89%E8%AF%BB"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 KKT 条件：选读</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E7%BB%9F%E4%B8%80%E6%A8%A1%E5%9E%8B%E4%B8%8E%E6%B1%82%E8%A7%A3%E5%99%A8%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.3.</span> <span class="nav-text">三、统一模型与求解器接口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%9F%E4%B8%80%E6%95%B0%E5%AD%A6%E5%BD%A2%E5%BC%8F"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 统一数学形式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlabfmincon"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 MATLAB：fmincon</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pythonminimize"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 Python：minimize</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%8E%E6%A0%B7%E9%80%89%E6%8B%A9%E6%96%B9%E6%B3%95"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.4 怎样选择方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%94%E5%9B%9E%E5%80%BC%E4%B8%8E%E5%AE%B9%E5%B7%AE"><span class="nav-number">1.3.5.</span> <span class="nav-text">3.5 返回值与容差</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E4%BE%8B%E9%A2%98%E4%B8%80%E7%BB%9F%E4%B8%80%E6%9C%80%E5%A4%A7%E5%8C%96%E4%B8%8E%E6%9C%80%E5%B0%8F%E5%8C%96%E6%96%B9%E5%90%91"><span class="nav-number">1.4.</span> <span class="nav-text">四、例题一：统一最大化与最小化方向</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E4%B8%80%E4%B8%AA%E5%87%BD%E6%95%B0%E4%B8%A4%E7%A7%8D%E4%BC%98%E5%8C%96%E6%96%B9%E5%90%91"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 同一个函数，两种优化方向</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E8%A1%8C%E5%9F%9F"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 可行域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E5%85%A5%E9%97%A8%E4%BB%A3%E7%A0%81%E6%8A%8A%E4%B8%A4%E4%B8%AA%E6%96%B9%E5%90%91%E5%88%86%E5%BC%80%E6%B1%82"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 Python
+入门代码：把两个方向分开求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%A4%A7%E5%80%BC%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF--1"><span class="nav-number">1.4.4.</span> <span class="nav-text">4.4 最大值为什么是 \(-1\)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%B0%8F%E5%80%BC%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF--13"><span class="nav-number">1.4.5.</span> <span class="nav-text">4.5 最小值为什么是 \(-13\)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E5%88%9D%E5%80%BC%E4%B8%8E%E9%9A%8F%E6%9C%BA%E7%B2%97%E6%90%9Cpython-%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="nav-number">1.4.6.</span> <span class="nav-text">4.6 多初值与随机粗搜：Python
+完整代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab%E5%87%BD%E6%95%B0%E6%96%87%E4%BB%B6%E4%B8%8E%E7%AE%97%E6%B3%95%E5%AF%B9%E7%85%A7"><span class="nav-number">1.4.7.</span> <span class="nav-text">4.7 MATLAB：函数文件与算法对照</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E4%BE%8B%E9%A2%98%E4%BA%8C%E5%85%AC%E5%85%B1%E5%B7%A5%E7%A8%8B%E5%BB%BA%E6%9D%90%E4%BE%9B%E5%BA%94%E4%B8%8E%E6%96%99%E5%9C%BA%E9%80%89%E5%9D%80"><span class="nav-number">1.5.</span> <span class="nav-text">五、例题二：公共工程建材供应与料场选址</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E4%B8%8E%E5%BB%BA%E6%A8%A1%E5%81%87%E8%AE%BE"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 数据与建模假设</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E7%BA%A6%E6%9D%9F%E4%B8%8E%E7%9B%AE%E6%A0%87"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 变量、约束与目标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BA%E5%AE%9A%E4%BD%8D%E7%BD%AE%E4%B8%BA%E4%BD%95%E6%98%AF%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 固定位置为何是线性规划</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python%E5%9B%BA%E5%AE%9A%E6%96%99%E5%9C%BA%E4%BE%9B%E5%BA%94%E8%AE%A1%E5%88%92"><span class="nav-number">1.5.4.</span> <span class="nav-text">5.4 Python：固定料场供应计划</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E9%97%AE%E4%BD%8D%E7%BD%AE%E4%B8%8E%E8%BF%90%E8%BE%93%E9%87%8F%E5%85%B1%E5%90%8C%E5%86%B3%E5%AE%9A"><span class="nav-number">1.5.5.</span> <span class="nav-text">5.5
+第二问：位置与运输量共同决定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%8F%AF%E5%BE%AE%E8%B7%9D%E7%A6%BB%E4%B8%8E%E5%85%89%E6%BB%91%E8%BF%91%E4%BC%BC"><span class="nav-number">1.5.6.</span> <span class="nav-text">5.6 不可微距离与光滑近似</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E9%9A%8F%E6%9C%BA%E7%94%9F%E6%88%90%E7%9C%9F%E6%AD%A3%E5%8F%AF%E8%A1%8C%E7%9A%84%E5%88%9D%E5%80%BC"><span class="nav-number">1.5.7.</span> <span class="nav-text">5.7 如何随机生成真正可行的初值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81%E9%9A%8F%E6%9C%BA%E4%BD%8D%E7%BD%AE%E7%B2%BE%E7%A1%AE%E8%BF%90%E8%BE%93%E5%A4%9A%E5%88%9D%E5%80%BC%E6%94%B9%E8%BF%9B"><span class="nav-number">1.5.8.</span> <span class="nav-text">5.8 Python
+完整代码：随机位置、精确运输、多初值改进</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab%E5%9B%BA%E5%AE%9A%E8%BF%90%E8%BE%93%E4%B8%8E%E9%80%89%E5%9D%80%E7%9A%84%E5%AE%8C%E6%95%B4%E4%B8%BB%E8%84%9A%E6%9C%AC"><span class="nav-number">1.5.9.</span> <span class="nav-text">5.9
+MATLAB：固定运输与选址的完整主脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab%E5%B8%A6%E8%A7%A3%E6%9E%90%E6%A2%AF%E5%BA%A6%E7%9A%84%E9%80%89%E5%9D%80%E7%9B%AE%E6%A0%87%E5%87%BD%E6%95%B0"><span class="nav-number">1.5.10.</span> <span class="nav-text">5.10
+MATLAB：带解析梯度的选址目标函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E9%80%89%E8%AF%BB%E6%9C%AC%E4%BE%8B%E5%A6%82%E4%BD%95%E8%BF%9B%E4%B8%80%E6%AD%A5%E6%A0%B8%E9%AA%8C%E5%85%A8%E5%B1%80%E7%BB%93%E6%9E%9C"><span class="nav-number">1.6.</span> <span class="nav-text">六、选读：本例如何进一步核验全局结果</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%A4%9A%E5%88%9D%E5%80%BC%E4%B9%8B%E5%A4%96%E8%BF%98%E9%9C%80%E8%A6%81%E8%AF%81%E6%8D%AE"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 为什么多初值之外还需要证据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A-12-%E4%B8%AA%E8%BF%90%E8%BE%93%E9%87%8F%E9%99%8D%E4%B8%BA-6-%E4%B8%AA"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 把 12 个运输量降为 6 个</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BA%E5%AE%9A%E8%BF%90%E8%BE%93%E9%87%8F%E5%90%8E%E4%BD%8D%E7%BD%AE%E5%AD%90%E9%97%AE%E9%A2%98%E6%98%AF%E5%87%B8%E7%9A%84"><span class="nav-number">1.6.3.</span> <span class="nav-text">6.3
+固定运输量后，位置子问题是凸的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8A%E4%B8%8B%E7%95%8C%E7%BB%99%E5%87%BA%E7%9A%84%E6%95%B0%E5%80%BC%E7%BB%93%E8%AE%BA"><span class="nav-number">1.6.4.</span> <span class="nav-text">6.4 上下界给出的数值结论</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E7%BB%93%E6%9E%9C%E6%A3%80%E6%9F%A5%E4%B8%8E%E6%96%B9%E6%B3%95%E8%AF%84%E4%BB%B7"><span class="nav-number">1.7.</span> <span class="nav-text">七、结果检查与方法评价</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%B1%82%E8%A7%A3%E7%9A%84%E5%AE%8C%E6%95%B4%E6%B5%81%E7%A8%8B"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 建模与求解的完整流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%9C%E5%BA%94%E6%80%8E%E6%A0%B7%E5%91%BD%E5%90%8D"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 结果应怎样命名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AF%E5%B7%AE%E4%B8%8E%E5%B0%BA%E5%BA%A6"><span class="nav-number">1.7.3.</span> <span class="nav-text">7.3 误差与尺度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E7%82%B9%E4%B8%8E%E5%B1%80%E9%99%90"><span class="nav-number">1.7.4.</span> <span class="nav-text">7.4 优点与局限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="nav-number">1.7.5.</span> <span class="nav-text">7.5 常见问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E7%BB%83%E4%B9%A0%E4%B8%8E%E5%8F%82%E8%80%83%E7%AD%94%E6%A1%88"><span class="nav-number">1.8.</span> <span class="nav-text">八、练习与参考答案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 练习</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E7%AD%94%E6%A1%88"><span class="nav-number">1.8.2.</span> <span class="nav-text">8.2 参考答案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">1.9.</span> <span class="nav-text">参考文献</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1
+id="非线性规划从模型建立到结果判断">非线性规划：从模型建立到结果判断</h1>
+<blockquote>
+<p>学习目标：识别决策变量中的非线性关系，正确编写目标与约束，使用 Python
+或 MATLAB 求解，并区分可行方案、驻点、局部最优和全局最优。</p>
+<p>阅读路线：第一至四节介绍原理与二次函数例题；第五节从固定料场运输过渡到选址；第六节利用本例的特殊结构核验全局结果，属于选读内容。</p>
+</blockquote>
+<h2 id="一非线性规划从哪里来">一、非线性规划从哪里来</h2>
+<h3 id="变量进入距离比例与曲线关系">1.1
+变量进入距离、比例与曲线关系</h3>
+<p>在线性规划中，每增加一个单位的活动或产品，效益与资源消耗按固定比例变化。实际问题还可能包含平方、乘积、平方根、三角函数或其他非线性关系。</p>
+<p>例如，料场的位置已知时，到工点的距离是常数；位置需要决定时，距离变为：</p>
+<p><span class="math display">\[
+\sqrt{(u-a)^2+(v-b)^2},
+\]</span></p>
+<p>其中 <span class="math inline">\((u,v)\)</span>
+是待确定的料场坐标，<span class="math inline">\((a,b)\)</span>
+是已知工点坐标。距离于是成为关于决策变量的非线性函数。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">场景</th>
+<th style="text-align: center;">决策变量</th>
+<th style="text-align: center;">可能出现的非线性关系</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">公共设施选址</td>
+<td style="text-align: center;">设施位置与分配量</td>
+<td style="text-align: center;">距离、分配量与距离的乘积</td>
+</tr>
+<tr>
+<td style="text-align: center;">工程设计</td>
+<td style="text-align: center;">尺寸、角度、控制参数</td>
+<td style="text-align: center;">平方项、三角函数、性能响应曲线</td>
+</tr>
+<tr>
+<td style="text-align: center;">资源效率优化</td>
+<td style="text-align: center;">资源投入量</td>
+<td style="text-align: center;">收益递减、比值、饱和关系</td>
+</tr>
+<tr>
+<td style="text-align: center;">运动与避障</td>
+<td style="text-align: center;">位置、姿态或轨迹参数</td>
+<td style="text-align: center;">距离、安全区域、角度关系</td>
+</tr>
+<tr>
+<td style="text-align: center;">参数拟合</td>
+<td style="text-align: center;">模型参数</td>
+<td style="text-align: center;">非线性模型的残差平方和</td>
+</tr>
+</tbody>
+</table>
+<p>非线性要相对于<strong>决策变量</strong>判断。公式中有平方根，并不自动说明问题是非线性规划；如果平方根里的坐标全部已知，算出的距离仍是一个常数系数。</p>
+<p>同理，“增长率”“收益率”等名称本身不决定模型类型，必须看它们与待求变量的具体函数关系。</p>
+<h3 id="定义与建模三要素">1.2 定义与建模三要素</h3>
+<p>非线性规划（Nonlinear Programming，简称
+NLP）研究的是：目标函数或约束函数中至少一个对决策变量非线性的最优化问题。</p>
+<p>建模仍然围绕三要素展开：<strong>决策变量、目标函数、约束条件</strong>。例如：</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\max\quad F(x_1,x_2)=x_1^2+x_2^2-x_1x_2-2x_1-5x_2,\\
+&amp;\text{s.t.}\quad\begin{cases}
+x_2-(x_1-1)^2\geqslant0,\\
+2x_1-3x_2+6\geqslant0.
+\end{cases}
+\end{aligned}
+\]</span></p>
+<p>目标中有二次项与变量乘积，第一条约束也是非线性的，因而这是
+NLP。第四节会完整求解它，并讨论为什么“求最大”与“求最小”不能混用。</p>
+<p>常见非线性表达式包括：</p>
+<p><span class="math display">\[
+x^2,\quad x_1x_2,\quad \mathrm{e}^{x},\quad
+\frac1x,\quad\sin x,\quad\log_2x.
+\]</span></p>
+<p>出现 <span class="math inline">\(1/x\)</span> 或 <span
+class="math inline">\(\log x\)</span>
+时，还必须明确函数定义域；出现距离函数时，还要考虑距离为 0
+处的可微性。</p>
+<h3 id="与线性规划的联系和区别">1.3 与线性规划的联系和区别</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">比较项目</th>
+<th style="text-align: center;">线性规划</th>
+<th style="text-align: center;">非线性规划</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">目标与约束</td>
+<td
+style="text-align: center;">目标线性，约束为线性等式、不等式及边界</td>
+<td style="text-align: center;">至少一项关系非线性</td>
+</tr>
+<tr>
+<td style="text-align: center;">最优位置</td>
+<td
+style="text-align: center;">对非空有界多面体，至少有一个顶点最优解；也可有整条边或更多点最优</td>
+<td style="text-align: center;">可在内部或边界取得最优值</td>
+</tr>
+<tr>
+<td style="text-align: center;">初始值</td>
+<td style="text-align: center;">一般使用 <code>linprog</code>
+时不需自行给初值</td>
+<td style="text-align: center;">局部求解器通常需要初值</td>
+</tr>
+<tr>
+<td style="text-align: center;">全局判断</td>
+<td style="text-align: center;">结构清晰，可由成熟 LP
+方法确认全局最优</td>
+<td
+style="text-align: center;">要结合凸性、下界、结构或全局方法判断</td>
+</tr>
+<tr>
+<td style="text-align: center;">数值结果</td>
+<td style="text-align: center;">浮点实现仍需检查容差</td>
+<td style="text-align: center;">同样需要检查容差，还需分析局部性</td>
+</tr>
+</tbody>
+</table>
+<p>线性规划也可能有内部最优点。例如，在 <span
+class="math inline">\(0\leqslant x\leqslant1\)</span> 上最小化常数
+0，每个可行点都是最优解，包括内部点。</p>
+<p>非线性也不等于非凸。有些非线性问题具有凸结构，可以确认全局最优；有些则存在多个局部最优，需要更加谨慎。</p>
+<h2 id="二局部最优凸性与一阶条件">二、局部最优、凸性与一阶条件</h2>
+<h3 id="可行解驻点与最优解">2.1 可行解、驻点与最优解</h3>
+<p>设可行域为 <span class="math inline">\(\mathcal
+F\)</span>，考虑最小化问题。</p>
+<ul>
+<li><strong>可行解</strong>：满足所有约束的点。</li>
+<li><strong>局部最优解</strong>：在该点附近的可行方案中，目标值不比它更小。</li>
+<li><strong>全局最优解</strong>：在整个可行域中，目标值不比它更小。</li>
+<li><strong>驻点</strong>：无约束可微情形下梯度为 0
+的点；约束情形还需考虑拉格朗日条件与可行方向。</li>
+</ul>
+<p>对于无约束最小化 <span class="math inline">\(f(x)=x^2\)</span>，<span
+class="math inline">\(x=0\)</span> 是内部的全局最优解。对于 <span
+class="math inline">\(f(x)=-x^2\)</span>，<span
+class="math inline">\(x=0\)</span> 同样满足导数为
+0，却是最大点。<strong>一阶变化为 0，并不能独立证明最小值。</strong></p>
+<p>局部数值算法可能返回一个满足其停止标准的点；它甚至可能仅是驻点，或者因步长过小而停下。因此，<code>success=True</code>
+或正的终止标志不能替代最优性论证。</p>
+<h3 id="初值为何重要">2.2 初值为何重要</h3>
+<p>局部算法从初始点出发，利用局部函数信息逐步更新。如果目标有多个“低谷”，不同初值可能进入不同区域，得到不同候选解。</p>
+<p>多初值计算、改变算法、先随机搜索再局部改进，都可以帮助找到更好的候选解。但这几种操作本身<strong>不构成全局最优保证</strong>。在非凸问题中，应报告“搜索到的最好可行值”，除非还有全局证据。</p>
+<p>对于确定性模型、固定初值、相同算法和环境，计算通常可复现。使用随机初值时，还应记录随机种子和生成方式；结果的差异可能来自初值、算法、数值精度或软件版本。</p>
+<h3 id="怎样判断凸结构">2.3 怎样判断凸结构</h3>
+<p>如果任意两个可行点之间的整条线段仍在可行域内，这个可行域就是凸的。对最小化问题，一个常用的充分结构是：</p>
+<ol type="1">
+<li>目标函数为凸函数。</li>
+<li>写成 <span class="math inline">\(c_i(x)\leqslant0\)</span>
+的不等式函数为凸函数。</li>
+<li>等式约束为仿射等式，并有适当的变量边界。</li>
+</ol>
+<p>在这种凸优化问题中，局部最优也是全局最优；若目标严格凸，最优解至多一个。最大化问题的对应条件是最大化凹函数，而不是最大化凸函数。</p>
+<p>梯度是各一阶偏导数组成的向量，用于描述函数在各坐标方向的局部变化。对定义在凸开集上的二阶连续可微函数，可以检查由二阶偏导数组成的
+Hessian
+矩阵：它处处半正定时，函数为凸函数；处处正定时，函数严格凸。初学者可先从“可行点连线仍可行”的几何图像理解凸集合，再结合二次函数学习凸性。</p>
+<h3 id="kkt-条件选读">2.4 KKT 条件：选读</h3>
+<p>卡鲁什—库恩—塔克条件（Karush–Kuhn–Tucker，简称
+KKT）把梯度、约束和乘子联系起来。对可微问题：</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\min_x\quad f(x),\\
+&amp;\text{s.t.}\quad\begin{cases}
+c_i(x)\leqslant0,&amp;i=1,\ldots,m,\\
+h_j(x)=0,&amp;j=1,\ldots,p.
+\end{cases}
+\end{aligned}
+\]</span></p>
+<p>定义拉格朗日函数：</p>
+<p><span class="math display">\[
+L(x,\lambda,\nu)=f(x)
++\sum\limits_i\lambda_ic_i(x)
++\sum\limits_j\nu_jh_j(x).
+\]</span></p>
+<p>KKT 条件包括：</p>
+<p><span class="math display">\[
+\begin{cases}
+\nabla_xL(x,\lambda,\nu)=0,\\
+c_i(x)\leqslant0,\qquad h_j(x)=0,\\
+\lambda_i\geqslant0,\\
+\lambda_ic_i(x)=0.
+\end{cases}
+\]</span></p>
+<p>最后一条称为互补松弛：若某个不等式在该点严格满足，即 <span
+class="math inline">\(c_i(x)&lt;0\)</span>，其对应乘子为
+0。在适当的约束资格条件下，局部最优点满足 KKT
+必要条件；在上述凸结构下，满足 KKT
+的点可据此证明全局最优。对一般非凸问题，KKT 条件通常只是必要条件。</p>
+<h2 id="三统一模型与求解器接口">三、统一模型与求解器接口</h2>
+<h3 id="统一数学形式">3.1 统一数学形式</h3>
+<p>本章主要使用最小化形式：</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\min_x\quad f(x),\\
+&amp;\text{s.t.}\quad\begin{cases}
+Ax\leqslant b,\\
+A_{\mathrm{eq}}x=b_{\mathrm{eq}},\\
+c(x)\leqslant0,\\
+h(x)=0,\\
+l\leqslant x\leqslant u.
+\end{cases}
+\end{aligned}
+\]</span></p>
+<p>最大化 <span class="math inline">\(F(x)\)</span> 时，将求解器目标设为
+<span class="math inline">\(f(x)=-F(x)\)</span>，最终用 <span
+class="math inline">\(F(x)=-f(x)\)</span>
+还原。每次比较结果时，都要确认是在比较求解器的最小值，还是原目标的最大值。</p>
+<p>变量不一定非负。位置坐标、偏差和抽象变量可取负值；质量和运输量则应非负。没有题意依据时，不能为了“方便”自行增加
+<span class="math inline">\(x\geqslant0\)</span>。</p>
+<h3 id="matlabfmincon">3.2 MATLAB：fmincon</h3>
+<p>MATLAB 示例需要 Optimization Toolbox。常用接口为：</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[x,fval,exitflag,output] = fmincon( ...</span><br><span class="line">    fun,x0,A,b,Aeq,beq,lb,ub,nonlcon,options);</span><br></pre></td></tr></table></figure>
+<p>其中 <code>fun</code> 返回一个标量最小化目标，<code>x0</code>
+为初值。线性不等式是 <code>A*x&lt;=b</code>；非线性约束函数返回
+<code>[c,ceq]</code>，分别要求
+<code>c&lt;=0</code>、<code>ceq=0</code>。没有某类约束时传入
+<code>[]</code>。</p>
+<p>目标函数可以写在独立 <code>.m</code>
+文件中，也可以使用匿名函数或适当的局部函数，<strong>不强制要求每个函数都有一个独立文件</strong>。使用独立文件时，主函数名与文件名应一致。</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">fmincon 算法</th>
+<th style="text-align: center;">本章使用或选择时的注意事项</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><code>interior-point</code></td>
+<td style="text-align: center;">内点法，可处理一般的光滑约束问题</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>sqp</code></td>
+<td
+style="text-align: center;">序列二次规划法，本章用它与内点法对照</td>
+</tr>
+<tr>
+<td
+style="text-align: center;"><code>trust-region-reflective</code></td>
+<td
+style="text-align: center;">必须提供目标梯度；仅接受特定的边界或线性等式结构，不适用于本章的一般非线性约束例题</td>
+</tr>
+</tbody>
+</table>
+<p>不同算法有各自的适用条件。<code>fmincon</code>
+主要针对光滑问题，目标或约束不可微时需要专门处理。</p>
+<h3 id="pythonminimize">3.3 Python：minimize</h3>
+<p>Python 示例使用 NumPy、SciPy；绘图另需 Matplotlib。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -m pip install numpy scipy matplotlib</span><br></pre></td></tr></table></figure>
+<p>常用接口如下，本章代码显式指定求解方法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">result = minimize(fun, x0, method=<span class="string">&quot;SLSQP&quot;</span>, jac=gradient,</span><br><span class="line">                  bounds=bounds, constraints=constraints,</span><br><span class="line">                  options=&#123;<span class="string">&quot;ftol&quot;</span>: <span class="number">1e-10</span>, <span class="string">&quot;maxiter&quot;</span>: <span class="number">1000</span>&#125;)</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">参数</th>
+<th style="text-align: center;">本章的使用方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><code>fun</code></td>
+<td style="text-align: center;">接收一维变量数组，返回标量目标</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>x0</code></td>
+<td style="text-align: center;">长度等于变量数的一维初始数组</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>args</code></td>
+<td
+style="text-align: center;">向目标函数传递额外固定参数；约束的参数需自行配置或使用闭包</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>method</code></td>
+<td style="text-align: center;">本章使用
+<code>SLSQP</code>，一般约束问题也可研究 <code>trust-constr</code></td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>jac</code></td>
+<td
+style="text-align: center;">目标梯度；简单示例可由求解器差分估计</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>hess,hessp</code></td>
+<td
+style="text-align: center;">某些算法使用的二阶信息，是否需要取决于方法</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>bounds</code></td>
+<td style="text-align: center;">各变量的下界、上界</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>constraints</code></td>
+<td
+style="text-align: center;">等式、不等式函数，或适用的方法所支持的约束对象</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>tol,options</code></td>
+<td
+style="text-align: center;">停止容差和方法专属选项，不表示统一的最终解误差</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>callback</code></td>
+<td style="text-align: center;">跟踪迭代的回调，具体签名依方法而定</td>
+</tr>
+</tbody>
+</table>
+<p>对于本章使用的 SLSQP 字典接口，符号方向为：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">字典设置</th>
+<th style="text-align: center;">函数应满足的关系</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td
+style="text-align: center;"><code>&#123;'type': 'ineq', 'fun': g&#125;</code></td>
+<td style="text-align: center;"><span
+class="math inline">\(g(x)\geqslant0\)</span></td>
+</tr>
+<tr>
+<td
+style="text-align: center;"><code>&#123;'type': 'eq', 'fun': h&#125;</code></td>
+<td style="text-align: center;"><span
+class="math inline">\(h(x)=0\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>因此，MATLAB 非线性不等式 <code>c(x)&lt;=0</code> 转到这种 Python
+接口时，需要使用 <code>g(x)=-c(x)&gt;=0</code>。这不是所有 Python
+约束对象的统一方向；例如 <code>LinearConstraint</code>
+可以直接设置上下界。</p>
+<h3 id="怎样选择方法">3.4 怎样选择方法</h3>
+<p>先识别问题结构，再选择算法。对本章的光滑约束问题，Python 使用
+SLSQP，MATLAB 使用 SQP，并在二次函数例题中与内点法对照。</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">问题结构</th>
+<th style="text-align: center;">可以优先了解的方法</th>
+<th style="text-align: center;">需要注意的条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">无约束、可微</td>
+<td style="text-align: center;">BFGS、共轭梯度法</td>
+<td style="text-align: center;">关注梯度精度与局部性</td>
+</tr>
+<tr>
+<td style="text-align: center;">只有变量边界、可微</td>
+<td style="text-align: center;">L-BFGS-B</td>
+<td style="text-align: center;">边界应符合变量含义</td>
+</tr>
+<tr>
+<td style="text-align: center;">光滑等式与不等式约束</td>
+<td style="text-align: center;">SLSQP、trust-constr</td>
+<td style="text-align: center;">核对约束方向与可行性</td>
+</tr>
+<tr>
+<td style="text-align: center;">不可微或存在离散决策</td>
+<td style="text-align: center;">专门的非光滑、离散优化方法</td>
+<td style="text-align: center;">先分析是否能利用等价模型或特殊结构</td>
+</tr>
+</tbody>
+</table>
+<p>SciPy 的 <code>minimize</code>
+未指定方法时，会根据约束与边界选择方法；显式指定 <code>method</code>
+可以使程序的求解意图更清楚。MATLAB 的 <code>fmincon</code>
+也提供多种算法，各有适用条件，不能仅根据一次运行的结果判断某种算法普遍更优。</p>
+<h3 id="返回值与容差">3.5 返回值与容差</h3>
+<p>Python 中先检查
+<code>result.success</code>、<code>result.message</code>，再读取
+<code>x</code>、<code>fun</code>；<code>status</code> 和
+<code>nit</code> 可帮助判断终止原因与迭代情况。梯度、Hessian
+近似、乘子及各种调用次数是否返回，取决于方法与版本，不能假设所有字段始终存在。</p>
+<p>MATLAB 中检查 <code>exitflag</code> 与
+<code>output.message</code>，并查看约束违反量和一阶信息。步长、目标变化、可行性与最优性容差对应不同停止条件；把容差设得很小，并不能自动获得同样位数的正确解。</p>
+<p>求解器通常接受非严格约束。<span
+class="math inline">\(g(x)&gt;0\)</span> 不应直接当成 <span
+class="math inline">\(g(x)\geqslant0\)</span>
+的同义表达；若业务要求严格留有余量，可设置明确的安全间隔，但要说明这会改变原问题。</p>
+<h2
+id="四例题一统一最大化与最小化方向">四、例题一：统一最大化与最小化方向</h2>
+<h3 id="同一个函数两种优化方向">4.1 同一个函数，两种优化方向</h3>
+<p>考虑以下最大化问题：</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\max\quad F(x_1,x_2)=x_1^2+x_2^2-x_1x_2-2x_1-5x_2,\\
+&amp;\text{s.t.}\quad\begin{cases}
+x_2-(x_1-1)^2\geqslant0,\\
+2x_1-3x_2+6\geqslant0.
+\end{cases}
+\end{aligned}
+\]</span></p>
+<p>同一可行域上，最小化 <span class="math inline">\(F\)</span> 与最大化
+<span class="math inline">\(F\)</span>
+是两个不同的问题。前者寻找最低处，后者寻找最高处。为了看清求解器中的目标方向，本节同时求解这两个问题，但始终用
+<span class="math inline">\(F\)</span> 表示原函数。</p>
+<p>图 1 展示可行域、函数等值线及主要候选点。</p>
+<p><img src="/images/NonlinearProgramming/NLP-1.png" alt="" style="width: 100%;"></p>
+<p>图 1　抛物线与直线之间的可行域。<span
+class="math inline">\((1,0)\)</span> 是全局最大点，<span
+class="math inline">\((3,4)\)</span>
+是全局最小点；左侧交点还构成一个局部最大点。</p>
+<h3 id="可行域">4.2 可行域</h3>
+<p>约束等价于：</p>
+<p><span class="math display">\[
+(x_1-1)^2\leqslant x_2\leqslant\frac{2x_1+6}{3}.
+\]</span></p>
+<p>下界不超过上界，要求：</p>
+<p><span class="math display">\[
+3(x_1-1)^2\leqslant2x_1+6
+\quad\Longleftrightarrow\quad
+3x_1^2-8x_1-3\leqslant0.
+\]</span></p>
+<p>因此：</p>
+<p><span class="math display">\[
+-\frac13\leqslant x_1\leqslant3,
+\qquad0\leqslant x_2\leqslant4.
+\]</span></p>
+<p>实际可行域是抛物线与直线之间的闭区域，而不是整个包围矩形。这里 <span
+class="math inline">\(x_1\)</span> 可以为负，不能自行增加 <span
+class="math inline">\(x_1\geqslant0\)</span>。</p>
+<p>转换为 MATLAB 约束时：</p>
+<p><span class="math display">\[
+A=\begin{pmatrix}-2&amp;3\end{pmatrix},\quad b=6,
+\qquad c(x)=(x_1-1)^2-x_2\leqslant0.
+\]</span></p>
+<p>Python 的 SLSQP 字典接口则使用：</p>
+<p><span class="math display">\[
+g_1(x)=x_2-(x_1-1)^2\geqslant0,
+\qquad g_2(x)=2x_1-3x_2+6\geqslant0.
+\]</span></p>
+<h3 id="python-入门代码把两个方向分开求">4.3 Python
+入门代码：把两个方向分开求</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> minimize</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">original_objective</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> x[<span class="number">0</span>]**<span class="number">2</span>+x[<span class="number">1</span>]**<span class="number">2</span>-x[<span class="number">0</span>]*x[<span class="number">1</span>]-<span class="number">2</span>*x[<span class="number">0</span>]-<span class="number">5</span>*x[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">inequalities</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> np.array([x[<span class="number">1</span>]-(x[<span class="number">0</span>]-<span class="number">1</span>)**<span class="number">2</span>, <span class="number">2</span>*x[<span class="number">0</span>]-<span class="number">3</span>*x[<span class="number">1</span>]+<span class="number">6</span>])</span><br><span class="line"></span><br><span class="line">constraints = [&#123;<span class="string">&quot;type&quot;</span>: <span class="string">&quot;ineq&quot;</span>, <span class="string">&quot;fun&quot;</span>: inequalities&#125;]</span><br><span class="line">x0 = np.array([<span class="number">1.0</span>, <span class="number">1.0</span>])   <span class="comment"># 可行初值</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> name, sign <span class="keyword">in</span> [(<span class="string">&quot;最大化 F&quot;</span>, -<span class="number">1.0</span>), (<span class="string">&quot;最小化 F&quot;</span>, <span class="number">1.0</span>)]:</span><br><span class="line">    result = minimize(</span><br><span class="line">        <span class="keyword">lambda</span> x: sign*original_objective(x), x0,</span><br><span class="line">        method=<span class="string">&quot;SLSQP&quot;</span>, constraints=constraints,</span><br><span class="line">        options=&#123;<span class="string">&quot;ftol&quot;</span>: <span class="number">1e-12</span>, <span class="string">&quot;maxiter&quot;</span>: <span class="number">1000</span>&#125;,</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> result.success:</span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(result.message)</span><br><span class="line">    <span class="keyword">if</span> np.<span class="built_in">min</span>(inequalities(result.x)) &lt; -<span class="number">1e-7</span>:</span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(<span class="string">&quot;约束检查失败&quot;</span>)</span><br><span class="line">    value = original_objective(result.x)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> np.isclose(value, result.fun/sign, atol=<span class="number">1e-7</span>):</span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(<span class="string">&quot;目标方向或目标值检查失败&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(name, <span class="string">&quot;候选解：&quot;</span>, np.<span class="built_in">round</span>(result.x, <span class="number">8</span>), <span class="string">&quot;原目标值：&quot;</span>, value)</span><br></pre></td></tr></table></figure>
+<p>运行结果为：最大化得到 <span
+class="math inline">\((1,0)\)</span>，<span
+class="math inline">\(F=-1\)</span>；最小化得到 <span
+class="math inline">\((3,4)\)</span>，<span
+class="math inline">\(F=-13\)</span>。求解器计算结果还需要下一节的数学分析确认。</p>
+<h3 id="最大值为什么是--1">4.4 最大值为什么是 <span
+class="math inline">\(-1\)</span></h3>
+<p>固定 <span class="math inline">\(x_1\)</span> 后，<span
+class="math inline">\(F\)</span> 关于 <span
+class="math inline">\(x_2\)</span>
+是凸二次函数，在允许的闭区间上最大值可在一个端点取得。因此只需比较上、下两条边界。</p>
+<p>上边界 <span class="math inline">\(x_2=(2x_1+6)/3\)</span> 上：</p>
+<p><span class="math display">\[
+F_{\mathrm{upper}}(x_1)=\frac79x_1^2-\frac{14}{3}x_1-6.
+\]</span></p>
+<p>这个函数在 <span class="math inline">\([-1/3,3]\)</span>
+上为凸函数，最大值在端点之一取得。</p>
+<p>下边界 <span class="math inline">\(x_2=(x_1-1)^2\)</span> 上：</p>
+<p><span class="math display">\[
+F_{\mathrm{lower}}(x_1)=x_1^4-5x_1^3+4x_1^2+3x_1-4,
+\]</span></p>
+<p><span class="math display">\[
+F_{\mathrm{lower}}&#39;(x_1)
+=4x_1^3-15x_1^2+8x_1+3
+=(x_1-1)(4x_1+1)(x_1-3).
+\]</span></p>
+<p>比较端点与导数为 0 的候选点：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">候选点 <span
+class="math inline">\((x_1,x_2)\)</span></th>
+<th style="text-align: center;">原目标 <span
+class="math inline">\(F\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\((-1/3,16/9)\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(-353/81\approx-4.358025\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\((-1/4,25/16)\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(-1131/256\approx-4.417969\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\((1,0)\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(-1\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\((3,4)\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(-13\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>最大值因此为：</p>
+<p><span class="math display">\[
+F_{\max}=-1,\qquad x^*=(1,0).
+\]</span></p>
+<p>若求解器最小化 <span
+class="math inline">\(-F\)</span>，它在这个点返回的目标值应为
+1。将该值取负，才得到原函数的最大值 <span
+class="math inline">\(-1\)</span>。</p>
+<h3 id="最小值为什么是--13">4.5 最小值为什么是 <span
+class="math inline">\(-13\)</span></h3>
+<p>令 <span class="math inline">\(u=x_1-3\)</span>、<span
+class="math inline">\(v=x_2-4\)</span>，直接整理可得：</p>
+<p><span class="math display">\[
+F(x_1,x_2)
+=-13+u^2+v^2-uv
+=-13+\frac12\bigl[u^2+v^2+(u-v)^2\bigr].
+\]</span></p>
+<p>后三项均非负，且只有 <span class="math inline">\(u=v=0\)</span>
+时同时为 0。<span class="math inline">\((3,4)\)</span>
+又满足两条约束，所以它是最小化问题唯一的全局最优解，最小值为 <span
+class="math inline">\(-13\)</span>。</p>
+<p>从凸性看，<span class="math inline">\(F\)</span> 的 Hessian 为：</p>
+<p><span class="math display">\[
+\nabla^2F=\begin{pmatrix}2&amp;-1\\-1&amp;2\end{pmatrix},
+\]</span></p>
+<p>特征值为 1、3，故 <span class="math inline">\(F\)</span>
+严格凸。可行域也是凸的，因此<strong>最小化 <span
+class="math inline">\(F\)</span> 是凸问题，而最大化 <span
+class="math inline">\(F\)</span>
+一般不具有同样的凸优化保证</strong>。</p>
+<h3 id="多初值与随机粗搜python-完整代码">4.6 多初值与随机粗搜：Python
+完整代码</h3>
+<p>下面使用解析梯度，多次从不同初值求最大化问题。随机粗搜在已经推导的包围矩形中筛选可行点，再作局部改进。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> minimize</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">F</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> x[<span class="number">0</span>]**<span class="number">2</span>+x[<span class="number">1</span>]**<span class="number">2</span>-x[<span class="number">0</span>]*x[<span class="number">1</span>]-<span class="number">2</span>*x[<span class="number">0</span>]-<span class="number">5</span>*x[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">grad_F</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> np.array([<span class="number">2</span>*x[<span class="number">0</span>]-x[<span class="number">1</span>]-<span class="number">2</span>, <span class="number">2</span>*x[<span class="number">1</span>]-x[<span class="number">0</span>]-<span class="number">5</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">g</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> np.array([x[<span class="number">1</span>]-(x[<span class="number">0</span>]-<span class="number">1</span>)**<span class="number">2</span>, <span class="number">2</span>*x[<span class="number">0</span>]-<span class="number">3</span>*x[<span class="number">1</span>]+<span class="number">6</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">jac_g</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> np.array([[-<span class="number">2</span>*(x[<span class="number">0</span>]-<span class="number">1</span>), <span class="number">1.0</span>], [<span class="number">2.0</span>, -<span class="number">3.0</span>]])</span><br><span class="line"></span><br><span class="line">constraints = [&#123;<span class="string">&quot;type&quot;</span>: <span class="string">&quot;ineq&quot;</span>, <span class="string">&quot;fun&quot;</span>: g, <span class="string">&quot;jac&quot;</span>: jac_g&#125;]</span><br><span class="line">starts = [np.array([<span class="number">1.0</span>, <span class="number">1.0</span>]), np.array([-<span class="number">0.3</span>, <span class="number">1.7</span>]),</span><br><span class="line">          np.array([<span class="number">3.0</span>, <span class="number">4.0</span>])]</span><br><span class="line">labels = [<span class="string">&quot;初值 (1,1)&quot;</span>, <span class="string">&quot;初值 (-0.3,1.7)&quot;</span>, <span class="string">&quot;初值 (3,4)&quot;</span>]</span><br><span class="line"></span><br><span class="line">rng = np.random.default_rng(<span class="number">20261009</span>)</span><br><span class="line">samples = rng.uniform([-<span class="number">1</span>/<span class="number">3</span>, <span class="number">0.0</span>], [<span class="number">3.0</span>, <span class="number">4.0</span>], size=(<span class="number">20000</span>, <span class="number">2</span>))</span><br><span class="line">mask = ((samples[:, <span class="number">1</span>] &gt;= (samples[:, <span class="number">0</span>]-<span class="number">1</span>)**<span class="number">2</span>)</span><br><span class="line">        &amp; (<span class="number">2</span>*samples[:, <span class="number">0</span>]-<span class="number">3</span>*samples[:, <span class="number">1</span>]+<span class="number">6</span> &gt;= <span class="number">0</span>))</span><br><span class="line">feasible = samples[mask]</span><br><span class="line"><span class="keyword">if</span> feasible.shape[<span class="number">0</span>] == <span class="number">0</span>:</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(<span class="string">&quot;随机搜索没有发现可行初值&quot;</span>)</span><br><span class="line">values = (feasible[:, <span class="number">0</span>]**<span class="number">2</span>+feasible[:, <span class="number">1</span>]**<span class="number">2</span></span><br><span class="line">          -feasible[:, <span class="number">0</span>]*feasible[:, <span class="number">1</span>]-<span class="number">2</span>*feasible[:, <span class="number">0</span>]-<span class="number">5</span>*feasible[:, <span class="number">1</span>])</span><br><span class="line">random_start = feasible[np.argmax(values)]</span><br><span class="line">starts.append(random_start)</span><br><span class="line">labels.append(<span class="string">&quot;随机粗搜初值&quot;</span>)</span><br><span class="line"></span><br><span class="line">accepted = []</span><br><span class="line"><span class="keyword">for</span> label, start <span class="keyword">in</span> <span class="built_in">zip</span>(labels, starts):</span><br><span class="line">    result = minimize(</span><br><span class="line">        <span class="keyword">lambda</span> x: -F(x), start, jac=<span class="keyword">lambda</span> x: -grad_F(x),</span><br><span class="line">        method=<span class="string">&quot;SLSQP&quot;</span>, constraints=constraints,</span><br><span class="line">        options=&#123;<span class="string">&quot;ftol&quot;</span>: <span class="number">1e-12</span>, <span class="string">&quot;maxiter&quot;</span>: <span class="number">1000</span>&#125;,</span><br><span class="line">    )</span><br><span class="line">    violation = <span class="built_in">max</span>(<span class="number">0.0</span>, <span class="built_in">float</span>(-np.<span class="built_in">min</span>(g(result.x))))</span><br><span class="line">    value = F(result.x)</span><br><span class="line">    <span class="built_in">print</span>(label, <span class="string">&quot;成功标志：&quot;</span>, result.success,</span><br><span class="line">          <span class="string">&quot;候选点：&quot;</span>, np.<span class="built_in">round</span>(result.x, <span class="number">8</span>),</span><br><span class="line">          <span class="string">&quot;原目标：&quot;</span>, value, <span class="string">&quot;约束违反量：&quot;</span>, violation)</span><br><span class="line">    <span class="keyword">if</span> result.success <span class="keyword">and</span> violation &lt;= <span class="number">1e-7</span> <span class="keyword">and</span> np.isfinite(value):</span><br><span class="line">        accepted.append((value, result.x))</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> accepted:</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(<span class="string">&quot;没有通过检查的候选解&quot;</span>)</span><br><span class="line">best_value, best_x = <span class="built_in">max</span>(accepted, key=<span class="keyword">lambda</span> item: item[<span class="number">0</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;搜索到的最好可行候选：&quot;</span>, best_x, <span class="string">&quot;原目标值：&quot;</span>, best_value)</span><br></pre></td></tr></table></figure>
+<p>按上述代码计算，初值 <span class="math inline">\((-0.3,1.7)\)</span>
+得到的候选点约为 <span
+class="math inline">\((-1/3,16/9)\)</span>，得到约 <span
+class="math inline">\(-4.358025\)</span>，它是最大化问题的一个局部最大点，比全局最大值
+<span class="math inline">\(-1\)</span> 小。</p>
+<p>更值得注意的是，初值 <span class="math inline">\((3,4)\)</span>
+处梯度为 0，SLSQP 可能立即返回成功标志与 <span
+class="math inline">\(F=-13\)</span>。这对最大化问题不是局部最大值，说明“程序成功终止”不能直接当作局部或全局最优证明。</p>
+<p>在约束推导的包围矩形内抽样，比在远大于可行域的区域内撒点更有效。随机粗搜的作用是提供较好的初值，其结果仍需由局部改进和数学分析进一步判断。</p>
+<h3 id="matlab函数文件与算法对照">4.7 MATLAB：函数文件与算法对照</h3>
+<p>将以下两个函数分别保存为 <code>fun1.m</code> 和
+<code>nonlfun1.m</code>，与主脚本放在同一文件夹。这里的
+<code>fun1</code> 始终表示最小化的 <span
+class="math inline">\(-F\)</span>。</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span> = <span class="title">fun1</span><span class="params">(x)</span></span></span><br><span class="line">    f = -x(<span class="number">1</span>)^<span class="number">2</span>-x(<span class="number">2</span>)^<span class="number">2</span>+x(<span class="number">1</span>)*x(<span class="number">2</span>)+<span class="number">2</span>*x(<span class="number">1</span>)+<span class="number">5</span>*x(<span class="number">2</span>);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[c,ceq]</span> = <span class="title">nonlfun1</span><span class="params">(x)</span></span></span><br><span class="line">    c = (x(<span class="number">1</span>)<span class="number">-1</span>)^<span class="number">2</span>-x(<span class="number">2</span>);</span><br><span class="line">    ceq = [];</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>主脚本比较内点法与 SQP，回代约束后还原原目标值。</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">clear;</span><br><span class="line">clc;</span><br><span class="line"></span><br><span class="line">A = [<span class="number">-2</span>,<span class="number">3</span>];</span><br><span class="line">b = <span class="number">6</span>;</span><br><span class="line">starts = [<span class="number">1</span>,<span class="number">1</span>;<span class="number">-0.3</span>,<span class="number">1.7</span>;<span class="number">3</span>,<span class="number">4</span>];</span><br><span class="line"><span class="keyword">methods</span> = &#123;<span class="string">&#x27;interior-point&#x27;</span>,<span class="string">&#x27;sqp&#x27;</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> m = <span class="number">1</span>:<span class="built_in">numel</span>(<span class="keyword">methods</span>)</span><br><span class="line">    options = optimoptions(<span class="string">&#x27;fmincon&#x27;</span>,<span class="string">&#x27;Algorithm&#x27;</span>,<span class="keyword">methods</span>&#123;m&#125;, ...</span><br><span class="line">        <span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;none&#x27;</span>,<span class="string">&#x27;ConstraintTolerance&#x27;</span>,<span class="number">1e-9</span>, ...</span><br><span class="line">        <span class="string">&#x27;OptimalityTolerance&#x27;</span>,<span class="number">1e-9</span>,<span class="string">&#x27;MaxIterations&#x27;</span>,<span class="number">1000</span>);</span><br><span class="line">    <span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">size</span>(starts,<span class="number">1</span>)</span><br><span class="line">        [x,fval,exitflag,output] = fmincon( ...</span><br><span class="line">            @fun1,starts(k,:)&#x27;,A,b,[],[],[],[],@nonlfun1,options);</span><br><span class="line">        [c,~] = nonlfun1(x);</span><br><span class="line">        violation = <span class="built_in">max</span>([<span class="number">0</span>;A*x-b;c]);</span><br><span class="line">        fprintf(<span class="string">&#x27;算法 %s，初值 (%.2f,%.2f)，标志 %d\n&#x27;</span>, ...</span><br><span class="line">            <span class="keyword">methods</span>&#123;m&#125;,starts(k,<span class="number">1</span>),starts(k,<span class="number">2</span>),exitflag);</span><br><span class="line">        fprintf(<span class="string">&#x27;候选点 (%.9f,%.9f)，原目标 %.9f，违反量 %.3g\n&#x27;</span>, ...</span><br><span class="line">            x(<span class="number">1</span>),x(<span class="number">2</span>),-fval,violation);</span><br><span class="line">        <span class="keyword">if</span> exitflag &lt;= <span class="number">0</span> || violation &gt; <span class="number">1e-7</span></span><br><span class="line">            <span class="built_in">disp</span>(output.message);</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>不同方法在个别初值上的表现，不能据此概括为某种算法普遍“适应性更好”。最大化问题最终应比较原目标
+<span
+class="math inline">\(F\)</span>，选择较大的可行值，再结合数学分析判断最优性。</p>
+<h2
+id="五例题二公共工程建材供应与料场选址">五、例题二：公共工程建材供应与料场选址</h2>
+<h3 id="数据与建模假设">5.1 数据与建模假设</h3>
+<p>为保障公共工程建设，六处工点需要每天接收建材。原有两个临时料场 A、B
+的位置分别为 <span class="math inline">\((5,1)\)</span>、<span
+class="math inline">\((2,7)\)</span>，每天各最多供应 20
+吨。工点位置与需求如下。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">工点</th>
+<th style="text-align: center;">I</th>
+<th style="text-align: center;">II</th>
+<th style="text-align: center;">III</th>
+<th style="text-align: center;">IV</th>
+<th style="text-align: center;">V</th>
+<th style="text-align: center;">VI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">横坐标</td>
+<td style="text-align: center;">1.25</td>
+<td style="text-align: center;">8.75</td>
+<td style="text-align: center;">0.5</td>
+<td style="text-align: center;">5.75</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">7.25</td>
+</tr>
+<tr>
+<td style="text-align: center;">纵坐标</td>
+<td style="text-align: center;">1.25</td>
+<td style="text-align: center;">0.75</td>
+<td style="text-align: center;">4.75</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">6.5</td>
+<td style="text-align: center;">7.75</td>
+</tr>
+<tr>
+<td style="text-align: center;">日需求（吨）</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">11</td>
+</tr>
+</tbody>
+</table>
+<p>本例规定 1 个坐标单位对应 1
+千米，距离使用直线距离，目标是最小化“运输吨数乘距离”的总吨千米数。建材可连续分割，允许一个工点由两个料场共同供应。不考虑道路绕行、车辆固定费用与新料场建设费用。</p>
+<p>图 2 给出工点与原料场的位置。</p>
+<p><img src="/images/NonlinearProgramming/NLP-2.png" alt="" style="width: 100%;"></p>
+<p>图
+2　六处工点与两个原料场。括号中的数字为工点日需求量，坐标单位为千米。</p>
+<p>两问分别是：</p>
+<ol type="1">
+<li>原料场位置固定时，怎样安排每天的供应量？</li>
+<li>改建两个新料场、每天各最多供应 20
+吨时，应怎样安排位置与供应量？运输指标能够减少多少？</li>
+</ol>
+<p>总需求为 36 吨，总供应能力为 40
+吨；供应能力够用，但不要求每个料场都正好运送 20 吨。</p>
+<h3 id="变量约束与目标">5.2 变量、约束与目标</h3>
+<p>设第 <span class="math inline">\(i\)</span> 个工点位置为 <span
+class="math inline">\((a_i,b_i)\)</span>，需求为 <span
+class="math inline">\(d_i\)</span>；第 <span
+class="math inline">\(j\)</span> 个料场位置为 <span
+class="math inline">\((u_j,v_j)\)</span>，容量为 <span
+class="math inline">\(e_j=20\)</span>；<span
+class="math inline">\(q_{ij}\)</span> 表示从料场 <span
+class="math inline">\(j\)</span> 向工点 <span
+class="math inline">\(i\)</span> 的日运输量。</p>
+<p>运输量应满足料场容量与工点需求。两问的共同模型为：</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\min\quad T=\sum\limits_{j=1}^{2}\sum\limits_{i=1}^{6}
+q_{ij}\sqrt{(u_j-a_i)^2+(v_j-b_i)^2},\\
+&amp;\text{s.t.}\quad\begin{cases}
+\sum\limits_{i=1}^{6}q_{ij}\leqslant e_j,&amp;j=1,2,\\
+q_{i1}+q_{i2}=d_i,&amp;i=1,\ldots,6,\\
+q_{ij}\geqslant0,&amp;i=1,\ldots,6,\quad j=1,2.
+\end{cases}
+\end{aligned}
+\]</span></p>
+<p>第一问中位置已知，只有运输量是变量；第二问中位置也需要决定。</p>
+<p>用 <span class="math inline">\(q_{ij}\)</span> 表示运输量，用 <span
+class="math inline">\((u_j,v_j)\)</span>
+表示位置，可以清楚地区分两类决策变量。</p>
+<p>模型包含两条容量不等式、六条需求等式，以及各运输量的非负限制。</p>
+<h3 id="固定位置为何是线性规划">5.3 固定位置为何是线性规划</h3>
+<p>第一问里 <span class="math inline">\((u_j,v_j)\)</span> 已知，距离
+<span class="math inline">\(L_{ij}\)</span> 为常数，于是：</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\min\quad
+T=\sum\limits_{j=1}^{2}\sum\limits_{i=1}^{6}L_{ij}q_{ij},\\
+&amp;\text{s.t.}\quad\begin{cases}
+\sum\limits_{i=1}^{6}q_{ij}\leqslant20,&amp;j=1,2,\\
+q_{i1}+q_{i2}=d_i,&amp;i=1,\ldots,6,\\
+q_{ij}\geqslant0,&amp;i=1,\ldots,6,\quad j=1,2.
+\end{cases}
+\end{aligned}
+\]</span></p>
+<p>目标与约束均对运输量线性，应直接使用 LP
+求解。平方根已经用于计算常数系数，不会使这个模型变成 NLP。</p>
+<p>采用变量顺序：</p>
+<p><span class="math display">\[
+q=(q_{11},q_{21},\ldots,q_{61},
+q_{12},q_{22},\ldots,q_{62})^{\mathsf T}.
+\]</span></p>
+<p>前六个是第一个料场的运输量，后六个是第二个料场的运输量。容量矩阵为两个分块的行向量，需求矩阵为：</p>
+<p><span class="math display">\[
+A_{\mathrm{eq}}=\begin{pmatrix}I_6&amp;I_6\end{pmatrix}.
+\]</span></p>
+<h3 id="python固定料场供应计划">5.4 Python：固定料场供应计划</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linprog</span><br><span class="line"></span><br><span class="line">sites = np.array([[<span class="number">1.25</span>,<span class="number">1.25</span>], [<span class="number">8.75</span>,<span class="number">0.75</span>], [<span class="number">0.5</span>,<span class="number">4.75</span>],</span><br><span class="line">                  [<span class="number">5.75</span>,<span class="number">5.0</span>], [<span class="number">3.0</span>,<span class="number">6.5</span>], [<span class="number">7.25</span>,<span class="number">7.75</span>]])</span><br><span class="line">demand = np.array([<span class="number">3.</span>,<span class="number">5.</span>,<span class="number">4.</span>,<span class="number">7.</span>,<span class="number">6.</span>,<span class="number">11.</span>])</span><br><span class="line">centers = np.array([[<span class="number">5.</span>,<span class="number">1.</span>], [<span class="number">2.</span>,<span class="number">7.</span>]])</span><br><span class="line">distances = np.linalg.norm(centers[:,<span class="literal">None</span>,:]-sites[<span class="literal">None</span>,:,:], axis=<span class="number">2</span>)</span><br><span class="line">A = np.kron(np.eye(<span class="number">2</span>), np.ones((<span class="number">1</span>,<span class="number">6</span>)))</span><br><span class="line">Aeq = np.hstack([np.eye(<span class="number">6</span>),np.eye(<span class="number">6</span>)])</span><br><span class="line"></span><br><span class="line">result = linprog(</span><br><span class="line">    distances.ravel(), A_ub=A, b_ub=[<span class="number">20.</span>,<span class="number">20.</span>],</span><br><span class="line">    A_eq=Aeq, b_eq=demand, bounds=(<span class="number">0</span>,<span class="literal">None</span>), method=<span class="string">&quot;highs&quot;</span>,</span><br><span class="line">)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> result.success:</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(result.message)</span><br><span class="line">flow = result.x.reshape(<span class="number">2</span>,<span class="number">6</span>)</span><br><span class="line"><span class="keyword">if</span> (np.<span class="built_in">any</span>(flow &lt; -<span class="number">1e-7</span>) <span class="keyword">or</span> np.<span class="built_in">any</span>(flow.<span class="built_in">sum</span>(axis=<span class="number">1</span>) &gt; <span class="number">20</span>+<span class="number">1e-7</span>)</span><br><span class="line">        <span class="keyword">or</span> <span class="keyword">not</span> np.allclose(flow.<span class="built_in">sum</span>(axis=<span class="number">0</span>), demand, atol=<span class="number">1e-7</span>, rtol=<span class="number">0</span>)):</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(<span class="string">&quot;供应计划未通过约束检查&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> np.isclose(np.<span class="built_in">sum</span>(flow*distances), result.fun, atol=<span class="number">1e-7</span>):</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(<span class="string">&quot;运输指标检查失败&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;运输矩阵：每行一个料场，每列一个工点（吨）&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(flow)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;各料场运输量：&quot;</span>, flow.<span class="built_in">sum</span>(axis=<span class="number">1</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;最小运输指标：<span class="subst">&#123;result.fun:<span class="number">.9</span>f&#125;</span> 吨千米&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>结果为：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">料场向各工点运输（吨）</th>
+<th style="text-align: center;">I</th>
+<th style="text-align: center;">II</th>
+<th style="text-align: center;">III</th>
+<th style="text-align: center;">IV</th>
+<th style="text-align: center;">V</th>
+<th style="text-align: center;">VI</th>
+<th style="text-align: center;">合计</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">16</td>
+</tr>
+<tr>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">20</td>
+</tr>
+<tr>
+<td style="text-align: center;">需求核对</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">36</td>
+</tr>
+</tbody>
+</table>
+<p>最小运输指标为：</p>
+<p><span class="math display">\[
+T_{\mathrm{old}}\approx136.227519883\text{ 吨千米}.
+\]</span></p>
+<h3 id="第二问位置与运输量共同决定">5.5
+第二问：位置与运输量共同决定</h3>
+<p>第二问增加四个位置变量。按相同运输顺序，完整变量为：</p>
+<p><span class="math display">\[
+w=(q_{11},\ldots,q_{61},q_{12},\ldots,q_{62},
+u_1,v_1,u_2,v_2)^{\mathsf T}.
+\]</span></p>
+<p>这是 16 维变量。容量和需求矩阵的后四列都补
+0，表示这些线性平衡只作用在运输量上。</p>
+<p>联合目标通常非凸：虽然固定位置时可以优化运输量，固定运输量时也可以分别优化两个位置，但两者同时作为变量，并不能由此推出联合凸性。</p>
+<p>在当前直线距离且没有其他选址限制的模型中，可将位置限制在所有工点的包围矩形：</p>
+<p><span class="math display">\[
+[0.5,8.75]\times[0.75,7.75].
+\]</span></p>
+<p>理由是：把矩形外的点逐坐标截到矩形上，对每个工点的距离都不会增大。因此至少有一组最优位置在这个矩形内。实际题目若另有可用土地、道路或禁建区域，应重新加入这些条件。</p>
+<h3 id="不可微距离与光滑近似">5.6 不可微距离与光滑近似</h3>
+<p>当料场恰好与某工点重合时，欧氏距离在这个位置不可微。不能把它当成处处光滑的函数而忽略求解器要求。</p>
+<p>本节的局部求解用：</p>
+<p><span class="math display">\[
+\sqrt{(u_j-a_i)^2+(v_j-b_i)^2+\varepsilon^2}
+\]</span></p>
+<p>近似真实距离，取 <span
+class="math inline">\(\varepsilon=10^{-6}\)</span>
+千米。对于任何满足需求的非负运输方案：</p>
+<p><span class="math display">\[
+0\leqslant T_{\varepsilon}(w)-T(w)
+\leqslant\varepsilon\sum\limits_{i=1}^{6}d_i
+=36\varepsilon.
+\]</span></p>
+<p>因为每条距离的增加量最多为 <span
+class="math inline">\(\varepsilon\)</span>。这里 <span
+class="math inline">\(36\varepsilon\)</span>
+只控制<strong>目标的光滑近似误差</strong>，不控制非凸局部求解距离全局最优的误差。</p>
+<p>最终报告时重新使用真实距离，并在得到的位置上重新求运输
+LP，保证展示的供应计划满足平衡约束。</p>
+<h3 id="如何随机生成真正可行的初值">5.7 如何随机生成真正可行的初值</h3>
+<p>不能独立生成 12 个运输量，再允许每个需求等式相差 1
+吨；那样得到的只是另一个放宽问题的解，可能通过少运建材获得虚假的低指标。</p>
+<p>本例使用更可靠的办法：<strong>只随机生成四个位置坐标，再用运输 LP
+计算这些位置下的最优可行运输量。</strong>
+每个候选初值都满足需求等式与容量限制，不需要人为放宽它们。</p>
+<p>下面抽取 200 组位置，从中选出较好的 12
+组，再与原料场方案一起作为局部求解的初值。抽样次数是计算规模的选择，不构成最优性保证。</p>
+<h3 id="python-完整代码随机位置精确运输多初值改进">5.8 Python
+完整代码：随机位置、精确运输、多初值改进</h3>
+<p>下列代码可独立运行。运输矩阵按 <code>shape=(2,6)</code>
+排列，每行一个料场，与前述变量顺序一致。程序分为运输分配、目标与梯度、初值生成、局部改进四部分。<code>centers[:,None,:]-sites[None,:,:]</code>
+逐一计算两个料场与六个工点的坐标差；<code>reshape(2,6)</code> 则把 12
+个运输量还原为两行六列。解析梯度用于减少重复的函数计算。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linprog, minimize</span><br><span class="line"></span><br><span class="line">sites = np.array([[<span class="number">1.25</span>,<span class="number">1.25</span>], [<span class="number">8.75</span>,<span class="number">0.75</span>], [<span class="number">0.5</span>,<span class="number">4.75</span>],</span><br><span class="line">                  [<span class="number">5.75</span>,<span class="number">5.0</span>], [<span class="number">3.0</span>,<span class="number">6.5</span>], [<span class="number">7.25</span>,<span class="number">7.75</span>]])</span><br><span class="line">demand = np.array([<span class="number">3.</span>,<span class="number">5.</span>,<span class="number">4.</span>,<span class="number">7.</span>,<span class="number">6.</span>,<span class="number">11.</span>])</span><br><span class="line">old_centers = np.array([[<span class="number">5.</span>,<span class="number">1.</span>], [<span class="number">2.</span>,<span class="number">7.</span>]])</span><br><span class="line">capacity = np.array([<span class="number">20.</span>,<span class="number">20.</span>])</span><br><span class="line">lower = sites.<span class="built_in">min</span>(axis=<span class="number">0</span>)</span><br><span class="line">upper = sites.<span class="built_in">max</span>(axis=<span class="number">0</span>)</span><br><span class="line">epsilon = <span class="number">1e-6</span></span><br><span class="line"></span><br><span class="line">A = np.kron(np.eye(<span class="number">2</span>), np.ones((<span class="number">1</span>,<span class="number">6</span>)))</span><br><span class="line">Aeq = np.hstack([np.eye(<span class="number">6</span>),np.eye(<span class="number">6</span>)])</span><br><span class="line">A16 = np.hstack([A,np.zeros((<span class="number">2</span>,<span class="number">4</span>))])</span><br><span class="line">E16 = np.hstack([Aeq,np.zeros((<span class="number">6</span>,<span class="number">4</span>))])</span><br><span class="line">bounds = [(<span class="number">0.</span>,di) <span class="keyword">for</span> di <span class="keyword">in</span> np.tile(demand,<span class="number">2</span>)]</span><br><span class="line">bounds += <span class="built_in">list</span>(<span class="built_in">zip</span>(np.tile(lower,<span class="number">2</span>),np.tile(upper,<span class="number">2</span>)))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">shipping</span>(<span class="params">centers</span>):</span><br><span class="line">    distances = np.linalg.norm(centers[:,<span class="literal">None</span>,:]-sites[<span class="literal">None</span>,:,:], axis=<span class="number">2</span>)</span><br><span class="line">    result = linprog(</span><br><span class="line">        distances.ravel(), A_ub=A, b_ub=capacity,</span><br><span class="line">        A_eq=Aeq, b_eq=demand, bounds=(<span class="number">0</span>,<span class="literal">None</span>), method=<span class="string">&quot;highs&quot;</span>,</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> result.success:</span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(result.message)</span><br><span class="line">    q = result.x</span><br><span class="line">    <span class="keyword">if</span> (np.<span class="built_in">any</span>(q &lt; -<span class="number">1e-7</span>) <span class="keyword">or</span> np.<span class="built_in">any</span>(A@q &gt; capacity+<span class="number">1e-7</span>)</span><br><span class="line">            <span class="keyword">or</span> <span class="keyword">not</span> np.allclose(Aeq@q,demand,atol=<span class="number">1e-7</span>,rtol=<span class="number">0</span>)):</span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(<span class="string">&quot;运输 LP 未通过回代检查&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> q, <span class="built_in">float</span>(result.fun)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">smooth_objective_gradient</span>(<span class="params">w</span>):</span><br><span class="line">    flow = w[:<span class="number">12</span>].reshape(<span class="number">2</span>,<span class="number">6</span>)</span><br><span class="line">    centers = w[<span class="number">12</span>:].reshape(<span class="number">2</span>,<span class="number">2</span>)</span><br><span class="line">    delta = centers[:,<span class="literal">None</span>,:]-sites[<span class="literal">None</span>,:,:]</span><br><span class="line">    distances = np.sqrt(np.<span class="built_in">sum</span>(delta**<span class="number">2</span>,axis=<span class="number">2</span>)+epsilon**<span class="number">2</span>)</span><br><span class="line">    value = <span class="built_in">float</span>(np.<span class="built_in">sum</span>(flow*distances))</span><br><span class="line">    position_gradient = np.<span class="built_in">sum</span>(</span><br><span class="line">        flow[:,:,<span class="literal">None</span>]*delta/distances[:,:,<span class="literal">None</span>], axis=<span class="number">1</span>,</span><br><span class="line">    )</span><br><span class="line">    gradient = np.r_[distances.ravel(),position_gradient.ravel()]</span><br><span class="line">    <span class="keyword">return</span> value, gradient</span><br><span class="line"></span><br><span class="line">constraints = [</span><br><span class="line">    &#123;<span class="string">&quot;type&quot;</span>:<span class="string">&quot;ineq&quot;</span>, <span class="string">&quot;fun&quot;</span>:<span class="keyword">lambda</span> w:capacity-A16@w,</span><br><span class="line">     <span class="string">&quot;jac&quot;</span>:<span class="keyword">lambda</span> w:-A16&#125;,</span><br><span class="line">    &#123;<span class="string">&quot;type&quot;</span>:<span class="string">&quot;eq&quot;</span>, <span class="string">&quot;fun&quot;</span>:<span class="keyword">lambda</span> w:E16@w-demand,</span><br><span class="line">     <span class="string">&quot;jac&quot;</span>:<span class="keyword">lambda</span> w:E16&#125;,</span><br><span class="line">]</span><br><span class="line">old_flow, old_cost = shipping(old_centers)</span><br><span class="line">rng = np.random.default_rng(<span class="number">20261009</span>)</span><br><span class="line">random_candidates = []</span><br><span class="line"><span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">200</span>):</span><br><span class="line">    centers = rng.uniform(lower,upper,size=(<span class="number">2</span>,<span class="number">2</span>))</span><br><span class="line">    q, value = shipping(centers)</span><br><span class="line">    random_candidates.append((value,np.r_[q,centers.ravel()]))</span><br><span class="line">random_candidates.sort(key=<span class="keyword">lambda</span> item:item[<span class="number">0</span>])</span><br><span class="line">starts = [(old_cost,np.r_[old_flow,old_centers.ravel()])]</span><br><span class="line">starts += random_candidates[:<span class="number">12</span>]</span><br><span class="line"></span><br><span class="line">best = (old_cost,old_centers.copy(),old_flow.copy())</span><br><span class="line">successful_runs = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> k, (_,start) <span class="keyword">in</span> <span class="built_in">enumerate</span>(starts):</span><br><span class="line">    result = minimize(</span><br><span class="line">        smooth_objective_gradient,start,jac=<span class="literal">True</span>,method=<span class="string">&quot;SLSQP&quot;</span>,</span><br><span class="line">        bounds=bounds,constraints=constraints,</span><br><span class="line">        options=&#123;<span class="string">&quot;ftol&quot;</span>:<span class="number">1e-10</span>,<span class="string">&quot;maxiter&quot;</span>:<span class="number">1000</span>&#125;,</span><br><span class="line">    )</span><br><span class="line">    w = result.x</span><br><span class="line">    violation = <span class="built_in">max</span>(<span class="number">0.</span>,<span class="built_in">float</span>(np.<span class="built_in">max</span>(A16@w-capacity)),</span><br><span class="line">                    <span class="built_in">float</span>(np.<span class="built_in">max</span>(np.<span class="built_in">abs</span>(E16@w-demand))))</span><br><span class="line">    bound_violation = <span class="built_in">max</span>(</span><br><span class="line">        <span class="number">0.</span>, <span class="built_in">max</span>(lb-w[i] <span class="keyword">for</span> i,(lb,ub) <span class="keyword">in</span> <span class="built_in">enumerate</span>(bounds)),</span><br><span class="line">        <span class="built_in">max</span>(w[i]-ub <span class="keyword">for</span> i,(lb,ub) <span class="keyword">in</span> <span class="built_in">enumerate</span>(bounds)),</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">not</span> result.success <span class="keyword">or</span> <span class="keyword">not</span> np.<span class="built_in">all</span>(np.isfinite(w))</span><br><span class="line">            <span class="keyword">or</span> <span class="built_in">max</span>(violation,bound_violation) &gt; <span class="number">1e-7</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;未接纳的运行：&quot;</span>,k,result.message,violation,bound_violation)</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    successful_runs += <span class="number">1</span></span><br><span class="line">    centers = w[<span class="number">12</span>:].reshape(<span class="number">2</span>,<span class="number">2</span>)</span><br><span class="line">    q, true_cost = shipping(centers)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;初值 <span class="subst">&#123;k:2d&#125;</span>：真实运输指标 <span class="subst">&#123;true_cost:<span class="number">.9</span>f&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> true_cost &lt; best[<span class="number">0</span>]:</span><br><span class="line">        best = (true_cost,centers.copy(),q.copy())</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> successful_runs == <span class="number">0</span>:</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(<span class="string">&quot;没有局部运行通过检查；原料场方案仍可行&quot;</span>)</span><br><span class="line">best_cost,best_centers,best_flow = best</span><br><span class="line"><span class="comment"># 料场编号互换不改变目标；按横坐标排序，方便比较展示。</span></span><br><span class="line">order = np.argsort(best_centers[:,<span class="number">0</span>])</span><br><span class="line">best_centers = best_centers[order]</span><br><span class="line">best_flow = best_flow.reshape(<span class="number">2</span>,<span class="number">6</span>)[order]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;通过检查的局部运行数：&quot;</span>,successful_runs)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;新料场坐标：\n&quot;</span>,best_centers)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;供应计划（吨）：\n&quot;</span>,best_flow)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;旧指标：<span class="subst">&#123;old_cost:<span class="number">.9</span>f&#125;</span>；搜索最好可行指标：<span class="subst">&#123;best_cost:<span class="number">.9</span>f&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;减少量：<span class="subst">&#123;old_cost-best_cost:<span class="number">.9</span>f&#125;</span> 吨千米&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;以上是多初值搜索结果，全局核验见第六节&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>新方案会接近第一个料场 <span
+class="math inline">\((3.254883,5.652332)\)</span>、第二个料场 <span
+class="math inline">\((7.25,7.75)\)</span>，供应矩阵为：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">新料场向各工点运输（吨）</th>
+<th style="text-align: center;">I</th>
+<th style="text-align: center;">II</th>
+<th style="text-align: center;">III</th>
+<th style="text-align: center;">IV</th>
+<th style="text-align: center;">V</th>
+<th style="text-align: center;">VI</th>
+<th style="text-align: center;">合计</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">新 A</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">20</td>
+</tr>
+<tr>
+<td style="text-align: center;">新 B</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">16</td>
+</tr>
+<tr>
+<td style="text-align: center;">需求核对</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">36</td>
+</tr>
+</tbody>
+</table>
+<p>上述代码得到的最好可行运输指标约为 85.266044 吨千米。对新
+A，运输量恰好达到 20 吨容量；新 B 运输 16 吨，位置非常接近工点
+VI。第六节进一步核验得到的参考方案将新 B 设在工点
+VI，在本模型中，向该工点供应的 11 吨建材对应的直线运输指标为 0。图 3
+比较固定料场方案与这一参考新方案。</p>
+<p><img src="/images/NonlinearProgramming/NLP-3.png" alt="" style="width: 100%;"></p>
+<p>图
+3　原料场与新料场的供应方案。两图采用相同坐标尺度，连线旁的数字为日运输量；右图新
+B 与工点 VI 重合，11 吨就地供应单独标注。</p>
+<h3 id="matlab固定运输与选址的完整主脚本">5.9
+MATLAB：固定运输与选址的完整主脚本</h3>
+<p>将下一小节的函数保存为
+<code>locationObjective.m</code>。本脚本先求固定料场
+LP，再随机生成可行初值并使用 <code>fmincon</code> 改进。</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line">clear;</span><br><span class="line">clc;</span><br><span class="line">rng(<span class="number">20261009</span>,<span class="string">&#x27;twister&#x27;</span>);</span><br><span class="line"></span><br><span class="line">sites = [<span class="number">1.25</span>,<span class="number">1.25</span>;<span class="number">8.75</span>,<span class="number">0.75</span>;<span class="number">0.5</span>,<span class="number">4.75</span>; ...</span><br><span class="line">         <span class="number">5.75</span>,<span class="number">5</span>;<span class="number">3</span>,<span class="number">6.5</span>;<span class="number">7.25</span>,<span class="number">7.75</span>];</span><br><span class="line">demand = [<span class="number">3</span>;<span class="number">5</span>;<span class="number">4</span>;<span class="number">7</span>;<span class="number">6</span>;<span class="number">11</span>];</span><br><span class="line">oldCenters = [<span class="number">5</span>,<span class="number">1</span>;<span class="number">2</span>,<span class="number">7</span>];</span><br><span class="line">capacity = [<span class="number">20</span>;<span class="number">20</span>];</span><br><span class="line">low = <span class="built_in">min</span>(sites,[],<span class="number">1</span>);</span><br><span class="line">high = <span class="built_in">max</span>(sites,[],<span class="number">1</span>);</span><br><span class="line">epsilon = <span class="number">1e-6</span>;</span><br><span class="line">A = [<span class="built_in">ones</span>(<span class="number">1</span>,<span class="number">6</span>),<span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">6</span>);<span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">6</span>),<span class="built_in">ones</span>(<span class="number">1</span>,<span class="number">6</span>)];</span><br><span class="line">Aeq = [<span class="built_in">eye</span>(<span class="number">6</span>),<span class="built_in">eye</span>(<span class="number">6</span>)];</span><br><span class="line">lpOptions = optimoptions(<span class="string">&#x27;linprog&#x27;</span>,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;none&#x27;</span>);</span><br><span class="line"></span><br><span class="line">distance = <span class="built_in">zeros</span>(<span class="number">6</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">    distance(:,<span class="built_in">j</span>) = <span class="built_in">hypot</span>(oldCenters(<span class="built_in">j</span>,<span class="number">1</span>)-sites(:,<span class="number">1</span>), ...</span><br><span class="line">                           oldCenters(<span class="built_in">j</span>,<span class="number">2</span>)-sites(:,<span class="number">2</span>));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">[oldFlow,oldCost,flag,out] = linprog( ...</span><br><span class="line">    distance(:),A,capacity,Aeq,demand,<span class="built_in">zeros</span>(<span class="number">12</span>,<span class="number">1</span>),[],lpOptions);</span><br><span class="line"><span class="keyword">if</span> flag &lt;= <span class="number">0</span></span><br><span class="line">    error(<span class="string">&#x27;固定料场 LP 未确认最优：%s&#x27;</span>,out.message);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">fprintf(<span class="string">&#x27;固定料场供应矩阵：每行一个料场\n&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="built_in">reshape</span>(oldFlow,<span class="number">6</span>,<span class="number">2</span>)&#x27;);</span><br><span class="line">fprintf(<span class="string">&#x27;固定料场最小运输指标：%.9f\n&#x27;</span>,oldCost);</span><br><span class="line"></span><br><span class="line">A16 = [A,<span class="built_in">zeros</span>(<span class="number">2</span>,<span class="number">4</span>)];</span><br><span class="line">E16 = [Aeq,<span class="built_in">zeros</span>(<span class="number">6</span>,<span class="number">4</span>)];</span><br><span class="line">lb = [<span class="built_in">zeros</span>(<span class="number">12</span>,<span class="number">1</span>);<span class="built_in">repmat</span>(low&#x27;,<span class="number">2</span>,<span class="number">1</span>)];</span><br><span class="line">ub = [<span class="built_in">repmat</span>(demand,<span class="number">2</span>,<span class="number">1</span>);<span class="built_in">repmat</span>(high&#x27;,<span class="number">2</span>,<span class="number">1</span>)];</span><br><span class="line">sampleStarts = <span class="built_in">zeros</span>(<span class="number">16</span>,<span class="number">200</span>);</span><br><span class="line">sampleValues = <span class="built_in">zeros</span>(<span class="number">200</span>,<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="number">200</span></span><br><span class="line">    centers = low+(high-low).*<span class="built_in">rand</span>(<span class="number">2</span>,<span class="number">2</span>);</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">        distance(:,<span class="built_in">j</span>) = <span class="built_in">hypot</span>(centers(<span class="built_in">j</span>,<span class="number">1</span>)-sites(:,<span class="number">1</span>), ...</span><br><span class="line">                               centers(<span class="built_in">j</span>,<span class="number">2</span>)-sites(:,<span class="number">2</span>));</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    [q,value,flag,out] = linprog( ...</span><br><span class="line">        distance(:),A,capacity,Aeq,demand,<span class="built_in">zeros</span>(<span class="number">12</span>,<span class="number">1</span>),[],lpOptions);</span><br><span class="line">    <span class="keyword">if</span> flag &lt;= <span class="number">0</span></span><br><span class="line">        error(<span class="string">&#x27;初值运输 LP 失败：%s&#x27;</span>,out.message);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    sampleStarts(:,k) = [q;<span class="built_in">reshape</span>(centers&#x27;,<span class="number">4</span>,<span class="number">1</span>)];</span><br><span class="line">    sampleValues(k) = value;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">[~,ranking] = <span class="built_in">sort</span>(sampleValues);</span><br><span class="line">starts = [[oldFlow;<span class="built_in">reshape</span>(oldCenters&#x27;,<span class="number">4</span>,<span class="number">1</span>)], ...</span><br><span class="line">          sampleStarts(:,ranking(<span class="number">1</span>:<span class="number">12</span>))];</span><br><span class="line">options = optimoptions(<span class="string">&#x27;fmincon&#x27;</span>,<span class="string">&#x27;Algorithm&#x27;</span>,<span class="string">&#x27;sqp&#x27;</span>,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;none&#x27;</span>, ...</span><br><span class="line">    <span class="string">&#x27;SpecifyObjectiveGradient&#x27;</span>,<span class="built_in">true</span>,<span class="string">&#x27;MaxIterations&#x27;</span>,<span class="number">1000</span>, ...</span><br><span class="line">    <span class="string">&#x27;ConstraintTolerance&#x27;</span>,<span class="number">1e-8</span>,<span class="string">&#x27;OptimalityTolerance&#x27;</span>,<span class="number">1e-8</span>);</span><br><span class="line">objective = @(w) locationObjective(w,sites,epsilon);</span><br><span class="line">bestCost = oldCost;</span><br><span class="line">bestCenters = oldCenters;</span><br><span class="line">bestFlow = oldFlow;</span><br><span class="line">accepted = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">size</span>(starts,<span class="number">2</span>)</span><br><span class="line">    [w,~,flag,out] = fmincon(objective,starts(:,k), ...</span><br><span class="line">        A16,capacity,E16,demand,lb,ub,[],options);</span><br><span class="line">    violation = <span class="built_in">max</span>([<span class="number">0</span>;A16*w-capacity;<span class="built_in">abs</span>(E16*w-demand);lb-w;w-ub]);</span><br><span class="line">    <span class="keyword">if</span> flag &lt;= <span class="number">0</span> || any(~<span class="built_in">isfinite</span>(w)) || violation &gt; <span class="number">1e-7</span></span><br><span class="line">        fprintf(<span class="string">&#x27;未接纳运行 %d：%s\n&#x27;</span>,k,out.message);</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    accepted = accepted+<span class="number">1</span>;</span><br><span class="line">    centers = <span class="built_in">reshape</span>(w(<span class="number">13</span>:<span class="number">16</span>),<span class="number">2</span>,<span class="number">2</span>)&#x27;;</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">        distance(:,<span class="built_in">j</span>) = <span class="built_in">hypot</span>(centers(<span class="built_in">j</span>,<span class="number">1</span>)-sites(:,<span class="number">1</span>), ...</span><br><span class="line">                               centers(<span class="built_in">j</span>,<span class="number">2</span>)-sites(:,<span class="number">2</span>));</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    [q,value,flag,out] = linprog( ...</span><br><span class="line">        distance(:),A,capacity,Aeq,demand,<span class="built_in">zeros</span>(<span class="number">12</span>,<span class="number">1</span>),[],lpOptions);</span><br><span class="line">    <span class="keyword">if</span> flag &lt;= <span class="number">0</span></span><br><span class="line">        error(<span class="string">&#x27;真实距离运输 LP 失败：%s&#x27;</span>,out.message);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">if</span> any(q &lt; <span class="number">-1e-7</span>) || any(A*q &gt; capacity+<span class="number">1e-7</span>) || ...</span><br><span class="line">            <span class="built_in">max</span>(<span class="built_in">abs</span>(Aeq*q-demand)) &gt; <span class="number">1e-7</span></span><br><span class="line">        error(<span class="string">&#x27;展示方案未通过约束检查&#x27;</span>);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">if</span> value &lt; bestCost</span><br><span class="line">        bestCost = value;</span><br><span class="line">        bestCenters = centers;</span><br><span class="line">        bestFlow = q;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">if</span> accepted == <span class="number">0</span></span><br><span class="line">    error(<span class="string">&#x27;没有局部运行通过检查，原料场方案仍可行&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">[~,order] = <span class="built_in">sort</span>(bestCenters(:,<span class="number">1</span>));</span><br><span class="line">bestCenters = bestCenters(order,:);</span><br><span class="line">flowMatrix = <span class="built_in">reshape</span>(bestFlow,<span class="number">6</span>,<span class="number">2</span>)&#x27;;</span><br><span class="line">flowMatrix = flowMatrix(order,:);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;搜索得到的新位置：&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>(bestCenters);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;搜索得到的供应矩阵：&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>(flowMatrix);</span><br><span class="line">fprintf(<span class="string">&#x27;旧指标 %.9f，新可行指标 %.9f，减少量 %.9f\n&#x27;</span>, ...</span><br><span class="line">    oldCost,bestCost,oldCost-bestCost);</span><br></pre></td></tr></table></figure>
+<h3 id="matlab带解析梯度的选址目标函数">5.10
+MATLAB：带解析梯度的选址目标函数</h3>
+<p>保存为 <code>locationObjective.m</code>。MATLAB 的
+<code>reshape(w(1:12),6,2)</code>
+每列对应一个料场，与主脚本的变量顺序一致。</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[value,gradient]</span> = <span class="title">locationObjective</span><span class="params">(w,sites,epsilon)</span></span></span><br><span class="line">    flow = <span class="built_in">reshape</span>(w(<span class="number">1</span>:<span class="number">12</span>),<span class="number">6</span>,<span class="number">2</span>);</span><br><span class="line">    centers = <span class="built_in">reshape</span>(w(<span class="number">13</span>:<span class="number">16</span>),<span class="number">2</span>,<span class="number">2</span>)&#x27;;</span><br><span class="line">    distance = <span class="built_in">zeros</span>(<span class="number">6</span>,<span class="number">2</span>);</span><br><span class="line">    positionGradient = <span class="built_in">zeros</span>(<span class="number">2</span>,<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">        delta = centers(<span class="built_in">j</span>,:)-sites;</span><br><span class="line">        distance(:,<span class="built_in">j</span>) = <span class="built_in">sqrt</span>(sum(delta.^<span class="number">2</span>,<span class="number">2</span>)+epsilon^<span class="number">2</span>);</span><br><span class="line">        positionGradient(<span class="built_in">j</span>,:) = sum( ...</span><br><span class="line">            (flow(:,<span class="built_in">j</span>)./distance(:,<span class="built_in">j</span>)).*delta,<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    value = sum(sum(flow.*distance));</span><br><span class="line">    gradient = [distance(:);<span class="built_in">reshape</span>(positionGradient&#x27;,<span class="number">4</span>,<span class="number">1</span>)];</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>MATLAB 与 Python
+的随机序列、停止规则及实现不同，局部运行的具体结果不必完全相同。应核对约束、真实目标值与最终方案，而不是要求每个中间值一致。</p>
+<h2
+id="六选读本例如何进一步核验全局结果">六、选读：本例如何进一步核验全局结果</h2>
+<h3 id="为什么多初值之外还需要证据">6.1 为什么多初值之外还需要证据</h3>
+<p>只做第五节的随机初值和局部求解，能够找到约 85.26604
+的可行值，但还不能排除其他未搜索到的位置与运输组合更好。</p>
+<p>本例只有两个料场、六个工点，且目标对固定位置下的运输量线性，可以利用这一特殊结构，把全局核验变成有限个凸子问题。这种做法不适用于任意
+NLP。</p>
+<h3 id="把-12-个运输量降为-6-个">6.2 把 12 个运输量降为 6 个</h3>
+<p>令 <span
+class="math inline">\(s_i=q_{i1}\)</span>，则第二个料场的运输量由需求平衡确定：</p>
+<p><span class="math display">\[
+q_{i2}=d_i-s_i.
+\]</span></p>
+<p>可行运输集合于是为：</p>
+<p><span class="math display">\[
+0\leqslant s_i\leqslant d_i,
+\qquad16\leqslant\sum\limits_{i=1}^{6}s_i\leqslant20.
+\]</span></p>
+<p>下界 16 来自第二个料场容量：<span
+class="math inline">\(36-\sum\limits_{i=1}^{6}s_i\leqslant20\)</span>。</p>
+<p>这个多面体的顶点可以分成两类：</p>
+<ol type="1">
+<li>六个 <span class="math inline">\(s_i\)</span> 都等于 0 或对应需求
+<span class="math inline">\(d_i\)</span>，并满足总量限制。</li>
+<li>总量恰好为 16 或 20，至少五个 <span
+class="math inline">\(s_i\)</span>
+等于各自的边界，剩余一个由总量确定。</li>
+</ol>
+<p>如果有两个分量都在各自上下界之间，就能让一个增加一点、另一个减少一点，得到两侧不同的可行点，原点便不是顶点。如果仅有一个分量不在边界，且总量约束也不取等号，那么单独增减这个分量仍可保持可行，原点同样不是顶点。</p>
+<p>去重后，本组数据共有 <strong>106
+个运输顶点</strong>，包括互换料场编号得到的对称方案。对于任何固定位置，运输
+LP 至少有一个顶点最优解，因此至少有一组联合全局最优方案的运输量来自这
+106 个顶点。</p>
+<h3 id="固定运输量后位置子问题是凸的">6.3
+固定运输量后，位置子问题是凸的</h3>
+<p>给定一个顶点 <span
+class="math inline">\(s\)</span>，两料场的位置可以分别求解：</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\min_z\quad \sum\limits_{i=1}^{6}w_i\|z-p_i\|_2,\\
+&amp;\text{s.t.}\quad\begin{cases}
+z\in\mathbb R^2.
+\end{cases}
+\end{aligned}
+\]</span></p>
+<p>其中第一个料场的权重为 <span
+class="math inline">\(w_i=s_i\)</span>，第二个为 <span
+class="math inline">\(w_i=d_i-s_i\)</span>，<span
+class="math inline">\(p_i=(a_i,b_i)\)</span>。这叫加权几何中位点问题，距离的非负加权和是凸函数。</p>
+<p>若最优位置与工点重合，可以用次梯度判断；若不重合，可使用 Weiszfeld
+迭代。这一步没有把距离平方化，求的仍然是原来的“吨数乘距离”。</p>
+<p>要检查位置子问题的精度，还可以构造下界。对任意向量 <span
+class="math inline">\(r_i\)</span>，只要：</p>
+<p><span class="math display">\[
+\|r_i\|_2\leqslant w_i,
+\qquad\sum\limits_i r_i=0,
+\]</span></p>
+<p>就有：</p>
+<p><span class="math display">\[
+\sum\limits_i w_i\|z-p_i\|_2
+\geqslant\sum\limits_i r_i^{\mathsf T}(z-p_i)
+=-\sum\limits_i r_i^{\mathsf T}p_i.
+\]</span></p>
+<p>右端与 <span class="math inline">\(z\)</span>
+无关，是有效下界。可行位置给出上界，二者之差可以检查几何中位点计算的精度。</p>
+<p>比较 106 个运输顶点的上、下界，便能给联合问题做全局数值核验。</p>
+<h3 id="上下界给出的数值结论">6.4 上下界给出的数值结论</h3>
+<p>对 106 个运输顶点分别计算位置子问题的可行值 <span
+class="math inline">\(U_k\)</span> 与下界 <span
+class="math inline">\(L_k\)</span>。联合问题的全局最优值 <span
+class="math inline">\(T^*\)</span> 满足：</p>
+<p><span class="math display">\[
+\min_k L_k\leqslant T^*\leqslant\min_k U_k.
+\]</span></p>
+<p>完整枚举得到：</p>
+<p><span class="math display">\[
+\min_k L_k\approx85.266040872079,\qquad
+\min_k U_k\approx85.266040872111.
+\]</span></p>
+<p>两者相差约 <span class="math inline">\(3.1\times10^{-11}\)</span>
+吨千米。因而，将最优运输指标保留六位小数，得到：</p>
+<p><span class="math display">\[
+T_{\mathrm{new}}\approx85.266041\text{ 吨千米}.
+\]</span></p>
+<p>以上为普通双精度计算的全局数值核验。上下界的推导在数学上成立，但计算没有采用有向舍入的区间运算；实际报告的精度应与数值误差相匹配。</p>
+<p>与固定料场方案相比，每天减少的运输指标为：</p>
+<p><span class="math display">\[
+\Delta T=T_{\mathrm{old}}-T_{\mathrm{new}}
+\approx50.961479\text{ 吨千米},
+\]</span></p>
+<p>降幅约为 <span
+class="math inline">\(37.41\%\)</span>。该比较仅针对运输吨千米指标。模型尚未计入建设、迁移、土地与道路条件，因此不能直接把这一结果解释为实际工程总费用的降幅。</p>
+<h2 id="七结果检查与方法评价">七、结果检查与方法评价</h2>
+<h3 id="建模与求解的完整流程">7.1 建模与求解的完整流程</h3>
+<ol type="1">
+<li>定义变量、单位、上下界、连续性与整数性。</li>
+<li>写出原目标，明确求最大还是求最小。</li>
+<li>区分线性约束、非线性约束与函数定义域。</li>
+<li>判断凸性、可微性和特殊结构，选择适合的方法。</li>
+<li>构造合理初值，必要时利用 LP 或参数化确保可行。</li>
+<li>求解并读取状态，回代所有约束与原目标。</li>
+<li>对非凸问题使用多初值与其他核验，但按证据强弱说明结果。</li>
+<li>解释实际方案、模型限制与数据敏感性。</li>
+</ol>
+<h3 id="结果应怎样命名">7.2 结果应怎样命名</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">已掌握的证据</th>
+<th style="text-align: center;">适合报告的说法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">只检查了约束</td>
+<td style="text-align: center;">可行方案与对应目标值</td>
+</tr>
+<tr>
+<td style="text-align: center;">局部算法成功停止且通过回代</td>
+<td style="text-align: center;">满足数值停止条件的候选解</td>
+</tr>
+<tr>
+<td style="text-align: center;">局部最优条件得到充分核验</td>
+<td style="text-align: center;">局部最优解</td>
+</tr>
+<tr>
+<td style="text-align: center;">多初值中目标最好</td>
+<td style="text-align: center;">本次搜索到的最好可行方案</td>
+</tr>
+<tr>
+<td style="text-align: center;">凸性与最优条件，或完整解析比较</td>
+<td style="text-align: center;">全局最优解或其数值近似</td>
+</tr>
+<tr>
+<td style="text-align: center;">特殊结构枚举，且有数值上下界</td>
+<td
+style="text-align: center;">明确精度与计算方式的全局数值核验结果</td>
+</tr>
+</tbody>
+</table>
+<p>对最小化问题，任意可行值都是全局最优值的上界；对最大化问题，任意可行值都是全局最优值的下界。若有反方向的界，就能用差距说明质量，而不是仅凭“多跑了几次”判断可靠性。</p>
+<h3 id="误差与尺度">7.3 误差与尺度</h3>
+<p>优化结果可能同时受到模型简化、数据误差、光滑近似误差、局部搜索误差和浮点容差的影响。它们不能混为一谈。</p>
+<p>例如，第五节的 <span class="math inline">\(36\varepsilon\)</span>
+只约束平滑前后的目标差；多初值寻找的是较好的局部区域；供需残差检查的是数值可行性；第六节的上下界比较才用于进一步核验本例的全局指标。</p>
+<p>若不同变量的单位或数量级相差很大，可考虑合理缩放。缩放后应换算回原单位再核算资源、需求与目标值。</p>
+<h3 id="优点与局限">7.4 优点与局限</h3>
+<p>NLP
+能表达比例、距离、性能曲线等实际关系，建模灵活；成熟求解器也提供统一的约束接口、梯度和二阶信息支持。</p>
+<p>它的局限主要来自非凸性、不可微性与数值条件。局部求解可能依赖初值，随机搜索在高维空间中也可能很低效；严格等式通常占据低维集合，不能指望独立随机撒点轻易满足。</p>
+<p>当存在整数决策、固定启用费用或离散候选点时，还需考虑混合整数非线性规划或适当的等价模型。连续
+NLP 不能通过简单四舍五入就自动处理这些限制。</p>
+<h3 id="常见问题">7.5 常见问题</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">现象</th>
+<th style="text-align: center;">首先检查什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">两种语言算出不同目标值</td>
+<td style="text-align: center;">是否使用相同数据、目标方向与约束</td>
+</tr>
+<tr>
+<td style="text-align: center;">目标值很好，但供应不足</td>
+<td style="text-align: center;">是否放宽了需求等式，或漏查需求残差</td>
+</tr>
+<tr>
+<td style="text-align: center;">求解器报告成功，但方案很差</td>
+<td
+style="text-align: center;">是否停在驻点，是否需要更换初值并分析结构</td>
+</tr>
+<tr>
+<td style="text-align: center;">随机生成大量点仍无法满足等式</td>
+<td
+style="text-align: center;">能否通过参数化或子问题直接构造可行初值</td>
+</tr>
+<tr>
+<td style="text-align: center;">料场与工点重合时计算不稳定</td>
+<td style="text-align: center;">是否处理了距离函数的不可微性</td>
+</tr>
+<tr>
+<td style="text-align: center;">连续解四舍五入后违反条件</td>
+<td
+style="text-align: center;">实际问题是否包含应直接建模的整数决策</td>
+</tr>
+</tbody>
+</table>
+<h2 id="八练习与参考答案">八、练习与参考答案</h2>
+<h3 id="练习">8.1 练习</h3>
+<ol type="1">
+<li>为什么固定料场的运输模型是 LP，而选址与运输共同决定时一般是
+NLP？</li>
+<li>将 <span class="math inline">\(x_2-(x_1-1)^2\geqslant0\)</span>
+分别写成 MATLAB 非线性约束与 Python SLSQP 字典约束。</li>
+<li>对第四节的 <span class="math inline">\(F\)</span>，如果 Python
+直接使用
+<code>minimize(F,...)</code>，求的是哪一个问题？它的全局值是多少？</li>
+<li>第五节运输需求总量为 36 吨。令第一个料场供应 <span
+class="math inline">\(s_i\)</span>，为什么必须要求 <span
+class="math inline">\(16\leqslant\sum\limits_{i=1}^{6}s_i\leqslant20\)</span>？</li>
+<li>将光滑距离参数改为 <span
+class="math inline">\(\varepsilon=10^{-4}\)</span>
+千米，平滑目标与真实目标的差最多是多少？这能否控制局部解与全局解的差距？</li>
+<li>多个随机初值最终都返回同一个目标值，是否足以证明全局最优？</li>
+</ol>
+<h3 id="参考答案">8.2 参考答案</h3>
+<ol type="1">
+<li>固定坐标时，距离已经算成常数，目标对运输量是线性的；未知位置进入距离函数，并与运输量相乘，联合目标通常非线性且非凸。</li>
+<li>MATLAB 返回 <span class="math inline">\(c=(x_1-1)^2-x_2\)</span>
+并要求 <span class="math inline">\(c\leqslant0\)</span>；Python 返回
+<span class="math inline">\(g=x_2-(x_1-1)^2\)</span> 并设置
+<code>type='ineq'</code>，要求 <span
+class="math inline">\(g\geqslant0\)</span>。</li>
+<li>它直接最小化 <span
+class="math inline">\(F\)</span>，而非最大化。全局最小点为 <span
+class="math inline">\((3,4)\)</span>，最小值为 <span
+class="math inline">\(-13\)</span>。最大化应最小化 <span
+class="math inline">\(-F\)</span>，全局最大值为 <span
+class="math inline">\(-1\)</span>。</li>
+<li>第一个料场不能超过 20 吨；第二个料场供应 <span
+class="math inline">\(36-\sum\limits_{i=1}^{6}s_i\)</span>，也不能超过
+20 吨，所以 <span
+class="math inline">\(\sum\limits_{i=1}^{6}s_i\geqslant16\)</span>。</li>
+<li>平滑目标与真实目标的差不超过 <span
+class="math inline">\(36\times10^{-4}=0.0036\)</span>
+吨千米。这个界控制距离平滑误差，不控制非凸局部求解的全局差距。</li>
+<li>不能。可能是初值覆盖不够，也可能多个初值进入同一个局部区域。还需解析比较、凸性、下界或其他适用的全局核验证据。</li>
+</ol>
+<h2 id="参考文献">参考文献</h2>
+<p>[1] BOYD S, VANDENBERGHE L. Convex Optimization[M]. Cambridge:
+Cambridge University Press, 2004.
+https://stanford.edu/~boyd/cvxbook/.</p>
+<p>[2] SciPy Developers. scipy.optimize.minimize[EB/OL].
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html.</p>
+<p>[3] SciPy Developers. minimize(method='SLSQP')[EB/OL].
+https://docs.scipy.org/doc/scipy/reference/optimize.minimize-slsqp.html.</p>
+<p>[4] MathWorks. fmincon[EB/OL].
+https://www.mathworks.com/help/optim/ug/fmincon.html.</p>
+<p>[5] MathWorks. linprog[EB/OL].
+https://www.mathworks.com/help/optim/ug/linprog.html.</p>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

@@ -30,8 +30,8 @@
 <meta property="og:image" content="http://example.com/images/GraphTheory/GT-2.png">
 <meta property="og:image" content="http://example.com/images/GraphTheory/GT-3.png">
 <meta property="og:image" content="http://example.com/images/GraphTheory/GT-4.png">
-<meta property="article:published_time" content="2026-10-14T00:51:27.649Z">
-<meta property="article:modified_time" content="2026-10-14T00:51:27.649Z">
+<meta property="article:published_time" content="2026-10-15T06:01:20.939Z">
+<meta property="article:modified_time" content="2026-10-15T02:43:31.469Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/GraphTheory/GT-1.png">
@@ -364,8 +364,10 @@ class="math inline">\(u\)</span> 的边也存在.</p>
 </table>
 <p>对于有向图, <span class="math inline">\(u\to v\)</span> 与 <span
 class="math inline">\(v\to u\)</span> 是不同有向边,
-本身不构成同向平行边. 软件中的 <code>Graph</code>, <code>DiGraph</code>
-等类可能允许自环, 使用时仍须按任务检查是否符合数学模型的要求.</p>
+本身不构成同向平行边. 本章允许多重图中的两条平行边组成长度为 2 的圈,
+自环组成长度为 1 的圈; 沿同一条无向边往返会重复该边, 不构成圈. 软件中的
+<code>Graph</code>, <code>DiGraph</code> 等类可能允许自环,
+使用时仍须按任务检查是否符合数学模型的要求.</p>
 <h3 id="度-入度与出度">2.4 度, 入度与出度</h3>
 <p>无向图的度 <span class="math inline">\(d(v)\)</span> 是与顶点 <span
 class="math inline">\(v\)</span> 关联的边端数量. 每条平行边分别计数,
@@ -412,7 +414,7 @@ class="math inline">\(v\)</span> 关联的边端数量. 每条平行边分别计
 </tr>
 <tr>
 <td style="text-align: center;">圈</td>
-<td style="text-align: center;">除首尾重合外, 顶点不重复的闭合路线</td>
+<td style="text-align: center;">除首尾重合外, 顶点不重复的闭迹</td>
 </tr>
 </tbody>
 </table>
@@ -612,7 +614,11 @@ A\to B\to A\to C\to A\to D\to B\to C\to D.
 分别表示普通无向图和有向图; <code>MultiGraph</code>,
 <code>MultiDiGraph</code> 用于允许平行边的对应模型.
 普通图重复添加相同端点的边, 通常会更新该边属性, 而不会另保存一座桥.</p>
-<p>本章各段 Python 示例均给出完整输入. 桥编号作为边键保存,
+<p>运行 Python 示例前, 可在终端执行
+<code>python -m pip install numpy networkx matplotlib</code> 安装所需库.
+NumPy 和 NetworkX 用于正文计算, Matplotlib 用于配套绘图.
+各代码块应分别运行, 以免不同示例重复使用的变量互相覆盖. 本章各段 Python
+示例均给出完整输入. 桥编号作为边键保存,
 使相同端点之间的两座桥仍可分别识别.</p>
 <h3 id="判断并构造欧拉通路">5.2 判断并构造欧拉通路</h3>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> networkx <span class="keyword">as</span> nx</span><br><span class="line"></span><br><span class="line">bridges = [</span><br><span class="line">    (<span class="string">&quot;A&quot;</span>, <span class="string">&quot;B&quot;</span>, <span class="string">&quot;b1&quot;</span>), (<span class="string">&quot;A&quot;</span>, <span class="string">&quot;B&quot;</span>, <span class="string">&quot;b2&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;A&quot;</span>, <span class="string">&quot;C&quot;</span>, <span class="string">&quot;b3&quot;</span>), (<span class="string">&quot;A&quot;</span>, <span class="string">&quot;C&quot;</span>, <span class="string">&quot;b4&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;A&quot;</span>, <span class="string">&quot;D&quot;</span>, <span class="string">&quot;b5&quot;</span>), (<span class="string">&quot;B&quot;</span>, <span class="string">&quot;D&quot;</span>, <span class="string">&quot;b6&quot;</span>), (<span class="string">&quot;C&quot;</span>, <span class="string">&quot;D&quot;</span>, <span class="string">&quot;b7&quot;</span>),</span><br><span class="line">]</span><br><span class="line">G = nx.MultiGraph()</span><br><span class="line">G.add_nodes_from([<span class="string">&quot;A&quot;</span>, <span class="string">&quot;B&quot;</span>, <span class="string">&quot;C&quot;</span>, <span class="string">&quot;D&quot;</span>])</span><br><span class="line"><span class="keyword">for</span> u, v, bridge_id <span class="keyword">in</span> bridges:</span><br><span class="line">    G.add_edge(u, v, key=bridge_id)</span><br><span class="line"></span><br><span class="line">degrees = <span class="built_in">dict</span>(G.degree())</span><br><span class="line"><span class="keyword">assert</span> G.number_of_edges() == <span class="number">7</span></span><br><span class="line"><span class="keyword">assert</span> degrees == &#123;<span class="string">&quot;A&quot;</span>: <span class="number">5</span>, <span class="string">&quot;B&quot;</span>: <span class="number">3</span>, <span class="string">&quot;C&quot;</span>: <span class="number">3</span>, <span class="string">&quot;D&quot;</span>: <span class="number">3</span>&#125;</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">sum</span>(degrees.values()) == <span class="number">14</span></span><br><span class="line"><span class="keyword">assert</span> nx.is_connected(G)</span><br><span class="line"><span class="keyword">assert</span> <span class="keyword">not</span> nx.has_eulerian_path(G)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;七桥图的度数：&quot;</span>, degrees)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;是否存在欧拉通路：&quot;</span>, nx.has_eulerian_path(G))</span><br><span class="line"></span><br><span class="line">H = G.copy()</span><br><span class="line">H.add_edge(<span class="string">&quot;B&quot;</span>, <span class="string">&quot;C&quot;</span>, key=<span class="string">&quot;b8&quot;</span>)</span><br><span class="line"><span class="keyword">assert</span> nx.has_eulerian_path(H) <span class="keyword">and</span> <span class="keyword">not</span> nx.is_eulerian(H)</span><br><span class="line">route = <span class="built_in">list</span>(nx.eulerian_path(H, source=<span class="string">&quot;A&quot;</span>, keys=<span class="literal">True</span>))</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">len</span>(route) == H.number_of_edges() == <span class="number">8</span></span><br><span class="line"><span class="keyword">assert</span> route[<span class="number">0</span>][<span class="number">0</span>] == <span class="string">&quot;A&quot;</span> <span class="keyword">and</span> route[-<span class="number">1</span>][<span class="number">1</span>] == <span class="string">&quot;D&quot;</span></span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">all</span>(route[i][<span class="number">1</span>] == route[i + <span class="number">1</span>][<span class="number">0</span>] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(route) - <span class="number">1</span>))</span><br><span class="line"><span class="keyword">assert</span> &#123;key <span class="keyword">for</span> u, v, key <span class="keyword">in</span> route&#125; == &#123;<span class="string">f&quot;b<span class="subst">&#123;i&#125;</span>&quot;</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, <span class="number">9</span>)&#125;</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">all</span>(H.has_edge(u, v, key) <span class="keyword">for</span> u, v, key <span class="keyword">in</span> route)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;新增 B—C 桥后的欧拉通路：&quot;</span>, route)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 一个连通条件反例：两组分离的三角形，度数全为偶数。</span></span><br><span class="line">disconnected = nx.Graph([(<span class="number">1</span>, <span class="number">2</span>), (<span class="number">2</span>, <span class="number">3</span>), (<span class="number">3</span>, <span class="number">1</span>),</span><br><span class="line">                         (<span class="number">4</span>, <span class="number">5</span>), (<span class="number">5</span>, <span class="number">6</span>), (<span class="number">6</span>, <span class="number">4</span>)])</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">all</span>(d % <span class="number">2</span> == <span class="number">0</span> <span class="keyword">for</span> v, d <span class="keyword">in</span> disconnected.degree())</span><br><span class="line"><span class="keyword">assert</span> <span class="keyword">not</span> nx.has_eulerian_path(disconnected)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 按只遍历边的任务约定，先去除不关联任何边的孤立点。</span></span><br><span class="line">with_isolate = nx.cycle_graph(<span class="number">3</span>)</span><br><span class="line">with_isolate.add_node(<span class="string">&quot;isolated&quot;</span>)</span><br><span class="line">active = with_isolate.subgraph([v <span class="keyword">for</span> v, d <span class="keyword">in</span> with_isolate.degree() <span class="keyword">if</span> d &gt; <span class="number">0</span>]).copy()</span><br><span class="line"><span class="keyword">assert</span> nx.is_eulerian(active)</span><br></pre></td></tr></table></figure>
@@ -632,14 +638,14 @@ class="math inline">\((5,3,3,3)^{\mathsf T}\)</span> 相对应.</p>
 从原始数据到矩阵</h2>
 <h3 id="完整边列表">6.1 完整边列表</h3>
 <p>用 <span class="math inline">\(v_1,\ldots,v_5\)</span> 表示五个城市,
-边权表示统一单位下的通行距离. 本节数据为算法教学设定,
+边权表示通行距离, 单位统一为 km. 本节数据为算法教学设定,
 不代表实际路网测量结果. 图中有以下 9 条有向边:</p>
 <table>
 <thead>
 <tr>
 <th style="text-align: center;">起点</th>
 <th style="text-align: center;">终点</th>
-<th style="text-align: center;">距离</th>
+<th style="text-align: center;">距离 / km</th>
 </tr>
 </thead>
 <tbody>
@@ -693,8 +699,8 @@ class="math inline">\((5,3,3,3)^{\mathsf T}\)</span> 相对应.</p>
 <p>例如, 2 到 3 的边权为 5, 3 到 2 的边权为 2; 即使这两个城市互相可达,
 两方向数据也不能合并成一条具有单个权值的无向边.</p>
 <p><img src="/images/GraphTheory/GT-2.png" alt="" style="width: 100%;"></p>
-<p>图 2　五城市有向道路图. 箭头表示通行方向, 数字为边权; 橙色边组成 1 到
-4 的最短路线, 距离为 21.</p>
+<p>图 2　五城市有向道路图. 箭头表示通行方向, 数字为距离, 单位为 km;
+橙色边组成 1 到 4 的最短路线, 距离为 21 km.</p>
 <h3 id="两种加权矩阵">6.2 两种加权矩阵</h3>
 <p>按顶点顺序 1, 2, 3, 4, 5, 最短路初始矩阵为</p>
 <p><span class="math display">\[
@@ -731,7 +737,7 @@ class="math inline">\(t\)</span> 的全部有向路径组成的集合,
 最短路模型为</p>
 <p><span class="math display">\[
 \begin{aligned}
-&amp;\min\quad L(P)=\sum_{e\in P}w(e),\\
+&amp;\min\quad L(P)=\sum\limits_{e\in P}w(e),\\
 &amp;\mathrm{s.t.}\quad\begin{cases}
 P\in\mathcal{P}_{st}.
 \end{cases}
@@ -740,20 +746,24 @@ P\in\mathcal{P}_{st}.
 <p>模型要求在合法路径中比较总边权. 如果路径集合为空, 则两点之间不可达;
 算法通常用 <span class="math inline">\(+\infty\)</span> 表示距离,
 而不返回一条可行路线.</p>
-<p>本例边权都非负, 可使用 Dijkstra 方法. 最短路线为</p>
+<p>本例边权都非负, 可使用 Dijkstra 方法. 它先把起点距离设为 0,
+其他点暂记为正无穷; 每次确定一个暂定距离最小的未确定顶点,
+再检查经由它到达邻点是否更短.
+非负边权保证已确定的最短距离不会被后续绕行降低. 若有并列最短路线,
+函数通常只返回其中一条. 最短路线为</p>
 <p><span class="math display">\[
 1\to2\to3\to4,
 \]</span></p>
 <p>距离为</p>
 <p><span class="math display">\[
-10+5+6=21.
+10+5+6=21\ \mathrm{km}.
 \]</span></p>
 <p>如果需要所有城市对之间的最短距离, 可计算 Floyd–Warshall 递推:</p>
 <p><span class="math display">\[
 D^{(0)}=W,
 \]</span></p>
 <p><span class="math display">\[
-D^{(k)}_{ij}=\min\{D^{(k-1)}_{ij},\
+D^{(k)}_{ij}=\min\{D^{(k-1)}_{ij},
 D^{(k-1)}_{ik}+D^{(k-1)}_{kj}\},\qquad k=1,\ldots,n.
 \]</span></p>
 <p>其中第 <span class="math inline">\(k\)</span> 步允许中间顶点来自前
@@ -764,7 +774,7 @@ Floyd–Warshall 算法可以处理负权边. 在允许沿边重复行走的最�
 一般应检查最终矩阵是否出现 <span
 class="math inline">\(D_{ii}&lt;0\)</span>; 本例所有边权为正,
 不存在负权回路.</p>
-<p>最终距离矩阵为</p>
+<p>最终距离矩阵为(各元素的单位均为 km)</p>
 <p><span class="math display">\[
 D=\begin{bmatrix}
 0&amp;10&amp;15&amp;21&amp;14\\
@@ -855,8 +865,10 @@ NumPy 矩阵中下标为 1 的元素不是同一概念: 本章顶点编号 1 对
 并不表示某条实际路线.</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> networkx <span class="keyword">as</span> nx</span><br><span class="line"></span><br><span class="line">plain_edges = [(<span class="number">1</span>, <span class="number">2</span>), (<span class="number">2</span>, <span class="number">3</span>), (<span class="number">3</span>, <span class="number">1</span>), (<span class="number">4</span>, <span class="number">1</span>)]</span><br><span class="line">weighted_edges = [(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>), (<span class="number">2</span>, <span class="number">3</span>, <span class="number">8</span>), (<span class="number">3</span>, <span class="number">1</span>, <span class="number">9</span>), (<span class="number">4</span>, <span class="number">1</span>, <span class="number">2</span>)]</span><br><span class="line">G0 = nx.Graph()</span><br><span class="line">G0.add_nodes_from(<span class="built_in">range</span>(<span class="number">1</span>, <span class="number">5</span>))</span><br><span class="line">G0.add_edges_from(plain_edges)</span><br><span class="line">Gw = nx.Graph()</span><br><span class="line">Gw.add_nodes_from(<span class="built_in">range</span>(<span class="number">1</span>, <span class="number">5</span>))</span><br><span class="line">Gw.add_weighted_edges_from(weighted_edges)</span><br><span class="line">B = np.array([[<span class="number">0</span>, <span class="number">3</span>, <span class="number">9</span>, <span class="number">2</span>], [<span class="number">3</span>, <span class="number">0</span>, <span class="number">8</span>, <span class="number">0</span>],</span><br><span class="line">              [<span class="number">9</span>, <span class="number">8</span>, <span class="number">0</span>, <span class="number">0</span>], [<span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]], dtype=<span class="built_in">float</span>)</span><br><span class="line"><span class="keyword">assert</span> np.array_equal(nx.to_numpy_array(Gw, nodelist=[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]), B)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 当前矩阵约定为 0 表示无边，且确实没有真实零权边。</span></span><br><span class="line">Gmatrix = nx.Graph()</span><br><span class="line">Gmatrix.add_nodes_from(<span class="built_in">range</span>(<span class="number">1</span>, <span class="number">5</span>))</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(i + <span class="number">1</span>, <span class="number">4</span>):</span><br><span class="line">        <span class="keyword">if</span> B[i, j] != <span class="number">0</span>:</span><br><span class="line">            Gmatrix.add_edge(i + <span class="number">1</span>, j + <span class="number">1</span>, weight=B[i, j])</span><br><span class="line"><span class="keyword">assert</span> np.array_equal(nx.to_numpy_array(Gmatrix, nodelist=[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]), B)</span><br><span class="line"></span><br><span class="line">Gnamed = nx.Graph()</span><br><span class="line">Gnamed.add_edges_from([(<span class="string">&quot;学校&quot;</span>, <span class="string">&quot;图书馆&quot;</span>), (<span class="string">&quot;图书馆&quot;</span>, <span class="string">&quot;博物馆&quot;</span>),</span><br><span class="line">                       (<span class="string">&quot;科技馆&quot;</span>, <span class="string">&quot;博物馆&quot;</span>), (<span class="string">&quot;博物馆&quot;</span>, <span class="string">&quot;社区服务中心&quot;</span>)])</span><br><span class="line"><span class="keyword">assert</span> Gnamed.number_of_nodes() == <span class="number">5</span> <span class="keyword">and</span> Gnamed.number_of_edges() == <span class="number">4</span></span><br><span class="line"></span><br><span class="line">D0 = nx.DiGraph()</span><br><span class="line">D0.add_nodes_from(<span class="built_in">range</span>(<span class="number">1</span>, <span class="number">5</span>))</span><br><span class="line">D0.add_edges_from(plain_edges + [(<span class="number">1</span>, <span class="number">4</span>)])</span><br><span class="line">Dw = nx.DiGraph()</span><br><span class="line">Dw.add_nodes_from(<span class="built_in">range</span>(<span class="number">1</span>, <span class="number">5</span>))</span><br><span class="line">Dw.add_weighted_edges_from(weighted_edges)</span><br><span class="line"><span class="keyword">assert</span> D0.number_of_edges() == <span class="number">5</span> <span class="keyword">and</span> Dw.number_of_edges() == <span class="number">4</span></span><br><span class="line"><span class="keyword">assert</span> <span class="keyword">not</span> G0.has_edge(<span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line">B_directed = np.array([[<span class="number">0</span>, <span class="number">3</span>, <span class="number">0</span>, <span class="number">0</span>], [<span class="number">0</span>, <span class="number">0</span>, <span class="number">8</span>, <span class="number">0</span>],</span><br><span class="line">                       [<span class="number">9</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>], [<span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]], dtype=<span class="built_in">float</span>)</span><br><span class="line">Dmatrix = nx.DiGraph()</span><br><span class="line">Dmatrix.add_nodes_from(<span class="built_in">range</span>(<span class="number">1</span>, <span class="number">5</span>))</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>):</span><br><span class="line">        <span class="keyword">if</span> B_directed[i, j] != <span class="number">0</span>:</span><br><span class="line">            Dmatrix.add_edge(i + <span class="number">1</span>, j + <span class="number">1</span>, weight=B_directed[i, j])</span><br><span class="line"><span class="keyword">assert</span> np.array_equal(nx.to_numpy_array(Dw, nodelist=[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]), B_directed)</span><br><span class="line"><span class="keyword">assert</span> np.array_equal(nx.to_numpy_array(Dmatrix, nodelist=[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]), B_directed)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;无向带权矩阵：\n&quot;</span>, B)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;有向带权矩阵：\n&quot;</span>, B_directed)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;命名节点：&quot;</span>, <span class="built_in">list</span>(Gnamed.nodes()))</span><br></pre></td></tr></table></figure>
 <p><img src="/images/GraphTheory/GT-3.png" alt="" style="width: 100%;"></p>
-<p>图 3　六个建图示例. 带权无向图的边列表与矩阵表示得到同一连接结构;
-有向图中, 1 到 4 与 4 到 1 是两条不同边.</p>
+<p>图 3　六个建图示例. 命名地点使用英文标签: School 为学校, Library
+为图书馆, Science 为科技馆, Museum 为博物馆, Community 为社区服务中心.
+带权无向图的边列表与矩阵表示得到同一连接结构; 有向图中, 1 到 4 与 4 到 1
+是两条不同边.</p>
 <h3 id="正确保留零权边与孤立顶点">7.3 正确保留零权边与孤立顶点</h3>
 <p>设有一条 1 到 2 的零费用边, 以及 2 到 3 的费用 4 的边, 另有孤立节点
 4. 不要把零费用边误作"无边", 也不要因节点 4
@@ -917,13 +929,13 @@ s=(1,2,3,4),\qquad t=(2,3,1,1)
 <h3 id="连通全部地点-和两点间最短路不同">9.1 连通全部地点,
 和两点间最短路不同</h3>
 <p>沿用无向小图的四条边: 1—2 权重 3, 2—3 权重 8, 3—1 权重 9, 4—1 权重 2.
-若在这个教学扩展中把权重解释为同一计价单位下的建设费用,
+若在这个教学扩展中把权重解释为统一费用单位下的非负建设费用,
 要求选择一组边连通全部四个地点, 总费用最小, 就得到最小生成树问题.</p>
 <p>以 <span class="math inline">\(F\)</span> 表示选中的边集合,
 最小生成树模型为</p>
 <p><span class="math display">\[
 \begin{aligned}
-&amp;\min\quad \sum_{e\in F}w(e),\\
+&amp;\min\quad \sum\limits_{e\in F}w(e),\\
 &amp;\mathrm{s.t.}\quad\begin{cases}
 F\subseteq E,\\
 (V,F)\text{ 连通},\\
@@ -931,7 +943,11 @@ F\subseteq E,\\
 \end{cases}
 \end{aligned}
 \]</span></p>
-<p>这里的连通与无圈条件共同保证所选边构成覆盖全部顶点的树.</p>
+<p>这里的连通与无圈条件共同保证所选边构成覆盖全部顶点的树.
+本例建设费用非负, 连通方案中的圈总能删去一条边而不增加费用,
+因此至少有一个最优连通方案是树. 若允许负费用,
+"任意连通边集的最小总费用"与"最小生成树"未必等价;
+最小生成树仍须满足无圈约束.</p>
 <p>无向连通图的生成树包含全部顶点, 没有圈, 且有 <span
 class="math inline">\(n-1\)</span> 条边. 本例 4—1 是节点 4 唯一的连接,
 必须保留. 三角形 1—2—3 中保留权重 3 和 8 的两条边, 删去权重 9 的边,
@@ -944,8 +960,11 @@ E_T=\{\{1,4\},\{1,2\},\{2,3\}\},
 2+3+8=13.
 \]</span></p>
 <p>它不是"选择全图最便宜的若干边"这么简单:
-选择过程中还必须保证最终连通且不成圈. 一般可用 Kruskal 或 Prim 算法;
-本例直接比较三角形中应删除的边即可核对.</p>
+选择过程中还必须保证最终连通且不成圈. Kruskal
+算法把边按权重从小到大考察, 只接纳不会形成圈的边, 直到选够 <span
+class="math inline">\(n-1\)</span> 条边. Prim 算法从一个顶点开始,
+每次选取连接已有顶点集与外部顶点的最便宜边, 逐步扩展为生成树.
+一般可用这两种算法; 本例直接比较三角形中应删除的边即可核对.</p>
 <p><img src="/images/GraphTheory/GT-4.png" alt="" style="width: 100%;"></p>
 <p>图 4　四顶点图的最小生成树. 实线为选中的三条边, 虚线为未选边,
 总费用为 <span class="math inline">\(2+3+8=13\)</span>.</p>
@@ -974,6 +993,9 @@ E_T=\{\{1,4\},\{1,2\},\{2,3\}\},
 <p>图绘制出来不等于问题已经求解. 不同的优化目标, 即使使用同一张图,
 也可能产生不同结果.</p>
 <h3 id="几类任务的区别">10.2 几类任务的区别</h3>
+<p>广度优先搜索(BFS)先访问离起点一条边的顶点, 再访问两条边的顶点,
+按层推进; 深度优先搜索(DFS)则沿一条分支深入, 无法继续时再回退.
+在无权图中, BFS 首次到达一个顶点时的层数就是从起点出发的最少边数.</p>
 <table>
 <colgroup>
 <col style="width: 33%" />
@@ -1027,6 +1049,11 @@ E_T=\{\{1,4\},\{1,2\},\{2,3\}\},
 class="math inline">\(O(n+m)\)</span> 时间;
 若对每个顶点扫描矩阵整行寻找邻点, 遍历量可能为 <span
 class="math inline">\(O(n^2)\)</span>.</p>
+<p>正文示例使用固定且合法的数据, 不是接收任意输入的通用程序. 更换输入时,
+应先检查矩阵是否方阵, 行列顺序是否一致, 有限边权是否为实数, 是否含 NaN
+或不允许的负无穷, 以及 Dijkstra 所需的非负条件.
+重复边应按任务明确选择保留, 覆盖或聚合. 浮点计算宜使用容差比较,
+不应照搬本章整数示例的精确相等断言.</p>
 <p>本章显式 Floyd–Warshall 代码有三重规模为 <span
 class="math inline">\(n\)</span> 的状态更新, 时间为 <span
 class="math inline">\(O(n^3)\)</span>, 矩阵空间为 <span
@@ -1137,9 +1164,9 @@ C, D 的度仍为 3. 图仍连通, 恰有两个奇度顶点, 所以存在开放�
 新增边也必须作为不同边保存.</p>
 <p><strong>第 3 题.</strong> 路线 <span
 class="math inline">\(3\to2\to5\)</span> 的距离为 <span
-class="math inline">\(2+4=6\)</span>, 路线 <span
+class="math inline">\(2+4=6\)</span> km, 路线 <span
 class="math inline">\(3\to4\to5\)</span> 的距离为 <span
-class="math inline">\(6+3=9\)</span>, 但还需比较其他候选.
+class="math inline">\(6+3=9\)</span> km, 但还需比较其他候选.
 全部点对距离计算给出 <span class="math inline">\(D_{35}=6\)</span>,
 本例最短路线为 <span class="math inline">\(3\to2\to5\)</span>.
 由于各边权都严格为正, 最短路线不会通过重复顶点的正费用圈;
@@ -1200,7 +1227,7 @@ class="math inline">\(2+1+3=6\)</span>.</p>
 但两组之间没有连接边. 一条连续路线不能在走完一组后跳到另一组,
 所以不存在覆盖全部边的欧拉通路. 连通条件与度数条件必须同时满足.</p>
 <p>本章的三个主要结果分别回答不同问题: 七桥原图没有欧拉通路; 五城市图中
-1 到 4 的最短距离为 21; 四顶点无向图的最小生成树总权重为 13.
+1 到 4 的最短距离为 21 km; 四顶点无向图的最小生成树总权重为 13.
 理解每个结果的任务, 图类型和数据约定,
 才能把图论方法正确用于新的实际问题.</p>
 <h2 id="参考资料">参考资料</h2>

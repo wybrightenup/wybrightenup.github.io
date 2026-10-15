@@ -19,18 +19,18 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="TOPSIS：用理想解比较多个方案 一个方案节电效果好，另一个方案维护方便，第三个方案在控制参数上更合适，怎样综合比较？TOPSIS 用两个参照点组织这种选择：一端集合了各方案的最好表现，另一端集合了最差表现，再看每个方案与两端的相对距离。 本章以校园照明节能改造为例，学习指标正向化、向量标准化、距离计算与结果解释。先理解案例和图形，再选择 Python 或 MATLAB 完成计算。 一">
+    <meta name="description" content="TOPSIS: 用理想解比较多个方案 一个方案节电效果好, 另一个方案维护方便, 第三个方案在控制参数上更合适, 怎样综合比较? TOPSIS 用两个参照点组织这种选择: 一端集合了各方案的最好表现, 另一端集合了最差表现, 再看每个方案与两端的相对距离. 本章以校园照明节能改造为例, 学习指标正向化、向量标准化、距离计算与结果解释. 先理解案例和图形, 再选择 Python 或 M">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Hexo">
 <meta property="og:url" content="http://example.com/wait/Topsis.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="TOPSIS：用理想解比较多个方案 一个方案节电效果好，另一个方案维护方便，第三个方案在控制参数上更合适，怎样综合比较？TOPSIS 用两个参照点组织这种选择：一端集合了各方案的最好表现，另一端集合了最差表现，再看每个方案与两端的相对距离。 本章以校园照明节能改造为例，学习指标正向化、向量标准化、距离计算与结果解释。先理解案例和图形，再选择 Python 或 MATLAB 完成计算。 一">
+<meta property="og:description" content="TOPSIS: 用理想解比较多个方案 一个方案节电效果好, 另一个方案维护方便, 第三个方案在控制参数上更合适, 怎样综合比较? TOPSIS 用两个参照点组织这种选择: 一端集合了各方案的最好表现, 另一端集合了最差表现, 再看每个方案与两端的相对距离. 本章以校园照明节能改造为例, 学习指标正向化、向量标准化、距离计算与结果解释. 先理解案例和图形, 再选择 Python 或 M">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/images/Topsis/Topsis-1.png">
 <meta property="og:image" content="http://example.com/images/Topsis/Topsis-2.png">
 <meta property="og:image" content="http://example.com/images/Topsis/Topsis-3.png">
-<meta property="article:published_time" content="2026-10-13T02:01:50.961Z">
-<meta property="article:modified_time" content="2026-10-12T12:54:26.000Z">
+<meta property="article:published_time" content="2026-10-15T06:01:20.982Z">
+<meta property="article:modified_time" content="2026-10-14T09:09:59.805Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/Topsis/Topsis-1.png">
@@ -131,9 +131,10 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#topsis%E7%94%A8%E7%90%86%E6%83%B3%E8%A7%A3%E6%AF%94%E8%BE%83%E5%A4%9A%E4%B8%AA%E6%96%B9%E6%A1%88"><span class="nav-number">1.</span> <span class="nav-text">TOPSIS：用理想解比较多个方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%BB%8E%E4%B8%80%E4%B8%AA%E4%B8%A4%E6%8C%87%E6%A0%87%E9%97%AE%E9%A2%98%E8%AF%B4%E8%B5%B7"><span class="nav-number">1.1.</span> <span class="nav-text">一、从一个两指标问题说起</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%85%88%E6%8A%8A%E8%AF%84%E4%BB%B7%E9%97%AE%E9%A2%98%E5%86%99%E6%B8%85%E6%A5%9A"><span class="nav-number">1.2.</span> <span class="nav-text">二、先把评价问题写清楚</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%84%E4%BB%B7%E7%9F%A9%E9%98%B5"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 评价矩阵</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E7%A7%8D%E5%B8%B8%E8%A7%81%E6%8C%87%E6%A0%87"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 四种常见指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E8%B7%AF%E7%BA%BF"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 计算路线</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E6%AD%A3%E5%90%91%E5%8C%96%E8%AE%A9%E6%9B%B4%E5%A5%BD%E6%9C%9D%E5%90%8C%E4%B8%80%E6%96%B9%E5%90%91"><span class="nav-number">1.3.</span> <span class="nav-text">三、正向化：让“更好”朝同一方向</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%88%E7%9B%8A%E5%9E%8B%E4%BF%9D%E7%95%99%E5%8E%9F%E5%80%BC"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 效益型：保留原值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%88%90%E6%9C%AC%E5%9E%8B%E6%9C%80%E5%A4%A7%E5%80%BC%E5%87%8F%E5%8E%9F%E5%80%BC"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 成本型：最大值减原值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87%E5%80%BC%E5%9E%8B%E6%8C%89%E5%81%8F%E7%A6%BB%E7%A8%8B%E5%BA%A6%E6%8A%98%E5%87%8F"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 目标值型：按偏离程度折减</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8C%BA%E9%97%B4%E5%9E%8B%E5%8C%BA%E9%97%B4%E5%86%85%E5%8F%96-1%E8%B6%85%E7%95%8C%E5%90%8E%E6%8A%98%E5%87%8F"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.4 区间型：区间内取
-1，超界后折减</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E7%BB%9F%E4%B8%80%E5%B0%BA%E5%BA%A6%E5%B9%B6%E8%AF%B4%E6%98%8E%E6%9D%83%E9%87%8D"><span class="nav-number">1.4.</span> <span class="nav-text">四、统一尺度，并说明权重</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%91%E9%87%8F%E6%A0%87%E5%87%86%E5%8C%96"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 向量标准化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E6%95%B0%E5%88%97%E6%80%8E%E6%A0%B7%E5%A4%84%E7%90%86"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 常数列怎样处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A0%E6%9D%83%E6%A0%87%E5%87%86%E5%8C%96%E7%9F%A9%E9%98%B5"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 加权标准化矩阵</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E8%AE%A1%E7%AE%97%E4%B8%A4%E4%B8%AA%E8%B7%9D%E7%A6%BB%E4%B8%8E%E7%9B%B8%E5%AF%B9%E8%B4%B4%E8%BF%91%E5%BA%A6"><span class="nav-number">1.5.</span> <span class="nav-text">五、计算两个距离与相对贴近度</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%90%86%E6%83%B3%E8%A7%A3%E5%92%8C%E8%B4%9F%E7%90%86%E6%83%B3%E8%A7%A3"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 理想解和负理想解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AC%A7%E6%B0%8F%E8%B7%9D%E7%A6%BB"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 欧氏距离</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%AF%B9%E8%B4%B4%E8%BF%91%E5%BA%A6"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 相对贴近度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9C%8B%E8%A7%81%E4%B8%A4%E6%8C%87%E6%A0%87%E5%BC%95%E4%BE%8B%E7%9A%84%E5%87%A0%E4%BD%95%E6%84%8F%E4%B9%89"><span class="nav-number">1.5.4.</span> <span class="nav-text">5.4 看见两指标引例的几何意义</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E5%AE%8C%E6%95%B4%E6%A1%88%E4%BE%8B%E5%9B%9B%E6%8C%87%E6%A0%87%E7%85%A7%E6%98%8E%E6%94%B9%E9%80%A0%E6%96%B9%E6%A1%88"><span class="nav-number">1.6.</span> <span class="nav-text">六、完整案例：四指标照明改造方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E4%B8%8E%E8%AF%84%E4%BB%B7%E8%AE%BE%E5%AE%9A"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 数据与评价设定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A3%E5%90%91%E5%8C%96%E4%B8%8E%E6%A0%87%E5%87%86%E5%8C%96"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 正向化与标准化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%90%86%E6%83%B3%E8%A7%A3%E8%B7%9D%E7%A6%BB%E4%B8%8E%E6%8E%92%E5%BA%8F"><span class="nav-number">1.6.3.</span> <span class="nav-text">6.3 理想解、距离与排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E7%A7%8D%E7%99%BE%E5%88%86%E6%95%B0%E5%B1%95%E7%A4%BA%E6%96%B9%E5%BC%8F"><span class="nav-number">1.6.4.</span> <span class="nav-text">6.4 两种百分数展示方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83python-%E4%B8%8E-matlab-%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.7.</span> <span class="nav-text">七、Python 与 MATLAB 实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E8%BF%90%E8%A1%8C%E4%B8%80%E6%AE%B5%E7%9F%AD%E4%BB%A3%E7%A0%81"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 先运行一段短代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4-python-%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 完整 Python 程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab-%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.7.3.</span> <span class="nav-text">7.3 MATLAB 程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E5%90%8E%E6%A3%80%E6%9F%A5%E4%BB%80%E4%B9%88"><span class="nav-number">1.7.4.</span> <span class="nav-text">7.4 运行后检查什么</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E6%A3%80%E6%9F%A5-bc-%E7%9A%84%E5%85%88%E5%90%8E%E6%98%AF%E5%90%A6%E7%A8%B3%E5%81%A5"><span class="nav-number">1.8.</span> <span class="nav-text">八、检查 B、C 的先后是否稳健</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D%E8%BF%9B%E4%B8%80%E6%AD%A5%E7%90%86%E8%A7%A3%E6%96%B9%E6%B3%95%E7%9A%84%E8%BE%B9%E7%95%8C"><span class="nav-number">1.9.</span> <span class="nav-text">九、进一步理解方法的边界</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%B4%E8%BF%91%E5%BA%A6%E5%A4%A7%E4%B8%8D%E4%B8%80%E5%AE%9A%E7%A6%BB%E6%AD%A3%E7%90%86%E6%83%B3%E8%A7%A3%E6%9B%B4%E8%BF%91"><span class="nav-number">1.9.1.</span> <span class="nav-text">9.1
-贴近度大，不一定离正理想解更近</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E7%A7%8D%E6%9D%83%E9%87%8D%E7%BA%A6%E5%AE%9A%E4%B8%8D%E8%83%BD%E6%B7%B7%E7%94%A8"><span class="nav-number">1.9.2.</span> <span class="nav-text">9.2 两种权重约定不能混用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%88%90%E6%9C%AC%E6%8C%87%E6%A0%87%E4%B9%9F%E5%8F%AF%E4%BB%A5%E4%B8%8D%E5%85%88%E6%AD%A3%E5%90%91%E5%8C%96"><span class="nav-number">1.9.3.</span> <span class="nav-text">9.3 成本指标也可以不先正向化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%AF%B9%E6%8E%92%E5%BA%8F%E7%9A%84%E9%80%82%E7%94%A8%E8%8C%83%E5%9B%B4"><span class="nav-number">1.9.4.</span> <span class="nav-text">9.4 相对排序的适用范围</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E7%BB%83%E4%B9%A0%E4%B8%8E%E6%9C%AC%E7%AB%A0%E8%A6%81%E7%82%B9"><span class="nav-number">1.10.</span> <span class="nav-text">十、练习与本章要点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.10.1.</span> <span class="nav-text">10.1 练习</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E7%AD%94%E6%A1%88%E4%B8%8E%E6%8F%90%E7%A4%BA"><span class="nav-number">1.10.2.</span> <span class="nav-text">10.2 参考答案与提示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E7%AB%A0%E8%A6%81%E7%82%B9"><span class="nav-number">1.10.3.</span> <span class="nav-text">10.3 本章要点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">1.11.</span> <span class="nav-text">参考文献</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#topsis-%E7%94%A8%E7%90%86%E6%83%B3%E8%A7%A3%E6%AF%94%E8%BE%83%E5%A4%9A%E4%B8%AA%E6%96%B9%E6%A1%88"><span class="nav-number">1.</span> <span class="nav-text">TOPSIS: 用理想解比较多个方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%BB%8E%E4%B8%80%E4%B8%AA%E4%B8%A4%E6%8C%87%E6%A0%87%E9%97%AE%E9%A2%98%E8%AF%B4%E8%B5%B7"><span class="nav-number">1.1.</span> <span class="nav-text">一、从一个两指标问题说起</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%85%88%E6%8A%8A%E8%AF%84%E4%BB%B7%E9%97%AE%E9%A2%98%E5%86%99%E6%B8%85%E6%A5%9A"><span class="nav-number">1.2.</span> <span class="nav-text">二、先把评价问题写清楚</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%84%E4%BB%B7%E7%9F%A9%E9%98%B5"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 评价矩阵</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E7%A7%8D%E5%B8%B8%E8%A7%81%E6%8C%87%E6%A0%87"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 四种常见指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E8%B7%AF%E7%BA%BF"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 计算路线</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E6%AD%A3%E5%90%91%E5%8C%96-%E8%AE%A9%E6%9B%B4%E5%A5%BD%E6%9C%9D%E5%90%8C%E4%B8%80%E6%96%B9%E5%90%91"><span class="nav-number">1.3.</span> <span class="nav-text">三、正向化: 让“更好”朝同一方向</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%88%E7%9B%8A%E5%9E%8B-%E4%BF%9D%E7%95%99%E5%8E%9F%E5%80%BC"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 效益型: 保留原值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%88%90%E6%9C%AC%E5%9E%8B-%E6%9C%80%E5%A4%A7%E5%80%BC%E5%87%8F%E5%8E%9F%E5%80%BC"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 成本型: 最大值减原值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87%E5%80%BC%E5%9E%8B-%E6%8C%89%E5%81%8F%E7%A6%BB%E7%A8%8B%E5%BA%A6%E6%8A%98%E5%87%8F"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 目标值型: 按偏离程度折减</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8C%BA%E9%97%B4%E5%9E%8B-%E5%8C%BA%E9%97%B4%E5%86%85%E5%8F%96-1-%E8%B6%85%E7%95%8C%E5%90%8E%E6%8A%98%E5%87%8F"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.4 区间型: 区间内取 1,
+超界后折减</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E7%BB%9F%E4%B8%80%E5%B0%BA%E5%BA%A6-%E5%B9%B6%E8%AF%B4%E6%98%8E%E6%9D%83%E9%87%8D"><span class="nav-number">1.4.</span> <span class="nav-text">四、统一尺度, 并说明权重</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%91%E9%87%8F%E6%A0%87%E5%87%86%E5%8C%96"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 向量标准化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E6%95%B0%E5%88%97%E6%80%8E%E6%A0%B7%E5%A4%84%E7%90%86"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 常数列怎样处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A0%E6%9D%83%E6%A0%87%E5%87%86%E5%8C%96%E7%9F%A9%E9%98%B5"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 加权标准化矩阵</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E8%AE%A1%E7%AE%97%E4%B8%A4%E4%B8%AA%E8%B7%9D%E7%A6%BB%E4%B8%8E%E7%9B%B8%E5%AF%B9%E8%B4%B4%E8%BF%91%E5%BA%A6"><span class="nav-number">1.5.</span> <span class="nav-text">五、计算两个距离与相对贴近度</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%90%86%E6%83%B3%E8%A7%A3%E5%92%8C%E8%B4%9F%E7%90%86%E6%83%B3%E8%A7%A3"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 理想解和负理想解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AC%A7%E6%B0%8F%E8%B7%9D%E7%A6%BB"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 欧氏距离</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%AF%B9%E8%B4%B4%E8%BF%91%E5%BA%A6"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 相对贴近度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9C%8B%E8%A7%81%E4%B8%A4%E6%8C%87%E6%A0%87%E5%BC%95%E4%BE%8B%E7%9A%84%E5%87%A0%E4%BD%95%E6%84%8F%E4%B9%89"><span class="nav-number">1.5.4.</span> <span class="nav-text">5.4 看见两指标引例的几何意义</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E5%AE%8C%E6%95%B4%E6%A1%88%E4%BE%8B-%E5%9B%9B%E6%8C%87%E6%A0%87%E7%85%A7%E6%98%8E%E6%94%B9%E9%80%A0%E6%96%B9%E6%A1%88"><span class="nav-number">1.6.</span> <span class="nav-text">六、完整案例:
+四指标照明改造方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E4%B8%8E%E8%AF%84%E4%BB%B7%E8%AE%BE%E5%AE%9A"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 数据与评价设定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A3%E5%90%91%E5%8C%96%E4%B8%8E%E6%A0%87%E5%87%86%E5%8C%96"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 正向化与标准化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%90%86%E6%83%B3%E8%A7%A3%E8%B7%9D%E7%A6%BB%E4%B8%8E%E6%8E%92%E5%BA%8F"><span class="nav-number">1.6.3.</span> <span class="nav-text">6.3 理想解、距离与排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E7%A7%8D%E7%99%BE%E5%88%86%E6%95%B0%E5%B1%95%E7%A4%BA%E6%96%B9%E5%BC%8F"><span class="nav-number">1.6.4.</span> <span class="nav-text">6.4 两种百分数展示方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83python-%E4%B8%8E-matlab-%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.7.</span> <span class="nav-text">七、Python 与 MATLAB 实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E8%BF%90%E8%A1%8C%E4%B8%80%E6%AE%B5%E7%9F%AD%E4%BB%A3%E7%A0%81"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 先运行一段短代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4-python-%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 完整 Python 程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab-%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.7.3.</span> <span class="nav-text">7.3 MATLAB 程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E5%90%8E%E6%A3%80%E6%9F%A5%E4%BB%80%E4%B9%88"><span class="nav-number">1.7.4.</span> <span class="nav-text">7.4 运行后检查什么</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E6%A3%80%E6%9F%A5-bc-%E7%9A%84%E5%85%88%E5%90%8E%E6%98%AF%E5%90%A6%E7%A8%B3%E5%81%A5"><span class="nav-number">1.8.</span> <span class="nav-text">八、检查 B、C 的先后是否稳健</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D%E8%BF%9B%E4%B8%80%E6%AD%A5%E7%90%86%E8%A7%A3%E6%96%B9%E6%B3%95%E7%9A%84%E8%BE%B9%E7%95%8C"><span class="nav-number">1.9.</span> <span class="nav-text">九、进一步理解方法的边界</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%B4%E8%BF%91%E5%BA%A6%E5%A4%A7-%E4%B8%8D%E4%B8%80%E5%AE%9A%E7%A6%BB%E6%AD%A3%E7%90%86%E6%83%B3%E8%A7%A3%E6%9B%B4%E8%BF%91"><span class="nav-number">1.9.1.</span> <span class="nav-text">9.1 贴近度大,
+不一定离正理想解更近</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E7%A7%8D%E6%9D%83%E9%87%8D%E7%BA%A6%E5%AE%9A%E4%B8%8D%E8%83%BD%E6%B7%B7%E7%94%A8"><span class="nav-number">1.9.2.</span> <span class="nav-text">9.2 两种权重约定不能混用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%88%90%E6%9C%AC%E6%8C%87%E6%A0%87%E4%B9%9F%E5%8F%AF%E4%BB%A5%E4%B8%8D%E5%85%88%E6%AD%A3%E5%90%91%E5%8C%96"><span class="nav-number">1.9.3.</span> <span class="nav-text">9.3 成本指标也可以不先正向化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%AF%B9%E6%8E%92%E5%BA%8F%E7%9A%84%E9%80%82%E7%94%A8%E8%8C%83%E5%9B%B4"><span class="nav-number">1.9.4.</span> <span class="nav-text">9.4 相对排序的适用范围</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E7%BB%83%E4%B9%A0%E4%B8%8E%E6%9C%AC%E7%AB%A0%E8%A6%81%E7%82%B9"><span class="nav-number">1.10.</span> <span class="nav-text">十、练习与本章要点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.10.1.</span> <span class="nav-text">10.1 练习</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E7%AD%94%E6%A1%88%E4%B8%8E%E6%8F%90%E7%A4%BA"><span class="nav-number">1.10.2.</span> <span class="nav-text">10.2 参考答案与提示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E7%AB%A0%E8%A6%81%E7%82%B9"><span class="nav-number">1.10.3.</span> <span class="nav-text">10.3 本章要点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">1.11.</span> <span class="nav-text">参考文献</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -183,19 +184,23 @@
       
       
       <div class="post-body">
-          <h1 id="topsis用理想解比较多个方案">TOPSIS：用理想解比较多个方案</h1>
-<p>一个方案节电效果好，另一个方案维护方便，第三个方案在控制参数上更合适，怎样综合比较？TOPSIS
-用两个参照点组织这种选择：一端集合了各方案的最好表现，另一端集合了最差表现，再看每个方案与两端的相对距离。</p>
-<p>本章以校园照明节能改造为例，学习指标正向化、向量标准化、距离计算与结果解释。先理解案例和图形，再选择
-Python 或 MATLAB 完成计算。</p>
+          <h1 id="topsis-用理想解比较多个方案">TOPSIS: 用理想解比较多个方案</h1>
+<p>一个方案节电效果好, 另一个方案维护方便, 第三个方案在控制参数上更合适,
+怎样综合比较? TOPSIS 用两个参照点组织这种选择:
+一端集合了各方案的最好表现, 另一端集合了最差表现,
+再看每个方案与两端的相对距离.</p>
+<p>本章以校园照明节能改造为例,
+学习指标正向化、向量标准化、距离计算与结果解释. 先理解案例和图形, 再选择
+Python 或 MATLAB 完成计算.</p>
 <h2 id="一从一个两指标问题说起">一、从一个两指标问题说起</h2>
-<p>学校准备从三个照明改造方案中选择一个。三个方案均满足必要的安全与使用要求，教学用模拟数据如下：</p>
+<p>学校准备从三个照明改造方案中选择一个.
+三个方案均满足必要的安全与使用要求, 教学用模拟数据如下:</p>
 <table>
 <thead>
 <tr>
 <th style="text-align: center;">方案</th>
-<th style="text-align: center;">年节电量（万千瓦时）</th>
-<th style="text-align: center;">年维护工时（小时）</th>
+<th style="text-align: center;">年节电量(万千瓦时)</th>
+<th style="text-align: center;">年维护工时(小时)</th>
 </tr>
 </thead>
 <tbody>
@@ -216,31 +221,33 @@ Python 或 MATLAB 完成计算。</p>
 </tr>
 </tbody>
 </table>
-<p>节电量越大越好，维护工时越少越好。A 的节电量最高，C
-的维护工时最少，没有一个方案在两个方面都占优。</p>
-<p>可以组合出两个参照点：<strong>正理想点</strong> <span
-class="math inline">\((9,3)\)</span>，同时取最大节电量和最少维护工时；<strong>负理想点</strong>
-<span
-class="math inline">\((6,10)\)</span>，同时取最小节电量和最多维护工时。它们不必是实际可选的方案。</p>
-<p>好的方案应尽量接近正理想点，同时远离负理想点。TOPSIS
-将这两个距离结合成一个相对贴近度。不过，原始数据的单位不同，正式计算距离前还要统一指标方向与尺度。</p>
+<p>节电量越大越好, 维护工时越少越好. A 的节电量最高, C 的维护工时最少,
+没有一个方案在两个方面都占优.</p>
+<p>可以组合出两个参照点: <strong>正理想点</strong> <span
+class="math inline">\((9,3)\)</span>, 同时取最大节电量和最少维护工时;
+<strong>负理想点</strong> <span class="math inline">\((6,10)\)</span>,
+同时取最小节电量和最多维护工时. 它们不必是实际可选的方案.</p>
+<p>好的方案应尽量接近正理想点, 同时远离负理想点. TOPSIS
+将这两个距离结合成一个相对贴近度. 不过, 原始数据的单位不同,
+正式计算距离前还要统一指标方向与尺度.</p>
 <p><strong>TOPSIS</strong> 是 Technique for Order Preference by
-Similarity to an Ideal Solution
-的缩写，通常译为逼近理想解排序法，也称优劣解距离法。Hwang 与 Yoon 于
-1981 年系统介绍了这一方法。[1]</p>
-<p>它给出的是特定指标、数据、权重和处理规则下的相对排序，并不自动代表方案的绝对优劣。AHP
-等方法可用于确定权重，TOPSIS
-则侧重利用指标数据与理想解的距离比较方案。</p>
+Similarity to an Ideal Solution 的缩写, 通常译为逼近理想解排序法,
+也称优劣解距离法. Hwang 与 Yoon 于 1981 年系统介绍了这一方法. [1]</p>
+<p>它给出的是特定指标、数据、权重和处理规则下的相对排序,
+并不自动代表方案的绝对优劣. AHP 等方法可用于确定权重, TOPSIS
+则侧重利用指标数据与理想解的距离比较方案.</p>
 <h2 id="二先把评价问题写清楚">二、先把评价问题写清楚</h2>
 <h3 id="评价矩阵">2.1 评价矩阵</h3>
 <p>设有 <span class="math inline">\(n\)</span> 个方案、<span
-class="math inline">\(m\)</span> 项指标，原始评价矩阵为：</p>
+class="math inline">\(m\)</span> 项指标, 原始评价矩阵为:</p>
 <p><span class="math display">\[
 A=(a_{ij})_{n\times m}.
 \]</span></p>
-<p>每一行对应一个方案，每一列对应一项指标。它记录方案的指标数值，与 AHP
-记录两两比较意见的判断矩阵不同。</p>
-<p>建模前应明确评价目标、指标定义与单位、数据来源、指标方向，以及权重的依据。预算、安全和质量底线等刚性要求应先检查，不能让其他指标的高分抵消必须满足的条件。</p>
+<p>每一行对应一个方案, 每一列对应一项指标. 它记录方案的指标数值, 与 AHP
+记录两两比较意见的判断矩阵不同.</p>
+<p>建模前应明确评价目标、指标定义与单位、数据来源、指标方向,
+以及权重的依据. 预算、安全和质量底线等刚性要求应先检查,
+不能让其他指标的高分抵消必须满足的条件.</p>
 <h3 id="四种常见指标">2.2 四种常见指标</h3>
 <table>
 <thead>
@@ -252,17 +259,17 @@ A=(a_{ij})_{n\times m}.
 </thead>
 <tbody>
 <tr>
-<td style="text-align: center;">效益型（极大型）</td>
+<td style="text-align: center;">效益型(极大型)</td>
 <td style="text-align: center;">在适用范围内越大越好</td>
 <td style="text-align: center;">节电量、设备有效产出</td>
 </tr>
 <tr>
-<td style="text-align: center;">成本型（极小型）</td>
+<td style="text-align: center;">成本型(极小型)</td>
 <td style="text-align: center;">越小越好</td>
 <td style="text-align: center;">维护工时、运输费用</td>
 </tr>
 <tr>
-<td style="text-align: center;">目标值型（中间型）</td>
+<td style="text-align: center;">目标值型(中间型)</td>
 <td style="text-align: center;">越接近指定值越好</td>
 <td style="text-align: center;">控制设定值、工艺目标尺寸</td>
 </tr>
@@ -273,63 +280,69 @@ A=(a_{ij})_{n\times m}.
 </tr>
 </tbody>
 </table>
-<p>指标类型取决于评价目标，同一个物理量未必总是越大或越小越好。若使用评分，也应先说明量表含义；仅有顺序意义的等级，不宜直接当成具有等距意义的测量值。</p>
+<p>指标类型取决于评价目标, 同一个物理量未必总是越大或越小越好.
+若使用评分, 也应先说明量表含义; 仅有顺序意义的等级,
+不宜直接当成具有等距意义的测量值.</p>
 <h3 id="计算路线">2.3 计算路线</h3>
-<p>本章采用以下顺序：</p>
+<p>本章采用以下顺序:</p>
 <ol type="1">
-<li><strong>正向化</strong>：让各项指标都变成越大越好。</li>
-<li><strong>向量标准化</strong>：消除正比例单位换算的影响。</li>
-<li><strong>加权并构造理想解</strong>：明确各项指标的重要程度。</li>
-<li><strong>计算距离与贴近度</strong>：得到排序。</li>
-<li><strong>检查敏感性</strong>：判断结论是否稳定。</li>
+<li><strong>正向化</strong>: 让各项指标都变成越大越好.</li>
+<li><strong>向量标准化</strong>: 消除正比例单位换算的影响.</li>
+<li><strong>加权并构造理想解</strong>: 明确各项指标的重要程度.</li>
+<li><strong>计算距离与贴近度</strong>: 得到排序.</li>
+<li><strong>检查敏感性</strong>: 判断结论是否稳定.</li>
 </ol>
-<h2 id="三正向化让更好朝同一方向">三、正向化：让“更好”朝同一方向</h2>
-<p>正向化后的矩阵记为 <span
-class="math inline">\(X=(x_{ij})\)</span>。以下先讨论其中一列，将原始值简记为
-<span class="math inline">\(a_i\)</span>，正向值记为 <span
-class="math inline">\(x_i\)</span>。</p>
-<h3 id="效益型保留原值">3.1 效益型：保留原值</h3>
-<p>若指标本来就是越大越好，可取：</p>
+<h2 id="三正向化-让更好朝同一方向">三、正向化: 让“更好”朝同一方向</h2>
+<p>正向化后的矩阵记为 <span class="math inline">\(X=(x_{ij})\)</span>.
+以下先讨论其中一列, 将原始值简记为 <span
+class="math inline">\(a_i\)</span>, 正向值记为 <span
+class="math inline">\(x_i\)</span>.</p>
+<h3 id="效益型-保留原值">3.1 效益型: 保留原值</h3>
+<p>若指标本来就是越大越好, 可取:</p>
 <p><span class="math display">\[
 x_i=a_i.
 \]</span></p>
-<p>本章计算采用非负效益值。若原始指标有负数，应结合含义另选变换，不能任意加常数，因为向量标准化通常不具有平移不变性。</p>
-<h3 id="成本型最大值减原值">3.2 成本型：最大值减原值</h3>
+<p>本章计算采用非负效益值. 若原始指标有负数, 应结合含义另选变换,
+不能任意加常数, 因为向量标准化通常不具有平移不变性.</p>
+<h3 id="成本型-最大值减原值">3.2 成本型: 最大值减原值</h3>
 <p>取本组最大值 <span class="math inline">\(a_{\max}=\max_k
-a_k\)</span>，令：</p>
+a_k\)</span>, 令:</p>
 <p><span class="math display">\[
 x_i=a_{\max}-a_i.
 \]</span></p>
 <p>维护工时 <span class="math inline">\(10,7,3\)</span> 就转为 <span
-class="math inline">\(0,3,7\)</span>。原始工时越少，正向值越大。这里的 0
-表示本组中的相对较差表现，并不表示真实价值为零。</p>
-<p>若所有数据相同，这一列会全部变成
-0，不能区分方案。对全为正数的成本指标，也可考虑倒数变换，但它会改变差异的相对大小，不应与上述变换混用。</p>
-<h3 id="目标值型按偏离程度折减">3.3 目标值型：按偏离程度折减</h3>
-<p>设目标值为 <span
-class="math inline">\(a^{\ast}\)</span>，取本组最大偏差：</p>
+class="math inline">\(0,3,7\)</span>. 原始工时越少, 正向值越大. 这里的 0
+表示本组中的相对较差表现, 并不表示真实价值为零.</p>
+<p>若所有数据相同, 这一列会全部变成 0, 不能区分方案.
+对全为正数的成本指标, 也可考虑倒数变换, 但它会改变差异的相对大小,
+不应与上述变换混用.</p>
+<h3 id="目标值型-按偏离程度折减">3.3 目标值型: 按偏离程度折减</h3>
+<p>设目标值为 <span class="math inline">\(a^{\ast}\)</span>,
+取本组最大偏差:</p>
 <p><span class="math display">\[
 M=\max_k|a_k-a^{\ast}|.
 \]</span></p>
-<p>当 <span class="math inline">\(M&gt;0\)</span> 时：</p>
+<p>当 <span class="math inline">\(M&gt;0\)</span> 时:</p>
 <p><span class="math display">\[
 x_i=1-\frac{|a_i-a^{\ast}|}{M}.
 \]</span></p>
-<p>达到目标时取 1，偏离最远时取 0。若 <span
-class="math inline">\(M=0\)</span>，全部方案均达到目标，统一取 1。</p>
-<p>例如，教学子系统的照度设定目标为 165 勒克斯，三个方案取 <span
-class="math inline">\(175,164,157\)</span>，最大偏差为 10，得到 <span
-class="math inline">\(0,0.9,0.2\)</span>。这一教学目标不是通用照明标准。</p>
-<p>公式对目标两侧相同大小的偏差给予相同惩罚。实际后果若不对称，应另设评价函数。</p>
-<h3 id="区间型区间内取-1超界后折减">3.4 区间型：区间内取
-1，超界后折减</h3>
-<p>设理想区间为 <span
-class="math inline">\([\alpha,\beta]\)</span>，其中 <span
-class="math inline">\(\alpha\leqslant\beta\)</span>。先定义：</p>
+<p>达到目标时取 1, 偏离最远时取 0. 若 <span
+class="math inline">\(M=0\)</span>, 全部方案均达到目标, 统一取 1.</p>
+<p>例如, 教学子系统的照度设定目标为 165 勒克斯, 三个方案取 <span
+class="math inline">\(175,164,157\)</span>, 最大偏差为 10, 得到 <span
+class="math inline">\(0,0.9,0.2\)</span>.
+这一教学目标不是通用照明标准.</p>
+<p>公式对目标两侧相同大小的偏差给予相同惩罚. 实际后果若不对称,
+应另设评价函数.</p>
+<h3 id="区间型-区间内取-1-超界后折减">3.4 区间型: 区间内取 1,
+超界后折减</h3>
+<p>设理想区间为 <span class="math inline">\([\alpha,\beta]\)</span>,
+其中 <span class="math inline">\(\alpha\leqslant\beta\)</span>.
+先定义:</p>
 <p><span class="math display">\[
 M=\max\left\{0,\ \alpha-\min_k a_k,\ \max_k a_k-\beta\right\}.
 \]</span></p>
-<p>当 <span class="math inline">\(M&gt;0\)</span> 时：</p>
+<p>当 <span class="math inline">\(M&gt;0\)</span> 时:</p>
 <p><span class="math display">\[
 x_i=\begin{cases}
 1-\dfrac{\alpha-a_i}{M},&amp;a_i&lt;\alpha,\\[4pt]
@@ -337,109 +350,116 @@ x_i=\begin{cases}
 1-\dfrac{a_i-\beta}{M},&amp;a_i&gt;\beta.
 \end{cases}
 \]</span></p>
-<p>若 <span
-class="math inline">\(M=0\)</span>，全部方案均在理想区间内，统一取 1。把
-0 放进最大值，是为了避免全部数据在区间内时出现负尺度。</p>
-<p>例如，教学子系统希望数据采样周期为 <span
-class="math inline">\([90,100]\)</span> 毫秒，三个方案取 <span
-class="math inline">\(120,80,90\)</span>，则 <span
-class="math inline">\(M=20\)</span>，正向值为 <span
-class="math inline">\(0,0.5,1\)</span>。这里假设采样过密会增加处理负担，过疏会影响及时识别，所以给定适宜区间。</p>
+<p>若 <span class="math inline">\(M=0\)</span>, 全部方案均在理想区间内,
+统一取 1. 把 0 放进最大值, 是为了避免全部数据在区间内时出现负尺度.</p>
+<p>例如, 教学子系统希望数据采样周期为 <span
+class="math inline">\([90,100]\)</span> 毫秒, 三个方案取 <span
+class="math inline">\(120,80,90\)</span>, 则 <span
+class="math inline">\(M=20\)</span>, 正向值为 <span
+class="math inline">\(0,0.5,1\)</span>. 这里假设采样过密会增加处理负担,
+过疏会影响及时识别, 所以给定适宜区间.</p>
 <p><img src="/images/Topsis/Topsis-1.png" alt="" style="width: 100%;"></p>
 <p><strong>图
-1　案例中四类指标的正向化规则与三个方案的位置。</strong></p>
-<p>这些曲线使用本组样本确定尺度。候选集合改变时，最大值或最大偏差也可能改变。实际工程若采用固定尺度，应预先说明依据，以及超出尺度时是否把满意度截断为
-0。</p>
-<h2 id="四统一尺度并说明权重">四、统一尺度，并说明权重</h2>
+1　案例中四类指标的正向化规则与三个方案的位置.</strong></p>
+<p>这些曲线使用本组样本确定尺度. 候选集合改变时,
+最大值或最大偏差也可能改变. 实际工程若采用固定尺度, 应预先说明依据,
+以及超出尺度时是否把满意度截断为 0.</p>
+<h2 id="四统一尺度-并说明权重">四、统一尺度, 并说明权重</h2>
 <h3 id="向量标准化">4.1 向量标准化</h3>
-<p>第 <span class="math inline">\(j\)</span> 列的向量长度为：</p>
+<p>第 <span class="math inline">\(j\)</span> 列的向量长度为:</p>
 <p><span class="math display">\[
 L_j=\sqrt{\sum\limits_{k=1}^{n}x_{kj}^{2}}.
 \]</span></p>
-<p>当 <span class="math inline">\(L_j&gt;0\)</span> 时，定义标准化矩阵
-<span class="math inline">\(Z=(z_{ij})\)</span>：</p>
+<p>当 <span class="math inline">\(L_j&gt;0\)</span> 时, 定义标准化矩阵
+<span class="math inline">\(Z=(z_{ij})\)</span>:</p>
 <p><span class="math display">\[
 z_{ij}=\frac{x_{ij}}{L_j}.
 \]</span></p>
-<p>每列平方和为
-1，数据变为无量纲数。同一列各值除以同一个正数，其顺序保持不变。</p>
-<p>整列乘以正常数 <span class="math inline">\(c\)</span> 后：</p>
+<p>每列平方和为 1, 数据变为无量纲数. 同一列各值除以同一个正数,
+其顺序保持不变.</p>
+<p>整列乘以正常数 <span class="math inline">\(c\)</span> 后:</p>
 <p><span class="math display">\[
 \frac{cx_{ij}}{\sqrt{\sum\limits_{k=1}^{n}(cx_{kj})^2}}
 =z_{ij}.
 \]</span></p>
-<p>因此，千瓦时与万千瓦时之间的正比例单位换算不影响结果。不过，向量标准化不保证各列具有相同极差或方差，也不能自动消除异常值与重复指标的影响。</p>
+<p>因此, 千瓦时与万千瓦时之间的正比例单位换算不影响结果. 不过,
+向量标准化不保证各列具有相同极差或方差,
+也不能自动消除异常值与重复指标的影响.</p>
 <h3 id="常数列怎样处理">4.2 常数列怎样处理</h3>
-<p>全零列的范数为
-0，不能直接相除；非零常数列虽然可以标准化，但正、负理想值相同，对距离也没有贡献。本章代码把常数列的标准化值设为
-0。</p>
-<p>删除常数列后，将剩余权重按相同比例重新归一化，只会让两个距离共同缩放，不改变贴近度。</p>
-<p>如果所有有权重的指标都无法区分方案，两个理想解重合，应报告“当前指标无法区分这些方案”，而不是强行给出名次。</p>
+<p>全零列的范数为 0, 不能直接相除; 非零常数列虽然可以标准化,
+但正、负理想值相同, 对距离也没有贡献. 本章代码把常数列的标准化值设为
+0.</p>
+<p>删除常数列后, 将剩余权重按相同比例重新归一化, 只会让两个距离共同缩放,
+不改变贴近度.</p>
+<p>如果所有有权重的指标都无法区分方案, 两个理想解重合,
+应报告“当前指标无法区分这些方案”, 而不是强行给出名次.</p>
 <h3 id="加权标准化矩阵">4.3 加权标准化矩阵</h3>
-<p>设指标权重 <span class="math inline">\(w_j\geqslant0\)</span>，且
-<span
-class="math inline">\(\sum\limits_{j=1}^{m}w_j=1\)</span>。本章采用坐标乘权重的约定：</p>
+<p>设指标权重 <span class="math inline">\(w_j\geqslant0\)</span>, 且
+<span class="math inline">\(\sum\limits_{j=1}^{m}w_j=1\)</span>.
+本章采用坐标乘权重的约定:</p>
 <p><span class="math display">\[
 v_{ij}=w_jz_{ij}.
 \]</span></p>
-<p>权重可来自
-AHP、专家讨论、熵权法等，需说明依据。等权也是一种明确假设，并不意味着所有指标在现实中必然同等重要。</p>
-<p>对数最小二乘法可从 AHP
-判断矩阵中提取权重，与几何平均法相联系。熵权反映数据分布差异，不应把差异大直接解释为社会重要性高。</p>
+<p>权重可来自 AHP、专家讨论、熵权法等, 需说明依据. 等权也是一种明确假设,
+并不意味着所有指标在现实中必然同等重要.</p>
+<p>对数最小二乘法可从 AHP 判断矩阵中提取权重, 与几何平均法相联系.
+熵权反映数据分布差异, 不应把差异大直接解释为社会重要性高.</p>
 <h2 id="五计算两个距离与相对贴近度">五、计算两个距离与相对贴近度</h2>
 <h3 id="理想解和负理想解">5.1 理想解和负理想解</h3>
-<p>所有指标都已转为越大越好，故在加权矩阵 <span
-class="math inline">\(V=(v_{ij})\)</span> 中取：</p>
+<p>所有指标都已转为越大越好, 故在加权矩阵 <span
+class="math inline">\(V=(v_{ij})\)</span> 中取:</p>
 <p><span class="math display">\[
 v_j^+=\max_i v_{ij},\qquad v_j^-=\min_i v_{ij}.
 \]</span></p>
 <p>它们组成正理想解 <span class="math inline">\(V^+\)</span> 和负理想解
-<span
-class="math inline">\(V^-\)</span>。这里的“理想”相对于当前候选集合及评价规则而言，不是理论上能够达到的绝对最好水平。</p>
+<span class="math inline">\(V^-\)</span>.
+这里的“理想”相对于当前候选集合及评价规则而言,
+不是理论上能够达到的绝对最好水平.</p>
 <h3 id="欧氏距离">5.2 欧氏距离</h3>
-<p>第 <span class="math inline">\(i\)</span> 个方案的两个距离为：</p>
+<p>第 <span class="math inline">\(i\)</span> 个方案的两个距离为:</p>
 <p><span class="math display">\[
 D_i^+=\sqrt{\sum\limits_{j=1}^{m}(v_{ij}-v_j^+)^2},
 \qquad
 D_i^-=\sqrt{\sum\limits_{j=1}^{m}(v_{ij}-v_j^-)^2}.
 \]</span></p>
-<p>每个指标上的差先平方、再相加、最后开方。<span
-class="math inline">\(D_i^+\)</span> 小表示靠近正理想解，<span
-class="math inline">\(D_i^-\)</span> 大表示远离负理想解。</p>
+<p>每个指标上的差先平方、再相加、最后开方. <span
+class="math inline">\(D_i^+\)</span> 小表示靠近正理想解, <span
+class="math inline">\(D_i^-\)</span> 大表示远离负理想解.</p>
 <h3 id="相对贴近度">5.3 相对贴近度</h3>
-<p>当 <span class="math inline">\(D_i^++D_i^-&gt;0\)</span>
-时，定义：</p>
+<p>当 <span class="math inline">\(D_i^++D_i^-&gt;0\)</span> 时,
+定义:</p>
 <p><span class="math display">\[
 S_i=\frac{D_i^-}{D_i^++D_i^-}.
 \]</span></p>
-<p>按 <span class="math inline">\(S_i\)</span>
-从大到小排序。由于两个距离非负，<span class="math inline">\(0\leqslant
-S_i\leqslant1\)</span>。在非退化情形下，<span
-class="math inline">\(S_i=1\)</span> 表示方案等于正理想解，<span
-class="math inline">\(S_i=0\)</span> 表示等于负理想解。</p>
-<p>贴近度同时考虑两个距离，不能只凭离正理想解最近就完成比较，也不能将贴近度解释为获选概率。</p>
-<p>等权时，所有坐标均乘以 <span
-class="math inline">\(1/m\)</span>，两个距离共同缩小，贴近度不变。因此，等权手算可以直接使用
-<span class="math inline">\(Z\)</span>；报告距离时则要区分使用的是 <span
+<p>按 <span class="math inline">\(S_i\)</span> 从大到小排序.
+由于两个距离非负, <span class="math inline">\(0\leqslant
+S_i\leqslant1\)</span>. 在非退化情形下, <span
+class="math inline">\(S_i=1\)</span> 表示方案等于正理想解, <span
+class="math inline">\(S_i=0\)</span> 表示等于负理想解.</p>
+<p>贴近度同时考虑两个距离, 不能只凭离正理想解最近就完成比较,
+也不能将贴近度解释为获选概率.</p>
+<p>等权时, 所有坐标均乘以 <span class="math inline">\(1/m\)</span>,
+两个距离共同缩小, 贴近度不变. 因此, 等权手算可以直接使用 <span
+class="math inline">\(Z\)</span>; 报告距离时则要区分使用的是 <span
 class="math inline">\(Z\)</span> 还是 <span
-class="math inline">\(V\)</span>。</p>
+class="math inline">\(V\)</span>.</p>
 <h3 id="看见两指标引例的几何意义">5.4 看见两指标引例的几何意义</h3>
-<p>将维护工时正向化，再进行向量标准化，第一个引例变成：</p>
+<p>将维护工时正向化, 再进行向量标准化, 第一个引例变成:</p>
 <p><span class="math display">\[
 X=\begin{pmatrix}9&amp;0\\8&amp;3\\6&amp;7\end{pmatrix}.
 \]</span></p>
 <p><img src="/images/Topsis/Topsis-2.png" alt="" style="width: 100%;"></p>
 <p><strong>图
-2　两指标模型的标准化坐标、两个参照点和贴近度。</strong></p>
-<p>左图用虚线展示 B
-到两个理想点的距离。纵轴已转为维护优势，越高表示维护工时越少。右图得到
-A、B、C 的贴近度约为 <span
-class="math inline">\(0.195238,0.442500,0.804762\)</span>，因此两指标模型中
-C 排第一。</p>
-<h2
-id="六完整案例四指标照明改造方案">六、完整案例：四指标照明改造方案</h2>
+2　两指标模型的标准化坐标、两个参照点和贴近度.</strong></p>
+<p>左图用虚线展示 B 到两个理想点的距离. 纵轴已转为维护优势,
+越高表示维护工时越少. 右图得到 A、B、C 的贴近度约为 <span
+class="math inline">\(0.195238,0.442500,0.804762\)</span>,
+因此两指标模型中 C 排第一.</p>
+<h2 id="六完整案例-四指标照明改造方案">六、完整案例:
+四指标照明改造方案</h2>
 <h3 id="数据与评价设定">6.1 数据与评价设定</h3>
-<p>除节电量和维护工时外，技术小组还考察控制系统的照度设定值与数据采样周期。</p>
+<p>除节电量和维护工时外,
+技术小组还考察控制系统的照度设定值与数据采样周期.</p>
 <table>
 <colgroup>
 <col style="width: 20%" />
@@ -451,10 +471,10 @@ id="六完整案例四指标照明改造方案">六、完整案例：四指标�
 <thead>
 <tr>
 <th style="text-align: center;">方案</th>
-<th style="text-align: center;">年节电量（万千瓦时）</th>
-<th style="text-align: center;">年维护工时（小时）</th>
-<th style="text-align: center;">照度设定值（勒克斯）</th>
-<th style="text-align: center;">采样周期（毫秒）</th>
+<th style="text-align: center;">年节电量(万千瓦时)</th>
+<th style="text-align: center;">年维护工时(小时)</th>
+<th style="text-align: center;">照度设定值(勒克斯)</th>
+<th style="text-align: center;">采样周期(毫秒)</th>
 </tr>
 </thead>
 <tbody>
@@ -481,12 +501,14 @@ id="六完整案例四指标照明改造方案">六、完整案例：四指标�
 </tr>
 </tbody>
 </table>
-<p>四列依次为效益型、成本型、目标值型、区间型；第三列目标为
-165，第四列理想区间为 <span
-class="math inline">\([90,100]\)</span>，暂取四项等权。</p>
-<p>这些数据和控制参数仅用于教学模拟。假设方案均已满足必要要求；节电量不是仅由照度设定值决定的，不同方案还可能采用不同设备与控制策略。</p>
+<p>四列依次为效益型、成本型、目标值型、区间型; 第三列目标为 165,
+第四列理想区间为 <span class="math inline">\([90,100]\)</span>,
+暂取四项等权.</p>
+<p>这些数据和控制参数仅用于教学模拟. 假设方案均已满足必要要求;
+节电量不是仅由照度设定值决定的,
+不同方案还可能采用不同设备与控制策略.</p>
 <h3 id="正向化与标准化">6.2 正向化与标准化</h3>
-<p>按第 3 节规则得到：</p>
+<p>按第 3 节规则得到:</p>
 <p><span class="math display">\[
 X=\begin{pmatrix}
 9&amp;0&amp;0&amp;0\\
@@ -494,9 +516,10 @@ X=\begin{pmatrix}
 6&amp;7&amp;0.2&amp;1
 \end{pmatrix}.
 \]</span></p>
-<p>第三、四列已是无量纲满意度，不再分别以勒克斯和毫秒计量。</p>
+<p>第三、四列已是无量纲满意度, 不再分别以勒克斯和毫秒计量.</p>
 <p>四列范数分别为 <span
-class="math inline">\(\sqrt{181},\sqrt{58},\sqrt{0.85},\sqrt{1.25}\)</span>，得到：</p>
+class="math inline">\(\sqrt{181},\sqrt{58},\sqrt{0.85},\sqrt{1.25}\)</span>,
+得到:</p>
 <table>
 <thead>
 <tr>
@@ -536,16 +559,17 @@ class="math inline">\(z_4\)</span></th>
 </tbody>
 </table>
 <p>例如 <span
-class="math inline">\(z_{B3}=0.9/\sqrt{0.85}\approx0.976187\)</span>。表格保留六位小数，计算使用未舍入值。</p>
+class="math inline">\(z_{B3}=0.9/\sqrt{0.85}\approx0.976187\)</span>.
+表格保留六位小数, 计算使用未舍入值.</p>
 <h3 id="理想解距离与排序">6.3 理想解、距离与排序</h3>
-<p>等权手算省略共同的 <span class="math inline">\(1/4\)</span>
-因子，直接在 <span class="math inline">\(Z\)</span> 中取：</p>
+<p>等权手算省略共同的 <span class="math inline">\(1/4\)</span> 因子,
+直接在 <span class="math inline">\(Z\)</span> 中取:</p>
 <p><span class="math display">\[
 Z^+\approx(0.668965,0.919145,0.976187,0.894427),
 \quad Z^-\approx(0.445976,0,0,0).
 \]</span></p>
-<p>正理想解的第一列来自 A，第二、四列来自 C，第三列来自 B。以 B
-为例，各坐标与正、负理想值的差分别平方求和后开方，得到：</p>
+<p>正理想解的第一列来自 A, 第二、四列来自 C, 第三列来自 B. 以 B 为例,
+各坐标与正、负理想值的差分别平方求和后开方, 得到:</p>
 <table>
 <colgroup>
 <col style="width: 20%" />
@@ -558,11 +582,11 @@ Z^+\approx(0.668965,0.919145,0.976187,0.894427),
 <tr>
 <th style="text-align: center;">方案</th>
 <th style="text-align: center;"><span
-class="math inline">\(D_i^+\)</span>（由 <span
-class="math inline">\(Z\)</span> 计算）</th>
+class="math inline">\(D_i^+\)</span>(由 <span
+class="math inline">\(Z\)</span> 计算)</th>
 <th style="text-align: center;"><span
-class="math inline">\(D_i^-\)</span>（由 <span
-class="math inline">\(Z\)</span> 计算）</th>
+class="math inline">\(D_i^-\)</span>(由 <span
+class="math inline">\(Z\)</span> 计算)</th>
 <th style="text-align: center;">贴近度 <span
 class="math inline">\(S_i\)</span></th>
 <th style="text-align: center;">名次</th>
@@ -592,16 +616,18 @@ class="math inline">\(S_i\)</span></th>
 </tr>
 </tbody>
 </table>
-<p>若用 <span class="math inline">\(V=Z/4\)</span> 计算，表中距离均除以
-4，贴近度相同。当前规则下，四指标排序为：</p>
+<p>若用 <span class="math inline">\(V=Z/4\)</span> 计算, 表中距离均除以
+4, 贴近度相同. 当前规则下, 四指标排序为:</p>
 <p><span class="math display">\[
 \boxed{B&gt;C&gt;A}.
 \]</span></p>
-<p>B、C 只相差约 0.002640，B
-略占优势。与两指标模型的排序不同，是因为增加了新的评价因素，应说明增加指标的理由，不能只选择支持预期结论的指标。</p>
+<p>B、C 只相差约 0.002640, B 略占优势. 与两指标模型的排序不同,
+是因为增加了新的评价因素, 应说明增加指标的理由,
+不能只选择支持预期结论的指标.</p>
 <h3 id="两种百分数展示方式">6.4 两种百分数展示方式</h3>
-<p>可直接把贴近度乘以 100，得到 <span
-class="math inline">\(P_i=100S_i\)</span>；也可计算各方案贴近度在总和中的占比：</p>
+<p>可直接把贴近度乘以 100, 得到 <span
+class="math inline">\(P_i=100S_i\)</span>;
+也可计算各方案贴近度在总和中的占比:</p>
 <p><span class="math display">\[
 Q_i=\frac{S_i}{\sum\limits_{k=1}^{n}S_k}\times100.
 \]</span></p>
@@ -614,7 +640,7 @@ class="math inline">\(S_i\)</span></th>
 <th style="text-align: center;"><span
 class="math inline">\(P_i\)</span></th>
 <th style="text-align: center;">贴近度占比 <span
-class="math inline">\(Q_i\)</span>（%）</th>
+class="math inline">\(Q_i\)</span>(%)</th>
 </tr>
 </thead>
 <tbody>
@@ -638,53 +664,57 @@ class="math inline">\(Q_i\)</span>（%）</th>
 </tr>
 </tbody>
 </table>
-<p>两种方式都不改变当前排序，但只有 <span
-class="math inline">\(Q_i\)</span> 的总和为 100。<span
-class="math inline">\(Q_i\)</span>
-不是通常的百分制成绩，也不是实际效益占比或预算分配比例。再次归一化只是可选展示，不是
-TOPSIS 的必要步骤。</p>
+<p>两种方式都不改变当前排序, 但只有 <span
+class="math inline">\(Q_i\)</span> 的总和为 100. <span
+class="math inline">\(Q_i\)</span> 不是通常的百分制成绩,
+也不是实际效益占比或预算分配比例. 再次归一化只是可选展示, 不是 TOPSIS
+的必要步骤.</p>
 <h2 id="七python-与-matlab-实现">七、Python 与 MATLAB 实现</h2>
 <h3 id="先运行一段短代码">7.1 先运行一段短代码</h3>
-<p>安装 NumPy：</p>
+<p>安装 NumPy:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -m pip install numpy</span><br></pre></td></tr></table></figure>
-<p>下面已给出正向化矩阵，直接复现等权计算：</p>
+<p>下面已给出正向化矩阵, 直接复现等权计算:</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">X = np.array([[<span class="number">9</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>],</span><br><span class="line">              [<span class="number">8</span>, <span class="number">3</span>, <span class="number">0.9</span>, <span class="number">0.5</span>],</span><br><span class="line">              [<span class="number">6</span>, <span class="number">7</span>, <span class="number">0.2</span>, <span class="number">1</span>]], dtype=<span class="built_in">float</span>)</span><br><span class="line">Z = X / np.linalg.norm(X, axis=<span class="number">0</span>)</span><br><span class="line">ideal = Z.<span class="built_in">max</span>(axis=<span class="number">0</span>)</span><br><span class="line">anti_ideal = Z.<span class="built_in">min</span>(axis=<span class="number">0</span>)</span><br><span class="line">d_plus = np.linalg.norm(Z - ideal, axis=<span class="number">1</span>)</span><br><span class="line">d_minus = np.linalg.norm(Z - anti_ideal, axis=<span class="number">1</span>)</span><br><span class="line">score = d_minus / (d_plus + d_minus)</span><br><span class="line">share = <span class="number">100</span> * score / score.<span class="built_in">sum</span>()</span><br><span class="line">order = np.argsort(-score, kind=<span class="string">&quot;stable&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;贴近度：&quot;</span>, score)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;贴近度占比（%）：&quot;</span>, share)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;排序：&quot;</span>, np.array([<span class="string">&quot;A&quot;</span>, <span class="string">&quot;B&quot;</span>, <span class="string">&quot;C&quot;</span>])[order])</span><br></pre></td></tr></table></figure>
-<p><code>axis=0</code> 表示沿方案方向逐列计算，<code>axis=1</code>
-表示沿指标方向逐行计算。<code>order</code>
-是排序索引，方案名称应按同一索引排列。</p>
+<p><code>axis=0</code> 表示沿方案方向逐列计算, <code>axis=1</code>
+表示沿指标方向逐行计算. <code>order</code> 是排序索引,
+方案名称应按同一索引排列.</p>
 <h3 id="完整-python-程序">7.2 完整 Python 程序</h3>
-<p>统一采用类型编号：1 为效益型，2 为成本型，3 为目标值型，4
-为区间型。目标值和区间通过 <code>params</code> 传入。下面整段可保存为
-<code>topsis.py</code> 运行。</p>
+<p>统一采用类型编号: 1 为效益型, 2 为成本型, 3 为目标值型, 4 为区间型.
+目标值和区间通过 <code>params</code> 传入. 下面整段可保存为
+<code>topsis.py</code> 运行.</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">positivize</span>(<span class="params">column, kind, param=<span class="literal">None</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;将一列有限实数转为非负、越大越好的指标。&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> np.iscomplexobj(column):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;指标列必须由实数组成&quot;</span>)</span><br><span class="line">    x = np.asarray(column, dtype=<span class="built_in">float</span>)</span><br><span class="line">    <span class="keyword">if</span> x.ndim != <span class="number">1</span> <span class="keyword">or</span> x.size == <span class="number">0</span> <span class="keyword">or</span> <span class="keyword">not</span> np.<span class="built_in">all</span>(np.isfinite(x)):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;指标列必须是非空的有限实数向量&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> kind == <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">if</span> np.<span class="built_in">any</span>(x &lt; <span class="number">0</span>):</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;效益型指标含负数，请先确定适合的变换&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> x.copy()</span><br><span class="line">    <span class="keyword">if</span> kind == <span class="number">2</span>:</span><br><span class="line">        <span class="keyword">return</span> x.<span class="built_in">max</span>() - x</span><br><span class="line">    <span class="keyword">if</span> kind == <span class="number">3</span>:</span><br><span class="line">        target = <span class="built_in">float</span>(param)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> np.isfinite(target):</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;目标值必须是有限实数&quot;</span>)</span><br><span class="line">        gap = np.<span class="built_in">abs</span>(x - target)</span><br><span class="line">        scale = gap.<span class="built_in">max</span>()</span><br><span class="line">        <span class="keyword">return</span> np.ones_like(x) <span class="keyword">if</span> scale == <span class="number">0</span> <span class="keyword">else</span> <span class="number">1</span> - gap / scale</span><br><span class="line">    <span class="keyword">if</span> kind == <span class="number">4</span>:</span><br><span class="line">        low, high = <span class="built_in">map</span>(<span class="built_in">float</span>, param)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> np.isfinite([low, high]).<span class="built_in">all</span>() <span class="keyword">or</span> low &gt; high:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;区间端点必须有限，且下界不能大于上界&quot;</span>)</span><br><span class="line">        gap = np.maximum(np.maximum(low - x, x - high), <span class="number">0</span>)</span><br><span class="line">        scale = gap.<span class="built_in">max</span>()</span><br><span class="line">        <span class="keyword">return</span> np.ones_like(x) <span class="keyword">if</span> scale == <span class="number">0</span> <span class="keyword">else</span> <span class="number">1</span> - gap / scale</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&quot;指标类型只能是 1、2、3、4&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">topsis</span>(<span class="params">data, kinds, params=<span class="literal">None</span>, weights=<span class="literal">None</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;坐标按 w_j 加权，再计算欧氏距离与相对贴近度。&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> np.iscomplexobj(data):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;评价矩阵必须由实数组成&quot;</span>)</span><br><span class="line">    A = np.asarray(data, dtype=<span class="built_in">float</span>)</span><br><span class="line">    <span class="keyword">if</span> A.ndim != <span class="number">2</span> <span class="keyword">or</span> <span class="built_in">min</span>(A.shape) == <span class="number">0</span> <span class="keyword">or</span> <span class="keyword">not</span> np.isfinite(A).<span class="built_in">all</span>():</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;评价矩阵必须是非空二维有限实数数组&quot;</span>)</span><br><span class="line">    n, m = A.shape</span><br><span class="line">    <span class="keyword">if</span> n &lt; <span class="number">2</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;至少需要两个候选方案&quot;</span>)</span><br><span class="line">    kinds = <span class="built_in">list</span>(kinds)</span><br><span class="line">    params = [<span class="literal">None</span>] * m <span class="keyword">if</span> params <span class="keyword">is</span> <span class="literal">None</span> <span class="keyword">else</span> <span class="built_in">list</span>(params)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(kinds) != m <span class="keyword">or</span> <span class="built_in">len</span>(params) != m:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;类型和参数的数量必须与指标列数一致&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> weights <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        w = np.ones(m) / m</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">if</span> np.iscomplexobj(weights):</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;权重必须由实数组成&quot;</span>)</span><br><span class="line">        w = np.asarray(weights, dtype=<span class="built_in">float</span>)</span><br><span class="line">        <span class="keyword">if</span> (w.shape != (m,) <span class="keyword">or</span> <span class="keyword">not</span> np.isfinite(w).<span class="built_in">all</span>()</span><br><span class="line">                <span class="keyword">or</span> np.<span class="built_in">any</span>(w &lt; <span class="number">0</span>) <span class="keyword">or</span> <span class="keyword">not</span> np.<span class="built_in">any</span>(w &gt; <span class="number">0</span>)):</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;权重须有限、非负、长度正确且不能全为 0&quot;</span>)</span><br><span class="line">        <span class="comment"># 先缩放，避免求和时数值过大；不改变权重比例。</span></span><br><span class="line">        w = w / w.<span class="built_in">max</span>()</span><br><span class="line">        w = w / w.<span class="built_in">sum</span>()</span><br><span class="line">    X = np.column_stack([</span><br><span class="line">        positivize(A[:, j], kinds[j], params[j]) <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(m)</span><br><span class="line">    ])</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> np.isfinite(X).<span class="built_in">all</span>():</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;正向化数值超出浮点范围，请调整数据尺度&quot;</span>)</span><br><span class="line">    active = (np.ptp(X, axis=<span class="number">0</span>) &gt; <span class="number">0</span>) &amp; (w &gt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> np.<span class="built_in">any</span>(active):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;当前有权重的指标无法区分这些方案&quot;</span>)</span><br><span class="line">    <span class="comment"># 常数列不贡献距离；有效列先按最大值缩放，再求范数。</span></span><br><span class="line">    Z = np.zeros_like(X)</span><br><span class="line">    scaled = X[:, active] / X[:, active].<span class="built_in">max</span>(axis=<span class="number">0</span>)</span><br><span class="line">    Z[:, active] = scaled / np.linalg.norm(scaled, axis=<span class="number">0</span>)</span><br><span class="line">    V = Z * w</span><br><span class="line">    ideal = V.<span class="built_in">max</span>(axis=<span class="number">0</span>)</span><br><span class="line">    anti_ideal = V.<span class="built_in">min</span>(axis=<span class="number">0</span>)</span><br><span class="line">    dp = np.linalg.norm(V - ideal, axis=<span class="number">1</span>)</span><br><span class="line">    dn = np.linalg.norm(V - anti_ideal, axis=<span class="number">1</span>)</span><br><span class="line">    denominator = dp + dn</span><br><span class="line">    <span class="keyword">if</span> np.<span class="built_in">any</span>(denominator == <span class="number">0</span>):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;距离退化，请检查数据尺度与有效权重&quot;</span>)</span><br><span class="line">    score = dn / denominator</span><br><span class="line">    share = <span class="number">100</span> * score / score.<span class="built_in">sum</span>()</span><br><span class="line">    order = np.argsort(-score, kind=<span class="string">&quot;stable&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;A&quot;</span>: A, <span class="string">&quot;X&quot;</span>: X, <span class="string">&quot;Z&quot;</span>: Z, <span class="string">&quot;V&quot;</span>: V, <span class="string">&quot;weights&quot;</span>: w,</span><br><span class="line">            <span class="string">&quot;active&quot;</span>: active, <span class="string">&quot;ideal&quot;</span>: ideal, <span class="string">&quot;anti_ideal&quot;</span>: anti_ideal,</span><br><span class="line">            <span class="string">&quot;d_plus&quot;</span>: dp, <span class="string">&quot;d_minus&quot;</span>: dn, <span class="string">&quot;score&quot;</span>: score,</span><br><span class="line">            <span class="string">&quot;share&quot;</span>: share, <span class="string">&quot;order&quot;</span>: order&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    A = [[<span class="number">9</span>, <span class="number">10</span>, <span class="number">175</span>, <span class="number">120</span>],</span><br><span class="line">         [<span class="number">8</span>, <span class="number">7</span>, <span class="number">164</span>, <span class="number">80</span>],</span><br><span class="line">         [<span class="number">6</span>, <span class="number">3</span>, <span class="number">157</span>, <span class="number">90</span>]]</span><br><span class="line">    result = topsis(A, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>],</span><br><span class="line">                    [<span class="literal">None</span>, <span class="literal">None</span>, <span class="number">165</span>, (<span class="number">90</span>, <span class="number">100</span>)])</span><br><span class="line">    names = np.array([<span class="string">&quot;A&quot;</span>, <span class="string">&quot;B&quot;</span>, <span class="string">&quot;C&quot;</span>])</span><br><span class="line">    np.set_printoptions(precision=<span class="number">6</span>, suppress=<span class="literal">True</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;正向化矩阵：\n&quot;</span>, result[<span class="string">&quot;X&quot;</span>])</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;标准化矩阵：\n&quot;</span>, result[<span class="string">&quot;Z&quot;</span>])</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;贴近度：&quot;</span>, result[<span class="string">&quot;score&quot;</span>])</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;贴近度占比（%）：&quot;</span>, result[<span class="string">&quot;share&quot;</span>])</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;排序：&quot;</span>, names[result[<span class="string">&quot;order&quot;</span>]])</span><br></pre></td></tr></table></figure>
-<p>函数输出各阶段矩阵，便于回代检查。有效列先按最大值缩放，再计算向量范数，与直接向量标准化等价，可减少平方时的数值溢出。常数列或零权重列不贡献距离。</p>
-<p>默认采用 <span
-class="math inline">\(w_j=1/4\)</span>，所以程序中的距离是第 6.3
-节表格值的四分之一；贴近度、占比与排序一致。</p>
+<p>函数输出各阶段矩阵, 便于回代检查. 有效列先按最大值缩放,
+再计算向量范数, 与直接向量标准化等价, 可减少平方时的数值溢出.
+常数列或零权重列不贡献距离.</p>
+<p>默认采用 <span class="math inline">\(w_j=1/4\)</span>,
+所以程序中的距离是第 6.3 节表格值的四分之一; 贴近度、占比与排序一致.</p>
 <h3 id="matlab-程序">7.3 MATLAB 程序</h3>
-<p>将以下函数分别保存为同名文件，放在同一目录，再运行
-<code>topsis_demo.m</code>。代码无需额外工具箱。</p>
-<p><strong><code>Positivization.m</code>：四类指标的正向化。</strong></p>
+<p>将以下函数分别保存为同名文件, 放在同一目录, 再运行
+<code>topsis_demo.m</code>. 代码无需额外工具箱.</p>
+<p><strong><code>Positivization.m</code>: 四类指标的正向化.</strong></p>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">y</span> = <span class="title">Positivization</span><span class="params">(x,kind,param)</span></span></span><br><span class="line"><span class="comment">% 1效益型、2成本型、3目标值型、4区间型。</span></span><br><span class="line"><span class="keyword">if</span> nargin &lt; <span class="number">3</span></span><br><span class="line">    param = [];</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">if</span> ~<span class="built_in">isreal</span>(x) || <span class="built_in">isempty</span>(x) || ~<span class="built_in">isvector</span>(x) || any(~<span class="built_in">isfinite</span>(x(:)))</span><br><span class="line">    error(<span class="string">&#x27;指标列必须是非空的有限实数向量&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">x = x(:);</span><br><span class="line"><span class="keyword">switch</span> kind</span><br><span class="line">    <span class="keyword">case</span> <span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> any(x &lt; <span class="number">0</span>)</span><br><span class="line">            error(<span class="string">&#x27;效益型指标含负数，需要另行确定变换&#x27;</span>);</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">        y = x;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">2</span></span><br><span class="line">        y = <span class="built_in">max</span>(x)-x;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">3</span></span><br><span class="line">        <span class="keyword">if</span> ~<span class="built_in">isscalar</span>(param) || ~<span class="built_in">isreal</span>(param) || ~<span class="built_in">isfinite</span>(param)</span><br><span class="line">            error(<span class="string">&#x27;目标值必须是有限实数&#x27;</span>);</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">        gap = <span class="built_in">abs</span>(x-param);</span><br><span class="line">        scale = <span class="built_in">max</span>(gap);</span><br><span class="line">        <span class="keyword">if</span> scale == <span class="number">0</span></span><br><span class="line">            y = <span class="built_in">ones</span>(<span class="built_in">size</span>(x));</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            y = <span class="number">1</span>-gap/scale;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">case</span> <span class="number">4</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">numel</span>(param) ~= <span class="number">2</span> || ~<span class="built_in">isreal</span>(param) || ...</span><br><span class="line">                any(~<span class="built_in">isfinite</span>(param(:))) || param(<span class="number">1</span>) &gt; param(<span class="number">2</span>)</span><br><span class="line">            error(<span class="string">&#x27;需要有限的区间下界和上界，且下界不大于上界&#x27;</span>);</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">        gap = <span class="built_in">max</span>(<span class="built_in">max</span>(param(<span class="number">1</span>)-x,x-param(<span class="number">2</span>)),<span class="number">0</span>);</span><br><span class="line">        scale = <span class="built_in">max</span>(gap);</span><br><span class="line">        <span class="keyword">if</span> scale == <span class="number">0</span></span><br><span class="line">            y = <span class="built_in">ones</span>(<span class="built_in">size</span>(x));</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            y = <span class="number">1</span>-gap/scale;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">otherwise</span></span><br><span class="line">        error(<span class="string">&#x27;指标类型只能是1、2、3、4&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
-<p><strong><code>topsis.m</code>：标准化、加权、距离与贴近度。</strong></p>
+<p><strong><code>topsis.m</code>:
+标准化、加权、距离与贴近度.</strong></p>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">result</span> = <span class="title">topsis</span><span class="params">(A,kinds,params,weights)</span></span></span><br><span class="line"><span class="comment">% 先按列正向化与标准化，再将坐标乘以指标权重。</span></span><br><span class="line"><span class="keyword">if</span> ~isnumeric(A) || ~<span class="built_in">isreal</span>(A) || ~ismatrix(A) || <span class="built_in">isempty</span>(A) ...</span><br><span class="line">        || any(~<span class="built_in">isfinite</span>(A(:)))</span><br><span class="line">    error(<span class="string">&#x27;评价矩阵必须是非空二维有限实数矩阵&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">[n,m] = <span class="built_in">size</span>(A);</span><br><span class="line"><span class="keyword">if</span> nargin &lt; <span class="number">3</span> || <span class="built_in">isempty</span>(params)</span><br><span class="line">    params = cell(<span class="number">1</span>,m);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">if</span> nargin &lt; <span class="number">4</span> || <span class="built_in">isempty</span>(weights)</span><br><span class="line">    weights = <span class="built_in">ones</span>(<span class="number">1</span>,m);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">if</span> n &lt; <span class="number">2</span> || <span class="built_in">numel</span>(kinds) ~= m || <span class="built_in">numel</span>(params) ~= m</span><br><span class="line">    error(<span class="string">&#x27;至少两个方案，类型和参数数量须与指标数一致&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">w = weights(:)&#x27;;</span><br><span class="line"><span class="keyword">if</span> <span class="built_in">numel</span>(w) ~= m || ~<span class="built_in">isreal</span>(w) || any(~<span class="built_in">isfinite</span>(w)) ...</span><br><span class="line">        || any(w &lt; <span class="number">0</span>) || ~any(w &gt; <span class="number">0</span>)</span><br><span class="line">    error(<span class="string">&#x27;权重须有限、非负、数量正确且不能全为0&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">w = w/<span class="built_in">max</span>(w);</span><br><span class="line">w = w/sum(w);</span><br><span class="line">X = <span class="built_in">zeros</span>(n,m);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:m</span><br><span class="line">    X(:,<span class="built_in">j</span>) = Positivization(A(:,<span class="built_in">j</span>),kinds(<span class="built_in">j</span>),params&#123;<span class="built_in">j</span>&#125;);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">if</span> any(~<span class="built_in">isfinite</span>(X(:)))</span><br><span class="line">    error(<span class="string">&#x27;正向化超出浮点范围，请调整数据尺度&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">active = (<span class="built_in">max</span>(X,[],<span class="number">1</span>) &gt; <span class="built_in">min</span>(X,[],<span class="number">1</span>)) &amp; (w &gt; <span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span> ~any(active)</span><br><span class="line">    error(<span class="string">&#x27;当前有权重的指标无法区分这些方案&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">Z = <span class="built_in">zeros</span>(n,m);</span><br><span class="line">T = <span class="built_in">bsxfun</span>(@rdivide,X(:,active),<span class="built_in">max</span>(X(:,active),[],<span class="number">1</span>));</span><br><span class="line">Z(:,active) = <span class="built_in">bsxfun</span>(@rdivide,T,<span class="built_in">sqrt</span>(sum(T.^<span class="number">2</span>,<span class="number">1</span>)));</span><br><span class="line">V = <span class="built_in">bsxfun</span>(@times,Z,w);</span><br><span class="line">ideal = <span class="built_in">max</span>(V,[],<span class="number">1</span>);</span><br><span class="line">anti = <span class="built_in">min</span>(V,[],<span class="number">1</span>);</span><br><span class="line">dp = <span class="built_in">sqrt</span>(sum(<span class="built_in">bsxfun</span>(@minus,V,ideal).^<span class="number">2</span>,<span class="number">2</span>));</span><br><span class="line">dn = <span class="built_in">sqrt</span>(sum(<span class="built_in">bsxfun</span>(@minus,V,anti).^<span class="number">2</span>,<span class="number">2</span>));</span><br><span class="line"><span class="keyword">if</span> any(dp+dn == <span class="number">0</span>)</span><br><span class="line">    error(<span class="string">&#x27;距离退化，请检查数据与有效权重&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">score = dn./(dp+dn);</span><br><span class="line">share = <span class="number">100</span>*score/sum(score);</span><br><span class="line">[~,order] = <span class="built_in">sort</span>(score,<span class="string">&#x27;descend&#x27;</span>);</span><br><span class="line">result = struct(<span class="string">&#x27;A&#x27;</span>,A,<span class="string">&#x27;X&#x27;</span>,X,<span class="string">&#x27;Z&#x27;</span>,Z,<span class="string">&#x27;V&#x27;</span>,V,<span class="string">&#x27;weights&#x27;</span>,w, ...</span><br><span class="line">    <span class="string">&#x27;active&#x27;</span>,active,<span class="string">&#x27;ideal&#x27;</span>,ideal,<span class="string">&#x27;anti_ideal&#x27;</span>,anti, ...</span><br><span class="line">    <span class="string">&#x27;d_plus&#x27;</span>,dp,<span class="string">&#x27;d_minus&#x27;</span>,dn,<span class="string">&#x27;score&#x27;</span>,score,<span class="string">&#x27;share&#x27;</span>,share,<span class="string">&#x27;order&#x27;</span>,order);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
-<p><strong><code>topsis_demo.m</code>：设置本例数据并输出结果。</strong></p>
+<p><strong><code>topsis_demo.m</code>:
+设置本例数据并输出结果.</strong></p>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">A = [<span class="number">9</span>,<span class="number">10</span>,<span class="number">175</span>,<span class="number">120</span>;<span class="number">8</span>,<span class="number">7</span>,<span class="number">164</span>,<span class="number">80</span>;<span class="number">6</span>,<span class="number">3</span>,<span class="number">157</span>,<span class="number">90</span>];</span><br><span class="line">result = topsis(A,[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>],&#123;[],[],<span class="number">165</span>,[<span class="number">90</span>,<span class="number">100</span>]&#125;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;正向化矩阵：&#x27;</span>); <span class="built_in">disp</span>(result.X);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;标准化矩阵：&#x27;</span>); <span class="built_in">disp</span>(result.Z);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;贴近度：&#x27;</span>); <span class="built_in">disp</span>(result.score&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;贴近度占比（%）：&#x27;</span>); <span class="built_in">disp</span>(result.share&#x27;);</span><br><span class="line">names = &#123;<span class="string">&#x27;A&#x27;</span>,<span class="string">&#x27;B&#x27;</span>,<span class="string">&#x27;C&#x27;</span>&#125;;</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;排序：&#x27;</span>); <span class="built_in">disp</span>(names(result.order));</span><br></pre></td></tr></table></figure>
-<p><code>bsxfun</code>
-用于让列向量或行向量参与逐列、逐行计算。两种语言都用同一套指标类型编号和坐标加权规则。</p>
+<p><code>bsxfun</code> 用于让列向量或行向量参与逐列、逐行计算.
+两种语言都用同一套指标类型编号和坐标加权规则.</p>
 <h3 id="运行后检查什么">7.4 运行后检查什么</h3>
-<p>核对指标顺序、类型、目标值与区间；检查权重非负且和为
-1；查看正向化矩阵是否符合偏好方向，再对照距离、贴近度和方案名称。</p>
-<p>如果得分相同或在实际精度内无法辨别差异，应报告并列或近似并列。排序程序维持的输入先后，不代表真实优劣。</p>
+<p>核对指标顺序、类型、目标值与区间; 检查权重非负且和为 1;
+查看正向化矩阵是否符合偏好方向, 再对照距离、贴近度和方案名称.</p>
+<p>如果得分相同或在实际精度内无法辨别差异, 应报告并列或近似并列.
+排序程序维持的输入先后, 不代表真实优劣.</p>
 <h2 id="八检查-bc-的先后是否稳健">八、检查 B、C 的先后是否稳健</h2>
-<p>设第三项“照度目标”权重为 <span
-class="math inline">\(t\)</span>，其余三项平均分享剩余权重：</p>
+<p>设第三项“照度目标”权重为 <span class="math inline">\(t\)</span>,
+其余三项平均分享剩余权重:</p>
 <p><span class="math display">\[
 \boldsymbol
 w(t)=\left(\frac{1-t}{3},\frac{1-t}{3},t,\frac{1-t}{3}\right).
 \]</span></p>
-<p>改变 <span
-class="math inline">\(t\)</span>，按本章同一规则重新计算：</p>
+<p>改变 <span class="math inline">\(t\)</span>,
+按本章同一规则重新计算:</p>
 <table>
 <thead>
 <tr>
@@ -735,32 +765,33 @@ class="math inline">\(t\)</span></th>
 </tbody>
 </table>
 <p><img src="/images/Topsis/Topsis-3.png" alt="" style="width: 100%;"></p>
-<p><strong>图 3　四指标等权结果，以及 B、C
-对第三项权重变化的敏感性。</strong></p>
-<p>沿这一调整方式，在 <span
-class="math inline">\(t\approx0.248691\)</span> 处，B、C
-的贴近度相等。把 <span class="math inline">\(t\)</span> 从 0.25 改为
-0.24，第一名就改变。因此，B
-可以作为进一步论证的优先方案，但不能仅凭这一微小差距断言显著优于 C。</p>
-<p>还可按有依据的误差范围扰动测量或预测数据，再观察结果。权重变化导致的排序变化，与新增或删除候选方案引起的排序逆转，原因不同，应分别说明。</p>
+<p><strong>图 3　四指标等权结果, 以及 B、C
+对第三项权重变化的敏感性.</strong></p>
+<p>沿这一调整方式, 在 <span
+class="math inline">\(t\approx0.248691\)</span> 处, B、C 的贴近度相等.
+把 <span class="math inline">\(t\)</span> 从 0.25 改为 0.24,
+第一名就改变. 因此, B 可以作为进一步论证的优先方案,
+但不能仅凭这一微小差距断言显著优于 C.</p>
+<p>还可按有依据的误差范围扰动测量或预测数据, 再观察结果.
+权重变化导致的排序变化, 与新增或删除候选方案引起的排序逆转, 原因不同,
+应分别说明.</p>
 <h2 id="九进一步理解方法的边界">九、进一步理解方法的边界</h2>
-<h3 id="贴近度大不一定离正理想解更近">9.1
-贴近度大，不一定离正理想解更近</h3>
-<p>当 <span class="math inline">\(D_i^-&gt;0\)</span> 时：</p>
+<h3 id="贴近度大-不一定离正理想解更近">9.1 贴近度大,
+不一定离正理想解更近</h3>
+<p>当 <span class="math inline">\(D_i^-&gt;0\)</span> 时:</p>
 <p><span class="math display">\[
 S_i=\frac{1}{1+D_i^+/D_i^-}.
 \]</span></p>
-<p>因此，贴近度比较的是两个距离之比，不单独比较 <span
-class="math inline">\(D_i^+\)</span>。</p>
+<p>因此, 贴近度比较的是两个距离之比, 不单独比较 <span
+class="math inline">\(D_i^+\)</span>.</p>
 <p>考虑四个无量纲效益数据点 <span
 class="math inline">\(P=(1,0.2)\)</span>、<span
 class="math inline">\(Q=(0.5,0.5)\)</span>、<span
 class="math inline">\(R=(0.2,0)\)</span>、<span
-class="math inline">\(T=(0,1)\)</span>。各列最大值均为 1，最小值均为
-0；两列的向量范数均为 <span
-class="math inline">\(\sqrt{1.29}\)</span>。</p>
-<p>在原坐标中，以 <span class="math inline">\((1,1)\)</span> 和 <span
-class="math inline">\((0,0)\)</span> 为参照点：</p>
+class="math inline">\(T=(0,1)\)</span>. 各列最大值均为 1, 最小值均为 0;
+两列的向量范数均为 <span class="math inline">\(\sqrt{1.29}\)</span>.</p>
+<p>在原坐标中, 以 <span class="math inline">\((1,1)\)</span> 和 <span
+class="math inline">\((0,0)\)</span> 为参照点:</p>
 <table>
 <colgroup>
 <col style="width: 25%" />
@@ -797,44 +828,54 @@ class="math inline">\(\sqrt{0.5}\approx0.707107\)</span></td>
 </tbody>
 </table>
 <p>标准化后两个距离都除以 <span
-class="math inline">\(\sqrt{1.29}\)</span>，贴近度不变。P 的贴近度高于
-Q，但到正理想解的距离也更大，说明不能把两种比较混为一谈。</p>
+class="math inline">\(\sqrt{1.29}\)</span>, 贴近度不变. P 的贴近度高于
+Q, 但到正理想解的距离也更大, 说明不能把两种比较混为一谈.</p>
 <h3 id="两种权重约定不能混用">9.2 两种权重约定不能混用</h3>
-<p>本章先将坐标乘以 <span
-class="math inline">\(w_j\)</span>，所以距离等价于：</p>
+<p>本章先将坐标乘以 <span class="math inline">\(w_j\)</span>,
+所以距离等价于:</p>
 <p><span class="math display">\[
 D_i^{\pm}=\sqrt{\sum\limits_{j=1}^{m}w_j^2(z_{ij}-z_j^{\pm})^2}.
 \]</span></p>
-<p>另有一种约定，直接把 <span class="math inline">\(w_j\)</span>
-放在平方差前，相当于坐标乘以 <span
-class="math inline">\(\sqrt{w_j}\)</span>。二者可能产生不同结果。应明确选择，并保持公式、代码和结果一致。</p>
+<p>另有一种约定, 直接把 <span class="math inline">\(w_j\)</span>
+放在平方差前, 相当于坐标乘以 <span
+class="math inline">\(\sqrt{w_j}\)</span>. 二者可能产生不同结果.
+应明确选择, 并保持公式、代码和结果一致.</p>
 <h3 id="成本指标也可以不先正向化">9.3 成本指标也可以不先正向化</h3>
-<p>一种常见路线直接标准化原始数据：效益型取最大值为正理想值，成本型取最小值为正理想值。本章则先用“最大值减原值”，再统一取最大值为正理想值。</p>
-<p>对成本列 <span
-class="math inline">\(c_i\)</span>，两条路线的尺度分别为：</p>
+<p>一种常见路线直接标准化原始数据: 效益型取最大值为正理想值,
+成本型取最小值为正理想值. 本章则先用“最大值减原值”,
+再统一取最大值为正理想值.</p>
+<p>对成本列 <span class="math inline">\(c_i\)</span>,
+两条路线的尺度分别为:</p>
 <p><span class="math display">\[
 \sqrt{\sum\limits_i c_i^2},
 \qquad
 \sqrt{\sum\limits_i(c_{\max}-c_i)^2}.
 \]</span></p>
-<p>尺度一般不同，因此多指标评价中可能得到不同排序。不能只替换一个计算步骤，而继续沿用另一条路线的理想解规则。</p>
+<p>尺度一般不同, 因此多指标评价中可能得到不同排序.
+不能只替换一个计算步骤, 而继续沿用另一条路线的理想解规则.</p>
 <h3 id="相对排序的适用范围">9.4 相对排序的适用范围</h3>
-<p>TOPSIS
-的优点是直观、透明、容易复核，适合候选方案明确、指标可比较、评价规则有依据的多指标排序。</p>
-<p>它的局限也来自这些选择：指标重复或相关可能重复强调某一方面；异常值可能改变尺度与理想解；权重和正向化方式会影响排序；多个坐标合并计算允许一定程度的指标间补偿。</p>
-<p>候选集合改变时，标准化分母、样本正向化尺度和理想解都可能改变。因此，不宜直接比较不同年度或不同批次的贴近度。若需长期跟踪，应另行固定参照标准、尺度和权重。</p>
+<p>TOPSIS 的优点是直观、透明、容易复核,
+适合候选方案明确、指标可比较、评价规则有依据的多指标排序.</p>
+<p>它的局限也来自这些选择: 指标重复或相关可能重复强调某一方面;
+异常值可能改变尺度与理想解; 权重和正向化方式会影响排序;
+多个坐标合并计算允许一定程度的指标间补偿.</p>
+<p>候选集合改变时, 标准化分母、样本正向化尺度和理想解都可能改变. 因此,
+不宜直接比较不同年度或不同批次的贴近度. 若需长期跟踪,
+应另行固定参照标准、尺度和权重.</p>
 <h2 id="十练习与本章要点">十、练习与本章要点</h2>
 <h3 id="练习">10.1 练习</h3>
 <ol type="1">
-<li>三个社区阅读活动方案均满足场地与安全要求。预计服务人数、费用、志愿服务工时如下，分别按效益型、成本型、成本型处理，取等权，完成排序。</li>
+<li>三个社区阅读活动方案均满足场地与安全要求.
+预计服务人数、费用、志愿服务工时如下, 分别按效益型、成本型、成本型处理,
+取等权, 完成排序.</li>
 </ol>
 <table>
 <thead>
 <tr>
 <th style="text-align: center;">方案</th>
-<th style="text-align: center;">服务人数（人）</th>
-<th style="text-align: center;">费用（元）</th>
-<th style="text-align: center;">志愿服务工时（小时）</th>
+<th style="text-align: center;">服务人数(人)</th>
+<th style="text-align: center;">费用(元)</th>
+<th style="text-align: center;">志愿服务工时(小时)</th>
 </tr>
 </thead>
 <tbody>
@@ -859,41 +900,45 @@ class="math inline">\(c_i\)</span>，两条路线的尺度分别为：</p>
 </tbody>
 </table>
 <ol start="2" type="1">
-<li>温度设定目标为 25 摄氏度，三组数值为 <span
-class="math inline">\(23,25,28\)</span>；另一个参数的理想区间为 <span
-class="math inline">\([40,60]\)</span>，数值为 <span
-class="math inline">\(30,50,70\)</span>。分别正向化。</li>
-<li>某指标各方案均为
-10。解释按效益型与成本型处理后，为何都不贡献距离。如果全部指标如此，应如何报告结果？</li>
-<li>改变本例第三项权重，复核图 3
-的交点，并讨论权重变化与候选方案增删的区别。</li>
-<li>为校园节水或图书馆服务设计评价体系，说明硬约束、指标方向、数据来源和权重依据。</li>
+<li>温度设定目标为 25 摄氏度, 三组数值为 <span
+class="math inline">\(23,25,28\)</span>; 另一个参数的理想区间为 <span
+class="math inline">\([40,60]\)</span>, 数值为 <span
+class="math inline">\(30,50,70\)</span>. 分别正向化.</li>
+<li>某指标各方案均为 10. 解释按效益型与成本型处理后, 为何都不贡献距离.
+如果全部指标如此, 应如何报告结果?</li>
+<li>改变本例第三项权重, 复核图 3 的交点,
+并讨论权重变化与候选方案增删的区别.</li>
+<li>为校园节水或图书馆服务设计评价体系,
+说明硬约束、指标方向、数据来源和权重依据.</li>
 </ol>
 <h3 id="参考答案与提示">10.2 参考答案与提示</h3>
 <ol type="1">
-<li>正向化矩阵为：</li>
+<li>正向化矩阵为:</li>
 </ol>
 <p><span class="math display">\[
 X=\begin{pmatrix}120&amp;400&amp;0\\150&amp;0&amp;6\\100&amp;700&amp;10\end{pmatrix}.
 \]</span></p>
 <p>贴近度约为 <span
-class="math inline">\(0.348134,0.376587,0.840903\)</span>，排序 <span
-class="math inline">\(C&gt;B&gt;A\)</span>。活动质量等未纳入因素仍需另行论证。
-2. 第一列为 <span class="math inline">\((1/3,1,0)\)</span>，第二列为
-<span
-class="math inline">\((0,1,0)\)</span>。讨论目标两侧的偏差是否具有相同后果。
-3.
-效益型得到非零常数列，成本型得到全零列，正、负理想值都相同。全部有效指标如此时，贴近度公式成为
-<span class="math inline">\(0/0\)</span>，应报告无法区分。 4.
-在本章指定的权重调整方式下，交点约为 <span
-class="math inline">\(0.248691\)</span>。其他权重变化方式可能得到不同交点。
-5.
-重点检查指标是否重复、量表是否合适、数据是否可靠，以及结论对合理参数变化是否敏感。</p>
+class="math inline">\(0.348134,0.376587,0.840903\)</span>, 排序 <span
+class="math inline">\(C&gt;B&gt;A\)</span>.
+活动质量等未纳入因素仍需另行论证. 2. 第一列为 <span
+class="math inline">\((1/3,1,0)\)</span>, 第二列为 <span
+class="math inline">\((0,1,0)\)</span>.
+讨论目标两侧的偏差是否具有相同后果. 3. 效益型得到非零常数列,
+成本型得到全零列, 正、负理想值都相同. 全部有效指标如此时, 贴近度公式成为
+<span class="math inline">\(0/0\)</span>, 应报告无法区分. 4.
+在本章指定的权重调整方式下, 交点约为 <span
+class="math inline">\(0.248691\)</span>.
+其他权重变化方式可能得到不同交点. 5.
+重点检查指标是否重复、量表是否合适、数据是否可靠,
+以及结论对合理参数变化是否敏感.</p>
 <h3 id="本章要点">10.3 本章要点</h3>
-<p>TOPSIS
-的主线是统一方向、统一尺度，再用正、负理想解的相对距离比较方案。计算时应明确权重约定，处理常数列与退化情形，并按未舍入数据完成排序。</p>
-<p>本例得到 <span class="math inline">\(B&gt;C&gt;A\)</span>，但 B、C
-的差距很小。把数据、规则、敏感性和适用范围一并说明，才能让排序成为有依据的决策参考。</p>
+<p>TOPSIS 的主线是统一方向、统一尺度,
+再用正、负理想解的相对距离比较方案. 计算时应明确权重约定,
+处理常数列与退化情形, 并按未舍入数据完成排序.</p>
+<p>本例得到 <span class="math inline">\(B&gt;C&gt;A\)</span>, 但 B、C
+的差距很小. 把数据、规则、敏感性和适用范围一并说明,
+才能让排序成为有依据的决策参考.</p>
 <h2 id="参考文献">参考文献</h2>
 <p>[1] HWANG C L, YOON K. Multiple Attribute Decision Making: Methods
 and Applications—A State-of-the-Art Survey[M]. Berlin, Heidelberg:

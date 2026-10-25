@@ -19,17 +19,19 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="层次分析法: 从多项比较到综合评价 几个方案各有优点时, 怎样作出有依据的选择? 一种有效的思路是: 先明确评价目标, 再比较各项指标的重要程度, 最后把方案在不同指标下的表现综合起来. 层次分析法把这一过程组织成了可以讨论、计算和检查的步骤. 本章以校园公益科普服务方案为例, 依次学习层次结构、判断矩阵、一致性检验、权重计算和综合排序. Python 与 MATLAB 代码提供两">
+    <meta name="description" content="层次分析法: 从成对比较到有依据的选择 三个方案各有优点, 为什么最后选择其中一个? 给出一个分数并不难, 难的是说明评价了什么, 为什么这样分配重要性, 以及结论在多大程度上依赖这些判断. 层次分析法(Analytic Hierarchy Process, AHP)把目标分解为准则与方案, 用成对比较表达相对重要性, 再逐层综合. 本章先完成一次公益科普服务方案选择, 再解释权重,">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Hexo">
 <meta property="og:url" content="http://example.com/MathematicalModelingAlgorithms/AnalyticHierarchyProcess.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="层次分析法: 从多项比较到综合评价 几个方案各有优点时, 怎样作出有依据的选择? 一种有效的思路是: 先明确评价目标, 再比较各项指标的重要程度, 最后把方案在不同指标下的表现综合起来. 层次分析法把这一过程组织成了可以讨论、计算和检查的步骤. 本章以校园公益科普服务方案为例, 依次学习层次结构、判断矩阵、一致性检验、权重计算和综合排序. Python 与 MATLAB 代码提供两">
+<meta property="og:description" content="层次分析法: 从成对比较到有依据的选择 三个方案各有优点, 为什么最后选择其中一个? 给出一个分数并不难, 难的是说明评价了什么, 为什么这样分配重要性, 以及结论在多大程度上依赖这些判断. 层次分析法(Analytic Hierarchy Process, AHP)把目标分解为准则与方案, 用成对比较表达相对重要性, 再逐层综合. 本章先完成一次公益科普服务方案选择, 再解释权重,">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/images/AnalyticHierarchyProcess/AHP-1.png">
 <meta property="og:image" content="http://example.com/images/AnalyticHierarchyProcess/AHP-2.png">
-<meta property="article:published_time" content="2026-10-15T06:01:20.926Z">
-<meta property="article:modified_time" content="2026-10-14T09:09:59.730Z">
+<meta property="og:image" content="http://example.com/images/AnalyticHierarchyProcess/AHP-3.png">
+<meta property="og:image" content="http://example.com/images/AnalyticHierarchyProcess/AHP-4.png">
+<meta property="article:published_time" content="2026-10-25T07:56:02.349Z">
+<meta property="article:modified_time" content="2026-10-25T08:17:14.000Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/AnalyticHierarchyProcess/AHP-1.png">
@@ -130,12 +132,20 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B1%82%E6%AC%A1%E5%88%86%E6%9E%90%E6%B3%95-%E4%BB%8E%E5%A4%9A%E9%A1%B9%E6%AF%94%E8%BE%83%E5%88%B0%E7%BB%BC%E5%90%88%E8%AF%84%E4%BB%B7"><span class="nav-number">1.</span> <span class="nav-text">层次分析法:
-从多项比较到综合评价</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%BD%92%E4%B8%80%E5%8C%96%E4%B8%8E%E6%9D%83%E9%87%8D"><span class="nav-number">1.1.</span> <span class="nav-text">一、为什么需要归一化与权重</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E4%B8%AA%E6%96%B9%E6%A1%88-%E5%90%84%E6%9C%89%E6%89%80%E9%95%BF"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 三个方案, 各有所长</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%89%E5%88%97%E5%BD%92%E4%B8%80%E5%8C%96"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 按列归一化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%83%E9%87%8D%E8%A1%A8%E7%A4%BA%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 权重表示什么</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%85%88%E5%BB%BA%E7%AB%8B%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="nav-number">1.2.</span> <span class="nav-text">二、先建立层次结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87%E5%87%86%E5%88%99%E4%B8%8E%E6%96%B9%E6%A1%88"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 目标、准则与方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E6%AF%94%E8%BE%83%E5%88%B0%E5%86%B3%E7%AD%96%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 从比较到决策的流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E6%8A%8A%E6%AF%94%E8%BE%83%E6%84%8F%E8%A7%81%E5%86%99%E6%88%90%E5%88%A4%E6%96%AD%E7%9F%A9%E9%98%B5"><span class="nav-number">1.3.</span> <span class="nav-text">三、把比较意见写成判断矩阵</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AF%8F%E6%AC%A1%E5%8F%AA%E6%AF%94%E8%BE%83%E4%B8%A4%E4%B8%AA%E5%9B%A0%E7%B4%A0"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 每次只比较两个因素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A3%E4%BA%92%E5%8F%8D%E5%88%A4%E6%96%AD%E7%9F%A9%E9%98%B5"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 正互反判断矩阵</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%92%E5%8F%8D%E5%B9%B6%E4%B8%8D%E6%84%8F%E5%91%B3%E7%9D%80%E5%89%8D%E5%90%8E%E4%B8%80%E8%87%B4"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 互反并不意味着前后一致</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E6%A3%80%E6%9F%A5%E5%88%A4%E6%96%AD%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-number">1.4.</span> <span class="nav-text">四、检查判断的一致性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E5%85%A8%E4%B8%80%E8%87%B4%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 完全一致是什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7%E6%A3%80%E9%AA%8C%E7%9A%84%E4%B8%89%E4%B8%AA%E9%87%8F"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 一致性检验的三个量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9E%E5%88%B0%E6%A1%88%E4%BE%8B-%E6%A3%80%E9%AA%8C%E4%B8%8E%E4%BF%AE%E8%AE%A2"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 回到案例: 检验与修订</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%90%86%E8%AE%BA%E8%A7%A3%E9%87%8A-%E4%B8%BA%E4%BB%80%E4%B9%88%E7%89%B9%E5%BE%81%E5%80%BC%E4%B8%8E%E6%9D%83%E9%87%8D%E6%9C%89%E5%85%B3"><span class="nav-number">1.4.4.</span> <span class="nav-text">4.4 理论解释:
-为什么特征值与权重有关</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E8%AE%A1%E7%AE%97%E6%9D%83%E9%87%8D%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E6%B3%95"><span class="nav-number">1.5.</span> <span class="nav-text">五、计算权重的三种方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%9C%AF%E5%B9%B3%E5%9D%87%E6%B3%95-%E6%8C%89%E5%88%97%E5%BD%92%E4%B8%80%E5%8C%96-%E5%86%8D%E6%8C%89%E8%A1%8C%E5%B9%B3%E5%9D%87"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 算术平均法: 按列归一化,
-再按行平均</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%A0%E4%BD%95%E5%B9%B3%E5%9D%87%E6%B3%95-%E6%AF%8F%E8%A1%8C%E5%85%88%E7%9B%B8%E4%B9%98-%E5%86%8D%E5%BC%80%E6%96%B9"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 几何平均法: 每行先相乘,
-再开方</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E5%BE%81%E5%90%91%E9%87%8F%E6%B3%95-%E6%B1%82%E6%9C%80%E5%A4%A7%E6%AD%A3%E7%89%B9%E5%BE%81%E5%80%BC%E5%AF%B9%E5%BA%94%E7%9A%84%E5%90%91%E9%87%8F"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 特征向量法:
-求最大正特征值对应的向量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E7%A7%8D%E7%BB%93%E6%9E%9C%E6%80%8E%E6%A0%B7%E6%AF%94%E8%BE%83"><span class="nav-number">1.5.4.</span> <span class="nav-text">5.4 三种结果怎样比较</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E7%BB%BC%E5%90%88%E8%AF%84%E5%88%86%E4%B8%8E%E7%BB%93%E6%9E%9C%E8%A7%A3%E9%87%8A"><span class="nav-number">1.6.</span> <span class="nav-text">六、综合评分与结果解释</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%89%E6%9D%83%E9%87%8D%E6%B1%87%E6%80%BB%E6%96%B9%E6%A1%88%E8%A1%A8%E7%8E%B0"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 按权重汇总方案表现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B9%E5%8F%98%E6%9D%83%E9%87%8D-%E6%8E%92%E5%BA%8F%E5%8F%AF%E8%83%BD%E5%8F%98%E5%8C%96"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 改变权重, 排序可能变化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E5%B1%80%E9%83%A8%E5%BE%97%E5%88%86%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%9D%A5%E6%BA%90"><span class="nav-number">1.6.3.</span> <span class="nav-text">6.3 方案局部得分的两种来源</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E7%94%A8%E7%A8%8B%E5%BA%8F%E5%AE%8C%E6%88%90%E8%AE%A1%E7%AE%97"><span class="nav-number">1.7.</span> <span class="nav-text">七、用程序完成计算</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 Python 实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab-%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 MATLAB 实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E7%85%A7%E7%BB%93%E6%9E%9C%E6%A3%80%E6%9F%A5%E8%AE%A1%E7%AE%97"><span class="nav-number">1.7.3.</span> <span class="nav-text">7.3 对照结果检查计算</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E4%BD%BF%E7%94%A8%E6%A8%A1%E5%9E%8B%E6%97%B6%E8%BF%98%E8%A6%81%E8%80%83%E8%99%91%E4%BB%80%E4%B9%88"><span class="nav-number">1.8.</span> <span class="nav-text">八、使用模型时还要考虑什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E7%82%B9%E4%B8%8E%E9%80%82%E7%94%A8%E8%8C%83%E5%9B%B4"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 优点与适用范围</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%A0%E4%B8%AA%E5%AE%B9%E6%98%93%E6%B7%B7%E6%B7%86%E7%9A%84%E8%BE%B9%E7%95%8C"><span class="nav-number">1.8.2.</span> <span class="nav-text">8.2 几个容易混淆的边界</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D%E7%BB%83%E4%B9%A0%E4%B8%8E%E6%9C%AC%E7%AB%A0%E8%A6%81%E7%82%B9"><span class="nav-number">1.9.</span> <span class="nav-text">九、练习与本章要点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.9.1.</span> <span class="nav-text">9.1 练习</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E7%AD%94%E6%A1%88%E4%B8%8E%E6%8F%90%E7%A4%BA"><span class="nav-number">1.9.2.</span> <span class="nav-text">9.2 参考答案与提示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E7%AB%A0%E8%A6%81%E7%82%B9"><span class="nav-number">1.9.3.</span> <span class="nav-text">9.3 本章要点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">1.10.</span> <span class="nav-text">参考文献</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B1%82%E6%AC%A1%E5%88%86%E6%9E%90%E6%B3%95-%E4%BB%8E%E6%88%90%E5%AF%B9%E6%AF%94%E8%BE%83%E5%88%B0%E6%9C%89%E4%BE%9D%E6%8D%AE%E7%9A%84%E9%80%89%E6%8B%A9"><span class="nav-number">1.</span> <span class="nav-text">层次分析法:
+从成对比较到有依据的选择</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E5%AE%8C%E6%88%90%E4%B8%80%E6%AC%A1%E6%96%B9%E6%A1%88%E9%80%89%E6%8B%A9"><span class="nav-number">1.1.</span> <span class="nav-text">1 先完成一次方案选择</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A9%E8%AF%84%E4%BB%B7%E5%AF%B9%E8%B1%A1%E5%92%8C%E6%8C%87%E6%A0%87%E4%B8%80%E7%9B%AE%E4%BA%86%E7%84%B6"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 让评价对象和指标一目了然</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E4%B8%80%E6%AE%B5%E5%AE%8C%E6%95%B4%E7%A8%8B%E5%BA%8F%E7%9C%8B%E6%B8%85%E8%BE%93%E5%85%A5%E4%B8%8E%E8%BE%93%E5%87%BA"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2
+用一段完整程序看清输入与输出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E8%AF%BB%E7%BB%93%E6%9E%9C-%E5%86%8D%E8%BF%BD%E9%97%AE%E5%AE%83%E7%9A%84%E4%BE%9D%E6%8D%AE"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.3 先读结果, 再追问它的依据</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E4%B8%8D%E5%90%8C%E6%8C%87%E6%A0%87%E8%BD%AC%E4%B8%BA%E5%8F%AF%E4%BB%A5%E7%BB%BC%E5%90%88%E7%9A%84%E5%B1%80%E9%83%A8%E5%BE%97%E5%88%86"><span class="nav-number">1.2.</span> <span class="nav-text">2
+把不同指标转为可以综合的局部得分</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AF%94%E4%BE%8B%E5%BD%92%E4%B8%80%E5%8C%96%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 比例归一化做了什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%83%E9%87%8D%E6%8A%8A%E5%B1%80%E9%83%A8%E5%BE%97%E5%88%86%E8%81%94%E7%B3%BB%E5%88%B0%E6%80%BB%E7%9B%AE%E6%A0%87"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 权重把局部得分联系到总目标</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E8%AF%84%E4%BB%B7%E7%90%86%E7%94%B1%E5%86%99%E6%88%90%E5%B1%82%E6%AC%A1%E4%B8%8E%E6%AF%94%E8%BE%83"><span class="nav-number">1.3.</span> <span class="nav-text">3 把评价理由写成层次与比较</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84%E5%85%88%E4%BA%8E%E7%9F%A9%E9%98%B5"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 层次结构先于矩阵</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AF%8F%E6%AC%A1%E5%8F%AA%E6%AF%94%E8%BE%83%E4%B8%A4%E4%B8%AA%E5%87%86%E5%88%99"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 每次只比较两个准则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E4%B8%80%E4%B8%AA%E4%B8%8D%E5%8D%8F%E8%B0%83%E7%9A%84%E5%88%A4%E6%96%AD%E7%BB%84%E5%8F%91%E7%8E%B0%E9%97%AE%E9%A2%98"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3
+用一个不协调的判断组发现问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7%E6%A3%80%E9%AA%8C-%E6%A3%80%E6%9F%A5%E6%AF%94%E8%BE%83%E8%83%BD%E5%90%A6%E5%8D%8F%E8%B0%83%E8%B5%B7%E6%9D%A5"><span class="nav-number">1.4.</span> <span class="nav-text">4 一致性检验:
+检查比较能否协调起来</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E5%AE%8C%E5%85%A8%E4%B8%80%E8%87%B4%E7%90%86%E8%A7%A3%E7%89%B9%E5%BE%81%E5%90%91%E9%87%8F"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 从完全一致理解特征向量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8ci%E4%B8%8Ecr%E8%A1%A1%E9%87%8F%E5%81%8F%E7%A6%BB%E7%A8%8B%E5%BA%A6"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 用CI与CR衡量偏离程度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E8%AE%A2%E6%9D%A5%E8%87%AA%E9%87%8D%E6%96%B0%E8%AE%A8%E8%AE%BA-%E4%B8%8D%E6%98%AF%E5%8F%AA%E4%B8%BA%E9%99%8D%E4%BD%8Ecr"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 修订来自重新讨论,
+不是只为降低CR</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%9D%83%E9%87%8D-%E7%90%86%E8%A7%A3%E5%90%8C%E4%B8%80%E4%BB%BB%E5%8A%A1%E7%9A%84%E4%B8%89%E7%A7%8D%E5%81%9A%E6%B3%95"><span class="nav-number">1.5.</span> <span class="nav-text">5 计算权重:
+理解同一任务的三种做法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%9C%AF%E5%B9%B3%E5%9D%87%E6%B3%95-%E6%8C%89%E5%88%97%E5%BD%92%E4%B8%80%E5%8C%96-%E5%86%8D%E6%8C%89%E8%A1%8C%E5%B9%B3%E5%9D%87"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 算术平均法: 按列归一化,
+再按行平均</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%A0%E4%BD%95%E5%B9%B3%E5%9D%87%E6%B3%95-%E6%AF%8F%E8%A1%8C%E7%9A%84%E6%AF%94%E7%8E%87%E5%85%88%E7%9B%B8%E4%B9%98"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 几何平均法:
+每行的比率先相乘</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E5%BE%81%E5%90%91%E9%87%8F%E6%B3%95-%E5%8F%96%E4%B8%BB%E7%89%B9%E5%BE%81%E5%90%91%E9%87%8F%E7%9A%84%E6%96%B9%E5%90%91"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 特征向量法:
+取主特征向量的方向</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%86%E4%B8%89%E4%B8%AA%E8%AE%A1%E7%AE%97%E4%BB%BB%E5%8A%A1%E5%86%99%E6%88%90%E5%8F%AF%E5%A4%8D%E7%94%A8%E5%87%BD%E6%95%B0"><span class="nav-number">1.5.4.</span> <span class="nav-text">5.4
+将三个计算任务写成可复用函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E9%87%8A%E7%BB%BC%E5%90%88%E5%BE%97%E5%88%86-%E5%93%AA%E4%BA%9B%E5%9B%A0%E7%B4%A0%E6%8E%A8%E5%8A%A8%E4%BA%86%E7%BB%93%E6%9E%9C"><span class="nav-number">1.6.</span> <span class="nav-text">6 解释综合得分:
+哪些因素推动了结果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%B9%E5%8F%98%E4%BE%A7%E9%87%8D%E7%82%B9-%E7%BB%93%E8%AE%BA%E8%BF%98%E8%83%BD%E4%BF%9D%E6%8C%81%E5%90%97"><span class="nav-number">1.7.</span> <span class="nav-text">7 改变侧重点, 结论还能保持吗</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E8%AF%B4%E6%98%8E%E6%9D%83%E9%87%8D%E6%80%8E%E6%A0%B7%E6%94%B9%E5%8F%98"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 先说明权重怎样改变</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E6%9C%8D%E5%8A%A1%E8%A6%86%E7%9B%96%E8%BD%AC%E7%A7%BB%E6%9D%83%E9%87%8D%E7%BB%99%E5%86%85%E5%AE%B9%E8%B4%A8%E9%87%8F"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2
+从服务覆盖转移权重给内容质量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E5%B1%82%E4%B9%9F%E5%8F%AF%E4%BB%A5%E4%BD%BF%E7%94%A8%E6%88%90%E5%AF%B9%E6%AF%94%E8%BE%83"><span class="nav-number">1.8.</span> <span class="nav-text">8 方案层也可以使用成对比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E5%9B%9E%E5%88%B0%E5%AE%9E%E9%99%85%E9%80%89%E6%8B%A9"><span class="nav-number">1.9.</span> <span class="nav-text">9 从计算结果回到实际选择</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.10.</span> <span class="nav-text">10 练习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">1.11.</span> <span class="nav-text">参考文献</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -185,34 +195,34 @@
       
       
       <div class="post-body">
-          <h1 id="层次分析法-从多项比较到综合评价">层次分析法:
-从多项比较到综合评价</h1>
-<p>几个方案各有优点时, 怎样作出有依据的选择? 一种有效的思路是:
-先明确评价目标, 再比较各项指标的重要程度,
-最后把方案在不同指标下的表现综合起来.
-层次分析法把这一过程组织成了可以讨论、计算和检查的步骤.</p>
-<p>本章以校园公益科普服务方案为例,
-依次学习层次结构、判断矩阵、一致性检验、权重计算和综合排序. Python 与
-MATLAB 代码提供两种实现方式, 可先选择熟悉的一种学习.</p>
-<h2 id="一为什么需要归一化与权重">一、为什么需要归一化与权重</h2>
-<h3 id="三个方案-各有所长">1.1 三个方案, 各有所长</h3>
-<p>某高校准备从三个公益科普服务方案 A、B、C 中,
-选择一个作为下一阶段的重点支持方案. 为比较方案,
-评审组选取服务覆盖、服务便利、内容质量、活动场次四项指标.</p>
-<table style="width:100%;">
+          <h1 id="层次分析法-从成对比较到有依据的选择">层次分析法:
+从成对比较到有依据的选择</h1>
+<p>三个方案各有优点, 为什么最后选择其中一个? 给出一个分数并不难,
+难的是说明评价了什么, 为什么这样分配重要性,
+以及结论在多大程度上依赖这些判断.</p>
+<p>层次分析法(Analytic Hierarchy Process, AHP)把目标分解为准则与方案,
+用成对比较表达相对重要性, 再逐层综合.
+本章先完成一次公益科普服务方案选择, 再解释权重,
+一致性与敏感性分析如何共同支撑这一选择. Python与MATLAB提供平行实现,
+可以先选择熟悉的一种阅读.</p>
+<h2 id="先完成一次方案选择">1 先完成一次方案选择</h2>
+<h3 id="让评价对象和指标一目了然">1.1 让评价对象和指标一目了然</h3>
+<p>某高校准备从三个公益科普服务方案A, B, C中,
+选择一个作为下一阶段重点支持的方案. 评审组选取四项指标, 数据如下.</p>
+<table>
 <colgroup>
-<col style="width: 7%" />
-<col style="width: 23%" />
-<col style="width: 26%" />
-<col style="width: 26%" />
-<col style="width: 16%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
 </colgroup>
 <thead>
 <tr>
 <th style="text-align: center;">方案</th>
 <th style="text-align: center;">预计服务覆盖(人次)</th>
-<th style="text-align: center;">服务便利(10 分制)</th>
-<th style="text-align: center;">内容质量(10 分制)</th>
+<th style="text-align: center;">服务便利(10分制)</th>
+<th style="text-align: center;">内容质量(10分制)</th>
 <th style="text-align: center;">活动场次(场)</th>
 </tr>
 </thead>
@@ -240,28 +250,129 @@ MATLAB 代码提供两种实现方式, 可先选择熟悉的一种学习.</p>
 </tr>
 </tbody>
 </table>
-<p>以上为教学示例数据. 服务人次按参与次数统计,
-同一人参加多场活动可以重复计入. 便利与质量评分采用统一评价规则,
-分数越高, 表示相应方面表现越好.</p>
-<p>A 的服务覆盖和便利评分较高, B 的内容质量和活动场次较高, C 相对均衡.
-直接把四个数字相加, 会混合不同单位, 并使数值较大的指标获得过多影响.
-因此, 需要先统一评价尺度, 再考虑各项指标的重要性.</p>
-<h3 id="按列归一化">1.2 按列归一化</h3>
-<p>本例把四项指标均视为<strong>效益型指标</strong>, 即在既定评价范围内,
-数值越大越好. 设 <span class="math inline">\(x_{ij}\)</span> 为第 <span
-class="math inline">\(i\)</span> 个方案的第 <span
-class="math inline">\(j\)</span> 项指标值, 采用比例归一化:</p>
+<p>这些数据为教学设定. 服务人次按参与次数统计,
+同一人参加多场活动可以重复计入; 便利与质量评分采用统一规则.
+本例暂把四项指标都视为在评价范围内数值越大越好的效益型指标.</p>
+<p>A的服务覆盖和便利评分较高, B的内容质量和活动场次较高, C相对均衡.
+因此, 不能只看某一列就决定最终选择,
+也不能把不同单位的四个数字直接相加.</p>
+<h3 id="用一段完整程序看清输入与输出">1.2
+用一段完整程序看清输入与输出</h3>
+<p>把方案数据写为矩阵 <span class="math inline">\(X\)</span>,
+行依次对应A, B, C, 列依次对应服务覆盖, 服务便利, 内容质量, 活动场次.
+准则的重要性由判断矩阵 <span class="math inline">\(A\)</span> 表示, 其中
+<span class="math inline">\(a_{ij}\)</span> 比较第 <span
+class="math inline">\(i\)</span> 项准则相对于第 <span
+class="math inline">\(j\)</span> 项准则的重要程度.</p>
+<p>下面先采用经过讨论修订后的矩阵</p>
+<p><span class="math display">\[
+A_1=\begin{pmatrix}
+1&amp;2&amp;3&amp;5\\
+\frac12&amp;1&amp;\frac12&amp;2\\
+\frac13&amp;2&amp;1&amp;2\\
+\frac15&amp;\frac12&amp;\frac12&amp;1
+\end{pmatrix}.
+\]</span></p>
+<p>例如, <span class="math inline">\(a_{14}=5\)</span>
+表示在本次评价目标下, 评审组认为服务覆盖比活动场次更重要,
+使用标度5表达这一判断. 它不是从方案数据表中自动推导出来的.
+第3节与第4节将说明这些比较怎样形成, 为什么需要修订.</p>
+<p>程序完成三件事: 计算准则权重, 检查比较是否协调, 按权重综合方案表现.
+一致性比例 <span class="math inline">\(CR\)</span>
+用来衡量判断的不协调程度; 本章采用 <span
+class="math inline">\(CR&lt;0.10\)</span> 的常用经验标准. 本例为4阶矩阵,
+对应的随机一致性指标 <span class="math inline">\(RI=0.90\)</span>.
+相关公式见第4节.</p>
+<p>以下两段程序均可独立运行. 输入矩阵在程序内固定,
+更换矩阵时还应进行第5.4节中的正互反性等检查.</p>
+<p><strong>ahp_quick.py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># Columns: coverage, convenience, quality, number of sessions.</span></span><br><span class="line">X = np.array([[<span class="number">6000</span>,<span class="number">10</span>,<span class="number">6.5</span>,<span class="number">25</span>], [<span class="number">3400</span>,<span class="number">6</span>,<span class="number">8.1</span>,<span class="number">46</span>],</span><br><span class="line">              [<span class="number">5500</span>,<span class="number">8</span>,<span class="number">7.5</span>,<span class="number">31</span>]], dtype=<span class="built_in">float</span>)</span><br><span class="line"><span class="comment"># Judgments after discussion. The revision is explained in Section 3.</span></span><br><span class="line">A = np.array([[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">5</span>], [<span class="number">1</span>/<span class="number">2</span>,<span class="number">1</span>,<span class="number">1</span>/<span class="number">2</span>,<span class="number">2</span>],</span><br><span class="line">              [<span class="number">1</span>/<span class="number">3</span>,<span class="number">2</span>,<span class="number">1</span>,<span class="number">2</span>], [<span class="number">1</span>/<span class="number">5</span>,<span class="number">1</span>/<span class="number">2</span>,<span class="number">1</span>/<span class="number">2</span>,<span class="number">1</span>]], dtype=<span class="built_in">float</span>)</span><br><span class="line">values, vectors = np.linalg.eig(A)</span><br><span class="line">k = np.argmax(values.real)</span><br><span class="line">lam = values[k].real</span><br><span class="line">w = vectors[:,k].real</span><br><span class="line">w = w/w.<span class="built_in">sum</span>()</span><br><span class="line">ci = <span class="built_in">max</span>(<span class="number">0.</span>,(lam-<span class="number">4</span>)/<span class="number">3</span>)</span><br><span class="line">cr = ci/<span class="number">.90</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;lambda, CI, CR:&#x27;</span>,lam,ci,cr)</span><br><span class="line"><span class="keyword">if</span> cr &gt;= <span class="number">.10</span>:</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&#x27;Review the judgments before reporting a decision&#x27;</span>)</span><br><span class="line">Z = X/X.<span class="built_in">sum</span>(axis=<span class="number">0</span>)</span><br><span class="line">scores = Z @ w</span><br><span class="line">names = np.array([<span class="string">&#x27;A&#x27;</span>,<span class="string">&#x27;B&#x27;</span>,<span class="string">&#x27;C&#x27;</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Weights:&#x27;</span>,w)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Scores:&#x27;</span>,scores)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Ranking:&#x27;</span>,<span class="string">&#x27; &gt; &#x27;</span>.join(names[np.argsort(-scores)]))</span><br></pre></td></tr></table></figure>
+<p><strong>ahp_quick.m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line"><span class="comment">% Columns: coverage, convenience, quality, number of sessions.</span></span><br><span class="line">X = [<span class="number">6000</span>,<span class="number">10</span>,<span class="number">6.5</span>,<span class="number">25</span>;<span class="number">3400</span>,<span class="number">6</span>,<span class="number">8.1</span>,<span class="number">46</span>;<span class="number">5500</span>,<span class="number">8</span>,<span class="number">7.5</span>,<span class="number">31</span>];</span><br><span class="line">A = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">5</span>;<span class="number">1</span>/<span class="number">2</span>,<span class="number">1</span>,<span class="number">1</span>/<span class="number">2</span>,<span class="number">2</span>;<span class="number">1</span>/<span class="number">3</span>,<span class="number">2</span>,<span class="number">1</span>,<span class="number">2</span>;<span class="number">1</span>/<span class="number">5</span>,<span class="number">1</span>/<span class="number">2</span>,<span class="number">1</span>/<span class="number">2</span>,<span class="number">1</span>];</span><br><span class="line">[V,D] = eig(A);</span><br><span class="line">[lambda,k] = <span class="built_in">max</span>(<span class="built_in">real</span>(<span class="built_in">diag</span>(D)));</span><br><span class="line">w = <span class="built_in">real</span>(V(:,k)); w = w/sum(w);</span><br><span class="line">CI = <span class="built_in">max</span>(<span class="number">0</span>,(lambda<span class="number">-4</span>)/<span class="number">3</span>); CR = CI/<span class="number">.90</span>;</span><br><span class="line">fprintf(<span class="string">&#x27;lambda=%.8f, CI=%.8f, CR=%.8f\n&#x27;</span>,lambda,CI,CR);</span><br><span class="line">assert(CR &lt; <span class="number">.10</span>,<span class="string">&#x27;Review the judgments before reporting a decision&#x27;</span>);</span><br><span class="line">Z = X./sum(X,<span class="number">1</span>);</span><br><span class="line">scores = Z*w;</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Weights:&#x27;</span>); <span class="built_in">disp</span>(w.&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Scores:&#x27;</span>); <span class="built_in">disp</span>(scores.&#x27;);</span><br><span class="line">[~,order] = <span class="built_in">sort</span>(scores,<span class="string">&#x27;descend&#x27;</span>);</span><br><span class="line">names = &#123;<span class="string">&#x27;A&#x27;</span>,<span class="string">&#x27;B&#x27;</span>,<span class="string">&#x27;C&#x27;</span>&#125;;</span><br><span class="line">fprintf(<span class="string">&#x27;Ranking: %s &gt; %s &gt; %s\n&#x27;</span>,names&#123;order(<span class="number">1</span>)&#125;,names&#123;order(<span class="number">2</span>)&#125;,names&#123;order(<span class="number">3</span>)&#125;);</span><br></pre></td></tr></table></figure>
+<p>先看数据经过了哪些变换. <code>eig</code> 求出矩阵的特征值和特征向量;
+程序选择最大正特征值对应的向量, 除以分量之和得到权重.
+<code>X.sum(axis=0)</code> 与MATLAB的 <code>sum(X,1)</code> 都按列求和,
+因而 <code>Z</code> 的每一列之和为1. 最后的 <code>Z @ w</code> 与
+<code>Z*w</code> 都把各项局部得分按权重相加.</p>
+<p>Python的一维数组 <code>w</code> 在这里承担权重向量的作用; MATLAB的
+<code>w</code> 为列向量. 两种语言的数学运算一致,
+数组表示不必完全相同.</p>
+<h3 id="先读结果-再追问它的依据">1.3 先读结果, 再追问它的依据</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">准则</th>
+<th style="text-align: center;">权重</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">服务覆盖</td>
+<td style="text-align: center;">0.493389</td>
+</tr>
+<tr>
+<td style="text-align: center;">服务便利</td>
+<td style="text-align: center;">0.178846</td>
+</tr>
+<tr>
+<td style="text-align: center;">内容质量</td>
+<td style="text-align: center;">0.230339</td>
+</tr>
+<tr>
+<td style="text-align: center;">活动场次</td>
+<td style="text-align: center;">0.097426</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">方案</th>
+<th style="text-align: center;">综合得分</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">0.364825</td>
+</tr>
+<tr>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">0.285657</td>
+</tr>
+<tr>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">0.349518</td>
+</tr>
+</tbody>
+</table>
+<p>本次计算得到 <span class="math inline">\(CR\approx0.041789\)</span>,
+综合排序为</p>
+<p><span class="math display">\[
+A&gt;C&gt;B.
+\]</span></p>
+<p>这一结论表示: 在当前指标, 评分方式和比较判断下, A的综合得分最高.
+它不表示A每一项都最好. A与C只相差约0.015307, 还需要检查改变评价侧重点后,
+两者的顺序是否稳定.</p>
+<p>接下来依次回答三个问题: 不同单位的指标怎样合成? 权重为什么这样计算?
+判断和权重改变后, 结论会怎样变化?</p>
+<h2 id="把不同指标转为可以综合的局部得分">2
+把不同指标转为可以综合的局部得分</h2>
+<h3 id="比例归一化做了什么">2.1 比例归一化做了什么</h3>
+<p>设有 <span class="math inline">\(m\)</span> 个方案, <span
+class="math inline">\(n\)</span> 项准则, 第 <span
+class="math inline">\(i\)</span> 个方案在第 <span
+class="math inline">\(j\)</span> 项准则下的指标值为 <span
+class="math inline">\(x_{ij}\)</span>. 对本例的非负效益型指标,
+且每列总和为正时, 采用</p>
 <p><span class="math display">\[
 z_{ij}=\frac{x_{ij}}{\sum\limits_{k=1}^{m}x_{kj}},
-\qquad i=1,2,\ldots,m.
+\qquad i=1,\ldots,m,\quad j=1,\ldots,n.
 \]</span></p>
-<p><span class="math inline">\(m\)</span> 为方案数, 本例 <span
-class="math inline">\(m=3\)</span>. 同一指标归一化后, 各方案得分之和为
-1. 例如, 方案 A 的服务覆盖得分为:</p>
+<p>这样得到的局部得分非负, 同一列之和为1. 例如,</p>
 <p><span class="math display">\[
 z_{A1}=\frac{6000}{6000+3400+5500}\approx0.4027.
 \]</span></p>
-<p>对其他数值同样处理, 得到:</p>
 <table>
 <thead>
 <tr>
@@ -296,111 +407,58 @@ z_{A1}=\frac{6000}{6000+3400+5500}\approx0.4027.
 </tr>
 </tbody>
 </table>
-<p>表格保留四位小数, 后续计算使用未舍入的数值.
-比例归一化保持同一指标下的比值关系, 但不保持原始差值的绝对大小.</p>
-<p>归一化方式应符合指标含义. 本例将评分作为可加权的正数指标进行教学演示,
-但 10 分并不必然表示效果是 5 分的两倍. 实际评价应明确评分规则;
-只有等级意义的评分, 不宜直接解释为比率尺度.
-成本型指标、负数、零值或列总和为零的情况, 也需要另外处理.</p>
-<h3 id="权重表示什么">1.3 权重表示什么</h3>
-<p>如果四项得分直接相加, 就相当于认为四项指标同等重要. 若重要性不同,
-应使用<strong>权重</strong>:</p>
+<p>比例归一化保留同一指标下正数之间的比值, 不保留原始差值的绝对大小.
+将一整列的单位同比例改变, 例如把人次改为千人次, 归一化得分不变.</p>
+<p>但去掉单位不等于解决量表问题.
+本例把便利和质量评分作为可加权的正数进行演示,
+并不据此认定10分的实际效果必为5分的两倍.
+实际评价须先约定评分规则及其含义; 只有等级意义的评分,
+不能直接当作具有客观比率意义的测量值.</p>
+<p>零值可以用于上述非负数据的比例归一化, 前提是整列不全为零.
+但零值不能直接用于构造正互反比率矩阵. 成本型指标,
+负数或列总和为零的情形需要另选适合含义的评分规则,
+不能直接套用本例公式.</p>
+<h3 id="权重把局部得分联系到总目标">2.2 权重把局部得分联系到总目标</h3>
+<p>令准则权重为 <span class="math inline">\(\boldsymbol
+w=(w_1,\ldots,w_n)^{\mathsf T}\)</span>, 满足</p>
 <p><span class="math display">\[
-w_j\geqslant0,\qquad\sum\limits_{j=1}^{n}w_j=1,
+w_j\geqslant0,\qquad\sum\limits_{j=1}^{n}w_j=1.
 \]</span></p>
+<p>采用加权和模型</p>
 <p><span class="math display">\[
-S_i=\sum\limits_{j=1}^{n}w_jz_{ij}.
+S_i=\sum\limits_{j=1}^{n}w_jz_{ij},\qquad
+\boldsymbol S=Z\boldsymbol w,
+\qquad \boldsymbol S=(S_1,\ldots,S_m)^{\mathsf T}.
 \]</span></p>
-<p>其中, <span class="math inline">\(n\)</span> 为指标数, <span
-class="math inline">\(S_i\)</span> 为第 <span
-class="math inline">\(i\)</span> 个方案的综合得分. 权重越大,
-该项指标对综合结果的影响越大.</p>
-<p>例如, 暂时指定 <span class="math inline">\(\boldsymbol
-w=(0.40,0.30,0.20,0.10)^{\mathsf T}\)</span>, 得到:</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">方案</th>
-<th style="text-align: center;">综合得分</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">A</td>
-<td style="text-align: center;">0.3694</td>
-</tr>
-<tr>
-<td style="text-align: center;">B</td>
-<td style="text-align: center;">0.2847</td>
-</tr>
-<tr>
-<td style="text-align: center;">C</td>
-<td style="text-align: center;">0.3459</td>
-</tr>
-</tbody>
-</table>
-<p>这组权重能够参与计算, 却仍需回答一个问题: 为什么服务覆盖应占 40%,
-活动场次应占 10%? 层次分析法正是用有组织的成对比较,
-帮助形成和检验这些判断.</p>
-<h2 id="二先建立层次结构">二、先建立层次结构</h2>
-<h3 id="目标准则与方案">2.1 目标、准则与方案</h3>
-<p><strong>层次分析法</strong>(Analytic Hierarchy Process, 简称 AHP)由
-Thomas L. Saaty 于 20 世纪 70 年代提出, 是一种多准则决策方法.
-它把问题分为不同层次, 再通过成对比较计算相对权重, 最后逐层综合. [1]</p>
-<p>最常见的三个层次是:</p>
-<table>
-<colgroup>
-<col style="width: 9%" />
-<col style="width: 31%" />
-<col style="width: 59%" />
-</colgroup>
-<thead>
-<tr>
-<th style="text-align: center;">层次</th>
-<th style="text-align: center;">要回答的问题</th>
-<th style="text-align: center;">本例内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">目标层</td>
-<td style="text-align: center;">最终要作出什么选择?</td>
-<td style="text-align: center;">选择重点支持的公益科普服务方案</td>
-</tr>
-<tr>
-<td style="text-align: center;">准则层</td>
-<td style="text-align: center;">根据哪些方面评价?</td>
-<td
-style="text-align: center;">服务覆盖、服务便利、内容质量、活动场次</td>
-</tr>
-<tr>
-<td style="text-align: center;">方案层</td>
-<td style="text-align: center;">有哪些备选对象?</td>
-<td style="text-align: center;">方案 A、B、C</td>
-</tr>
-</tbody>
-</table>
-<p><img src="/images/AnalyticHierarchyProcess/AHP-1.png" /></p>
-<p><strong>图 1　公益科普服务方案的递阶层次结构.</strong></p>
-<p>连线表示评价关系: 每项准则均用于评价三个方案. 连线相交处不是新增节点,
-也不表示方案之间相互影响.</p>
-<p>指标应覆盖关键目标, 又应避免重复计量. 例如,
-服务覆盖人次可能与活动场次有关. 应用时需检查二者是否提供不同的评价信息,
-不能仅因两项指标各自重要, 就忽视它们的关联.
-复杂问题可以继续设置子准则层.</p>
-<h3 id="从比较到决策的流程">2.2 从比较到决策的流程</h3>
-<p><img src="/images/AnalyticHierarchyProcess/AHP-2.png" /></p>
-<p><strong>图 2　AHP 的基本建模流程.</strong></p>
-<p>如果一致性不可接受, 应回到比较依据, 重新讨论判断矩阵,
-再计算权重与一致性. 通过检验后, 才报告相应的综合评价.
-对于包含多个判断矩阵的层次模型, 各矩阵都应分别检查.</p>
-<p>这一流程可以记为:
-<strong>建立结构—成对比较—检验判断—综合评价</strong>.</p>
-<h2 id="三把比较意见写成判断矩阵">三、把比较意见写成判断矩阵</h2>
-<h3 id="每次只比较两个因素">3.1 每次只比较两个因素</h3>
-<p>直接给四项指标分配权重, 往往比较困难.
-先回答“服务覆盖与活动场次哪项更重要、重要多少”, 通常更容易说明理由.</p>
-<p>常用的 1—9 标度如下:</p>
+<p>保持其他局部得分不变时, 某项局部得分每改变一个单位,
+综合得分改变该项权重那么多. 实际贡献还取决于局部得分本身,
+不能只看权重就判断哪个指标贡献最大.</p>
+<p>四项直接相加得到的排序, 与使用等权重 <span
+class="math inline">\(1/4\)</span> 相同, 但前者的得分是后者的4倍. 若暂定
+<span class="math inline">\(\boldsymbol
+w_0=(0.40,0.30,0.20,0.10)^{\mathsf T}\)</span>, 则三方案得分约为 <span
+class="math inline">\((0.3694,0.2847,0.3459)^{\mathsf T}\)</span>.
+这说明只要给出权重就能计算, 却没有解释权重从何而来.
+AHP用成对比较进一步组织这项判断.</p>
+<p>由于每列局部得分之和为1, 且权重之和为1, 本例综合得分也满足 <span
+class="math inline">\(\sum\limits_i S_i=1\)</span>.
+这些得分是相对评价量, 不是胜出概率, 也不是达成目标的概率.</p>
+<h2 id="把评价理由写成层次与比较">3 把评价理由写成层次与比较</h2>
+<h3 id="层次结构先于矩阵">3.1 层次结构先于矩阵</h3>
+<p>AHP由Thomas L. Saaty提出, 将复杂决策组织为不同层次的比较与综合.[1]
+本例的目标层是选择重点支持方案, 准则层是四项指标, 方案层是A, B, C.</p>
+<p><img src="/images/AnalyticHierarchyProcess/AHP-1.png" alt="" style="width: 100%;"></p>
+<p><strong>图1　公益科普服务方案的层次结构</strong></p>
+<p>每项准则都评价同一组方案. 图中将方案组分别列在各准则下,
+是为了减少交叉连线, 不表示存在四套不同的方案.</p>
+<p>指标要覆盖目标, 也要避免重复计量. 例如, 覆盖人次与活动场次可能关联.
+应说明一个衡量服务规模, 另一个是否还提供频次等不同信息,
+而不能仅因两者都容易统计就同时赋予较大影响.</p>
+<p>层次结构表达评价关系, 不自动证明各准则相互独立或加权和适用.
+存在明显的反馈或相互依赖时, 需要进一步调整结构与合成方式.
+复杂目标可以设置子准则层, 再逐层综合局部权重.</p>
+<h3 id="每次只比较两个准则">3.2 每次只比较两个准则</h3>
+<p>在同一上层目标下, 比较两个准则的重要程度. 常用的1-9标度如下.</p>
 <table>
 <thead>
 <tr>
@@ -411,26 +469,26 @@ style="text-align: center;">服务覆盖、服务便利、内容质量、活动�
 <tbody>
 <tr>
 <td style="text-align: center;">1</td>
-<td style="text-align: center;">两个因素同样重要</td>
+<td style="text-align: center;">同等重要</td>
 </tr>
 <tr>
 <td style="text-align: center;">3</td>
-<td style="text-align: center;">一个因素比另一个稍微重要</td>
+<td style="text-align: center;">稍微重要</td>
 </tr>
 <tr>
 <td style="text-align: center;">5</td>
-<td style="text-align: center;">一个因素比另一个明显重要</td>
+<td style="text-align: center;">明显重要</td>
 </tr>
 <tr>
 <td style="text-align: center;">7</td>
-<td style="text-align: center;">一个因素比另一个强烈重要</td>
+<td style="text-align: center;">强烈重要</td>
 </tr>
 <tr>
 <td style="text-align: center;">9</td>
-<td style="text-align: center;">一个因素比另一个极端重要</td>
+<td style="text-align: center;">极端重要</td>
 </tr>
 <tr>
-<td style="text-align: center;">2、4、6、8</td>
+<td style="text-align: center;">2, 4, 6, 8</td>
 <td style="text-align: center;">相邻判断等级之间的中间值</td>
 </tr>
 <tr>
@@ -439,21 +497,23 @@ style="text-align: center;">服务覆盖、服务便利、内容质量、活动�
 </tr>
 </tbody>
 </table>
-<p>若评审组认为服务覆盖相对于活动场次的标度为 5, 就填写 <span
-class="math inline">\(a_{14}=5\)</span>, 反向比较填写 <span
-class="math inline">\(a_{41}=1/5\)</span>. 标度是判断的数值表达,
-不是自动证明某项指标更重要的依据; 评审者仍需记录比较理由.</p>
-<h3 id="正互反判断矩阵">3.2 正互反判断矩阵</h3>
-<p>令 <span class="math inline">\(a_{ij}\)</span> 表示第 <span
-class="math inline">\(i\)</span> 项指标相对于第 <span
-class="math inline">\(j\)</span> 项指标的重要程度, 组成判断矩阵 <span
-class="math inline">\(A=(a_{ij})\)</span>. 指标顺序固定为:
-服务覆盖、服务便利、内容质量、活动场次.</p>
-<p>判断矩阵满足:</p>
+<p>标度是相对判断的数值表达, 仍需记录比较依据. 给 <span
+class="math inline">\(a_{14}=5\)</span> 后, 反向比较填写 <span
+class="math inline">\(a_{41}=1/5\)</span>, 不是再作一次独立打分.</p>
+<p>设 <span class="math inline">\(a_{ij}\)</span> 表示第 <span
+class="math inline">\(i\)</span> 项准则相对于第 <span
+class="math inline">\(j\)</span> 项准则的重要程度, 判断矩阵 <span
+class="math inline">\(A=(a_{ij})\)</span> 应满足</p>
 <p><span class="math display">\[
 a_{ij}&gt;0,\qquad a_{ii}=1,\qquad a_{ji}=\frac1{a_{ij}}.
 \]</span></p>
-<p>这样的矩阵称为<strong>正互反矩阵</strong>. 本例首次讨论得到:</p>
+<p>这样的矩阵称为正互反矩阵. <span class="math inline">\(n\)</span>
+项准则只需填写上三角的 <span class="math inline">\(n(n-1)/2\)</span>
+次比较, 本例为6次. 互反性规定比较方向之间的对应关系,
+不保证多项判断相互协调.</p>
+<h3 id="用一个不协调的判断组发现问题">3.3
+用一个不协调的判断组发现问题</h3>
+<p>假设首次讨论得到</p>
 <p><span class="math display">\[
 A_0=\begin{pmatrix}
 1&amp;2&amp;3&amp;5\\
@@ -462,74 +522,63 @@ A_0=\begin{pmatrix}
 \frac15&amp;\frac12&amp;2&amp;1
 \end{pmatrix}.
 \]</span></p>
-<p>只需判断上三角部分, 主对角线填 1, 下三角部分按互反关系填写. <span
-class="math inline">\(n\)</span> 个因素共需要 <span
-class="math inline">\(n(n-1)/2\)</span> 次成对比较; 本例四项指标需要 6
-次.</p>
-<h3 id="互反并不意味着前后一致">3.3 互反并不意味着前后一致</h3>
-<p>在 <span class="math inline">\(A_0\)</span> 中:
-内容质量比服务便利重要, 服务便利比活动场次重要,
-而活动场次又比内容质量重要. 三条判断形成了循环.</p>
-<p>即使没有这种明显循环, 比较程度也可能不协调. 例如, 认为指标 1 比指标 2
-重要 2 倍、指标 2 比指标 3 重要 2 倍, 却认为指标 1 只比指标 3 重要 3 倍,
-也没有达到完全一致.</p>
-<p>因此, 成对比较之后, 还需要检查这些判断放在一起是否协调.</p>
-<h2 id="四检查判断的一致性">四、检查判断的一致性</h2>
-<h3 id="完全一致是什么">4.1 完全一致是什么</h3>
-<p>对正互反矩阵, 若任意 <span class="math inline">\(i,j,k\)</span>
-均满足:</p>
+<p>其中内容质量比服务便利重要, 服务便利比活动场次重要,
+活动场次又比内容质量重要, 形成了循环. 即使没有这样的方向循环,
+比较程度也可能不协调. 例如, <span
+class="math inline">\(a_{12}=2,a_{23}=2,a_{13}=3\)</span>
+不满足完全一致的乘法关系, 因为 <span
+class="math inline">\(2\times2\ne3\)</span>.</p>
+<p>发现不协调之后, 需要回答的是哪些比较依据应重新讨论,
+而不只是寻找一组看起来顺眼的数字.</p>
+<h2 id="一致性检验-检查比较能否协调起来">4 一致性检验:
+检查比较能否协调起来</h2>
+<h3 id="从完全一致理解特征向量">4.1 从完全一致理解特征向量</h3>
+<p>若正互反矩阵对任意 <span class="math inline">\(i,j,k\)</span>
+都有</p>
 <p><span class="math display">\[
 a_{ij}=a_{ik}a_{kj},
 \]</span></p>
-<p>就称它为<strong>一致矩阵</strong>. 例如:</p>
+<p>称为一致矩阵. 此时可用某个正向量表示所有比较:</p>
+<p><span class="math display">\[
+a_{ij}=\frac{w_i}{w_j},\qquad
+\boldsymbol w=(w_1,\ldots,w_n)^{\mathsf T}.
+\]</span></p>
+<p>因而</p>
+<p><span class="math display">\[
+(A\boldsymbol w)_i
+=\sum\limits_{j=1}^{n}\frac{w_i}{w_j}w_j=nw_i,
+\qquad A\boldsymbol w=n\boldsymbol w.
+\]</span></p>
+<p>这解释了为什么特征向量与权重有关.
+矩阵作用于该向量时只改变长度而不改变方向, 其特征值为 <span
+class="math inline">\(n\)</span>. 一致矩阵各行成比例, 秩为1;
+非零特征值只有 <span class="math inline">\(n\)</span>, 其余为0.</p>
+<p>例如,</p>
 <p><span class="math display">\[
 B=\begin{pmatrix}
-1&amp;2&amp;4\\
-\frac12&amp;1&amp;2\\
-\frac14&amp;\frac12&amp;1
-\end{pmatrix}.
+1&amp;2&amp;4\\\frac12&amp;1&amp;2\\\frac14&amp;\frac12&amp;1
+\end{pmatrix}
 \]</span></p>
-<p>第一项与第二项、第二项与第三项的比较, 能够推导出第一项与第三项的比较.
-这就是一致性的乘法关系.</p>
-<p>实际判断通常不会完全一致. AHP 通过一致性指标,
-检查偏离程度是否处在可接受范围.</p>
-<h3 id="一致性检验的三个量">4.2 一致性检验的三个量</h3>
-<p>设 <span class="math inline">\(A\)</span> 为 <span
-class="math inline">\(n\)</span> 阶正互反矩阵, 其最大正特征值为 <span
-class="math inline">\(\lambda_{\max}\)</span>, 也称 Perron 特征值.
-它满足:</p>
+<p>对应权重为 <span class="math inline">\((4/7,2/7,1/7)^{\mathsf
+T}\)</span>. 完全一致时, 也可将第一行元素取倒数再归一化恢复权重;
+这一简便方法不适用于一般不一致矩阵.</p>
+<h3 id="用ci与cr衡量偏离程度">4.2 用CI与CR衡量偏离程度</h3>
+<p>对 <span class="math inline">\(n\)</span> 阶正互反矩阵, 最大正特征值
+<span class="math inline">\(\lambda_{\max}\)</span> 为Perron特征值,
+也是谱半径. 它满足</p>
 <p><span class="math display">\[
 \lambda_{\max}\geqslant n,
 \qquad
 \lambda_{\max}=n\ \Longleftrightarrow\ A\text{ 完全一致}.
 \]</span></p>
 <p>对 <span class="math inline">\(n\geqslant3\)</span>,
-定义<strong>一致性指标</strong>:</p>
+定义一致性指标与一致性比例</p>
 <p><span class="math display">\[
-CI=\frac{\lambda_{\max}-n}{n-1}.
+CI=\frac{\lambda_{\max}-n}{n-1},\qquad CR=\frac{CI}{RI}.
 \]</span></p>
-<p>再与同阶随机判断矩阵的平均一致性指标 <span
-class="math inline">\(RI\)</span> 比较,
-得到<strong>一致性比例</strong>:</p>
-<p><span class="math display">\[
-CR=\frac{CI}{RI}.
-\]</span></p>
-<p>本章统一采用下列常用 <span class="math inline">\(RI\)</span> 参考表.
-[2]</p>
+<p><span class="math inline">\(RI\)</span>
+是同阶随机判断矩阵的一致性指标平均值. 本章采用下表.[2]</p>
 <table>
-<colgroup>
-<col style="width: 13%" />
-<col style="width: 6%" />
-<col style="width: 6%" />
-<col style="width: 9%" />
-<col style="width: 9%" />
-<col style="width: 9%" />
-<col style="width: 9%" />
-<col style="width: 9%" />
-<col style="width: 9%" />
-<col style="width: 9%" />
-<col style="width: 9%" />
-</colgroup>
 <thead>
 <tr>
 <th style="text-align: center;">阶数 <span
@@ -553,7 +602,7 @@ class="math inline">\(RI\)</span></td>
 <td style="text-align: center;">0</td>
 <td style="text-align: center;">0</td>
 <td style="text-align: center;">0.58</td>
-<td style="text-align: center;">0.90</td>
+<td style="text-align: center;">0.9</td>
 <td style="text-align: center;">1.12</td>
 <td style="text-align: center;">1.24</td>
 <td style="text-align: center;">1.32</td>
@@ -563,88 +612,62 @@ class="math inline">\(RI\)</span></td>
 </tr>
 </tbody>
 </table>
-<p><span class="math inline">\(RI\)</span> 来自随机模拟,
-不同文献的参考值可能略有差异. 同一次分析中, 应使用同一张表.</p>
-<p>通常采用以下经验标准:</p>
-<p><span class="math display">\[
-\begin{cases}
-CR&lt;0.10,&amp;\text{一致性可以接受；}\\
-CR\geqslant0.10,&amp;\text{应重新讨论判断依据。}
-\end{cases}
-\]</span></p>
-<p>这不是保证决策正确的数学定理. <span
-class="math inline">\(CR=0\)</span> 表示完全一致; <span
+<p><span class="math inline">\(RI\)</span>
+取决于随机矩阵的生成规则等因素, 不同资料的数值可能略有差异,
+同一次分析应统一查表依据. 本章使用 <span
+class="math inline">\(CR&lt;0.10\)</span> 作为可以接受的经验标准,
+等于或高于0.10时重新讨论.</p>
+<p><span class="math inline">\(CR=0\)</span> 对应完全一致; <span
 class="math inline">\(0&lt;CR&lt;0.10\)</span>
-只表示不一致程度在所选阈值内可以接受.</p>
-<p>1 阶和 2 阶正互反矩阵天然完全一致, 无须计算 <span
-class="math inline">\(CI/RI\)</span>. 程序可用 0 标记它们的一致性,
-不应人为把 <span class="math inline">\(RI=0\)</span>
-改成很小的正数来避免除零.</p>
-<h3 id="回到案例-检验与修订">4.3 回到案例: 检验与修订</h3>
-<p>对首次判断矩阵 <span class="math inline">\(A_0\)</span>, 计算得:</p>
+只表示偏离程度在所选经验阈值内可以接受. 一致性通过不能证明指标完整,
+判断有事实依据或最终决策正确.</p>
+<p>1阶和2阶正互反矩阵天然完全一致, 无须计算 <span
+class="math inline">\(CI/RI\)</span>. 程序将其一致性标记为0, 并不是把
+<span class="math inline">\(0/0\)</span> 定义为0, 更不应把 <span
+class="math inline">\(RI\)</span> 改成很小的数来掩盖除零.</p>
+<h3 id="修订来自重新讨论-不是只为降低cr">4.3 修订来自重新讨论,
+不是只为降低CR</h3>
+<p>首次矩阵的计算结果为</p>
 <p><span class="math display">\[
-\lambda_{\max}\approx4.467245,
-\quad CI\approx0.155748,
-\quad CR\approx\frac{0.155748}{0.90}=0.173054.
+\lambda_{\max}\approx4.467245,\qquad CI\approx0.155748,
+\qquad CR\approx0.173054.
 \]</span></p>
-<p>由于 <span class="math inline">\(CR\geqslant0.10\)</span>,
-应重新讨论. 假设评审组认为, 科普内容质量应比单纯的活动场次更受重视, 将
-<span class="math inline">\(a_{34}\)</span> 从 <span
-class="math inline">\(1/2\)</span> 改为 2, 并同步将 <span
-class="math inline">\(a_{43}\)</span> 从 2 改为 <span
-class="math inline">\(1/2\)</span>:</p>
+<p>这超过本章采用的阈值. 假设评审组重新讨论后认为,
+科普内容质量应比单纯的活动场次更受重视, 将 <span
+class="math inline">\(a_{34}\)</span> 从 <span
+class="math inline">\(1/2\)</span> 改为2, 同时把 <span
+class="math inline">\(a_{43}\)</span> 改为 <span
+class="math inline">\(1/2\)</span>, 得到第1节的 <span
+class="math inline">\(A_1\)</span>. 重新计算为</p>
 <p><span class="math display">\[
-A_1=\begin{pmatrix}
-1&amp;2&amp;3&amp;5\\
-\frac12&amp;1&amp;\frac12&amp;2\\
-\frac13&amp;2&amp;1&amp;2\\
-\frac15&amp;\frac12&amp;\frac12&amp;1
-\end{pmatrix}.
+\lambda_{\max}\approx4.112830,\qquad CI\approx0.037610,
+\qquad CR\approx0.041789&lt;0.10.
 \]</span></p>
-<p>重新计算:</p>
-<p><span class="math display">\[
-\lambda_{\max}\approx4.112830,
-\quad CI\approx0.037610,
-\quad CR\approx0.041789&lt;0.10.
-\]</span></p>
-<p>修订后的矩阵通过常用检验. 修改应来自重新审视证据和比较理由,
-而不是为了得到较小的 <span class="math inline">\(CR\)</span>
-随意改数.</p>
-<h3 id="理论解释-为什么特征值与权重有关">4.4 理论解释:
-为什么特征值与权重有关</h3>
-<p>假设存在正权重 <span class="math inline">\(w_1,\ldots,w_n\)</span>,
-且完全一致的比较满足 <span
-class="math inline">\(a_{ij}=w_i/w_j\)</span>. 令 <span
-class="math inline">\(\boldsymbol w=(w_1,\ldots,w_n)^{\mathsf
-T}\)</span>, 则:</p>
-<p><span class="math display">\[
-(A\boldsymbol w)_i
-=\sum\limits_{j=1}^{n}\frac{w_i}{w_j}w_j
-=nw_i.
-\]</span></p>
-<p>所以 <span class="math inline">\(A\boldsymbol w=n\boldsymbol
-w\)</span>. 矩阵乘以这个向量, 只改变大小, 不改变方向;
-这正是特征向量的含义. 完全一致时, 权重就是特征值 <span
-class="math inline">\(n\)</span> 对应的正特征向量归一化后的结果.</p>
-<p>一致矩阵的各行成比例, 秩为 1; 它的非零特征值只有 <span
-class="math inline">\(n\)</span>, 其余特征值为 0. 此时,
-也可以将第一行各元素取倒数后归一化, 直接恢复权重.
-这个简便方法不应直接用于一般不一致矩阵.</p>
-<h2 id="五计算权重的三种方法">五、计算权重的三种方法</h2>
-<p>以下均使用 <span class="math inline">\(A_1\)</span>,
-并保持四项指标的固定顺序.</p>
+<p>判断组可以在本章标准下接受. 这次修订演示如何回到评价理由,
+不表示任何不一致矩阵都应该通过同一位置的一次修改解决.
+实际评审应记录修订原因, 不为满足阈值而反向凑数.</p>
+<p><img src="/images/AnalyticHierarchyProcess/AHP-2.png" alt="" style="width: 100%;"></p>
+<p><strong>图2　从比较依据到结果复核的评价流程</strong></p>
+<p>数值检验不通过时回到比较依据; 排序对合理变化敏感时,
+回到数据与判断补充讨论. 两条反馈对应不同问题,
+不能用较小CR替代敏感性分析.</p>
+<h2 id="计算权重-理解同一任务的三种做法">5 计算权重:
+理解同一任务的三种做法</h2>
+<p>以下都使用 <span class="math inline">\(A_1\)</span>.
+一般不一致矩阵的权重没有完全一致情形那样唯一的比率恢复公式,
+不同求权重方法可能给出不同结果.</p>
 <h3 id="算术平均法-按列归一化-再按行平均">5.1 算术平均法: 按列归一化,
 再按行平均</h3>
-<p>先把每个元素除以所在列的总和, 再对每行求平均:</p>
 <p><span class="math display">\[
 w_i^{(\mathrm a)}=\frac1n\sum\limits_{j=1}^{n}
 \frac{a_{ij}}{\sum\limits_{k=1}^{n}a_{kj}}.
 \]</span></p>
-<p>本例按列归一化后的矩阵为:</p>
+<p>先将判断矩阵每列归一化, 再把同一行的结果平均.
+本例的列归一化矩阵为</p>
 <table>
 <thead>
 <tr>
-<th style="text-align: center;">指标</th>
+<th style="text-align: center;">准则</th>
 <th style="text-align: center;">服务覆盖</th>
 <th style="text-align: center;">服务便利</th>
 <th style="text-align: center;">内容质量</th>
@@ -682,70 +705,37 @@ w_i^{(\mathrm a)}=\frac1n\sum\limits_{j=1}^{n}
 </tr>
 </tbody>
 </table>
-<p>例如, 服务覆盖的权重约为 <span
-class="math inline">\((0.4918+0.3636+0.6000+0.5000)/4=0.4889\)</span>.
-这种方法便于手算.</p>
-<h3 id="几何平均法-每行先相乘-再开方">5.2 几何平均法: 每行先相乘,
-再开方</h3>
-<p>先计算各行的几何平均值:</p>
+<p>第一行的均值约为0.4889, 即服务覆盖的权重. 该方法便于手算,
+但列归一化只是求权重的步骤, 不要把判断矩阵 <span
+class="math inline">\(A\)</span> 与方案指标矩阵 <span
+class="math inline">\(X\)</span> 混淆.</p>
+<h3 id="几何平均法-每行的比率先相乘">5.2 几何平均法:
+每行的比率先相乘</h3>
 <p><span class="math display">\[
-g_i=\left(\prod\limits_{j=1}^{n}a_{ij}\right)^{1/n},
-\qquad
+g_i=\left(\prod\limits_{j=1}^{n}a_{ij}\right)^{1/n},\qquad
 w_i^{(\mathrm g)}=\frac{g_i}{\sum\limits_{k=1}^{n}g_k}.
 \]</span></p>
-<p>本例 <span class="math inline">\(n=4\)</span>, 得到:</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">指标</th>
-<th style="text-align: center;"><span
-class="math inline">\(g_i\)</span></th>
-<th style="text-align: center;">归一化权重</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">服务覆盖</td>
-<td style="text-align: center;">2.3403</td>
-<td style="text-align: center;">0.4949</td>
-</tr>
-<tr>
-<td style="text-align: center;">服务便利</td>
-<td style="text-align: center;">0.8409</td>
-<td style="text-align: center;">0.1778</td>
-</tr>
-<tr>
-<td style="text-align: center;">内容质量</td>
-<td style="text-align: center;">1.0746</td>
-<td style="text-align: center;">0.2272</td>
-</tr>
-<tr>
-<td style="text-align: center;">活动场次</td>
-<td style="text-align: center;">0.4729</td>
-<td style="text-align: center;">0.1000</td>
-</tr>
-</tbody>
-</table>
-<p>例如, 第一行的几何平均值为 <span
-class="math inline">\(g_1=(1\times2\times3\times5)^{1/4}=30^{1/4}\)</span>.
-这种乘法结构与判断矩阵的比率含义相契合.</p>
-<h3 id="特征向量法-求最大正特征值对应的向量">5.3 特征向量法:
-求最大正特征值对应的向量</h3>
-<p>对一般正互反矩阵, 求:</p>
+<p>第一行有 <span
+class="math inline">\(g_1=(1\times2\times3\times5)^{1/4}=30^{1/4}\approx2.3403\)</span>.
+乘法结构与比率比较相契合. 程序用</p>
 <p><span class="math display">\[
-A\boldsymbol v=\lambda_{\max}\boldsymbol v,
-\qquad
-w_i^{(\mathrm e)}=\frac{v_i}{\sum\limits_{k=1}^{n}v_k},
+g_i=\exp\left(\frac1n\sum\limits_{j=1}^{n}\ln a_{ij}\right)
 \]</span></p>
-<p>其中 <span class="math inline">\(\boldsymbol v\)</span>
-取对应的正特征向量. 权重归一化后, 各分量之和为 1.
-尚未学习特征值理论的读者, 可以先利用程序完成计算, 再对照第 4.4
-节理解它的来源.</p>
-<h3 id="三种结果怎样比较">5.4 三种结果怎样比较</h3>
+<p>计算, 减少直接连乘的数值问题. 最后仍需把各行结果归一化.</p>
+<h3 id="特征向量法-取主特征向量的方向">5.3 特征向量法:
+取主特征向量的方向</h3>
+<p><span class="math display">\[
+A\boldsymbol v=\lambda_{\max}\boldsymbol v,\qquad
+w_i^{(\mathrm e)}=\frac{v_i}{\sum\limits_{k=1}^{n}v_k}.
+\]</span></p>
+<p>正矩阵的主特征向量可取为全正. 数值库给出的特征向量允许整体反号,
+先统一方向再归一化即可;
+不能对任意特征向量逐项取绝对值后都声称得到了正确权重.</p>
+<p>三种方法的结果如下.</p>
 <table>
 <thead>
 <tr>
-<th style="text-align: center;">指标</th>
+<th style="text-align: center;">准则</th>
 <th style="text-align: center;">算术平均法</th>
 <th style="text-align: center;">几何平均法</th>
 <th style="text-align: center;">特征向量法</th>
@@ -754,52 +744,78 @@ w_i^{(\mathrm e)}=\frac{v_i}{\sum\limits_{k=1}^{n}v_k},
 <tbody>
 <tr>
 <td style="text-align: center;">服务覆盖</td>
-<td style="text-align: center;">0.4889</td>
-<td style="text-align: center;">0.4949</td>
-<td style="text-align: center;">0.4934</td>
+<td style="text-align: center;">0.488860</td>
+<td style="text-align: center;">0.494926</td>
+<td style="text-align: center;">0.493389</td>
 </tr>
 <tr>
 <td style="text-align: center;">服务便利</td>
-<td style="text-align: center;">0.1819</td>
-<td style="text-align: center;">0.1778</td>
-<td style="text-align: center;">0.1788</td>
+<td style="text-align: center;">0.181930</td>
+<td style="text-align: center;">0.177829</td>
+<td style="text-align: center;">0.178846</td>
 </tr>
 <tr>
 <td style="text-align: center;">内容质量</td>
-<td style="text-align: center;">0.2319</td>
-<td style="text-align: center;">0.2272</td>
-<td style="text-align: center;">0.2303</td>
+<td style="text-align: center;">0.231893</td>
+<td style="text-align: center;">0.227245</td>
+<td style="text-align: center;">0.230339</td>
 </tr>
 <tr>
 <td style="text-align: center;">活动场次</td>
-<td style="text-align: center;">0.0973</td>
-<td style="text-align: center;">0.1000</td>
-<td style="text-align: center;">0.0974</td>
+<td style="text-align: center;">0.097317</td>
+<td style="text-align: center;">0.100000</td>
+<td style="text-align: center;">0.097426</td>
 </tr>
 </tbody>
 </table>
-<p>完全一致时, 三种方法得到同一个归一化权重; 不完全一致时, 结果可能不同.
-本例三种结果接近, 均认为服务覆盖权重最高, 内容质量次之.</p>
-<p>算法结果接近, 不能代替对指标设置和比较依据的检查.
-以下综合评价采用特征向量法的权重.</p>
-<h2 id="六综合评分与结果解释">六、综合评分与结果解释</h2>
-<h3 id="按权重汇总方案表现">6.1 按权重汇总方案表现</h3>
-<p>以第 1.2 节的归一化矩阵 <span class="math inline">\(Z\)</span> 和第
-5.4 节的权重 <span class="math inline">\(\boldsymbol w\)</span>
-计算:</p>
-<p><span class="math display">\[
-\boldsymbol S=Z\boldsymbol w,
-\qquad
-S_i=\sum\limits_{j=1}^{4}w_jz_{ij}.
-\]</span></p>
-<table>
+<p>完全一致时, 三种方法得到相同的归一化权重. 不完全一致时, 它们可能不同,
+也不保证总有相同的准则排序. 本例三者接近, 都把服务覆盖放在首位,
+内容质量放在第二位.</p>
+<p>本章综合评价采用特征向量法. 无论展示哪种权重,
+下文的CI与CR都使用矩阵实际的Perron特征值,
+不把近似权重代入后得到的近似特征值混作精确计算.</p>
+<h3 id="将三个计算任务写成可复用函数">5.4
+将三个计算任务写成可复用函数</h3>
+<p>函数的输入是判断矩阵, 返回值依次为算术平均权重, 几何平均权重,
+特征向量权重, 最大正特征值, CI和CR. 程序按三个数学任务组织:
+检查正互反条件, 计算权重, 根据阶数检验一致性. 本例的RI表覆盖1至10阶,
+超出范围时需另行确定RI来源.</p>
+<p><strong>ahp_weights.py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># RI 的第一个元素对应 1 阶矩阵, 统一使用同一张参考表. </span></span><br><span class="line">RI = [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0.58</span>, <span class="number">0.90</span>, <span class="number">1.12</span>, <span class="number">1.24</span>, <span class="number">1.32</span>, <span class="number">1.41</span>, <span class="number">1.45</span>, <span class="number">1.49</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">ahp_weights</span>(<span class="params">A</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;计算三种权重, 最大正特征值, CI 和 CR. &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> np.iscomplexobj(A):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;判断矩阵必须由实数组成&quot;</span>)</span><br><span class="line">    A = np.asarray(A, dtype=<span class="built_in">float</span>)</span><br><span class="line">    <span class="keyword">if</span> A.ndim != <span class="number">2</span> <span class="keyword">or</span> A.shape[<span class="number">0</span>] != A.shape[<span class="number">1</span>]:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;判断矩阵必须是方阵&quot;</span>)</span><br><span class="line">    n = A.shape[<span class="number">0</span>]</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> <span class="number">1</span> &lt;= n &lt;= <span class="built_in">len</span>(RI):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;本例的 RI 表支持 1 至 10 阶矩阵&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> np.<span class="built_in">any</span>(~np.isfinite(A)) <span class="keyword">or</span> np.<span class="built_in">any</span>(A &lt;= <span class="number">0</span>):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;判断矩阵元素必须是有限正数&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> np.allclose(A*A.T, <span class="number">1</span>, atol=<span class="number">1e-10</span>, rtol=<span class="number">0</span>):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;判断矩阵必须满足互反关系&quot;</span>)</span><br><span class="line"></span><br><span class="line">    wa = np.mean(A / A.<span class="built_in">sum</span>(axis=<span class="number">0</span>), axis=<span class="number">1</span>)</span><br><span class="line">    g = np.exp(np.mean(np.log(A), axis=<span class="number">1</span>))</span><br><span class="line">    wg = g / g.<span class="built_in">sum</span>()</span><br><span class="line"></span><br><span class="line">    values, vectors = np.linalg.eig(A)</span><br><span class="line">    k = np.argmax(values.real)</span><br><span class="line">    lam = <span class="built_in">float</span>(values[k].real)</span><br><span class="line">    v = vectors[:, k].real</span><br><span class="line">    <span class="keyword">if</span> v.<span class="built_in">sum</span>() &lt; <span class="number">0</span>:</span><br><span class="line">        v = -v</span><br><span class="line">    we = v / v.<span class="built_in">sum</span>()</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">abs</span>(values[k].imag) &gt; <span class="number">1e-8</span> <span class="keyword">or</span> np.<span class="built_in">any</span>(we &lt;= <span class="number">0</span>):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;未能得到正实主特征向量&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> n &lt;= <span class="number">2</span>:</span><br><span class="line">        ci, cr = <span class="number">0.0</span>, <span class="number">0.0</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        ci = <span class="built_in">max</span>(<span class="number">0.0</span>, (lam-n)/(n-<span class="number">1</span>))</span><br><span class="line">        cr = ci / RI[n-<span class="number">1</span>]  <span class="comment"># Python 索引从 0 开始. </span></span><br><span class="line">    <span class="keyword">return</span> wa, wg, we, lam, ci, cr</span><br></pre></td></tr></table></figure>
+<p><strong>ahp_weights.m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[wa,wg,we,lambda,CI,CR]</span> = <span class="title">ahp_weights</span><span class="params">(A)</span></span></span><br><span class="line"><span class="comment">% 三种权重与一致性检验, 无需额外工具箱. </span></span><br><span class="line">RI = [<span class="number">0</span>,<span class="number">0</span>,<span class="number">0.58</span>,<span class="number">0.90</span>,<span class="number">1.12</span>,<span class="number">1.24</span>,<span class="number">1.32</span>,<span class="number">1.41</span>,<span class="number">1.45</span>,<span class="number">1.49</span>];</span><br><span class="line">[n,m] = <span class="built_in">size</span>(A);</span><br><span class="line"><span class="keyword">if</span> ~ismatrix(A) || n ~= m || n &lt; <span class="number">1</span> || n &gt; <span class="built_in">length</span>(RI)</span><br><span class="line">    error(<span class="string">&#x27;判断矩阵必须是 1 至 10 阶方阵&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">if</span> ~<span class="built_in">isreal</span>(A) || any(~<span class="built_in">isfinite</span>(A(:))) || any(A(:) &lt;= <span class="number">0</span>)</span><br><span class="line">    error(<span class="string">&#x27;判断矩阵元素必须是有限正数&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">if</span> <span class="built_in">max</span>(<span class="built_in">max</span>(<span class="built_in">abs</span>(A.*A.&#x27;<span class="number">-1</span>))) &gt; <span class="number">1e-10</span></span><br><span class="line">    error(<span class="string">&#x27;判断矩阵必须满足互反关系&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">wa = <span class="built_in">mean</span>(<span class="built_in">bsxfun</span>(@rdivide,A,sum(A,<span class="number">1</span>)),<span class="number">2</span>);</span><br><span class="line">g = <span class="built_in">exp</span>(<span class="built_in">mean</span>(<span class="built_in">log</span>(A),<span class="number">2</span>));</span><br><span class="line">wg = g/sum(g);</span><br><span class="line">[V,D] = eig(A);</span><br><span class="line">[lambda,k] = <span class="built_in">max</span>(<span class="built_in">real</span>(<span class="built_in">diag</span>(D)));</span><br><span class="line">v = <span class="built_in">real</span>(V(:,k));</span><br><span class="line"><span class="keyword">if</span> sum(v) &lt; <span class="number">0</span></span><br><span class="line">    v = -v;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">we = v/sum(v);</span><br><span class="line"><span class="keyword">if</span> <span class="built_in">abs</span>(<span class="built_in">imag</span>(D(k,k))) &gt; <span class="number">1e-8</span> || any(we &lt;= <span class="number">0</span>)</span><br><span class="line">    error(<span class="string">&#x27;未能得到正实主特征向量&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> n &lt;= <span class="number">2</span></span><br><span class="line">    CI = <span class="number">0</span>; CR = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    CI = <span class="built_in">max</span>(<span class="number">0</span>,(lambda-n)/(n<span class="number">-1</span>));</span><br><span class="line">    CR = CI/RI(n);  <span class="comment">% MATLAB 索引从 1 开始. </span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>输入检查与计算公式各有作用. 正数和互反检查能发现填表错误,
+却不能代替CR检验; CR衡量多个比较之间的协调程度. <code>A*A.T</code>
+在Python中是对应位置相乘, 与MATLAB的 <code>A.*A.'</code> 对应, 检查的是
+<span class="math inline">\(a_{ij}a_{ji}=1\)</span>.</p>
+<p>Python的 <code>axis=0</code> 对应按列求和, <code>axis=1</code>
+对应按行平均. MATLAB中的 <code>bsxfun</code> 让每一列除以各自的列总和.
+RI表的第一个元素对应1阶, 所以Python查 <code>RI[n-1]</code>, MATLAB查
+<code>RI(n)</code>.</p>
+<p>特征值计算按最大实部定位Perron特征值, 而不是用浮点数相等比较寻找位置.
+最后的 <code>max(0,...)</code> 只处理理论上一致矩阵因舍入产生的极小负CI,
+不意味着负的不一致程度具有实际意义.</p>
+<p>下面用同一函数复算首次矩阵和修订矩阵, 并比较三种权重.
+MATLAB脚本与函数文件放在同一目录.</p>
+<p><strong>ahp_revision.py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> ahp_weights <span class="keyword">import</span> ahp_weights</span><br><span class="line"></span><br><span class="line">A0 = np.array([[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">5</span>], [<span class="number">1</span>/<span class="number">2</span>,<span class="number">1</span>,<span class="number">1</span>/<span class="number">2</span>,<span class="number">2</span>],</span><br><span class="line">               [<span class="number">1</span>/<span class="number">3</span>,<span class="number">2</span>,<span class="number">1</span>,<span class="number">1</span>/<span class="number">2</span>], [<span class="number">1</span>/<span class="number">5</span>,<span class="number">1</span>/<span class="number">2</span>,<span class="number">2</span>,<span class="number">1</span>]], dtype=<span class="built_in">float</span>)</span><br><span class="line">A1 = A0.copy()</span><br><span class="line">A1[<span class="number">2</span>,<span class="number">3</span>], A1[<span class="number">3</span>,<span class="number">2</span>] = <span class="number">2</span>, <span class="number">1</span>/<span class="number">2</span></span><br><span class="line"><span class="keyword">for</span> name,A <span class="keyword">in</span> [(<span class="string">&#x27;First discussion&#x27;</span>,A0),(<span class="string">&#x27;After review&#x27;</span>,A1)]:</span><br><span class="line">    wa,wg,w,lam,ci,cr = ahp_weights(A)</span><br><span class="line">    <span class="built_in">print</span>(name,<span class="string">&#x27;lambda, CI, CR:&#x27;</span>,lam,ci,cr)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;Acceptable consistency:&#x27;</span>,cr &lt; <span class="number">.10</span>)</span><br><span class="line">wa,wg,w,lam,ci,cr = ahp_weights(A1)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Columns: arithmetic mean, geometric mean, eigenvector&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(np.column_stack((wa,wg,w)))</span><br></pre></td></tr></table></figure>
+<p><strong>ahp_revision.m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">A0 = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">5</span>;<span class="number">1</span>/<span class="number">2</span>,<span class="number">1</span>,<span class="number">1</span>/<span class="number">2</span>,<span class="number">2</span>;<span class="number">1</span>/<span class="number">3</span>,<span class="number">2</span>,<span class="number">1</span>,<span class="number">1</span>/<span class="number">2</span>;<span class="number">1</span>/<span class="number">5</span>,<span class="number">1</span>/<span class="number">2</span>,<span class="number">2</span>,<span class="number">1</span>];</span><br><span class="line">A1 = A0;</span><br><span class="line">A1(<span class="number">3</span>,<span class="number">4</span>) = <span class="number">2</span>; A1(<span class="number">4</span>,<span class="number">3</span>) = <span class="number">1</span>/<span class="number">2</span>;</span><br><span class="line">matrices = &#123;A0,A1&#125;;</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">    [~,~,~,lambda,CI,CR] = ahp_weights(matrices&#123;<span class="built_in">j</span>&#125;);</span><br><span class="line">    fprintf(<span class="string">&#x27;Matrix %d: lambda=%.8f, CI=%.8f, CR=%.8f\n&#x27;</span>,<span class="built_in">j</span>,lambda,CI,CR);</span><br><span class="line">    fprintf(<span class="string">&#x27;Acceptable consistency: %d\n&#x27;</span>,CR &lt; <span class="number">.10</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">[wa,wg,w,lambda,CI,CR] = ahp_weights(A1);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Columns: arithmetic mean, geometric mean, eigenvector&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>([wa,wg,w]);</span><br></pre></td></tr></table></figure>
+<p>首次CR约为0.173054, 修订后约为0.041789. 两次计算使用同一RI表,
+因而可以比较. 三种权重的程序输出应与上表一致, 表格显示值经过舍入,
+后续计算始终使用未舍入值.</p>
+<h2 id="解释综合得分-哪些因素推动了结果">6 解释综合得分:
+哪些因素推动了结果</h2>
+<p>综合得分可分解为四项贡献 <span
+class="math inline">\(c_{ij}=z_{ij}w_j\)</span>.</p>
+<table style="width:100%;">
 <colgroup>
-<col style="width: 9%" />
-<col style="width: 18%" />
-<col style="width: 18%" />
-<col style="width: 18%" />
-<col style="width: 18%" />
-<col style="width: 18%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
 </colgroup>
 <thead>
 <tr>
@@ -814,82 +830,113 @@ S_i=\sum\limits_{j=1}^{4}w_jz_{ij}.
 <tbody>
 <tr>
 <td style="text-align: center;">A</td>
-<td style="text-align: center;">0.1987</td>
-<td style="text-align: center;">0.0745</td>
-<td style="text-align: center;">0.0677</td>
-<td style="text-align: center;">0.0239</td>
-<td style="text-align: center;">0.3648</td>
+<td style="text-align: center;">0.198680</td>
+<td style="text-align: center;">0.074519</td>
+<td style="text-align: center;">0.067747</td>
+<td style="text-align: center;">0.023879</td>
+<td style="text-align: center;">0.364825</td>
 </tr>
 <tr>
 <td style="text-align: center;">B</td>
-<td style="text-align: center;">0.1126</td>
-<td style="text-align: center;">0.0447</td>
-<td style="text-align: center;">0.0844</td>
-<td style="text-align: center;">0.0439</td>
-<td style="text-align: center;">0.2857</td>
+<td style="text-align: center;">0.112586</td>
+<td style="text-align: center;">0.044711</td>
+<td style="text-align: center;">0.084423</td>
+<td style="text-align: center;">0.043937</td>
+<td style="text-align: center;">0.285657</td>
 </tr>
 <tr>
 <td style="text-align: center;">C</td>
-<td style="text-align: center;">0.1821</td>
-<td style="text-align: center;">0.0596</td>
-<td style="text-align: center;">0.0782</td>
-<td style="text-align: center;">0.0296</td>
-<td style="text-align: center;">0.3495</td>
+<td style="text-align: center;">0.182124</td>
+<td style="text-align: center;">0.059615</td>
+<td style="text-align: center;">0.078169</td>
+<td style="text-align: center;">0.029610</td>
+<td style="text-align: center;">0.349518</td>
 </tr>
 </tbody>
 </table>
-<p>表中数值经过舍入, 因此显示的单项贡献之和与综合得分末位可能略有差别.
-用未舍入值计算, 排序为:</p>
+<p><img src="/images/AnalyticHierarchyProcess/AHP-3.png" alt="" style="width: 100%;"></p>
+<p><strong>图3　准则权重与方案综合得分的来源</strong></p>
+<p>左图显示四项准则的重要性, 右图显示各准则对三个方案的得分贡献.
+条形总长度为综合得分, 不是某项原始指标的大小.</p>
+<p>A在服务覆盖和便利方面的优势, 在当前权重下超过其质量和场次方面的劣势,
+因而综合得分最高. 这是一项可以拆开核对的加权结论,
+不宜仅写成"计算表明A最佳"而略去评价条件.</p>
+<p>舍入后的单项贡献相加, 末位可能与表中综合得分略有差别.
+解释小的得分差异时, 尤其需要用未舍入数值计算,
+再结合数据误差和判断不确定性审视结论.</p>
+<h2 id="改变侧重点-结论还能保持吗">7 改变侧重点, 结论还能保持吗</h2>
+<h3 id="先说明权重怎样改变">7.1 先说明权重怎样改变</h3>
+<p>如果更强调内容质量, 另设</p>
 <p><span class="math display">\[
-\boxed{A&gt;C&gt;B}.
+\boldsymbol w&#39;=(0.20,0.18,0.50,0.12)^{\mathsf T},
 \]</span></p>
-<p>在当前指标、标准化方式和评审判断下, A 的综合得分最高, 可优先考虑.
-它不意味着 A 在每个方面都最好, 也不意味着这一选择不受评价规则影响. A 与
-C 仅相差约 0.0153, 更应检查结论是否稳定.</p>
-<h3 id="改变权重-排序可能变化">6.2 改变权重, 排序可能变化</h3>
-<p>将权重改为 <span class="math inline">\(\boldsymbol
-w&#39;=(0.20,0.18,0.50,0.12)^{\mathsf T}\)</span>, 保持方案数据不变,
-得到:</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">方案</th>
-<th style="text-align: center;">新权重下的得分</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">A</td>
-<td style="text-align: center;">0.3320</td>
-</tr>
-<tr>
-<td style="text-align: center;">B</td>
-<td style="text-align: center;">0.3280</td>
-</tr>
-<tr>
-<td style="text-align: center;">C</td>
-<td style="text-align: center;">0.3400</td>
-</tr>
-</tbody>
-</table>
-<p>排序变为 <span class="math inline">\(C&gt;A&gt;B\)</span>.
-这组权重用于演示不同侧重点对结果的影响, 不是由 <span
-class="math inline">\(A_1\)</span> 计算得到的权重. 若作为正式评审依据,
-应重新说明它的来源.</p>
-<p>有意识地改变参数并观察结果, 称为<strong>敏感性分析</strong>.
-除权重外, 还可检查评分规则、输入数据和候选方案集合的变化.
-比例归一化的分母取决于当前方案集, 新增或删除方案,
-有时会引起原有方案之间的排序逆转.</p>
-<h3 id="方案局部得分的两种来源">6.3 方案局部得分的两种来源</h3>
-<p>本例使用 AHP 确定准则权重, 再以指标数据归一化得到方案局部得分.
-这是“AHP 赋权＋指标评分”的应用方式.</p>
-<p>也可以针对每项准则, 分别比较 A、B、C 三个方案, 构造方案层判断矩阵,
-检验一致性并求出局部权重, 再按准则权重综合.
-方案间比较难以直接测量的体验或效果时, 这种方式更有帮助.</p>
+<p>保持方案数据不变, 得分约为 <span
+class="math inline">\((0.332008,0.328013,0.339979)^{\mathsf T}\)</span>,
+排序变为 <span class="math inline">\(C&gt;A&gt;B\)</span>.
+这组权重用于演示不同侧重点, 不是由 <span
+class="math inline">\(A_1\)</span> 推导的结果. 若要作为正式评审依据,
+应说明其来源并重新讨论相应比较.</p>
+<p>有意识地改变输入并检查输出如何变化, 称为敏感性分析. 除了试两组权重,
+还可以沿一条明确路径找出排序改变的临界点.</p>
+<h3 id="从服务覆盖转移权重给内容质量">7.2
+从服务覆盖转移权重给内容质量</h3>
+<p>以未舍入的特征向量权重为起点, 将服务覆盖权重减少 <span
+class="math inline">\(\delta\)</span>, 同量增加到内容质量,
+其他两项不变:</p>
+<p><span class="math display">\[
+\boldsymbol w(\delta)
+=(w_1-\delta,w_2,w_3+\delta,w_4)^{\mathsf T},
+\qquad 0\leqslant\delta\leqslant w_1.
+\]</span></p>
+<p>因此权重仍非负且和为1. 令 <span
+class="math inline">\(D=S_A-S_C\)</span>, 两方案的得分差满足</p>
+<p><span class="math display">\[
+D(\delta)=D+\delta[(z_{A3}-z_{C3})-(z_{A1}-z_{C1})].
+\]</span></p>
+<p>右端对 <span class="math inline">\(\delta\)</span> 为一次函数.
+令其为0, 得到</p>
+<p><span class="math display">\[
+\delta_*\approx0.194236.
+\]</span></p>
+<p>这是权重绝对值转移约0.194236, 即约19.4236个百分点,
+不是把原覆盖权重相对减少19.4236%. 此时</p>
+<p><span class="math display">\[
+\boldsymbol w(\delta_*)\approx
+(0.299153,0.178846,0.424575,0.097426)^{\mathsf T}.
+\]</span></p>
+<p>A与C得分同为约0.343737, B约为0.312525. 在这一特定方向上继续增大 <span
+class="math inline">\(\delta\)</span>, C的得分超过A. 这只定位A与C的交点,
+不是所有权重变化方向下共同的临界值. 继续转移时, B也可能超过C,
+所以还应观察三个方案的完整得分变化.</p>
+<p><strong>ahp_sensitivity.py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> ahp_weights <span class="keyword">import</span> ahp_weights</span><br><span class="line"></span><br><span class="line">A = np.array([[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">5</span>], [<span class="number">1</span>/<span class="number">2</span>,<span class="number">1</span>,<span class="number">1</span>/<span class="number">2</span>,<span class="number">2</span>],</span><br><span class="line">              [<span class="number">1</span>/<span class="number">3</span>,<span class="number">2</span>,<span class="number">1</span>,<span class="number">2</span>], [<span class="number">1</span>/<span class="number">5</span>,<span class="number">1</span>/<span class="number">2</span>,<span class="number">1</span>/<span class="number">2</span>,<span class="number">1</span>]], dtype=<span class="built_in">float</span>)</span><br><span class="line">X = np.array([[<span class="number">6000</span>,<span class="number">10</span>,<span class="number">6.5</span>,<span class="number">25</span>], [<span class="number">3400</span>,<span class="number">6</span>,<span class="number">8.1</span>,<span class="number">46</span>],</span><br><span class="line">              [<span class="number">5500</span>,<span class="number">8</span>,<span class="number">7.5</span>,<span class="number">31</span>]], dtype=<span class="built_in">float</span>)</span><br><span class="line">_,_,w,_,_,cr = ahp_weights(A)</span><br><span class="line"><span class="keyword">if</span> cr &gt;= <span class="number">.10</span>:</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&#x27;Review the judgments first&#x27;</span>)</span><br><span class="line">Z = X/X.<span class="built_in">sum</span>(axis=<span class="number">0</span>)</span><br><span class="line">scores = Z @ w</span><br><span class="line">D = scores[<span class="number">0</span>]-scores[<span class="number">2</span>]</span><br><span class="line">slope = (Z[<span class="number">0</span>,<span class="number">2</span>]-Z[<span class="number">2</span>,<span class="number">2</span>])-(Z[<span class="number">0</span>,<span class="number">0</span>]-Z[<span class="number">2</span>,<span class="number">0</span>])</span><br><span class="line">delta_star = -D/slope</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> <span class="number">0</span> &lt;= delta_star &lt;= w[<span class="number">0</span>]:</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&#x27;No feasible A-C crossing along this direction&#x27;</span>)</span><br><span class="line">w_star = w.copy()</span><br><span class="line">w_star[<span class="number">0</span>] -= delta_star</span><br><span class="line">w_star[<span class="number">2</span>] += delta_star</span><br><span class="line">alternative_w = np.array([<span class="number">.20</span>,<span class="number">.18</span>,<span class="number">.50</span>,<span class="number">.12</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Critical transfer delta:&#x27;</span>,delta_star)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Weights at the crossing:&#x27;</span>,w_star)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Scores at the crossing:&#x27;</span>,Z @ w_star)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Alternative weights, scores:&#x27;</span>,alternative_w,Z @ alternative_w)</span><br><span class="line">deltas = np.linspace(<span class="number">0</span>,w[<span class="number">0</span>],<span class="number">401</span>)</span><br><span class="line">weight_path = np.tile(w,(<span class="built_in">len</span>(deltas),<span class="number">1</span>))</span><br><span class="line">weight_path[:,<span class="number">0</span>] -= deltas</span><br><span class="line">weight_path[:,<span class="number">2</span>] += deltas</span><br><span class="line">score_path = weight_path @ Z.T</span><br></pre></td></tr></table></figure>
+<p><strong>ahp_sensitivity.m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">A = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">5</span>;<span class="number">1</span>/<span class="number">2</span>,<span class="number">1</span>,<span class="number">1</span>/<span class="number">2</span>,<span class="number">2</span>;<span class="number">1</span>/<span class="number">3</span>,<span class="number">2</span>,<span class="number">1</span>,<span class="number">2</span>;<span class="number">1</span>/<span class="number">5</span>,<span class="number">1</span>/<span class="number">2</span>,<span class="number">1</span>/<span class="number">2</span>,<span class="number">1</span>];</span><br><span class="line">X = [<span class="number">6000</span>,<span class="number">10</span>,<span class="number">6.5</span>,<span class="number">25</span>;<span class="number">3400</span>,<span class="number">6</span>,<span class="number">8.1</span>,<span class="number">46</span>;<span class="number">5500</span>,<span class="number">8</span>,<span class="number">7.5</span>,<span class="number">31</span>];</span><br><span class="line">[~,~,w,~,~,CR] = ahp_weights(A);</span><br><span class="line">assert(CR &lt; <span class="number">.10</span>,<span class="string">&#x27;Review the judgments first&#x27;</span>);</span><br><span class="line">Z = X./sum(X,<span class="number">1</span>); scores = Z*w;</span><br><span class="line">D = scores(<span class="number">1</span>)-scores(<span class="number">3</span>);</span><br><span class="line">slope = (Z(<span class="number">1</span>,<span class="number">3</span>)-Z(<span class="number">3</span>,<span class="number">3</span>))-(Z(<span class="number">1</span>,<span class="number">1</span>)-Z(<span class="number">3</span>,<span class="number">1</span>));</span><br><span class="line">deltaStar = -D/slope;</span><br><span class="line">assert(deltaStar &gt;= <span class="number">0</span> &amp;&amp; deltaStar &lt;= w(<span class="number">1</span>),<span class="string">&#x27;No feasible A-C crossing&#x27;</span>);</span><br><span class="line">wStar = w; wStar(<span class="number">1</span>) = wStar(<span class="number">1</span>)-deltaStar; wStar(<span class="number">3</span>) = wStar(<span class="number">3</span>)+deltaStar;</span><br><span class="line">fprintf(<span class="string">&#x27;Critical transfer delta: %.10f\n&#x27;</span>,deltaStar);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Weights and scores at the crossing:&#x27;</span>); <span class="built_in">disp</span>(wStar.&#x27;); <span class="built_in">disp</span>((Z*wStar).&#x27;);</span><br><span class="line">alternativeW = [<span class="number">.20</span>,<span class="number">.18</span>,<span class="number">.50</span>,<span class="number">.12</span>].&#x27;;</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Alternative scores:&#x27;</span>); <span class="built_in">disp</span>((Z*alternativeW).&#x27;);</span><br><span class="line">deltas = <span class="built_in">linspace</span>(<span class="number">0</span>,w(<span class="number">1</span>),<span class="number">401</span>).&#x27;;</span><br><span class="line">weightPath = <span class="built_in">repmat</span>(w.&#x27;,<span class="built_in">numel</span>(deltas),<span class="number">1</span>);</span><br><span class="line">weightPath(:,<span class="number">1</span>) = weightPath(:,<span class="number">1</span>)-deltas;</span><br><span class="line">weightPath(:,<span class="number">3</span>) = weightPath(:,<span class="number">3</span>)+deltas;</span><br><span class="line">scorePath = weightPath*Z.&#x27;;</span><br></pre></td></tr></table></figure>
+<p>程序先从得分差公式求交点, 再检查交点是否落在权重非负的区间,
+最后生成整条路径. 求交点不需要扫描到两项浮点得分恰好相等;
+图形用来观察趋势, 公式负责定位临界值.</p>
+<p><img src="/images/AnalyticHierarchyProcess/AHP-4.png" alt="" style="width: 100%;"></p>
+<p><strong>图4　沿给定权重转移路径的排序变化</strong></p>
+<p>横轴为从服务覆盖转移给内容质量的权重绝对量.
+竖虚线标出A与C得分相等的位置; 图中同时画出B,
+防止只比较两方案而忽略第三方案.</p>
+<p>临界转移量较大或较小, 都不能脱离可接受的判断变化范围解释.
+若合理的权重或数据扰动就可能改变推荐方案, 应报告这种敏感性并补充证据,
+而不是只保留一次排序.</p>
+<p>比例归一化的分母依赖当前候选方案集合. 新增或删除方案时,
+局部得分会改变, 原有方案之间也可能发生排序逆转.
+单位同比例变化与候选集合变化是不同的操作, 不应混为一谈.</p>
+<h2 id="方案层也可以使用成对比较">8 方案层也可以使用成对比较</h2>
+<p>本例用AHP确定准则权重, 用指标数据归一化确定方案局部得分,
+属于"AHP赋权与指标评分结合"的应用.
+它不要求把所有数据都再转成专家的1-9判断.</p>
+<p>另一种做法是: 在每项准则下, 分别对A, B, C构造方案层判断矩阵,
+各自检验一致性并求局部权重, 组成局部得分矩阵后再逐层综合.
+比较难以直接测量的体验或效果时, 可考虑这种方式. 多矩阵模型需要逐一检查,
+不能用一个通过检验的准则矩阵代表所有层次都协调.</p>
 <p>若某项指标具有适合比率比较的正数数据 <span
-class="math inline">\(x_1,x_2,x_3\)</span>, 可构造 <span
-class="math inline">\(p_{ik}=x_i/x_k\)</span>. 例如,
-服务覆盖对应的矩阵为:</p>
+class="math inline">\(x_1,x_2,x_3\)</span>, 可以构造 <span
+class="math inline">\(p_{ik}=x_i/x_k\)</span>. 服务覆盖对应</p>
 <p><span class="math display">\[
 P^{(1)}=\begin{pmatrix}
 1&amp;\frac{6000}{3400}&amp;\frac{6000}{5500}\\
@@ -897,152 +944,54 @@ P^{(1)}=\begin{pmatrix}
 \frac{5500}{6000}&amp;\frac{5500}{3400}&amp;1
 \end{pmatrix}.
 \]</span></p>
-<p>它完全一致, 局部权重恰好是 <span
-class="math inline">\((6000,3400,5500)^{\mathsf T}/14900\)</span>,
-与比例归一化相同. 观测数据的比值不必属于 1—9 离散标度,
-应与专家判断标度区分; 仅有等级意义的评分也不宜照此构造比率矩阵.</p>
-<h2 id="七用程序完成计算">七、用程序完成计算</h2>
-<h3 id="python-实现">7.1 Python 实现</h3>
-<p>以下代码仅需 NumPy:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -m pip install numpy</span><br></pre></td></tr></table></figure>
-<p>函数 <code>ahp_weights</code> 返回三种权重及一致性指标.
-几何平均使用对数计算, 减少直接连乘产生的数值问题.</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># RI 的第一个元素对应 1 阶矩阵，统一使用同一张参考表。</span></span><br><span class="line">RI = [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0.58</span>, <span class="number">0.90</span>, <span class="number">1.12</span>, <span class="number">1.24</span>, <span class="number">1.32</span>, <span class="number">1.41</span>, <span class="number">1.45</span>, <span class="number">1.49</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">ahp_weights</span>(<span class="params">A</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;计算三种权重、最大正特征值、CI 和 CR。&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> np.iscomplexobj(A):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;判断矩阵必须由实数组成&quot;</span>)</span><br><span class="line">    A = np.asarray(A, dtype=<span class="built_in">float</span>)</span><br><span class="line">    <span class="keyword">if</span> A.ndim != <span class="number">2</span> <span class="keyword">or</span> A.shape[<span class="number">0</span>] != A.shape[<span class="number">1</span>]:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;判断矩阵必须是方阵&quot;</span>)</span><br><span class="line">    n = A.shape[<span class="number">0</span>]</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> <span class="number">1</span> &lt;= n &lt;= <span class="built_in">len</span>(RI):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;本例的 RI 表支持 1 至 10 阶矩阵&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> np.<span class="built_in">any</span>(~np.isfinite(A)) <span class="keyword">or</span> np.<span class="built_in">any</span>(A &lt;= <span class="number">0</span>):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;判断矩阵元素必须是有限正数&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> np.allclose(A*A.T, <span class="number">1</span>, atol=<span class="number">1e-10</span>, rtol=<span class="number">0</span>):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;判断矩阵必须满足互反关系&quot;</span>)</span><br><span class="line"></span><br><span class="line">    wa = np.mean(A / A.<span class="built_in">sum</span>(axis=<span class="number">0</span>), axis=<span class="number">1</span>)</span><br><span class="line">    g = np.exp(np.mean(np.log(A), axis=<span class="number">1</span>))</span><br><span class="line">    wg = g / g.<span class="built_in">sum</span>()</span><br><span class="line"></span><br><span class="line">    values, vectors = np.linalg.eig(A)</span><br><span class="line">    k = np.argmax(values.real)</span><br><span class="line">    lam = <span class="built_in">float</span>(values[k].real)</span><br><span class="line">    v = vectors[:, k].real</span><br><span class="line">    <span class="keyword">if</span> v.<span class="built_in">sum</span>() &lt; <span class="number">0</span>:</span><br><span class="line">        v = -v</span><br><span class="line">    we = v / v.<span class="built_in">sum</span>()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> n &lt;= <span class="number">2</span>:</span><br><span class="line">        ci, cr = <span class="number">0.0</span>, <span class="number">0.0</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        ci = <span class="built_in">max</span>(<span class="number">0.0</span>, (lam-n)/(n-<span class="number">1</span>))</span><br><span class="line">        cr = ci / RI[n-<span class="number">1</span>]  <span class="comment"># Python 索引从 0 开始。</span></span><br><span class="line">    <span class="keyword">return</span> wa, wg, we, lam, ci, cr</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    A0 = np.array([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>], [<span class="number">1</span>/<span class="number">2</span>, <span class="number">1</span>, <span class="number">1</span>/<span class="number">2</span>, <span class="number">2</span>],</span><br><span class="line">                   [<span class="number">1</span>/<span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">1</span>/<span class="number">2</span>], [<span class="number">1</span>/<span class="number">5</span>, <span class="number">1</span>/<span class="number">2</span>, <span class="number">2</span>, <span class="number">1</span>]])</span><br><span class="line">    A1 = np.array([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>], [<span class="number">1</span>/<span class="number">2</span>, <span class="number">1</span>, <span class="number">1</span>/<span class="number">2</span>, <span class="number">2</span>],</span><br><span class="line">                   [<span class="number">1</span>/<span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">2</span>], [<span class="number">1</span>/<span class="number">5</span>, <span class="number">1</span>/<span class="number">2</span>, <span class="number">1</span>/<span class="number">2</span>, <span class="number">1</span>]])</span><br><span class="line">    <span class="keyword">for</span> name, A <span class="keyword">in</span> [(<span class="string">&quot;首次判断&quot;</span>, A0), (<span class="string">&quot;修订后&quot;</span>, A1)]:</span><br><span class="line">        wa, wg, w, lam, ci, cr = ahp_weights(A)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;name&#125;</span>：λ=<span class="subst">&#123;lam:<span class="number">.6</span>f&#125;</span>，CI=<span class="subst">&#123;ci:<span class="number">.6</span>f&#125;</span>，CR=<span class="subst">&#123;cr:<span class="number">.6</span>f&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;一致性可接受&quot;</span> <span class="keyword">if</span> cr &lt; <span class="number">0.10</span> <span class="keyword">else</span> <span class="string">&quot;需要重新讨论判断依据&quot;</span>)</span><br><span class="line"></span><br><span class="line">    wa, wg, w, lam, ci, cr = ahp_weights(A1)</span><br><span class="line">    <span class="keyword">if</span> cr &gt;= <span class="number">0.10</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;应先修订判断矩阵，再报告综合评价&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;算术平均法：&quot;</span>, np.<span class="built_in">round</span>(wa, <span class="number">4</span>))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;几何平均法：&quot;</span>, np.<span class="built_in">round</span>(wg, <span class="number">4</span>))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;特征向量法：&quot;</span>, np.<span class="built_in">round</span>(w, <span class="number">4</span>))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 行对应方案 A、B、C；列对应覆盖、便利、质量、场次。</span></span><br><span class="line">    X = np.array([[<span class="number">6000</span>, <span class="number">10</span>, <span class="number">6.5</span>, <span class="number">25</span>], [<span class="number">3400</span>, <span class="number">6</span>, <span class="number">8.1</span>, <span class="number">46</span>],</span><br><span class="line">                   [<span class="number">5500</span>, <span class="number">8</span>, <span class="number">7.5</span>, <span class="number">31</span>]], dtype=<span class="built_in">float</span>)</span><br><span class="line">    Z = X / X.<span class="built_in">sum</span>(axis=<span class="number">0</span>)</span><br><span class="line">    scores = Z @ w</span><br><span class="line">    names = np.array([<span class="string">&quot;A&quot;</span>, <span class="string">&quot;B&quot;</span>, <span class="string">&quot;C&quot;</span>])</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;综合得分：&quot;</span>, np.<span class="built_in">round</span>(scores, <span class="number">4</span>))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;排序：&quot;</span>, <span class="string">&quot; &gt; &quot;</span>.join(names[np.argsort(-scores)]))</span><br><span class="line">    alternative_w = np.array([<span class="number">0.20</span>, <span class="number">0.18</span>, <span class="number">0.50</span>, <span class="number">0.12</span>])</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;另一组权重的得分：&quot;</span>, np.<span class="built_in">round</span>(Z @ alternative_w, <span class="number">4</span>))</span><br></pre></td></tr></table></figure>
-<p><code>A.sum(axis=0)</code> 是按列求和,
-<code>np.mean(...,axis=1)</code> 是按行平均; <code>Z @ w</code>
-表示加权综合. Python 列表索引从 0 开始, 因此 <span
-class="math inline">\(n\)</span> 阶矩阵的 <span
-class="math inline">\(RI\)</span> 位于 <code>RI[n-1]</code>.</p>
-<h3 id="matlab-实现">7.2 MATLAB 实现</h3>
-<p>先将以下函数保存为 <code>ahp_weights.m</code>:</p>
-<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[wa,wg,we,lambda,CI,CR]</span> = <span class="title">ahp_weights</span><span class="params">(A)</span></span></span><br><span class="line"><span class="comment">% 三种权重与一致性检验，无需额外工具箱。</span></span><br><span class="line">RI = [<span class="number">0</span>,<span class="number">0</span>,<span class="number">0.58</span>,<span class="number">0.90</span>,<span class="number">1.12</span>,<span class="number">1.24</span>,<span class="number">1.32</span>,<span class="number">1.41</span>,<span class="number">1.45</span>,<span class="number">1.49</span>];</span><br><span class="line">[n,m] = <span class="built_in">size</span>(A);</span><br><span class="line"><span class="keyword">if</span> ~ismatrix(A) || n ~= m || n &lt; <span class="number">1</span> || n &gt; <span class="built_in">length</span>(RI)</span><br><span class="line">    error(<span class="string">&#x27;判断矩阵必须是 1 至 10 阶方阵&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">if</span> ~<span class="built_in">isreal</span>(A) || any(~<span class="built_in">isfinite</span>(A(:))) || any(A(:) &lt;= <span class="number">0</span>)</span><br><span class="line">    error(<span class="string">&#x27;判断矩阵元素必须是有限正数&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">if</span> <span class="built_in">max</span>(<span class="built_in">max</span>(<span class="built_in">abs</span>(A.*A.&#x27;<span class="number">-1</span>))) &gt; <span class="number">1e-10</span></span><br><span class="line">    error(<span class="string">&#x27;判断矩阵必须满足互反关系&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">wa = <span class="built_in">mean</span>(<span class="built_in">bsxfun</span>(@rdivide,A,sum(A,<span class="number">1</span>)),<span class="number">2</span>);</span><br><span class="line">g = <span class="built_in">exp</span>(<span class="built_in">mean</span>(<span class="built_in">log</span>(A),<span class="number">2</span>));</span><br><span class="line">wg = g/sum(g);</span><br><span class="line">[V,D] = eig(A);</span><br><span class="line">[lambda,k] = <span class="built_in">max</span>(<span class="built_in">real</span>(<span class="built_in">diag</span>(D)));</span><br><span class="line">v = <span class="built_in">real</span>(V(:,k));</span><br><span class="line"><span class="keyword">if</span> sum(v) &lt; <span class="number">0</span></span><br><span class="line">    v = -v;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">we = v/sum(v);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> n &lt;= <span class="number">2</span></span><br><span class="line">    CI = <span class="number">0</span>; CR = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    CI = <span class="built_in">max</span>(<span class="number">0</span>,(lambda-n)/(n<span class="number">-1</span>));</span><br><span class="line">    CR = CI/RI(n);  <span class="comment">% MATLAB 索引从 1 开始。</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
-<p>再将以下脚本保存为 <code>ahp_example.m</code>, 在同一目录运行.
-代码无需额外工具箱.</p>
-<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">A0 = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">5</span>;<span class="number">1</span>/<span class="number">2</span>,<span class="number">1</span>,<span class="number">1</span>/<span class="number">2</span>,<span class="number">2</span>;<span class="number">1</span>/<span class="number">3</span>,<span class="number">2</span>,<span class="number">1</span>,<span class="number">1</span>/<span class="number">2</span>;<span class="number">1</span>/<span class="number">5</span>,<span class="number">1</span>/<span class="number">2</span>,<span class="number">2</span>,<span class="number">1</span>];</span><br><span class="line">A1 = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">5</span>;<span class="number">1</span>/<span class="number">2</span>,<span class="number">1</span>,<span class="number">1</span>/<span class="number">2</span>,<span class="number">2</span>;<span class="number">1</span>/<span class="number">3</span>,<span class="number">2</span>,<span class="number">1</span>,<span class="number">2</span>;<span class="number">1</span>/<span class="number">5</span>,<span class="number">1</span>/<span class="number">2</span>,<span class="number">1</span>/<span class="number">2</span>,<span class="number">1</span>];</span><br><span class="line">matrices = &#123;A0,A1&#125;;</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">    [~,~,~,lambda,CI,CR] = ahp_weights(matrices&#123;<span class="built_in">j</span>&#125;);</span><br><span class="line">    fprintf(<span class="string">&#x27;矩阵 %d：lambda=%.6f，CI=%.6f，CR=%.6f\n&#x27;</span>, ...</span><br><span class="line">             <span class="built_in">j</span>,lambda,CI,CR);</span><br><span class="line">    <span class="keyword">if</span> CR &lt; <span class="number">0.10</span></span><br><span class="line">        <span class="built_in">disp</span>(<span class="string">&#x27;一致性可接受&#x27;</span>);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="built_in">disp</span>(<span class="string">&#x27;需要重新讨论判断依据&#x27;</span>);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">[wa,wg,w,lambda,CI,CR] = ahp_weights(A1);</span><br><span class="line">assert(CR &lt; <span class="number">0.10</span>,<span class="string">&#x27;应先修订判断矩阵，再报告综合评价&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;算术平均法：&#x27;</span>); <span class="built_in">disp</span>(wa&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;几何平均法：&#x27;</span>); <span class="built_in">disp</span>(wg&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;特征向量法：&#x27;</span>); <span class="built_in">disp</span>(w&#x27;);</span><br><span class="line">X = [<span class="number">6000</span>,<span class="number">10</span>,<span class="number">6.5</span>,<span class="number">25</span>;<span class="number">3400</span>,<span class="number">6</span>,<span class="number">8.1</span>,<span class="number">46</span>;<span class="number">5500</span>,<span class="number">8</span>,<span class="number">7.5</span>,<span class="number">31</span>];</span><br><span class="line">Z = <span class="built_in">bsxfun</span>(@rdivide,X,sum(X,<span class="number">1</span>));</span><br><span class="line">scores = Z*w;</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;方案 A、B、C 的综合得分：&#x27;</span>); <span class="built_in">disp</span>(scores&#x27;);</span><br><span class="line">[~,order] = <span class="built_in">sort</span>(scores,<span class="string">&#x27;descend&#x27;</span>);</span><br><span class="line">names = &#123;<span class="string">&#x27;A&#x27;</span>,<span class="string">&#x27;B&#x27;</span>,<span class="string">&#x27;C&#x27;</span>&#125;;</span><br><span class="line">fprintf(<span class="string">&#x27;排序：%s &gt; %s &gt; %s\n&#x27;</span>, ...</span><br><span class="line">         names&#123;order(<span class="number">1</span>)&#125;,names&#123;order(<span class="number">2</span>)&#125;,names&#123;order(<span class="number">3</span>)&#125;);</span><br><span class="line">alternativeW = [<span class="number">0.20</span>;<span class="number">0.18</span>;<span class="number">0.50</span>;<span class="number">0.12</span>];</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;另一组权重的得分：&#x27;</span>); <span class="built_in">disp</span>((Z*alternativeW)&#x27;);</span><br></pre></td></tr></table></figure>
-<p>MATLAB 索引从 1 开始, 因此查表使用 <code>RI(n)</code>.
-特征向量可整体改变符号, 代码先调整为正方向, 再归一化.
-两种语言都取最大正实特征值对应的向量,
-不用浮点数相等比较寻找它的位置.</p>
-<h3 id="对照结果检查计算">7.3 对照结果检查计算</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">项目</th>
-<th style="text-align: center;">结果</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">首次矩阵 <span
-class="math inline">\(\lambda_{\max}\)</span></td>
-<td style="text-align: center;">4.467245</td>
-</tr>
-<tr>
-<td style="text-align: center;">首次矩阵 <span
-class="math inline">\(CI\)</span>、<span
-class="math inline">\(CR\)</span></td>
-<td style="text-align: center;">0.155748、0.173054</td>
-</tr>
-<tr>
-<td style="text-align: center;">修订矩阵 <span
-class="math inline">\(\lambda_{\max}\)</span></td>
-<td style="text-align: center;">4.112830</td>
-</tr>
-<tr>
-<td style="text-align: center;">修订矩阵 <span
-class="math inline">\(CI\)</span>、<span
-class="math inline">\(CR\)</span></td>
-<td style="text-align: center;">0.037610、0.041789</td>
-</tr>
-<tr>
-<td style="text-align: center;">特征向量法权重</td>
-<td style="text-align: center;"><span
-class="math inline">\((0.4934,0.1788,0.2303,0.0974)^{\mathsf
-T}\)</span></td>
-</tr>
-<tr>
-<td style="text-align: center;">方案 A、B、C 综合得分</td>
-<td style="text-align: center;">0.3648、0.2857、0.3495</td>
-</tr>
-<tr>
-<td style="text-align: center;">排序</td>
-<td style="text-align: center;">A、C、B</td>
-</tr>
-</tbody>
-</table>
-<p>检查顺序是: 确认矩阵为正互反矩阵, 确认一致性可以接受,
-再检查权重是否为正且和为 1, 最后核对指标顺序与综合得分.
-数值显示经过舍入, 计算和检查应使用未舍入的结果.</p>
-<h2 id="八使用模型时还要考虑什么">八、使用模型时还要考虑什么</h2>
-<h3 id="优点与适用范围">8.1 优点与适用范围</h3>
-<p>AHP 能把复杂选择分为较容易说明理由的局部比较,
-使定性判断与定量计算结合. 判断矩阵记录了比较意见,
-一致性检验帮助发现不协调之处, 综合结果也便于讨论和复核.</p>
-<p>它适用于公共服务方案、校园资源配置、环境项目等多指标评价,
-但结论依赖评价目标、指标设计、专家判断和数据质量.</p>
-<h3 id="几个容易混淆的边界">8.2 几个容易混淆的边界</h3>
-<p><strong>一致性通过, 不等于模型正确.</strong> 评审意见即使协调,
-也可能遗漏重要指标或使用不可靠的数据.</p>
-<p><strong>准则权重, 不是无条件的客观事实.</strong>
-它反映特定目标下的判断; 不同需求或评审群体可能得到不同结果.</p>
-<p><strong>归一化, 不等于自动解决量表问题.</strong>
-必须先明确指标方向与计量含义;
-评分、概率、金额和次数不能不加说明地套用同一处理方法.</p>
-<p><strong>综合得分, 不能替代全部现实条件.</strong>
-若存在预算、质量底线或服务对象覆盖要求, 应先明确这些条件.
-对公益科普方案, 还应关注不同受益群体的实际需求与资源使用效率.</p>
-<p>当单层指标过多时, 成对比较次数迅速增加, 可根据问题结构设置子准则层.
-复杂依赖关系也可能需要其他评价方法辅助分析.</p>
-<h2 id="九练习与本章要点">九、练习与本章要点</h2>
-<h3 id="练习">9.1 练习</h3>
-<ol type="1">
-<li>对第 4.1 节的矩阵 <span class="math inline">\(B\)</span>,
-分别用三种方法计算权重, 并解释为什么结果相同.</li>
-<li>三项指标的比较为 <span
-class="math inline">\(a_{12}=3\)</span>、<span
-class="math inline">\(a_{23}=2\)</span>、<span
-class="math inline">\(a_{13}=1/2\)</span>. 补成正互反矩阵,
-指出不一致之处, 并讨论合理修订的依据.</li>
-<li>保持方案数据不变, 将服务覆盖权重减少 <span
-class="math inline">\(\delta\)</span>, 把同样的权重转给内容质量,
-其他两项不变. 求 A、C 得分相等时的 <span
-class="math inline">\(\delta\)</span>, 并解释这一临界值.</li>
-<li>以校园节水、图书馆服务或社区科普为主题, 设计三层评价结构.
-说明指标含义、比较理由与数据来源, 并报告权重、一致性与结果解释.</li>
-</ol>
-<h3 id="参考答案与提示">9.2 参考答案与提示</h3>
-<ol type="1">
-<li>三种权重均为 <span class="math inline">\((4/7,2/7,1/7)^{\mathsf
-T}\)</span>. 矩阵完全一致, <span
-class="math inline">\(\lambda_{\max}=3\)</span>, <span
-class="math inline">\(CI=CR=0\)</span>.</li>
-<li>由前两项比较, 完全一致时应有 <span
-class="math inline">\(a_{13}=3\times2=6\)</span>, 与 <span
-class="math inline">\(1/2\)</span> 不同. 真实修订仍需回顾比较依据,
-不能仅为满足公式就直接指定新判断.</li>
-<li>设初始权重为未舍入的特征向量法权重, 初始得分差为 <span
-class="math inline">\(D=S_A-S_C\)</span>, 则:</li>
-</ol>
+<p>该矩阵完全一致, 局部权重为</p>
 <p><span class="math display">\[
-D(\delta)=D+\delta\bigl[(z_{A3}-z_{C3})-(z_{A1}-z_{C1})\bigr].
+\boldsymbol p^{(1)}=\frac1{14900}(6000,3400,5500)^{\mathsf T},
 \]</span></p>
-<p>令 <span class="math inline">\(D(\delta)=0\)</span>, 得 <span
-class="math inline">\(\delta\approx0.194236\)</span>.
-此时服务覆盖权重约为 0.2992, 内容质量权重约为 0.4246, 其他两项不变.
-在该特定调整方向下, 超过临界值后, C 的得分高于 A;
-这不代表所有其他参数变化都具有同一临界值. 4.
-重点检查指标是否重复、量表是否适合所选评分方式、成对比较是否有依据,
-以及结论是否对参数变化敏感.</p>
-<h3 id="本章要点">9.3 本章要点</h3>
-<p>层次分析法的核心是分层、比较与综合. 先把问题组织成目标、准则和方案,
-再用正互反判断矩阵表达比较意见; 一致性可以接受后,
-计算权重并综合方案表现.</p>
-<p>真正有用的评价结果, 应当说明指标、数据、权重与适用条件,
-并经得起复核和讨论. 掌握公式之外, 更要学会把选择的理由说清楚.</p>
+<p>恰好等于比例归一化结果. 下面的程序核对这两条计算路径.</p>
+<p><strong>ahp_local.py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> ahp_weights <span class="keyword">import</span> ahp_weights</span><br><span class="line"></span><br><span class="line"><span class="comment"># Positive coverage data allow an exact ratio matrix.</span></span><br><span class="line">x = np.array([<span class="number">6000.</span>,<span class="number">3400.</span>,<span class="number">5500.</span>])</span><br><span class="line">P = x[:,<span class="literal">None</span>]/x[<span class="literal">None</span>,:]</span><br><span class="line">_,_,local_w,lam,ci,cr = ahp_weights(P)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Coverage ratio matrix:&#x27;</span>,P,sep=<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Local weights from AHP:&#x27;</span>,local_w)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Direct proportional scores:&#x27;</span>,x/x.<span class="built_in">sum</span>())</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;lambda, CI, CR:&#x27;</span>,lam,ci,cr)</span><br></pre></td></tr></table></figure>
+<p><strong>ahp_local.m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">x = [<span class="number">6000</span>,<span class="number">3400</span>,<span class="number">5500</span>].&#x27;;</span><br><span class="line">P = x./x.&#x27;;</span><br><span class="line">[~,~,localW,lambda,CI,CR] = ahp_weights(P);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Coverage ratio matrix:&#x27;</span>); <span class="built_in">disp</span>(P);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Local weights from AHP:&#x27;</span>); <span class="built_in">disp</span>(localW.&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Direct proportional scores:&#x27;</span>); <span class="built_in">disp</span>((x/sum(x)).&#x27;);</span><br><span class="line">fprintf(<span class="string">&#x27;lambda=%.8f, CI=%.8f, CR=%.8f\n&#x27;</span>,lambda,CI,CR);</span><br></pre></td></tr></table></figure>
+<p>完全一致时理论CR为0, 浮点输出可能是约 <span
+class="math inline">\(10^{-15}\)</span> 的微小正数. 这属于数值舍入,
+不应据此讨论新的判断矛盾. 正数测量数据的比值不一定落在1-9离散标度中,
+这与专家判断的标度选择是两回事. 便利或质量评分若只有等级含义,
+不能仅因数值为正就宣称适合这样的比率矩阵.</p>
+<h2 id="从计算结果回到实际选择">9 从计算结果回到实际选择</h2>
+<p>AHP能使评价目标, 比较意见和综合依据变得清楚,
+但判断协调并不意味着现实条件已经全部纳入. 若存在预算上限,
+内容质量底线或特定群体服务要求, 应先明确方案是否符合这些要求,
+再综合比较.</p>
+<p>报告评价结果时, 至少说明指标的含义与数据来源, 判断矩阵的依据,
+采用的求权重方法及RI表, 综合得分和敏感性. 准则权重表达特定目标下的判断,
+不应称为无条件的客观事实.</p>
+<p>本例的两类核对分别解决不同问题: 特征方程和一致矩阵帮助验证计算,
+调整权重帮助判断推荐结论是否依赖某种侧重点.
+两者都不能代替实际调研和对服务对象需求的了解.</p>
+<h2 id="练习">10 练习</h2>
+<ol type="1">
+<li>对第4.1节的一致矩阵 <span class="math inline">\(B\)</span>,
+用三种方法计算权重. 说明为什么它们相同, 并核对特征方程.</li>
+<li>已知 <span
+class="math inline">\(a_{12}=3,a_{23}=2,a_{13}=1/2\)</span>,
+补成正互反矩阵. 区分互反性与一致性, 并讨论修订需要哪些依据.</li>
+<li>不运行完整函数, 手算 <span class="math inline">\(A_1\)</span>
+第一行的算术平均权重和几何平均值. 比较这两种归一化步骤的先后顺序.</li>
+<li>推导A与C的敏感性临界值, 核对临界权重和三方案得分.
+为什么必须同时报告所选的权重变化方向?</li>
+<li>将服务覆盖由人次改为千人次, 检查局部得分和排序是否改变.
+再说明这一操作与新增候选方案的区别.</li>
+<li>比较本例指标归一化与正数比率矩阵求局部权重的结果. 数据中含零时,
+两条计算路径还能直接使用吗?</li>
+<li>以校园节水, 图书馆服务或社区科普为主题设计三层评价结构.
+记录比较理由与数据来源, 报告一致性, 权重和敏感性分析,
+并说明不能由模型单独决定的现实条件.</li>
+</ol>
 <h2 id="参考文献">参考文献</h2>
 <p>[1] SAATY T L. Decision making with the analytic hierarchy
 process[J]. International Journal of Services Sciences, 2008, 1(1):
-83–98. DOI: 10.1504/IJSSCI.2008.017590.</p>
+83-98. DOI: 10.1504/IJSSCI.2008.017590.</p>
 <p>[2] CANCO I, KRUJA D, IANCU T. AHP, a reliable method for quality
 decision making: A case study in business[J]. Sustainability, 2021,
 13(24): 13932. DOI: 10.3390/su132413932.</p>

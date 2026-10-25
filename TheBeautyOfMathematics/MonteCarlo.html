@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="第 5 章 蒙特卡罗法: 用随机抽样近似计算 上一章把正面朝上记为 1, 反面朝上记为 0, 用许多次试验的平均值观察概率规律. 如果把事件换成&quot;点落在某个区域内&quot;, 能否用相同的办法计算面积? 如果每个样本不再只贡献 0 或 1, 而是贡献一个函数值, 又能计算什么? 本章从随机投点出发, 先把几何量与概率联系起来, 再结合模拟结果解释误差, 随后把样本平均推广到积分计算. 章末用">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/TheBeautyOfMathematics/MonteCarlo.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="第 5 章 蒙特卡罗法: 用随机抽样近似计算 上一章把正面朝上记为 1, 反面朝上记为 0, 用许多次试验的平均值观察概率规律. 如果把事件换成&quot;点落在某个区域内&quot;, 能否用相同的办法计算面积? 如果每个样本不再只贡献 0 或 1, 而是贡献一个函数值, 又能计算什么? 本章从随机投点出发, 先把几何量与概率联系起来, 再结合模拟结果解释误差, 随后把样本平均推广到积分计算. 章末用">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/MonteCarlo/MC-1.png">
+<meta property="og:image" content="http://example.com/images/MonteCarlo/MC-2.png">
+<meta property="og:image" content="http://example.com/images/MonteCarlo/MC-3.png">
+<meta property="og:image" content="http://example.com/images/MonteCarlo/MC-4.png">
+<meta property="og:image" content="http://example.com/images/MonteCarlo/MC-5.png">
+<meta property="article:published_time" content="2026-10-25T02:33:59.711Z">
+<meta property="article:modified_time" content="2026-10-20T00:21:32.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/MonteCarlo/MC-1.png">
+
+
+<link rel="canonical" href="http://example.com/TheBeautyOfMathematics/MonteCarlo">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/TheBeautyOfMathematics/MonteCarlo.html","path":"TheBeautyOfMathematics/MonteCarlo.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-5-%E7%AB%A0-%E8%92%99%E7%89%B9%E5%8D%A1%E7%BD%97%E6%B3%95-%E7%94%A8%E9%9A%8F%E6%9C%BA%E6%8A%BD%E6%A0%B7%E8%BF%91%E4%BC%BC%E8%AE%A1%E7%AE%97"><span class="nav-number">1.</span> <span class="nav-text">第 5 章 蒙特卡罗法:
+用随机抽样近似计算</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA%E6%8A%95%E7%82%B9-%E6%80%8E%E6%A0%B7%E7%AE%97%E5%87%BA%E5%9C%86%E5%91%A8%E7%8E%87"><span class="nav-number">1.1.</span> <span class="nav-text">5.1 随机投点, 怎样算出圆周率</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E9%9D%A2%E7%A7%AF%E6%AF%94%E5%88%B0%E5%8F%AF%E8%AE%A1%E7%AE%97%E7%9A%84%E9%A2%91%E7%8E%87"><span class="nav-number">1.1.1.</span> <span class="nav-text">5.1.1 从面积比到可计算的频率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%8E%E6%A0%B7%E7%94%9F%E6%88%90%E7%82%B9-%E6%80%8E%E6%A0%B7%E5%88%A4%E6%96%AD%E4%BD%8D%E7%BD%AE"><span class="nav-number">1.1.2.</span> <span class="nav-text">5.1.2 怎样生成点, 怎样判断位置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E6%8A%95%E7%82%B9%E8%BF%87%E7%A8%8B%E5%86%99%E6%88%90%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.1.3.</span> <span class="nav-text">5.1.3 把投点过程写成程序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%99%E6%AC%A1%E5%BE%88%E6%8E%A5%E8%BF%91-%E6%98%AF%E5%90%A6%E8%AF%B4%E6%98%8E%E6%96%B9%E6%B3%95%E5%BE%88%E7%B2%BE%E7%A1%AE"><span class="nav-number">1.2.</span> <span class="nav-text">5.2 这次很接近,
+是否说明方法很精确</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%99%85%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%A0%87%E5%87%86%E8%AF%AF%E5%B7%AE"><span class="nav-number">1.2.1.</span> <span class="nav-text">5.2.1 实际误差与标准误差</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%A2%9E%E5%8A%A0%E6%A0%B7%E6%9C%AC%E5%90%8E%E8%AF%AF%E5%B7%AE%E5%8F%8D%E8%80%8C%E5%8F%AF%E8%83%BD%E5%8F%98%E5%A4%A7"><span class="nav-number">1.2.2.</span> <span class="nav-text">5.2.2
+为什么增加样本后误差反而可能变大</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8C%BA%E9%97%B4%E4%BC%B0%E8%AE%A1%E6%80%8E%E6%A0%B7%E7%90%86%E8%A7%A3-%E9%80%89%E8%AF%BB"><span class="nav-number">1.2.3.</span> <span class="nav-text">5.2.3 区间估计怎样理解 (选读)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E8%AE%A1%E7%AE%97%E6%AF%94%E4%BE%8B%E5%88%B0%E8%AE%A1%E7%AE%97%E7%A7%AF%E5%88%86"><span class="nav-number">1.3.</span> <span class="nav-text">5.3 从计算比例到计算积分</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AF%8F%E4%B8%AA%E6%A0%B7%E6%9C%AC%E5%8F%AF%E4%BB%A5%E8%B4%A1%E7%8C%AE%E4%B8%80%E4%B8%AA%E5%87%BD%E6%95%B0%E5%80%BC"><span class="nav-number">1.3.1.</span> <span class="nav-text">5.3.1
+每个样本可以贡献一个函数值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E4%B8%80%E4%B8%AA%E7%A7%AF%E5%88%86%E6%A3%80%E6%9F%A5%E8%AE%A1%E7%AE%97%E8%BF%87%E7%A8%8B"><span class="nav-number">1.3.2.</span> <span class="nav-text">5.3.2 用一个积分检查计算过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E6%A1%88%E4%BE%8B%E5%85%B1%E5%90%8C%E7%9A%84%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%84"><span class="nav-number">1.4.</span> <span class="nav-text">5.4 两个案例共同的计算结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E5%8F%AA%E5%A2%9E%E5%8A%A0%E6%A0%B7%E6%9C%AC%E9%87%8F-%E5%86%85%E5%AD%98%E4%B8%8E%E6%96%B9%E5%B7%AE%E7%9A%84%E6%94%B9%E8%BF%9B-%E9%80%89%E8%AF%BB"><span class="nav-number">1.5.</span> <span class="nav-text">5.5 不只增加样本量:
+内存与方差的改进 (选读)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%89%B9%E7%94%9F%E6%88%90-%E4%BB%8D%E7%84%B6%E6%8C%89%E6%80%BB%E6%AC%A1%E6%95%B0%E7%BB%9F%E8%AE%A1"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.5.1 分批生成, 仍然按总次数统计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%B2%E7%9F%A5%E6%9B%B4%E5%A4%9A%E7%BB%93%E6%9E%84-%E5%8F%AF%E4%BB%A5%E5%87%8F%E5%B0%91%E6%8A%BD%E6%A0%B7%E5%99%AA%E5%A3%B0"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.5.2 已知更多结构,
+可以减少抽样噪声</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%8E%E6%A0%B7%E5%88%A4%E6%96%AD%E6%A8%A1%E6%8B%9F%E7%BB%93%E6%9E%9C%E6%98%AF%E5%90%A6%E5%8F%AF%E4%BF%A1"><span class="nav-number">1.6.</span> <span class="nav-text">5.6 怎样判断模拟结果是否可信</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E8%AF%BB-%E4%B8%89%E7%9B%92%E5%AE%9E%E9%AA%8C%E4%B8%8E%E6%A8%A1%E6%8B%9F%E8%A7%84%E5%88%99"><span class="nav-number">1.7.</span> <span class="nav-text">5.7 选读: 三盒实验与模拟规则</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B9%E9%80%89%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%AF%E8%83%BD%E6%9B%B4%E6%9C%89%E5%88%A9"><span class="nav-number">1.7.1.</span> <span class="nav-text">5.7.1 改选为什么可能更有利</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E6%8B%9F%E8%A7%84%E5%88%99%E4%B8%8E%E6%A3%80%E6%9F%A5%E7%BB%93%E6%9E%9C"><span class="nav-number">1.7.2.</span> <span class="nav-text">5.7.2 模拟规则与检查结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A8%E6%89%8B%E6%94%B9%E5%8F%98%E6%9D%A1%E4%BB%B6"><span class="nav-number">1.8.</span> <span class="nav-text">5.8 动手改变条件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.9.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="第-5-章-蒙特卡罗法-用随机抽样近似计算">第 5 章 蒙特卡罗法:
+用随机抽样近似计算</h1>
+<p>上一章把正面朝上记为 1, 反面朝上记为 0,
+用许多次试验的平均值观察概率规律. 如果把事件换成"点落在某个区域内",
+能否用相同的办法计算面积? 如果每个样本不再只贡献 0 或 1,
+而是贡献一个函数值, 又能计算什么?</p>
+<p>本章从随机投点出发, 先把几何量与概率联系起来, 再结合模拟结果解释误差,
+随后把样本平均推广到积分计算. 章末用一个简短的三盒实验,
+检查模拟是否遵守所声明的概率规则. 这些计算共同采用一种思路:
+找到待求量与概率或期望的关系, 用符合模型的随机样本给出近似值.
+这一类方法称为蒙特卡罗法.</p>
+<h2 id="随机投点-怎样算出圆周率">5.1 随机投点, 怎样算出圆周率</h2>
+<h3 id="从面积比到可计算的频率">5.1.1 从面积比到可计算的频率</h3>
+<p>在边长为 2 的正方形中画一个半径为 1 的内切圆.
+在正方形内均匀随机选择一个点, 它落入圆内的概率等于两者的面积比:</p>
+<p><span class="math display">\[
+p=P(\text{点落在圆内})=\frac{\pi}{4}.
+\]</span></p>
+<p>现在独立投放 <span class="math inline">\(N\)</span> 个点,
+记其中落入圆内的点数为 <span class="math inline">\(K\)</span>.
+与上一章统计正面次数一样, 可以用 <span
+class="math inline">\(K/N\)</span> 估计概率 <span
+class="math inline">\(p\)</span>, 从而得到</p>
+<p><span class="math display">\[
+\widehat\pi_N=4\frac{K}{N}.
+\]</span></p>
+<p>这里等于面积比的是模型概率, 有限次投点得到的频率只是估计. 因此, <span
+class="math inline">\(\widehat\pi_N\)</span> 随样本变化,
+并不等于圆周率的精确值.</p>
+<p><img src="/images/MonteCarlo/MC-1.png" alt="" style="width: 100%;"></p>
+<p><strong>图 5-1 圆与包围正方形中的随机点.</strong> 左图为几何模型,
+右图展示 10000 个模拟点中的前 2000 个. 蓝色点落在圆内, 红色点落在圆外;
+点数统计使用全部 10000 个样本.</p>
+<h3 id="怎样生成点-怎样判断位置">5.1.2 怎样生成点, 怎样判断位置</h3>
+<p>把圆心设为 <span class="math inline">\((x_0,y_0)=(1,1)\)</span>,
+半径设为 <span class="math inline">\(r=1\)</span>. 先独立生成两个在
+<span class="math inline">\([0,1)\)</span> 上均匀分布的数 <span
+class="math inline">\(U,V\)</span>, 再令</p>
+<p><span class="math display">\[
+X=x_0-r+2rU,\qquad Y=y_0-r+2rV.
+\]</span></p>
+<p>这样得到的点在包围正方形</p>
+<p><span class="math display">\[
+[x_0-r,x_0+r]\times[y_0-r,y_0+r]
+\]</span></p>
+<p>内均匀分布. 不同点之间也按照独立抽样的模型生成.
+仅要求横纵坐标各自均匀还不够, 它们的独立性同样重要. 例如, 若强行令 <span
+class="math inline">\(V=U\)</span>, 所有点都会落在对角线上,
+就不能用它们估计整个正方形中的面积比例.</p>
+<p>判断点是否在圆内, 只需检查</p>
+<p><span class="math display">\[
+(X-x_0)^2+(Y-y_0)^2\leqslant r^2.
+\]</span></p>
+<p>比较距离的平方与半径的平方, 可以省去开平方运算. 理想连续模型中,
+点恰好落在圆周上的概率为 0,
+因而边界使用严格或非严格不等式不改变理论概率.</p>
+<h3 id="把投点过程写成程序">5.1.3 把投点过程写成程序</h3>
+<p>两种实现都完成生成样本, 判定命中和统计估计三个任务. Python 程序中,
+<code>sample_circle</code> 生成坐标并判定位置; <code>main</code>
+累加命中次数, 计算圆周率估计; <code>wilson_interval</code>
+计算比例的近似区间. MATLAB 程序把区间计算写成同一文件内的局部函数,
+无需额外的函数文件. 两种程序都报告标准误差和区间,
+它们的含义将在下一节结合结果解释.</p>
+<p><code>rng.random((count, 2))</code> 生成一个两列数组,
+每行对应一个点的两个基础随机数[2]. 平移和缩放以后, <code>points</code>
+保存横纵坐标. <code>(points-center)**2</code>
+计算相对圆心的两个坐标差的平方, <code>sum(..., axis=1)</code>
+沿每一行相加, 就对应距离平方公式.</p>
+<p><strong>Python 实现 (<code>pi_experiment.py</code>)</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">sample_circle</span>(<span class="params">count, seed, radius=<span class="number">1.0</span>, center=(<span class="params"><span class="number">1.0</span>, <span class="number">1.0</span></span>)</span>):</span><br><span class="line">    <span class="keyword">if</span> count &lt; <span class="number">1</span> <span class="keyword">or</span> radius &lt;= <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;样本量和半径必须为正&#x27;</span>)</span><br><span class="line">    rng = np.random.default_rng(seed)</span><br><span class="line">    center = np.array(center)</span><br><span class="line">    points = center - radius + <span class="number">2</span>*radius*rng.random((count, <span class="number">2</span>))</span><br><span class="line">    inside = np.<span class="built_in">sum</span>((points-center)**<span class="number">2</span>, axis=<span class="number">1</span>) &lt;= radius**<span class="number">2</span></span><br><span class="line">    <span class="keyword">return</span> points, inside</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">wilson_interval</span>(<span class="params">hits, count</span>):</span><br><span class="line">    z = <span class="number">1.959963984540054</span></span><br><span class="line">    p = hits/count</span><br><span class="line">    denominator = <span class="number">1</span> + z*z/count</span><br><span class="line">    center = (p + z*z/(<span class="number">2</span>*count))/denominator</span><br><span class="line">    half = z*np.sqrt(p*(<span class="number">1</span>-p)/count + z*z/(<span class="number">4</span>*count**<span class="number">2</span>))/denominator</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">max</span>(<span class="number">0.0</span>, center-half), <span class="built_in">min</span>(<span class="number">1.0</span>, center+half)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    count = <span class="number">10000</span></span><br><span class="line">    points, inside = sample_circle(count, seed=<span class="number">20261009</span>)</span><br><span class="line">    hits = <span class="built_in">int</span>(inside.<span class="built_in">sum</span>())</span><br><span class="line">    p = hits/count</span><br><span class="line">    estimate = <span class="number">4</span>*p</span><br><span class="line">    estimated_se = <span class="number">4</span>*np.sqrt(p*(<span class="number">1</span>-p)/count)</span><br><span class="line">    low, high = wilson_interval(hits, count)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;样本量: <span class="subst">&#123;count&#125;</span>; 圆内点数: <span class="subst">&#123;hits&#125;</span>&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;圆周率估计: <span class="subst">&#123;estimate:<span class="number">.6</span>f&#125;</span>&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;估计标准误差: <span class="subst">&#123;estimated_se:<span class="number">.6</span>f&#125;</span>&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;Wilson 近似 95% 区间: [<span class="subst">&#123;<span class="number">4</span>*low:<span class="number">.6</span>f&#125;</span>, <span class="subst">&#123;<span class="number">4</span>*high:<span class="number">.6</span>f&#125;</span>]&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;对照用绝对误差: <span class="subst">&#123;<span class="built_in">abs</span>(estimate-np.pi):<span class="number">.6</span>f&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB 实现 (<code>pi_experiment.m</code>)</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">pi_experiment</span></span></span><br><span class="line">N = <span class="number">10000</span>;</span><br><span class="line">r = <span class="number">1</span>;</span><br><span class="line">x0 = <span class="number">1</span>;</span><br><span class="line">y0 = <span class="number">1</span>;</span><br><span class="line">rng(<span class="number">20261009</span>,<span class="string">&#x27;twister&#x27;</span>);</span><br><span class="line"></span><br><span class="line">points = [x0-r,y0-r] + <span class="number">2</span>*r*<span class="built_in">rand</span>(<span class="number">2</span>,N).&#x27;;</span><br><span class="line">inside = sum((points-[x0,y0]).^<span class="number">2</span>,<span class="number">2</span>) &lt;= r^<span class="number">2</span>;</span><br><span class="line">K = sum(inside);</span><br><span class="line">phat = K/N;</span><br><span class="line">estimate = <span class="number">4</span>*phat;</span><br><span class="line">estimatedSE = <span class="number">4</span>*<span class="built_in">sqrt</span>(phat*(<span class="number">1</span>-phat)/N);</span><br><span class="line">[low,high] = local_wilson(K,N);</span><br><span class="line"></span><br><span class="line">fprintf(<span class="string">&#x27;样本量: %d; 圆内点数: %d\n&#x27;</span>,N,K);</span><br><span class="line">fprintf(<span class="string">&#x27;圆周率估计: %.6f\n&#x27;</span>,estimate);</span><br><span class="line">fprintf(<span class="string">&#x27;估计标准误差: %.6f\n&#x27;</span>,estimatedSE);</span><br><span class="line">fprintf(<span class="string">&#x27;Wilson 近似 95%% 区间: [%.6f, %.6f]\n&#x27;</span>,<span class="number">4</span>*low,<span class="number">4</span>*high);</span><br><span class="line">fprintf(<span class="string">&#x27;对照用绝对误差: %.6f\n&#x27;</span>,<span class="built_in">abs</span>(estimate-<span class="built_in">pi</span>));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[low,high]</span> = <span class="title">local_wilson</span><span class="params">(K,N)</span></span></span><br><span class="line">z = <span class="number">1.959963984540054</span>;</span><br><span class="line">phat = K/N;</span><br><span class="line">denominator = <span class="number">1</span>+z^<span class="number">2</span>/N;</span><br><span class="line">center = (phat+z^<span class="number">2</span>/(<span class="number">2</span>*N))/denominator;</span><br><span class="line">half = z*<span class="built_in">sqrt</span>(phat*(<span class="number">1</span>-phat)/N+z^<span class="number">2</span>/(<span class="number">4</span>*N^<span class="number">2</span>))/denominator;</span><br><span class="line">low = <span class="built_in">max</span>(<span class="number">0</span>,center-half);</span><br><span class="line">high = <span class="built_in">min</span>(<span class="number">1</span>,center+half);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>Python 的 <code>sum(..., axis=1)</code> 与 MATLAB 的
+<code>sum(...,2)</code> 都把每行的两个坐标分量相加. MATLAB 的
+<code>.^2</code> 表示逐元素平方, <code>rand(2,N).'</code>
+把连续的两个随机数组成一行坐标.</p>
+<p>布尔数组 <code>inside</code> 与点表逐行对应. 其中 <code>True</code>
+表示命中, <code>False</code> 表示未命中. 对它求和时分别按 1 与 0 累加,
+得到的 <code>hits</code> 就是公式中的 <span
+class="math inline">\(K\)</span>.</p>
+<p>两种语言使用相同的几何模型和统计公式, 但随机数生成器不同.
+相同的种子数值不保证相同的随机序列, 因而下表及正文中的随机模拟数值均以
+Python 实现为例. 对 MATLAB 实现应检查模型, 计数关系和误差尺度,
+而非要求逐项计数相同.</p>
+<p>本次 Python 模拟的结果如下:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">样本量 <span
+class="math inline">\(N\)</span></th>
+<th style="text-align: center;">圆内点数 <span
+class="math inline">\(K\)</span></th>
+<th style="text-align: center;">圆周率估计</th>
+<th style="text-align: center;">与圆周率的绝对差</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">10000</td>
+<td style="text-align: center;">7857</td>
+<td style="text-align: center;">3.142800</td>
+<td style="text-align: center;">0.001207</td>
+</tr>
+</tbody>
+</table>
+<p>圆周率的内置数值只用于结果对照, 没有参与样本的命中判断.
+改变种子或随机数生成顺序, 具体输出可能变化. 固定种子便于复现实验,
+不会使估计自动变得更准确.</p>
+<h2 id="这次很接近-是否说明方法很精确">5.2 这次很接近,
+是否说明方法很精确</h2>
+<h3 id="实际误差与标准误差">5.2.1 实际误差与标准误差</h3>
+<p>这次绝对误差约为 0.001207, 但不能据此认为投放 10000
+个点通常就能达到同样精度. 设第 <span class="math inline">\(i\)</span>
+个点的命中指示变量为 <span class="math inline">\(I_i\)</span>, 则</p>
+<p><span class="math display">\[
+\widehat\pi_N=\frac1N\sum\limits_{i=1}^{N}4I_i.
+\]</span></p>
+<p>由上一章独立 0-1 试验的方差公式,</p>
+<p><span class="math display">\[
+\operatorname{Var}(\widehat\pi_N)=\frac{16p(1-p)}{N},\qquad
+\operatorname{SE}(\widehat\pi_N)=4\sqrt{\frac{p(1-p)}{N}}.
+\]</span></p>
+<p>标准误差是估计量在重复抽样中的标准差.
+它衡量不同样本可能造成的波动尺度, 不等于这一次结果与真值的差.</p>
+<p>实际计算时, 可把未知的 <span class="math inline">\(p\)</span>
+换成命中频率 <span class="math inline">\(\widehat p=K/N\)</span>,
+得到估计标准误差. 本例为 0.016413, 明显大于这次恰好取得的绝对误差.
+这两个数字并不矛盾, 它们描述的是不同的量.</p>
+<h3 id="为什么增加样本后误差反而可能变大">5.2.2
+为什么增加样本后误差反而可能变大</h3>
+<p>沿同一条随机序列, 分别取前 100, 1000, 10000, 100000 和 1000000 个点,
+得到:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">样本量 <span
+class="math inline">\(N\)</span></th>
+<th style="text-align: center;">圆周率估计</th>
+<th style="text-align: center;">绝对误差</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">100</td>
+<td style="text-align: center;">3.000000</td>
+<td style="text-align: center;">0.141593</td>
+</tr>
+<tr>
+<td style="text-align: center;">1000</td>
+<td style="text-align: center;">3.052000</td>
+<td style="text-align: center;">0.089593</td>
+</tr>
+<tr>
+<td style="text-align: center;">10000</td>
+<td style="text-align: center;">3.142800</td>
+<td style="text-align: center;">0.001207</td>
+</tr>
+<tr>
+<td style="text-align: center;">100000</td>
+<td style="text-align: center;">3.147360</td>
+<td style="text-align: center;">0.005767</td>
+</tr>
+<tr>
+<td style="text-align: center;">1000000</td>
+<td style="text-align: center;">3.141548</td>
+<td style="text-align: center;">0.000045</td>
+</tr>
+</tbody>
+</table>
+<p>从 10000 个点增加到 100000 个点, 实际误差反而变大.
+这与第四章的硬币实验具有相同特点:
+长期稳定不表示沿某条路径每一步都更接近真值.</p>
+<p><img src="/images/MonteCarlo/MC-2.png" alt="" style="width: 100%;"></p>
+<p><strong>图 5-2 同一随机序列的圆周率估计.</strong> 横轴采用对数刻度.
+黑色虚线为圆周率, 蓝色折线为不同前缀样本量的估计. 阴影为真值附近正负
+1.96 倍理论标准误差的逐点参考范围, 不是整条路径的同时置信带.</p>
+<p>由于标准误差与 <span class="math inline">\(N^{-1/2}\)</span> 成正比,
+若希望这一尺度减半, 样本量需要增加到四倍; 若希望缩小到十分之一,
+需要增加到一百倍. 这解释了直接投点法提高精度较慢的原因.</p>
+<p>在本例中, 理论标准误差约为 <span class="math inline">\(1.64218/\sqrt
+N\)</span>. 如果希望正态近似区间的半宽约为 0.01, 可作样本量规划:</p>
+<p><span class="math display">\[
+N\approx\frac{1.96^2\times16p(1-p)}{0.01^2}
+\approx1.04\times10^5,\qquad p=\frac\pi4.
+\]</span></p>
+<p>这里使用已知几何量说明规划方法. 其他问题中可先用预试验估计概率,
+或利用 <span class="math inline">\(p(1-p)\leqslant1/4\)</span>
+作更保守的正态近似规划. 上述计算不保证每一次运行的绝对误差小于 0.01.</p>
+<h3 id="区间估计怎样理解-选读">5.2.3 区间估计怎样理解 (选读)</h3>
+<p>程序报告的 Wilson 比例区间, 先估计命中概率, 再把两个端点乘以 4,
+得到圆周率的区间估计. 设 <span
+class="math inline">\(z\approx1.959964\)</span>, 则比例区间为 <span
+class="math inline">\([c-h,c+h]\)</span>, 其中[1]</p>
+<p><span class="math display">\[
+c=\frac{\widehat p+z^2/(2N)}{1+z^2/N},\qquad
+h=\frac{z}{1+z^2/N}
+\sqrt{\frac{\widehat p(1-\widehat p)}{N}+\frac{z^2}{4N^2}}.
+\]</span></p>
+<p>代入本次计数, 圆周率的 Wilson 近似 95% 区间为</p>
+<p><span class="math display">\[
+[3.110195,\ 3.174528].
+\]</span></p>
+<p>置信水平描述重复抽样程序的覆盖性质.
+若反复独立抽样并按同一规则构造区间,
+区间覆盖真值的长期比例应接近所标称的水平. 对已经算出的区间,
+真值是否在其中是确定的事实. Wilson 区间也不是任意样本量下都严格具有 95%
+覆盖率的保证.</p>
+<p>与简单的对称正态近似比例区间相比, Wilson 方法在成功次数为 0 或 <span
+class="math inline">\(N\)</span> 时仍能给出非零宽度,
+且端点保持在概率范围内. 但合理的区间公式仍依赖正确的二项抽样模型.
+本章事先固定样本量; 根据不断查看结果而随时停止的规则,
+需要另行分析其覆盖性质.</p>
+<h2 id="从计算比例到计算积分">5.3 从计算比例到计算积分</h2>
+<h3 id="每个样本可以贡献一个函数值">5.3.1
+每个样本可以贡献一个函数值</h3>
+<p>投点实验用 0-1 变量记录事件. 现在考虑函数 <span
+class="math inline">\(f\)</span>: 不再问一个点是否命中,
+而是记录它对应的函数值.</p>
+<p>设 <span class="math inline">\(U\)</span> 在 <span
+class="math inline">\([a,b]\)</span> 上均匀分布, <span
+class="math inline">\(a&lt;b\)</span>, 且 <span
+class="math inline">\(f\)</span> 在该区间上绝对可积. 由于概率密度为
+<span class="math inline">\(1/(b-a)\)</span>,</p>
+<p><span class="math display">\[
+\mathbb E[f(U)]=\frac1{b-a}\int_a^b f(x)\,\mathrm d x.
+\]</span></p>
+<p>所以待求积分可写为</p>
+<p><span class="math display">\[
+I=\int_a^b f(x)\,\mathrm d x=(b-a)\mathbb E[f(U)].
+\]</span></p>
+<p>用 <span class="math inline">\(N\)</span> 个独立均匀样本近似这个期望,
+得到</p>
+<p><span class="math display">\[
+\widehat I_N=\frac{b-a}{N}\sum\limits_{i=1}^{N}f(U_i).
+\]</span></p>
+<p>这一公式不要求 <span class="math inline">\(f\)</span> 非负,
+也不需要额外生成纵坐标. 它直接对函数值求平均, 然后乘以区间长度.</p>
+<h3 id="用一个积分检查计算过程">5.3.2 用一个积分检查计算过程</h3>
+<p>考虑</p>
+<p><span class="math display">\[
+I=\int_0^1\mathrm e^{-x^2}\,\mathrm d x.
+\]</span></p>
+<p>由于区间长度为 1, 对独立的 <span
+class="math inline">\(U_i\sim\operatorname{Unif}(0,1)\)</span>,</p>
+<p><span class="math display">\[
+\widehat I_N=\frac1N\sum\limits_{i=1}^{N}\mathrm e^{-U_i^2}.
+\]</span></p>
+<p><img src="/images/MonteCarlo/MC-3.png" alt="" style="width: 100%;"></p>
+<p><strong>图 5-3 用函数值的平均估计积分.</strong>
+阴影为待求积分对应的面积. 绿色竖线表示 20 个示意抽样位置的函数值,
+正文数值计算使用 100000 个样本.</p>
+<p>程序中的 <code>samples</code> 是抽样位置, <code>values</code>
+是这些位置上的函数值. <code>estimate</code> 先求均值再乘区间长度.
+若函数值方差有限, 估计标准误差为</p>
+<p><span class="math display">\[
+\widehat{\operatorname{SE}}(\widehat I_N)
+=(b-a)\frac{s_f}{\sqrt N},
+\]</span></p>
+<p>其中 <span class="math inline">\(s_f\)</span> 是样本函数值的标准差.
+Python 的 <code>std(ddof=1)</code> 与 MATLAB 的
+<code>std(values,0)</code> 都使用 <span
+class="math inline">\(N-1\)</span> 作为样本方差的分母[2–3]. MATLAB 的
+<code>exp(-samples.^2)</code> 对每个样本分别计算函数值, <code>.^</code>
+不能改成矩阵乘方 <code>^</code>.</p>
+<p><strong>Python 实现
+(<code>integral_experiment.py</code>)</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> math</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">integrate_uniform</span>(<span class="params">count, seed, a=<span class="number">0.0</span>, b=<span class="number">1.0</span></span>):</span><br><span class="line">    <span class="keyword">if</span> count &lt; <span class="number">2</span> <span class="keyword">or</span> b &lt;= a:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;样本量至少为 2, 且上限必须大于下限&#x27;</span>)</span><br><span class="line">    rng = np.random.default_rng(seed)</span><br><span class="line">    samples = a+(b-a)*rng.random(count)</span><br><span class="line">    values = np.exp(-samples**<span class="number">2</span>)</span><br><span class="line">    estimate = (b-a)*values.mean()</span><br><span class="line">    se = (b-a)*values.std(ddof=<span class="number">1</span>)/np.sqrt(count)</span><br><span class="line">    <span class="keyword">return</span> estimate, se</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    estimate, se = integrate_uniform(<span class="number">100000</span>, seed=<span class="number">20261009</span>)</span><br><span class="line">    reference = math.sqrt(math.pi)*math.erf(<span class="number">1</span>)/<span class="number">2</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;积分估计: <span class="subst">&#123;estimate:<span class="number">.9</span>f&#125;</span>&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;估计标准误差: <span class="subst">&#123;se:<span class="number">.9</span>f&#125;</span>&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;大样本近似 95% 区间: [<span class="subst">&#123;estimate-<span class="number">1.96</span>*se:<span class="number">.9</span>f&#125;</span>, <span class="subst">&#123;estimate+<span class="number">1.96</span>*se:<span class="number">.9</span>f&#125;</span>]&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;解析对照值: <span class="subst">&#123;reference:<span class="number">.9</span>f&#125;</span>&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;绝对误差: <span class="subst">&#123;<span class="built_in">abs</span>(estimate-reference):<span class="number">.9</span>f&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB 实现 (<code>integral_experiment.m</code>)</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">integral_experiment</span></span></span><br><span class="line">N = <span class="number">100000</span>;</span><br><span class="line">a = <span class="number">0</span>;</span><br><span class="line">b = <span class="number">1</span>;</span><br><span class="line">rng(<span class="number">20261009</span>,<span class="string">&#x27;twister&#x27;</span>);</span><br><span class="line"></span><br><span class="line">samples = a+(b-a)*<span class="built_in">rand</span>(N,<span class="number">1</span>);</span><br><span class="line">values = <span class="built_in">exp</span>(-samples.^<span class="number">2</span>);</span><br><span class="line">estimate = (b-a)*<span class="built_in">mean</span>(values);</span><br><span class="line">se = (b-a)*std(values,<span class="number">0</span>)/<span class="built_in">sqrt</span>(N);</span><br><span class="line">interval = estimate+[<span class="number">-1</span>,<span class="number">1</span>]*<span class="number">1.96</span>*se;</span><br><span class="line">reference = <span class="built_in">sqrt</span>(<span class="built_in">pi</span>)*(<span class="built_in">erf</span>(b)-<span class="built_in">erf</span>(a))/<span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">fprintf(<span class="string">&#x27;积分估计: %.9f\n&#x27;</span>,estimate);</span><br><span class="line">fprintf(<span class="string">&#x27;估计标准误差: %.9f\n&#x27;</span>,se);</span><br><span class="line">fprintf(<span class="string">&#x27;大样本近似 95%% 区间: [%.9f, %.9f]\n&#x27;</span>,interval(<span class="number">1</span>),interval(<span class="number">2</span>));</span><br><span class="line">fprintf(<span class="string">&#x27;解析对照值: %.9f\n&#x27;</span>,reference);</span><br><span class="line">fprintf(<span class="string">&#x27;绝对误差: %.9f\n&#x27;</span>,<span class="built_in">abs</span>(estimate-reference));</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>误差函数定义为</p>
+<p><span class="math display">\[
+\operatorname{erf}(t)=\frac2{\sqrt\pi}\int_0^t\mathrm e^{-u^2}\,\mathrm
+d u,
+\]</span></p>
+<p>所以本例的解析对照关系为 <span
+class="math inline">\(I=\sqrt\pi\operatorname{erf}(1)/2\)</span>.
+对照值不参与样本平均, 只用于检查结果.</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">积分估计</th>
+<th style="text-align: center;">估计标准误差</th>
+<th style="text-align: center;">大样本近似 95% 区间</th>
+<th style="text-align: center;">解析对照值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0.746030081</td>
+<td style="text-align: center;">0.000635508</td>
+<td style="text-align: center;"><span
+class="math inline">\([0.744784486,\ 0.747275676]\)</span></td>
+<td style="text-align: center;">0.746824133</td>
+</tr>
+</tbody>
+</table>
+<p>本次绝对误差约为 0.000794052. 大样本区间使用样本均值的正态近似,
+需要独立同分布, 有限方差以及足够的样本量等条件. 它与前面的二项比例
+Wilson 区间属于不同的构造.</p>
+<p>对于这样的一维光滑积分, 常规数值积分通常更有效率. 这里采用蒙特卡罗法,
+是为了理解把积分转为期望的办法. 在高维或复杂区域中, 这种转换可能更有用,
+但前提仍是能够按所需分布抽样.</p>
+<p>例如, 若 <span class="math inline">\(0&lt;|D|&lt;\infty\)</span>,
+<span class="math inline">\(U\)</span> 在区域 <span
+class="math inline">\(D\)</span> 内均匀分布, 且 <span
+class="math inline">\(f\)</span> 绝对可积, 则</p>
+<p><span class="math display">\[
+\int_D f(\boldsymbol x)\,\mathrm d\boldsymbol x=|D|\mathbb
+E[f(U)],\qquad
+\boldsymbol x=(x_1,\ldots,x_d)^{\mathsf T}.
+\]</span></p>
+<p>抽样不均匀时, 不能继续把区域体积直接乘以未加权的函数均值.</p>
+<h2 id="两个案例共同的计算结构">5.4 两个案例共同的计算结构</h2>
+<p>回看前面的程序, 抽样对象虽然不同, 每次试验最终都产生一个数值贡献,
+然后对这些贡献求平均:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">待求量</th>
+<th style="text-align: center;">单次样本贡献 <span
+class="math inline">\(Z\)</span></th>
+<th style="text-align: center;">样本平均估计</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">圆周率</td>
+<td style="text-align: center;"><span
+class="math inline">\(4\mathbf1_{\{\text{命中圆}\}}\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(4K/N\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">区间上的积分</td>
+<td style="text-align: center;"><span
+class="math inline">\((b-a)f(U)\)</span></td>
+<td style="text-align: center;">区间长度乘函数值均值</td>
+</tr>
+</tbody>
+</table>
+<p>表中 <span class="math inline">\(\mathbf1\)</span> 是指示变量,
+事件发生取 1, 否则取 0. 计算一般事件的概率,
+同样可以把它的指示变量作为单次贡献.</p>
+<p>一般地, 若 <span class="math inline">\(Z_1,\ldots,Z_N\)</span>
+独立同分布, 且 <span class="math inline">\(\mathbb
+E|Z_1|&lt;\infty\)</span>, 则</p>
+<p><span class="math display">\[
+\widehat\mu_N=\frac1N\sum\limits_{i=1}^{N}Z_i
+\xrightarrow[N\to\infty]{\mathbb P}\mu=\mathbb E[Z_1].
+\]</span></p>
+<p>这就是样本平均能够近似期望的依据. 同时 <span
+class="math inline">\(\mathbb E[\widehat\mu_N]=\mu\)</span>,
+因而该估计是无偏的. 无偏指期望等于真值, 不表示每次误差为零.</p>
+<p>若进一步有 <span
+class="math inline">\(\operatorname{Var}(Z_1)=\sigma^2&lt;\infty\)</span>,
+则</p>
+<p><span class="math display">\[
+\operatorname{SE}(\widehat\mu_N)=\frac\sigma{\sqrt N}.
+\]</span></p>
+<p>当 <span class="math inline">\(N\geqslant2\)</span>, 用样本标准差
+<span class="math inline">\(s\)</span> 代替 <span
+class="math inline">\(\sigma\)</span>, 得到 <span
+class="math inline">\(s/\sqrt N\)</span>.
+有相关性的样本或无限方差的情形, 不能直接沿用这个误差公式.</p>
+<p>因此, 设计一个新的蒙特卡罗程序时, 首先要写出"待求量等于哪个期望",
+再确定如何抽样和计算贡献. 随意生成一批数并求平均,
+不会自动得到原问题的答案.</p>
+<h2 id="不只增加样本量-内存与方差的改进-选读">5.5 不只增加样本量:
+内存与方差的改进 (选读)</h2>
+<h3 id="分批生成-仍然按总次数统计">5.5.1 分批生成, 仍然按总次数统计</h3>
+<p>如果只需要投点命中数, 可以每次生成一批点, 累加计数后释放这批数据.
+这样峰值内存由每批大小决定, 不需要一直保存全部点.</p>
+<p>下面程序的 <code>processed</code> 记录已经处理的点数.
+最后一批可能不足设定大小, 因而使用总量与已处理量之差确定本批数量.</p>
+<p><strong>Python 实现 (<code>pi_batch.py</code>)</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">count_circle_hits</span>(<span class="params">count, batch_size, seed</span>):</span><br><span class="line">    <span class="keyword">if</span> count &lt; <span class="number">1</span> <span class="keyword">or</span> batch_size &lt; <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;总样本量和每批样本量必须为正&#x27;</span>)</span><br><span class="line">    rng = np.random.default_rng(seed)</span><br><span class="line">    total_hits = <span class="number">0</span></span><br><span class="line">    processed = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> processed &lt; count:</span><br><span class="line">        size = <span class="built_in">min</span>(batch_size, count-processed)</span><br><span class="line">        points = <span class="number">2</span>*rng.random((size, <span class="number">2</span>))</span><br><span class="line">        inside = np.<span class="built_in">sum</span>((points-<span class="number">1.0</span>)**<span class="number">2</span>, axis=<span class="number">1</span>) &lt;= <span class="number">1.0</span></span><br><span class="line">        total_hits += <span class="built_in">int</span>(inside.<span class="built_in">sum</span>())</span><br><span class="line">        processed += size</span><br><span class="line">    <span class="keyword">return</span> total_hits, processed</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    hits, processed = count_circle_hits(<span class="number">1000000</span>, <span class="number">100000</span>, <span class="number">20261009</span>)</span><br><span class="line">    p = hits/processed</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;实际样本数: <span class="subst">&#123;processed&#125;</span>; 圆内点数: <span class="subst">&#123;hits&#125;</span>&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;圆周率估计: <span class="subst">&#123;<span class="number">4</span>*p:<span class="number">.6</span>f&#125;</span>&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;估计标准误差: <span class="subst">&#123;<span class="number">4</span>*np.sqrt(p*(<span class="number">1</span>-p)/processed):<span class="number">.6</span>f&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB 实现 (<code>pi_batch.m</code>)</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">pi_batch</span></span></span><br><span class="line">N = <span class="number">1000000</span>;</span><br><span class="line">batchSize = <span class="number">100000</span>;</span><br><span class="line">rng(<span class="number">20261009</span>,<span class="string">&#x27;twister&#x27;</span>);</span><br><span class="line">processed = <span class="number">0</span>;</span><br><span class="line">totalHits = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> processed &lt; N</span><br><span class="line">    sizeNow = <span class="built_in">min</span>(batchSize,N-processed);</span><br><span class="line">    points = <span class="number">2</span>*<span class="built_in">rand</span>(<span class="number">2</span>,sizeNow).&#x27;;</span><br><span class="line">    inside = sum((points<span class="number">-1</span>).^<span class="number">2</span>,<span class="number">2</span>) &lt;= <span class="number">1</span>;</span><br><span class="line">    totalHits = totalHits+sum(inside);</span><br><span class="line">    processed = processed+sizeNow;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">assert(processed == N);</span><br><span class="line">phat = totalHits/processed;</span><br><span class="line">estimate = <span class="number">4</span>*phat;</span><br><span class="line">se = <span class="number">4</span>*<span class="built_in">sqrt</span>(phat*(<span class="number">1</span>-phat)/processed);</span><br><span class="line">fprintf(<span class="string">&#x27;实际样本数: %d; 圆内点数: %d\n&#x27;</span>,processed,totalHits);</span><br><span class="line">fprintf(<span class="string">&#x27;圆周率估计: %.6f\n&#x27;</span>,estimate);</span><br><span class="line">fprintf(<span class="string">&#x27;估计标准误差: %.6f\n&#x27;</span>,se);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>本次处理 1000000 个点, 命中 785387 次, 圆周率估计为 3.141548.
+各批大小不同时, 应当用总命中次数除以总样本量,
+不能不加权地平均各批频率.</p>
+<p>本例保持每个点的两个随机数顺序不变, 因而在同一生成器和种子下,
+分批与一次性生成可以得到相同计数.
+这不是所有随机算法改变分批方式后都能逐项复现的保证.
+并行抽样还需合理安排随机子流,
+不能让各任务从相同状态反复生成重复样本.</p>
+<h3 id="已知更多结构-可以减少抽样噪声">5.5.2 已知更多结构,
+可以减少抽样噪声</h3>
+<p>在第一象限单位正方形内, 圆边界为 <span
+class="math inline">\(v=\sqrt{1-u^2}\)</span>. 给定横坐标 <span
+class="math inline">\(u\)</span>, 圆内的纵向比例已经确定,
+不必再随机生成纵坐标来判断命中. 因为</p>
+<p><span class="math display">\[
+\pi=4\int_0^1\sqrt{1-u^2}\,\mathrm d u
+=4\mathbb E[\sqrt{1-U^2}],
+\]</span></p>
+<p>可以用</p>
+<p><span class="math display">\[
+\widetilde\pi_N=\frac4N\sum\limits_{i=1}^{N}\sqrt{1-U_i^2}
+\]</span></p>
+<p>估计同一个圆周率. 若 <span class="math inline">\(U,V\)</span>
+独立且均匀分布于 <span class="math inline">\([0,1]\)</span>, 则</p>
+<p><span class="math display">\[
+\mathbb E[4\mathbf1_{\{U^2+V^2\leqslant1\}}\mid U]
+=4\sqrt{1-U^2}.
+\]</span></p>
+<p>这一步用给定横坐标时的条件平均, 代替原来随机取 0 或 4 的贡献.
+由全方差公式, 条件平均的方差不大于原变量的方差.
+本例去掉了纵坐标抽样带来的一部分波动.</p>
+<p><img src="/images/MonteCarlo/MC-4.png" alt="" style="width: 100%;"></p>
+<p><strong>图 5-4 利用圆边界降低方差.</strong> 左图横坐标为 0.6 时,
+圆内纵向长度为 0.8. 右图比较两种单样本贡献的理论方差,
+不表示某次计算的实际误差.</p>
+<p>两种单样本贡献的方差为</p>
+<p><span class="math display">\[
+\begin{aligned}
+\operatorname{Var}(4\mathbf1_{\{U^2+V^2\leqslant1\}})
+&amp;=16\frac\pi4\left(1-\frac\pi4\right)\approx2.696766,\\
+\operatorname{Var}(4\sqrt{1-U^2})
+&amp;=16\left(\int_0^1(1-u^2)\,\mathrm d
+u-\left(\frac\pi4\right)^2\right)\\
+&amp;=\frac{32}{3}-\pi^2\approx0.797062.
+\end{aligned}
+\]</span></p>
+<p>因此, 相同样本量下, 后者的理论标准误差约为前者的 54.4%.
+下面用同一批横坐标进行比较:</p>
+<p><strong>Python 实现 (<code>variance_reduction.py</code>)</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">compare_estimators</span>(<span class="params">count, seed</span>):</span><br><span class="line">    rng = np.random.default_rng(seed)</span><br><span class="line">    u = rng.random(count)</span><br><span class="line">    v = rng.random(count)</span><br><span class="line">    hit_values = <span class="number">4.0</span>*(u*u+v*v &lt;= <span class="number">1.0</span>)</span><br><span class="line">    smooth_values = <span class="number">4</span>*np.sqrt(<span class="number">1</span>-u*u)</span><br><span class="line">    <span class="keyword">return</span> hit_values, smooth_values</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    hit_values, smooth_values = compare_estimators(<span class="number">100000</span>, <span class="number">20261009</span>)</span><br><span class="line">    <span class="keyword">for</span> name, values <span class="keyword">in</span> [(<span class="string">&#x27;随机投点&#x27;</span>, hit_values), (<span class="string">&#x27;边界函数均值&#x27;</span>, smooth_values)]:</span><br><span class="line">        estimate = values.mean()</span><br><span class="line">        se = values.std(ddof=<span class="number">1</span>)/np.sqrt(<span class="built_in">len</span>(values))</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&#x27;<span class="subst">&#123;name&#125;</span>: 估计 <span class="subst">&#123;estimate:<span class="number">.9</span>f&#125;</span>; 估计标准误差 <span class="subst">&#123;se:<span class="number">.9</span>f&#125;</span>&#x27;</span>)</span><br><span class="line">    var_hit = <span class="number">16</span>*(np.pi/<span class="number">4</span>)*(<span class="number">1</span>-np.pi/<span class="number">4</span>)</span><br><span class="line">    var_smooth = <span class="number">32</span>/<span class="number">3</span>-np.pi**<span class="number">2</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;理论单样本方差: <span class="subst">&#123;var_hit:<span class="number">.6</span>f&#125;</span>, <span class="subst">&#123;var_smooth:<span class="number">.6</span>f&#125;</span>&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;理论标准误差比: <span class="subst">&#123;np.sqrt(var_smooth/var_hit):<span class="number">.6</span>f&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB 实现 (<code>variance_reduction.m</code>)</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">variance_reduction</span></span></span><br><span class="line">N = <span class="number">100000</span>;</span><br><span class="line">rng(<span class="number">20261009</span>,<span class="string">&#x27;twister&#x27;</span>);</span><br><span class="line">u = <span class="built_in">rand</span>(N,<span class="number">1</span>);</span><br><span class="line">v = <span class="built_in">rand</span>(N,<span class="number">1</span>);</span><br><span class="line">hitValues = <span class="number">4</span>*(u.^<span class="number">2</span>+v.^<span class="number">2</span> &lt;= <span class="number">1</span>);</span><br><span class="line">smoothValues = <span class="number">4</span>*<span class="built_in">sqrt</span>(<span class="number">1</span>-u.^<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">fprintf(<span class="string">&#x27;随机投点: 估计 %.9f; 估计标准误差 %.9f\n&#x27;</span>, ...</span><br><span class="line">    <span class="built_in">mean</span>(hitValues),std(hitValues,<span class="number">0</span>)/<span class="built_in">sqrt</span>(N));</span><br><span class="line">fprintf(<span class="string">&#x27;边界函数均值: 估计 %.9f; 估计标准误差 %.9f\n&#x27;</span>, ...</span><br><span class="line">    <span class="built_in">mean</span>(smoothValues),std(smoothValues,<span class="number">0</span>)/<span class="built_in">sqrt</span>(N));</span><br><span class="line"></span><br><span class="line">varHit = <span class="number">16</span>*(<span class="built_in">pi</span>/<span class="number">4</span>)*(<span class="number">1</span>-<span class="built_in">pi</span>/<span class="number">4</span>);</span><br><span class="line">varSmooth = <span class="number">32</span>/<span class="number">3</span>-<span class="built_in">pi</span>^<span class="number">2</span>;</span><br><span class="line">fprintf(<span class="string">&#x27;理论单样本方差: %.6f, %.6f\n&#x27;</span>,varHit,varSmooth);</span><br><span class="line">fprintf(<span class="string">&#x27;理论标准误差比: %.6f\n&#x27;</span>,<span class="built_in">sqrt</span>(varSmooth/varHit));</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>MATLAB 的 <code>.*</code> 和 <code>.^</code>
+分别表示逐元素相乘与乘方. 两种程序都对单样本贡献求均值,
+再用样本标准差除以样本量的平方根, 因而对应同一组估计公式.</p>
+<p>本次 Python 运行的两种估计分别为 3.135560000 和 3.138725547,
+估计标准误差分别约为 0.005206276 和 0.002824131.
+降低的是重复抽样中的波动尺度, 不保证每次都更接近真值. 若比较实际效率,
+还要计入生成随机数和计算函数值的耗时.</p>
+<p>分层抽样, 重要性抽样, 控制变量和对偶变量也是降低方差的思路.
+它们都需要利用问题结构. 改变抽样分布后, 往往还要改变权重,
+不能直接保留均匀抽样的平均公式.</p>
+<h2 id="怎样判断模拟结果是否可信">5.6 怎样判断模拟结果是否可信</h2>
+<p>首先检查模型对应关系. 投点是否在整个正方形内均匀分布?
+积分样本是否来自所声明的区间? 抽样机制错误时,
+增加次数可能只会使估计更稳定地接近另一个问题的答案.</p>
+<p>其次检查统计对象. 命中数必须在 0 与样本量之间,
+互斥且完整的类别计数之和应等于总次数. 条件频率使用条件子样本作分母.
+输入分布也应来自题设, 数据或明确假设; 随意给参数加均匀扰动,
+只能描述这一人为设定下的输出变化.</p>
+<p>再检查误差. 有解析对照时, 可以比较多次独立运行的均值,
+标准差或均方根误差. 没有解析值时, 也应报告样本量和适当的不确定性指标.
+标准误差不是每次误差的上限, 一次漂亮结果也不能代表通常精度.</p>
+<p>对于罕见事件, 零次发生尤其容易被误读. 在独立同概率的二项模型中,</p>
+<p><span class="math display">\[
+P(K=0)=(1-p)^N.
+\]</span></p>
+<p>观测到 <span class="math inline">\(N\)</span> 次均未发生时, 由 <span
+class="math inline">\((1-p_{\mathrm{upper}})^N=0.05\)</span> 可得单侧
+95% 上置信限</p>
+<p><span class="math display">\[
+p_{\mathrm{upper}}=1-0.05^{1/N}\approx\frac3N.
+\]</span></p>
+<p>例如 <span class="math inline">\(N=1000\)</span> 时约为 0.002991.
+零计数不等于零概率, 也不能据此断言事件不可能发生.</p>
+<p>最后区分估计与最优化. 随机生成很多方案并选出最好的一组,
+只得到已抽到的方案中最好的结果, 不能自动证明全局最优.
+本章讨论的核心是概率和期望的估计,
+后面的优化章节将进一步讨论可行性与最优性.</p>
+<p>独立有限方差模型的 <span class="math inline">\(N^{-1/2}\)</span>
+误差指数不直接随维数变化, 但方差,
+抽样难度和单次计算成本可能随维数显著增加. 因此,
+蒙特卡罗法的适用性仍需结合具体模型判断.</p>
+<h2 id="选读-三盒实验与模拟规则">5.7 选读: 三盒实验与模拟规则</h2>
+<h3 id="改选为什么可能更有利">5.7.1 改选为什么可能更有利</h3>
+<p>准备三只编号为 1, 2, 3 的不透明盒子, 只有一只装有说明卡.
+学生先选一只, 老师打开另一只空盒, 再允许学生坚持原选择或改选剩余未开盒.
+这个实验与经典三门问题具有相同的概率结构.</p>
+<p>实验规定: 卡等概率放入三盒之一; 初选与卡的位置独立; 老师知道卡在哪里,
+每次都打开一只未被学生选择的空盒, 并且每次都允许改选.
+有两只合法空盒可开时, 程序等概率选择其中一只.</p>
+<p>固定初选盒 1, 三种等可能状态如下:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">卡的位置</th>
+<th style="text-align: center;">老师可打开的盒子</th>
+<th style="text-align: center;">坚持原选择</th>
+<th style="text-align: center;">改选剩余盒</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">盒 1</td>
+<td style="text-align: center;">盒 2 或盒 3</td>
+<td style="text-align: center;">成功</td>
+<td style="text-align: center;">失败</td>
+</tr>
+<tr>
+<td style="text-align: center;">盒 2</td>
+<td style="text-align: center;">盒 3</td>
+<td style="text-align: center;">失败</td>
+<td style="text-align: center;">成功</td>
+</tr>
+<tr>
+<td style="text-align: center;">盒 3</td>
+<td style="text-align: center;">盒 2</td>
+<td style="text-align: center;">失败</td>
+<td style="text-align: center;">成功</td>
+</tr>
+</tbody>
+</table>
+<p>坚持成功等价于初选正确, 改选成功等价于初选错误. 因而</p>
+<p><span class="math display">\[
+P(\text{始终坚持成功})=\frac13,\qquad
+P(\text{始终改选成功})=\frac23.
+\]</span></p>
+<p><img src="/images/MonteCarlo/MC-5.png" alt="" style="width: 100%;"></p>
+<p><strong>图 5-5 初选盒 1 时的三种状态.</strong> 蓝色边框表示初选盒,
+灰色表示老师打开的空盒. 第一行以打开盒 3 为例, 打开盒 2 也符合规则.
+图中展示卡的位置供分析, 学生初选时并不知道该位置.</p>
+<p>剩下两只未开盒, 并不意味着它们等可能.
+老师展示空盒的过程利用了卡的位置, 需要把这一规则写进模型.</p>
+<h3 id="模拟规则与检查结果">5.7.2 模拟规则与检查结果</h3>
+<p>下面两种实现均先产生卡的位置与初选, 再筛选老师可以打开的盒子.
+<code>eligible</code> 排除有卡盒和初选盒, 只从合法候选中随机选择.
+三个编号之和为 6, 减去初选盒与打开盒, 就得到改选盒.</p>
+<p><strong>Python 实现 (<code>boxes_experiment.py</code>)</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">simulate_boxes</span>(<span class="params">count, seed</span>):</span><br><span class="line">    rng = np.random.default_rng(seed)</span><br><span class="line">    target = rng.integers(<span class="number">1</span>, <span class="number">4</span>, size=count)</span><br><span class="line">    initial = rng.integers(<span class="number">1</span>, <span class="number">4</span>, size=count)</span><br><span class="line">    opened = np.empty(count, dtype=<span class="built_in">int</span>)</span><br><span class="line">    boxes = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(count):</span><br><span class="line">        eligible = boxes[(boxes != target[i]) &amp; (boxes != initial[i])]</span><br><span class="line">        opened[i] = rng.choice(eligible)</span><br><span class="line">    switched = <span class="number">6</span>-initial-opened</span><br><span class="line">    <span class="keyword">return</span> target, initial, opened, switched</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    target, initial, opened, switched = simulate_boxes(<span class="number">100000</span>, <span class="number">20261009</span>)</span><br><span class="line">    stay_success = initial == target</span><br><span class="line">    switch_success = switched == target</span><br><span class="line">    <span class="keyword">assert</span> np.<span class="built_in">all</span>((opened != target) &amp; (opened != initial))</span><br><span class="line">    <span class="keyword">assert</span> np.<span class="built_in">all</span>(stay_success ^ switch_success)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;始终坚持的成功率估计: <span class="subst">&#123;stay_success.mean():<span class="number">.6</span>f&#125;</span>&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;始终改选的成功率估计: <span class="subst">&#123;switch_success.mean():<span class="number">.6</span>f&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB 实现 (<code>boxes_experiment.m</code>)</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">boxes_experiment</span></span></span><br><span class="line">N = <span class="number">100000</span>;</span><br><span class="line">rng(<span class="number">20261009</span>,<span class="string">&#x27;twister&#x27;</span>);</span><br><span class="line">target = randi([<span class="number">1</span>,<span class="number">3</span>],N,<span class="number">1</span>);</span><br><span class="line">initial = randi([<span class="number">1</span>,<span class="number">3</span>],N,<span class="number">1</span>);</span><br><span class="line">opened = <span class="built_in">zeros</span>(N,<span class="number">1</span>);</span><br><span class="line">boxes = <span class="number">1</span>:<span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:N</span><br><span class="line">    eligible = boxes(boxes ~= target(<span class="built_in">i</span>) &amp; boxes ~= initial(<span class="built_in">i</span>));</span><br><span class="line">    opened(<span class="built_in">i</span>) = eligible(randi(<span class="built_in">numel</span>(eligible)));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">switched = <span class="number">6</span>-initial-opened;</span><br><span class="line">staySuccess = initial == target;</span><br><span class="line">switchSuccess = switched == target;</span><br><span class="line">assert(all(opened ~= target &amp; opened ~= initial));</span><br><span class="line">assert(all(xor(staySuccess,switchSuccess)));</span><br><span class="line">fprintf(<span class="string">&#x27;始终坚持的成功率估计: %.6f\n&#x27;</span>,<span class="built_in">mean</span>(staySuccess));</span><br><span class="line">fprintf(<span class="string">&#x27;始终改选的成功率估计: %.6f\n&#x27;</span>,<span class="built_in">mean</span>(switchSuccess));</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>Python 示例中, 坚持与改选的成功频率分别为 0.334740 和 0.665260.
+每次试验恰有一种固定策略成功, 所以两个频率之和严格为 1.
+两种语言中的断言还检查老师是否打开了禁开的盒子,
+以及两种策略的成功事件是否互补.</p>
+<p>这个实验的作用是检查概率模型与抽样过程的对应关系.
+老师的知识或开盒规则改变时, 应重新分析模型,
+不能只替换一行代码后沿用原结论. 增加模拟次数能够降低抽样误差,
+却不能把错误的试验机制变成正确的机制.</p>
+<h2 id="动手改变条件">5.8 动手改变条件</h2>
+<ol type="1">
+<li>把投点程序的圆心改为 <span class="math inline">\((3,-2)\)</span>,
+半径改为 2. 说明包围正方形应如何变化, 圆周率估计公式是否变化.
+恢复原例的圆心和半径, 再令两个坐标相等,
+观察为什么仅有均匀边缘分布仍不够.</li>
+<li>面积为 12 的矩形中均匀独立投放 20000 个点, 其中 7500
+个落入一块不规则区域. 估计该区域面积及标准误差. 数据是教学设定,
+不代表实地测量.</li>
+<li>若希望投点估计的标准误差变为原来的五分之一, 需要多少倍样本?
+是否保证实际绝对误差也按同样比例缩小?</li>
+<li>将积分程序的函数改为 <span class="math inline">\(x^2\)</span>,
+区间改为 <span class="math inline">\([0,2]\)</span>. 写出估计量,
+同步更新两种语言程序中的函数, 上下限与解析对照值, 核对结果.</li>
+<li>改用每批 30000 个样本估计圆周率, 总样本量保持 1000000.
+检查最后不足一批的点是否全部计入, 并与一次性生成的计数比较.</li>
+<li>某事件在 1000 次独立试验中从未发生. 说明为什么不能断言概率为 0,
+并计算二项模型下的单侧 95% 上置信限.</li>
+<li>(选做) 将三盒实验推广到 <span
+class="math inline">\(n\geqslant3\)</span> 只盒子, 卡仍等概率放置,
+初选与卡的位置独立. 知道卡位置的老师每次打开 <span
+class="math inline">\(n-2\)</span> 只未被选中的空盒,
+再允许学生改选唯一剩余盒. 求坚持和改选的总体成功概率.
+原程序中哪些部分不能直接照搬?</li>
+</ol>
+<p>第四章从频率中观察概率, 本章进一步把概率和期望用于近似计算. 接下来,
+回归分析将面对另一类任务: 根据已有观测估计变量之间的关系.
+随机模拟可以帮助认识模型的波动, 但从观测数据中推断关系,
+还需要明确拟合目标并检查预测表现.</p>
+<h2 id="参考资料">参考资料</h2>
+<p>[1] NIST/SEMATECH. e-Handbook of Statistical Methods: Confidence
+intervals. <a
+target="_blank" rel="noopener" href="https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm">https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm</a>.</p>
+<p>[2] NumPy Developers. Generator.random; Generator.integers;
+numpy.std. <a
+target="_blank" rel="noopener" href="https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.random.html">https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.random.html</a>;
+<a
+target="_blank" rel="noopener" href="https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.integers.html">https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.integers.html</a>;
+<a
+target="_blank" rel="noopener" href="https://numpy.org/doc/stable/reference/generated/numpy.std.html">https://numpy.org/doc/stable/reference/generated/numpy.std.html</a>.</p>
+<p>[3] MathWorks. rand; randi; std. <a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/matlab/ref/double.rand.html">https://www.mathworks.com/help/matlab/ref/double.rand.html</a>;
+<a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/matlab/ref/double.randi.html">https://www.mathworks.com/help/matlab/ref/double.randi.html</a>;
+<a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/matlab/ref/double.std.html">https://www.mathworks.com/help/matlab/ref/double.std.html</a>.</p>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

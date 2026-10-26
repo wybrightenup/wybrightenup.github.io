@@ -19,21 +19,23 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="21. 灰色预测 GM(1,1) 模型 一, 用少量数据描述变化趋势 一个地区积累了十年的废水排放记录. 管理部门希望了解排放总量的变化趋势, 为监测和治理提供参考, 但现有数据不足以刻画产业结构, 人口, 处理设施等全部因素. 能否先建立一个简单的趋势模型, 再用没有参与建模的数据检查它? 灰色预测提供了一种思路: 把原序列累加, 得到新的表示, 再用一个简单的变化方程描述累加序列">
+    <meta name="description" content="第21章 灰色预测: 用少量数据建立可检验的趋势模型 只有十年的年度记录, 能否先预测接下来的三年? 一个模型即使把历史拟合得很好, 也未必能预测未来. 本章从一个年度废水排放指标的教学算例出发, 用GM(1,1)建立趋势模型, 先留出数据检验, 再讨论条件外推. 学习时把握一条线索: 将序列累加, 用一阶方程描述累加值, 估计两个参数, 再累减还原. 每一步都能对应到简短的数组运算">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Hexo">
 <meta property="og:url" content="http://example.com/MathematicalModelingAlgorithms/GreyPredictionGM11.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="21. 灰色预测 GM(1,1) 模型 一, 用少量数据描述变化趋势 一个地区积累了十年的废水排放记录. 管理部门希望了解排放总量的变化趋势, 为监测和治理提供参考, 但现有数据不足以刻画产业结构, 人口, 处理设施等全部因素. 能否先建立一个简单的趋势模型, 再用没有参与建模的数据检查它? 灰色预测提供了一种思路: 把原序列累加, 得到新的表示, 再用一个简单的变化方程描述累加序列">
+<meta property="og:description" content="第21章 灰色预测: 用少量数据建立可检验的趋势模型 只有十年的年度记录, 能否先预测接下来的三年? 一个模型即使把历史拟合得很好, 也未必能预测未来. 本章从一个年度废水排放指标的教学算例出发, 用GM(1,1)建立趋势模型, 先留出数据检验, 再讨论条件外推. 学习时把握一条线索: 将序列累加, 用一阶方程描述累加值, 估计两个参数, 再累减还原. 每一步都能对应到简短的数组运算">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/images/GreyPredictionGM11/GM11-Original.png">
-<meta property="og:image" content="http://example.com/images/GreyPredictionGM11/GM11-Smoothness.png">
 <meta property="og:image" content="http://example.com/images/GreyPredictionGM11/GM11-AGO.png">
 <meta property="og:image" content="http://example.com/images/GreyPredictionGM11/GM11-Holdout.png">
 <meta property="og:image" content="http://example.com/images/GreyPredictionGM11/GM11-Forecast.png">
+<meta property="og:image" content="http://example.com/images/GreyPredictionGM11/GM11-Smoothness.png">
 <meta property="og:image" content="http://example.com/images/GreyPredictionGM11/GM11-Residuals.png">
-<meta property="article:published_time" content="2026-10-15T06:01:20.941Z">
-<meta property="article:modified_time" content="2026-10-15T02:38:30.772Z">
+<meta property="og:image" content="http://example.com/images/GreyPredictionGM11/GM11-Rolling.png">
+<meta property="og:image" content="http://example.com/images/GreyPredictionGM11/GM11-Shift.png">
+<meta property="article:published_time" content="2026-10-26T03:37:02.342Z">
+<meta property="article:modified_time" content="2026-10-25T07:15:08.000Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/GreyPredictionGM11/GM11-Original.png">
@@ -134,13 +136,19 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%81%B0%E8%89%B2%E9%A2%84%E6%B5%8B-gm11-%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">21. 灰色预测 GM(1,1) 模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E7%94%A8%E5%B0%91%E9%87%8F%E6%95%B0%E6%8D%AE%E6%8F%8F%E8%BF%B0%E5%8F%98%E5%8C%96%E8%B6%8B%E5%8A%BF"><span class="nav-number">1.1.</span> <span class="nav-text">一, 用少量数据描述变化趋势</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%81%B0%E8%89%B2%E6%8F%8F%E8%BF%B0%E4%BF%A1%E6%81%AF%E7%9A%84%E5%AE%8C%E6%95%B4%E7%A8%8B%E5%BA%A6"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 &quot;灰色&quot;描述信息的完整程度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gm11-%E7%9A%84%E5%90%AB%E4%B9%89%E4%B8%8E%E9%80%82%E7%94%A8%E8%8C%83%E5%9B%B4"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 GM(1,1) 的含义与适用范围</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-%E5%85%88%E8%AF%BB%E6%87%82%E6%95%B0%E6%8D%AE-%E5%86%8D%E6%A3%80%E6%9F%A5%E6%98%AF%E5%90%A6%E9%80%82%E5%90%88"><span class="nav-number">1.2.</span> <span class="nav-text">二, 先读懂数据,
-再检查是否适合</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%99%E5%AD%A6%E7%A4%BA%E4%BE%8B%E6%95%B0%E6%8D%AE%E4%B8%8E%E5%BB%BA%E6%A8%A1%E7%9B%AE%E6%A0%87"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 教学示例数据与建模目标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%89%E6%BB%91%E6%AF%94-%E7%9C%8B%E6%96%B0%E5%A2%9E%E9%87%8F%E4%B8%8E%E5%B7%B2%E6%9C%89%E7%B4%AF%E5%8A%A0%E9%87%8F%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 光滑比:
-看新增量与已有累加量的关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E5%A7%8B%E7%BA%A7%E6%AF%94-%E5%8F%A6%E4%B8%80%E4%B8%AA%E9%87%8F-%E4%B8%8D%E8%A6%81%E4%B8%8E%E5%85%89%E6%BB%91%E6%AF%94%E6%B7%B7%E6%B7%86"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 原始级比: 另一个量,
-不要与光滑比混淆</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89-%E4%BB%8E%E7%B4%AF%E5%8A%A0%E5%BA%8F%E5%88%97%E6%8E%A8%E5%AF%BC%E9%A2%84%E6%B5%8B%E5%85%AC%E5%BC%8F"><span class="nav-number">1.3.</span> <span class="nav-text">三, 从累加序列推导预测公式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E6%AC%A1%E7%B4%AF%E5%8A%A0%E7%94%9F%E6%88%90-%E6%8D%A2%E4%B8%80%E7%A7%8D%E8%A1%A8%E7%A4%BA"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 一次累加生成: 换一种表示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E9%98%B6%E5%8F%98%E5%8C%96%E6%96%B9%E7%A8%8B%E4%B8%8E%E8%83%8C%E6%99%AF%E5%80%BC"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 一阶变化方程与背景值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B3%95%E4%BC%B0%E8%AE%A1%E4%B8%A4%E4%B8%AA%E5%8F%82%E6%95%B0"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 用最小二乘法估计两个参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B1%82%E8%A7%A3%E8%BF%9E%E7%BB%AD%E6%96%B9%E7%A8%8B-%E5%86%8D%E7%B4%AF%E5%87%8F%E8%BF%98%E5%8E%9F"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.4 求解连续方程, 再累减还原</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#a0-%E4%B8%8E%E6%8E%A5%E8%BF%91%E9%9B%B6%E7%9A%84%E6%83%85%E5%86%B5"><span class="nav-number">1.3.5.</span> <span class="nav-text">3.5 \(a&#x3D;0\)
-与接近零的情况</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E5%BB%BA%E6%A8%A1%E6%B5%81%E7%A8%8B"><span class="nav-number">1.3.6.</span> <span class="nav-text">3.6 完整建模流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B-%E4%BE%8B%E9%A2%98%E7%BB%93%E6%9E%9C-%E6%8B%9F%E5%90%88%E4%B8%8E%E9%A2%84%E6%B5%8B%E5%88%86%E5%88%AB%E8%AF%84%E4%BB%B7"><span class="nav-number">1.4.</span> <span class="nav-text">四, 例题结果:
-拟合与预测分别评价</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%95%99%E5%87%BA%E6%9C%80%E5%90%8E%E4%B8%89%E5%B9%B4-%E5%85%88%E6%A3%80%E9%AA%8C%E5%A4%96%E6%8E%A8"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 留出最后三年, 先检验外推</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E5%85%A8%E9%83%A8%E6%95%B0%E6%8D%AE%E9%87%8D%E4%BC%B0%E5%B9%B6%E6%9F%A5%E7%9C%8B%E5%8E%86%E5%8F%B2%E6%8B%9F%E5%90%88"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2
-用全部数据重估并查看历史拟合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E6%9C%9F%E6%9D%A1%E4%BB%B6%E5%A4%96%E6%8E%A8"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 三期条件外推</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94-%E6%A8%A1%E5%9E%8B%E6%A3%80%E9%AA%8C-%E6%8C%87%E6%A0%87%E8%AF%B4%E6%98%8E%E4%BA%86%E4%BB%80%E4%B9%88"><span class="nav-number">1.5.</span> <span class="nav-text">五, 模型检验: 指标说明了什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AE%8B%E5%B7%AE%E4%B8%8E%E5%B9%B3%E5%9D%87%E7%BB%9D%E5%AF%B9%E7%9B%B8%E5%AF%B9%E8%AF%AF%E5%B7%AE"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 残差与平均绝对相对误差</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%A7%E6%AF%94%E5%81%8F%E5%B7%AE"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 级比偏差</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E4%B8%80%E6%AD%A5%E6%A3%80%E6%9F%A5%E4%B8%8E%E6%A8%A1%E5%9E%8B%E5%B1%80%E9%99%90"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 进一步检查与模型局限</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD-%E7%AE%80%E5%8D%95%E5%8F%AF%E8%BF%90%E8%A1%8C%E7%9A%84-python-%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.6.</span> <span class="nav-text">六, 简单可运行的 Python 实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E6%A8%A1%E5%9E%8B%E5%88%B0%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 从模型到程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E5%87%BD%E6%95%B0-gm11.py"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 模型函数 gm11.py</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E4%BE%8B%E9%A2%98%E7%A8%8B%E5%BA%8F-gm_main.py"><span class="nav-number">1.6.3.</span> <span class="nav-text">6.3 完整例题程序 GM_MAIN.py</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83-matlab-%E5%AE%8C%E6%95%B4%E6%95%B0%E5%80%BC%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.7.</span> <span class="nav-text">七, MATLAB 完整数值实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E5%87%BD%E6%95%B0"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 模型函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 主程序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB-%E7%BB%83%E4%B9%A0%E4%B8%8E%E6%96%B9%E6%B3%95%E8%AF%84%E4%BB%B7"><span class="nav-number">1.8.</span> <span class="nav-text">八, 练习与方法评价</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 练习</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%A7%A3%E7%AD%94"><span class="nav-number">1.8.2.</span> <span class="nav-text">8.2 参考解答</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E7%82%B9%E4%B8%8E%E9%80%82%E7%94%A8%E8%BE%B9%E7%95%8C"><span class="nav-number">1.8.3.</span> <span class="nav-text">8.3 优点与适用边界</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D-%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.9.</span> <span class="nav-text">九, 参考资料</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC21%E7%AB%A0-%E7%81%B0%E8%89%B2%E9%A2%84%E6%B5%8B-%E7%94%A8%E5%B0%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BB%BA%E7%AB%8B%E5%8F%AF%E6%A3%80%E9%AA%8C%E7%9A%84%E8%B6%8B%E5%8A%BF%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">第21章 灰色预测:
+用少量数据建立可检验的趋势模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E6%98%8E%E7%A1%AE%E4%BB%BB%E5%8A%A1-%E7%94%A8%E5%89%8D%E4%B8%83%E5%B9%B4%E9%A2%84%E6%B5%8B%E5%90%8E%E4%B8%89%E5%B9%B4"><span class="nav-number">1.1.</span> <span class="nav-text">21.1 先明确任务:
+用前七年预测后三年</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E4%B8%8E%E4%BD%BF%E7%94%A8%E8%BE%B9%E7%95%8C"><span class="nav-number">1.1.1.</span> <span class="nav-text">21.1.1 数据与使用边界</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gm11%E5%87%86%E5%A4%87%E6%8F%8F%E8%BF%B0%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.2.</span> <span class="nav-text">21.1.2 GM(1,1)准备描述什么</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E7%B4%AF%E5%8A%A0%E5%88%B0%E8%BF%98%E5%8E%9F-%E6%8A%8A%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%A8%8B%E5%BA%8F%E6%8E%A5%E8%B5%B7%E6%9D%A5"><span class="nav-number">1.2.</span> <span class="nav-text">21.2 从累加到还原:
+把模型与程序接起来</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E6%8D%A2%E4%B8%80%E7%A7%8D%E8%A1%A8%E7%A4%BA-%E4%B8%8D%E5%A2%9E%E5%8A%A0%E4%BF%A1%E6%81%AF"><span class="nav-number">1.2.1.</span> <span class="nav-text">21.2.1 先换一种表示, 不增加信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E5%8C%96%E6%96%B9%E7%A8%8B%E6%80%8E%E6%A0%B7%E5%8F%98%E6%88%90%E5%8F%AF%E4%BC%B0%E8%AE%A1%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">1.2.2.</span> <span class="nav-text">21.2.2
+变化方程怎样变成可估计的关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AA%E4%BC%B0%E8%AE%A1%E4%B8%A4%E4%B8%AA%E5%8F%82%E6%95%B0"><span class="nav-number">1.2.3.</span> <span class="nav-text">21.2.3 只估计两个参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E6%80%8E%E6%A0%B7%E5%8F%98%E6%88%90%E9%80%90%E6%9C%9F%E9%A2%84%E6%B5%8B%E5%80%BC"><span class="nav-number">1.2.4.</span> <span class="nav-text">21.2.4 参数怎样变成逐期预测值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E5%87%BD%E6%95%B0%E6%8C%89%E5%9B%9B%E9%A1%B9%E4%BB%BB%E5%8A%A1%E9%98%85%E8%AF%BB"><span class="nav-number">1.2.5.</span> <span class="nav-text">21.2.5 完整函数按四项任务阅读</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%8C%E6%88%90%E4%B8%80%E6%AC%A1%E9%A2%84%E6%B5%8B%E6%A3%80%E9%AA%8C-%E5%86%8D%E9%87%8D%E4%BC%B0%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.3.</span> <span class="nav-text">21.3 完成一次预测检验,
+再重估模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%99%E6%A8%A1%E5%9E%8B%E8%AE%BE%E7%BD%AE%E4%B8%A4%E4%B8%AA%E7%AE%80%E5%8D%95%E5%AF%B9%E6%89%8B"><span class="nav-number">1.3.1.</span> <span class="nav-text">21.3.1 给模型设置两个简单对手</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E4%BE%8B%E9%A2%98%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.3.2.</span> <span class="nav-text">21.3.2 完整例题程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E8%AF%BB%E7%95%99%E5%87%BA%E7%BB%93%E6%9E%9C"><span class="nav-number">1.3.3.</span> <span class="nav-text">21.3.3 先读留出结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E6%A0%B7%E6%9C%AC%E6%8B%9F%E5%90%88%E4%B8%8E%E6%9C%AA%E6%9D%A5%E5%A4%96%E6%8E%A8%E5%88%86%E5%88%AB%E8%A7%A3%E9%87%8A"><span class="nav-number">1.3.4.</span> <span class="nav-text">21.3.4
+全样本拟合与未来外推分别解释</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%8A%E6%96%AD%E4%B8%8E%E6%BB%9A%E5%8A%A8%E6%A3%80%E9%AA%8C-%E6%95%B0%E5%80%BC%E9%80%9A%E8%BF%87%E8%AF%B4%E6%98%8E%E4%BA%86%E4%BB%80%E4%B9%88"><span class="nav-number">1.4.</span> <span class="nav-text">21.4 诊断与滚动检验:
+数值通过说明了什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E5%8C%BA%E5%88%86%E4%B8%89%E7%A7%8D%E6%AF%94%E5%80%BC"><span class="nav-number">1.4.1.</span> <span class="nav-text">21.4.1 先区分三种比值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%AF%B9%E8%AF%AF%E5%B7%AE%E4%B8%8E%E7%BA%A7%E6%AF%94%E5%81%8F%E5%B7%AE%E4%B8%8D%E6%98%AF%E5%90%8C%E4%B8%80%E7%A7%8D%E7%B2%BE%E5%BA%A6"><span class="nav-number">1.4.2.</span> <span class="nav-text">21.4.2
+相对误差与级比偏差不是同一种精度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8D%A2%E5%87%A0%E4%B8%AA%E8%B5%B7%E7%82%B9-%E7%BB%93%E8%AE%BA%E8%BF%98%E7%9B%B8%E8%BF%91%E5%90%97"><span class="nav-number">1.4.3.</span> <span class="nav-text">21.4.3 换几个起点, 结论还相近吗</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E8%BE%B9%E7%95%8C-%E7%BC%A9%E6%94%BE-%E5%B9%B3%E7%A7%BB%E4%B8%8E%E4%B8%8D%E7%A1%AE%E5%AE%9A%E6%80%A7"><span class="nav-number">1.5.</span> <span class="nav-text">21.5 处理边界: 缩放,
+平移与不确定性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B9%98%E6%B3%95%E6%8D%A2%E5%8D%95%E4%BD%8D%E4%B8%8E%E5%8A%A0%E5%B8%B8%E6%95%B0%E4%B8%8D%E6%98%AF%E5%90%8C%E4%B8%80%E4%BB%B6%E4%BA%8B"><span class="nav-number">1.5.1.</span> <span class="nav-text">21.5.1
+乘法换单位与加常数不是同一件事</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E5%90%8C%E4%B8%80%E4%B8%AA%E7%95%99%E5%87%BA%E6%9C%9F%E6%A3%80%E6%9F%A5%E5%B9%B3%E7%A7%BB%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="nav-number">1.5.2.</span> <span class="nav-text">21.5.2
+用同一个留出期检查平移的影响</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E6%9D%A1%E4%BB%B6%E5%A4%96%E6%8E%A8%E4%BD%9C%E4%B8%BA%E9%9C%80%E8%A6%81%E6%9B%B4%E6%96%B0%E7%9A%84%E5%8F%82%E8%80%83"><span class="nav-number">1.5.3.</span> <span class="nav-text">21.5.3
+把条件外推作为需要更新的参考</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.6.</span> <span class="nav-text">21.6 练习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.7.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -190,74 +198,26 @@
       
       
       <div class="post-body">
-          <h1 id="灰色预测-gm11-模型">21. 灰色预测 GM(1,1) 模型</h1>
-<h2 id="一-用少量数据描述变化趋势">一, 用少量数据描述变化趋势</h2>
-<p>一个地区积累了十年的废水排放记录. 管理部门希望了解排放总量的变化趋势,
-为监测和治理提供参考, 但现有数据不足以刻画产业结构, 人口,
-处理设施等全部因素. 能否先建立一个简单的趋势模型,
-再用没有参与建模的数据检查它?</p>
-<p>灰色预测提供了一种思路: 把原序列累加, 得到新的表示,
-再用一个简单的变化方程描述累加序列, 最后通过相邻项相减还原原序列.
-累加有时能突出总体趋势, 但不会创造新的信息,
-也不会保证未来符合所选曲线.</p>
-<h3 id="灰色描述信息的完整程度">1.1 "灰色"描述信息的完整程度</h3>
-<p>灰色系统理论由邓聚龙于 20 世纪 80 年代初提出.
-这里的"灰色"是信息不完全的比喻: 系统中的部分因素,
-关系或作用机制已经知道, 另一部分尚不清楚.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">系统的直观分类</th>
-<th style="text-align: center;">信息特点</th>
-<th style="text-align: center;">建模时需要面对的问题</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">白色系统</td>
-<td style="text-align: center;">相关信息较充分</td>
-<td style="text-align: center;">可以利用已知结构建立较明确的模型</td>
-</tr>
-<tr>
-<td style="text-align: center;">黑色系统</td>
-<td style="text-align: center;">内部信息很少</td>
-<td style="text-align: center;">常需要通过输入, 输出认识系统</td>
-</tr>
-<tr>
-<td style="text-align: center;">灰色系统</td>
-<td style="text-align: center;">部分信息已知, 部分未知</td>
-<td style="text-align: center;">用有限信息构建可以检验的近似模型</td>
-</tr>
-</tbody>
-</table>
-<p>这种分类不决定方程是否有唯一解, 也不代表系统具有某种价值高低.</p>
-<h3 id="gm11-的含义与适用范围">1.2 GM(1,1) 的含义与适用范围</h3>
-<p>GM 是 Grey Model 的缩写. GM(1,1) 中, 第一个"1"表示一阶变化方程,
-第二个"1"表示一个建模变量. 本章介绍传统 GM(1,1),
-采用相邻累加值的算术平均作为背景值, 并以原序列首项确定初始条件.</p>
-<p>它常作为小样本, 总体趋势较平稳的等间隔序列的候选模型. 应先检查异常值,
-缺失项, 测量口径变化, 季节性和结构突变, 再决定是否适合.</p>
-<p>"4 至 10 期"是某些教学例题的常用范围, 不是模型的数学定义. 超过 10
-期仍可以计算; 能否使用, 应看趋势与验证表现. 只有很少几项数据时,
-尽管某些情况下能够解出参数, 也可能没有足够数据检验结果.
-本章程序要求至少四项, 示例留出检验实际使用七项训练数据.</p>
-<p>传统模型可以讨论非负数据, 但本章的级比和相对误差包含除法,
-因此完整程序要求<strong>每项严格为正且有限</strong>. 有零值,
-负值或缺失值时, 不应机械加一个常数或把缺失项填零;
-应先判断指标含义和适当的处理方法. 即使采用平移变换,
-也要在还原后重新评价原尺度误差.</p>
-<h2 id="二-先读懂数据-再检查是否适合">二, 先读懂数据,
-再检查是否适合</h2>
-<h3 id="教学示例数据与建模目标">2.1 教学示例数据与建模目标</h3>
-<p>下面以某地区年度废水排放指标为背景, 使用一组教学模拟数据.
-年份仅作时间标签, 数值单位未指定. 这些给定数值仅用于模拟建模过程,
-不作为实际调查结果或任何真实地区的统计记录, 也不用于判断当前环境状况.
-本例保留给定数值, 重点学习建模与检验方法.</p>
+          <h1 id="第21章-灰色预测-用少量数据建立可检验的趋势模型">第21章 灰色预测:
+用少量数据建立可检验的趋势模型</h1>
+<p>只有十年的年度记录, 能否先预测接下来的三年?
+一个模型即使把历史拟合得很好, 也未必能预测未来.
+本章从一个年度废水排放指标的教学算例出发, 用GM(1,1)建立趋势模型,
+先留出数据检验, 再讨论条件外推.</p>
+<p>学习时把握一条线索: 将序列累加, 用一阶方程描述累加值, 估计两个参数,
+再累减还原. 每一步都能对应到简短的数组运算. 最后要回到原尺度,
+与简单基准比较预测误差, 而不是只看累加后的曲线是否平滑.</p>
+<h2 id="先明确任务-用前七年预测后三年">21.1 先明确任务:
+用前七年预测后三年</h2>
+<h3 id="数据与使用边界">21.1.1 数据与使用边界</h3>
+<p>以下以年度废水排放指标为背景给出一组教学数据, 年份仅作时间标签.
+数值的计量单位未指定, 不对应任何真实地区的统计记录. 因此,
+本例只用于理解计算与验证, 不据此判断实际环境状况.</p>
 <table>
 <thead>
 <tr>
 <th style="text-align: center;">年份</th>
-<th style="text-align: center;">排放总量 <span
+<th style="text-align: center;">排放总量<span
 class="math inline">\(x^{(0)}_k\)</span></th>
 <th style="text-align: center;">一次累加值 <span
 class="math inline">\(x^{(1)}_k\)</span></th>
@@ -316,109 +276,31 @@ class="math inline">\(x^{(1)}_k\)</span></th>
 </tr>
 </tbody>
 </table>
-<p>本例的问题是: 建立排放总量的趋势模型,
-先用前七年预测后三年检验外推表现,
-再用全部十年数据演示未来三期的条件外推.</p>
+<p>先用1995-2001年的七项数据训练, 预测2002-2004年的三项数据.
+后三项在本次计算中只用于评价, 不参与估计参数或选择背景值.
+完成这项回溯检验后, 才用十项数据重估并演示2005-2007年的条件外推.</p>
 <p><img src="/images/GreyPredictionGM11/GM11-Original.png" alt="" style="width: 100%;"></p>
-<p><strong>图 1: 原始序列.</strong> 总体呈增长趋势, 2001 年有所回落.
-数据不是完全无规律, 也不是因为按年份记录就自动适合灰色预测.</p>
-<p>排放总量与水质污染程度不能直接画等号. 水质还与污染物浓度, 处理效果,
-河流流量等因素有关; 本例只预测表中这一指标. 模型没有治理投入,
-政策实施等解释变量, 因而不能据此估计"不采取保护措施"会造成什么后果.</p>
-<h3 id="光滑比-看新增量与已有累加量的关系">2.2 光滑比:
-看新增量与已有累加量的关系</h3>
-<p>定义一次累加序列</p>
-<p><span class="math display">\[
-x^{(1)}_k=\sum\limits_{i=1}^{k}x^{(0)}_i,
-\qquad k=1,2,\ldots,n.
-\]</span></p>
-<p>光滑比定义为</p>
-<p><span class="math display">\[
-\rho_k=\frac{x^{(0)}_k}{x^{(1)}_{k-1}},
-\qquad k=2,3,\ldots,n.
-\]</span></p>
-<p>分子是第 <span class="math inline">\(k\)</span> 期新增量,
-分母是此前累加量. 因为</p>
-<p><span class="math display">\[
-\frac{x^{(1)}_k}{x^{(1)}_{k-1}}=1+\rho_k,
-\]</span></p>
-<p>当 <span class="math inline">\(0&lt;\rho_k&lt;0.5\)</span> 时,
-对应的累加级比位于 <span class="math inline">\((1,1.5)\)</span>,
-可以作为观察累加序列变化幅度的一个参考.</p>
-<p>一些教学程序采用两个经验指标: 全部 <span
-class="math inline">\(\rho_k&lt;0.5\)</span> 的占比超过 60%, 并且去掉
-<span class="math inline">\(\rho_2,\rho_3\)</span> 后的占比至少为 90%.
-这里"去掉前两个"指去掉光滑比序列的前两项, 剩余对应原序列的 <span
-class="math inline">\(k=4,\ldots,n\)</span>.
-这些阈值不是预测可靠性的数学保证, 也不等于统计意义上的显著性检验.</p>
-<p>本例两个占比分别为 <strong>77.78%</strong> 和 <strong>100%</strong>.
-只用前七年训练数据单独计算时, 两个占比为 66.67% 和 100%,
-也满足上述参考规则. 真正的外推评价仍需保留最后三年数据.</p>
-<p><img src="/images/GreyPredictionGM11/GM11-Smoothness.png" alt="" style="width: 100%;"></p>
-<p><strong>图 2: 光滑比.</strong> 1996, 1997 年高于 0.5, 其余年份低于
-0.5.</p>
-<p>不能由"原序列非负"推出 <span
-class="math inline">\(\rho_k\to0\)</span>. 例如 <span
-class="math inline">\(x^{(0)}_k=2^{k-1}\)</span>, 则</p>
-<p><span class="math display">\[
-\rho_k=\frac{2^{k-1}}{2^{k-1}-1}\to1.
-\]</span></p>
-<p>而且有限序列只有有限个比值, 不能仅凭它讨论无限序列的极限.</p>
-<h3 id="原始级比-另一个量-不要与光滑比混淆">2.3 原始级比: 另一个量,
-不要与光滑比混淆</h3>
-<p>本章统一定义原始级比为</p>
-<p><span class="math display">\[
-\lambda_k=\frac{x^{(0)}_{k-1}}{x^{(0)}_k},
-\qquad k=2,\ldots,n.
-\]</span></p>
-<p>一种常用筛查方法, 是查看所有 <span
-class="math inline">\(\lambda_k\)</span> 是否落在</p>
-<p><span class="math display">\[
-\left(\mathrm{e}^{-2/(n+1)},\ \mathrm{e}^{2/(n+1)}\right)
-\]</span></p>
-<p>内. 本例 <span class="math inline">\(n=10\)</span>, 参考区间约为
-<span class="math inline">\((0.833753,1.199396)\)</span>,
-所有原始级比均在其中. 这个筛查也不能保证预测准确.</p>
-<table>
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
-<thead>
-<tr>
-<th style="text-align: center;">比值</th>
-<th style="text-align: center;">定义</th>
-<th style="text-align: center;">关注什么</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">光滑比 <span
-class="math inline">\(\rho_k\)</span></td>
-<td style="text-align: center;"><span
-class="math inline">\(x^{(0)}_k/x^{(1)}_{k-1}\)</span></td>
-<td style="text-align: center;">新增量相对于此前累加量的大小</td>
-</tr>
-<tr>
-<td style="text-align: center;">累加级比</td>
-<td style="text-align: center;"><span
-class="math inline">\(x^{(1)}_k/x^{(1)}_{k-1}=1+\rho_k\)</span></td>
-<td style="text-align: center;">累加序列的相邻变化</td>
-</tr>
-<tr>
-<td style="text-align: center;">原始级比 <span
-class="math inline">\(\lambda_k\)</span></td>
-<td style="text-align: center;"><span
-class="math inline">\(x^{(0)}_{k-1}/x^{(0)}_k\)</span></td>
-<td style="text-align: center;">原序列的相邻变化</td>
-</tr>
-</tbody>
-</table>
-<p>有的资料把原始级比定义为这里的倒数. 两种约定都可以使用,
-但级比偏差公式必须随之调整; 不能在同一公式中混用.</p>
-<h2 id="三-从累加序列推导预测公式">三, 从累加序列推导预测公式</h2>
-<h3 id="一次累加生成-换一种表示">3.1 一次累加生成: 换一种表示</h3>
+<p><strong>图21-1　先看原始记录, 再划分时间</strong></p>
+<p>虚线区分训练期与留出期. 总体增长中包含2001年的回落,
+不能因为按年份记录就认定适合某种趋势模型.</p>
+<p>排放总量与水质污染程度不能直接画等号. 水质还与污染物浓度,
+处理效果和河流流量等因素有关. 本模型没有治理投入或政策实施变量,
+不能据此估计某项政策的因果效果.</p>
+<h3 id="gm11准备描述什么">21.1.2 GM(1,1)准备描述什么</h3>
+<p>GM是Grey Model的缩写. 第一个"1"表示一阶变化方程,
+第二个"1"表示一个建模变量. 这里"灰色"是信息部分已知, 部分未知的比喻,
+并不使未知因素自动变成可预测信息.</p>
+<p>本章固定采用传统GM(1,1): 相邻累加值的算术平均作背景值,
+原序列首项作初值. 数据按等间隔排列, 每项为有限正数;
+正值条件使级比与相对误差有定义. 这些是本章程序的使用前提,
+不是说一切灰色模型都只能处理严格正数.</p>
+<p>它描述的是第二项以后近似保持固定增长因子的变化. 明显季节性,
+突变或趋势反转应先核查, 不能仅因为数据少就选用GM(1,1).
+常见的"4至10期"只是教学习惯, 不是模型定义. 本章函数至少接收四项,
+但能算出参数与有足够信息检验模型是两回事.</p>
+<h2 id="从累加到还原-把模型与程序接起来">21.2 从累加到还原:
+把模型与程序接起来</h2>
+<h3 id="先换一种表示-不增加信息">21.2.1 先换一种表示, 不增加信息</h3>
 <p>一次累加生成简称 1-AGO. 比如本例前三项为</p>
 <p><span class="math display">\[
 174,\quad174+179=353,\quad174+179+183=536.
@@ -432,9 +314,11 @@ x^{(0)}_k=x^{(1)}_k-x^{(1)}_{k-1},\quad k\geqslant2.
 但并没有增加观测量. 累加后的相邻项共享许多原始数据,
 也不是相互独立的新样本.</p>
 <p><img src="/images/GreyPredictionGM11/GM11-AGO.png" alt="" style="width: 100%;"></p>
-<p><strong>图 3: 原序列与一次累加序列.</strong> 左图保留每年波动,
-右图展示累加后的变化; 两图所含原始信息相同.</p>
-<h3 id="一阶变化方程与背景值">3.2 一阶变化方程与背景值</h3>
+<p><strong>图21-2　同一数据的原序列与一次累加序列</strong></p>
+<p>一次累加突出总体变化, 原序列保留逐期波动. 两种表示包含同样的原始信息,
+累加值也不是额外的独立样本.</p>
+<h3 id="变化方程怎样变成可估计的关系">21.2.2
+变化方程怎样变成可估计的关系</h3>
 <p>设连续函数 <span class="math inline">\(y(t)\)</span> 描述累加序列,
 采用方程</p>
 <p><span class="math display">\[
@@ -468,7 +352,7 @@ class="math inline">\(0\leqslant\delta\leqslant1\)</span> 时可写成 <span
 class="math inline">\(z^{(1)}_k=\delta
 x^{(1)}_k+(1-\delta)x^{(1)}_{k-1}\)</span>. 本章固定 <span
 class="math inline">\(\delta=0.5\)</span>, 不增加需要调节的参数.</p>
-<h3 id="用最小二乘法估计两个参数">3.3 用最小二乘法估计两个参数</h3>
+<h3 id="只估计两个参数">21.2.3 只估计两个参数</h3>
 <p>令</p>
 <p><span class="math display">\[
 B=\begin{pmatrix}
@@ -498,7 +382,7 @@ class="math inline">\(\hat a,\hat u\)</span>, 不是先截距后斜率.</p>
 <p>这个目标最小化的是<strong>背景值估计方程的误差平方和</strong>.
 从连续方程求解再还原出的原尺度拟合值, 其平方误差并不一定也达到最小;
 要在原尺度直接最小化误差, 需要另设求解问题.</p>
-<h3 id="求解连续方程-再累减还原">3.4 求解连续方程, 再累减还原</h3>
+<h3 id="参数怎样变成逐期预测值">21.2.4 参数怎样变成逐期预测值</h3>
 <p>当 <span class="math inline">\(\hat a\ne0\)</span> 时, 用积分因子
 <span class="math inline">\(\mathrm{e}^{\hat a t}\)</span> 解方程. 以
 <span class="math inline">\(y(1)=x^{(0)}_1\)</span> 为初值, 得到</p>
@@ -535,8 +419,6 @@ class="math inline">\(k=1\)</span> 代入它来代替首项初值.</p>
 class="math inline">\(\hat a&lt;0\)</span> 时增长, <span
 class="math inline">\(\hat a&gt;0\)</span> 时衰减;
 这个单一趋势结构不适合直接描述明显的周期或趋势反转.</p>
-<h3 id="a0-与接近零的情况">3.5 <span class="math inline">\(a=0\)</span>
-与接近零的情况</h3>
 <p>如果 <span class="math inline">\(a=0\)</span>, 连续方程变为 <span
 class="math inline">\(y&#39;=u\)</span>, 解为</p>
 <p><span class="math display">\[
@@ -558,30 +440,64 @@ class="math inline">\(y&#39;=u\)</span>, 解为</p>
 class="math inline">\(\mathrm{e}^a-1\)</span>, 在 <span
 class="math inline">\(a\)</span> 很小时比直接相减更准确.
 初学者可以先掌握前一节的公式, 再理解这项数值处理.</p>
-<h3 id="完整建模流程">3.6 完整建模流程</h3>
-<ol type="1">
-<li>明确指标, 时间间隔与数据口径, 检查有限性, 正值条件,
-缺失和异常记录.</li>
-<li>预先确定预测期限与时间留出方案, 保证训练数据足够,
-并避免打乱时间顺序.</li>
-<li>在训练期内检查光滑比与原始级比, 将其作为模型筛查参考.</li>
-<li>累加训练序列, 构造背景值与设计矩阵, 求解 <span
-class="math inline">\(a,u\)</span>.</li>
-<li>用初值求连续时间响应, 累减还原, 分清训练拟合与留出预测的索引.</li>
-<li>对留出预测计算原尺度误差, 与仅使用训练信息的简单基准比较.</li>
-<li>完成评价后才用全部历史数据重估, 给出明确期限的条件外推.</li>
-<li>报告训练内诊断, 独立预测表现与模型局限, 随新数据持续更新.</li>
-</ol>
-<p>切分长度不能只由某个固定样本数规则机械决定. 例如只有四项数据时,
-虽可按本章程序拟合, 却无法同时留出两项并保留至少四项训练数据.
-本例使用七项训练, 三项留出, 是明确的教学方案, 不是通用规定.</p>
-<h2 id="四-例题结果-拟合与预测分别评价">四, 例题结果:
-拟合与预测分别评价</h2>
-<h3 id="留出最后三年-先检验外推">4.1 留出最后三年, 先检验外推</h3>
-<p>将 1995-2001 年七项数据用于训练, 2002-2004 年作为留出集.
-留出数据不参与参数估计; 不要打乱时间顺序,
-也不要先用全数据拟合再声称后三年是"未见过"的数据.</p>
-<p>训练参数为</p>
+<h3 id="完整函数按四项任务阅读">21.2.5 完整函数按四项任务阅读</h3>
+<p>第一项任务检查输入并统一数值尺度. 输入整体除以最大值, 发展系数 <span
+class="math inline">\(a\)</span> 不变, 灰作用量 <span
+class="math inline">\(u\)</span> 按相同倍数变化, 输出时再换回原尺度.
+这是乘法缩放, 与后文的加常数平移不同.</p>
+<p>第二项任务用 <code>cumsum</code> 构造累加序列,
+由相邻项平均得到背景值. 第三项任务解最小二乘问题:
+设计矩阵第一列为负背景值, 第二列为1, 因而参数依次为 <span
+class="math inline">\(a,u\)</span>, 不是通常直线回归中的截距,
+斜率顺序.</p>
+<p>第四项任务生成拟合与预测, 再计算诊断量. 首项按初值固定,
+第二项起使用稳定还原式. Python中 <code>m=1</code> 对应数学中的 <span
+class="math inline">\(k=2\)</span>, <code>fitted</code>
+长度等于历史项数, <code>future</code> 长度等于预测期数.
+MATLAB采用同样的索引关系.</p>
+<p>Python数组可用一维表示数学列向量. 函数接受一维数组或单行, 单列输入,
+不改变时间顺序. 以下两个函数分别保存为 <code>gm11.py</code> 和
+<code>gm11.m</code>.</p>
+<p><strong>gm11.py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gm11</span>(<span class="params">x0, predict_num=<span class="number">3</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;传统 GM(1,1)：返回参数、拟合值、预测值和两项误差。&quot;&quot;&quot;</span></span><br><span class="line">    raw = np.asarray(x0)</span><br><span class="line">    <span class="keyword">if</span> np.iscomplexobj(raw) <span class="keyword">or</span> raw.dtype.kind <span class="keyword">not</span> <span class="keyword">in</span> <span class="string">&quot;iuf&quot;</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;数据必须是实数数值数组, 不接受复数, 布尔值或文本&quot;</span>)</span><br><span class="line">    x0 = np.asarray(raw, dtype=<span class="built_in">float</span>)</span><br><span class="line">    <span class="keyword">if</span> x0.ndim == <span class="number">2</span> <span class="keyword">and</span> <span class="number">1</span> <span class="keyword">in</span> x0.shape:</span><br><span class="line">        x0 = x0.ravel()  <span class="comment"># 行向量、列向量都转为一维数组。</span></span><br><span class="line">    <span class="keyword">if</span> x0.ndim != <span class="number">1</span> <span class="keyword">or</span> <span class="built_in">len</span>(x0) &lt; <span class="number">4</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;请输入至少 4 项的一维序列。&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> np.<span class="built_in">all</span>(np.isfinite(x0)) <span class="keyword">or</span> np.<span class="built_in">any</span>(x0 &lt;= <span class="number">0</span>):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;本程序的级比和相对误差要求数据为有限的正数。&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">isinstance</span>(predict_num, <span class="built_in">bool</span>)</span><br><span class="line">            <span class="keyword">or</span> <span class="keyword">not</span> <span class="built_in">isinstance</span>(predict_num, (<span class="built_in">int</span>, np.integer))</span><br><span class="line">            <span class="keyword">or</span> predict_num &lt; <span class="number">0</span>):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;预测期数必须是非负整数。&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 第一步：累加；第二步：计算相邻累加值的平均数。</span></span><br><span class="line">    scale = np.<span class="built_in">max</span>(x0)</span><br><span class="line">    scaled = x0 / scale</span><br><span class="line">    <span class="keyword">if</span> np.<span class="built_in">any</span>(scaled &lt;= <span class="number">0</span>):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;数据动态范围过大, 归一化发生下溢&quot;</span>)</span><br><span class="line">    x1 = np.cumsum(scaled)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> np.isfinite(x1).<span class="built_in">all</span>():</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;累加值发生溢出, 请检查数据尺度&quot;</span>)</span><br><span class="line">    z1 = x1[:-<span class="number">1</span>] / <span class="number">2</span> + x1[<span class="number">1</span>:] / <span class="number">2</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 第三步：拟合 x0(k) = -a*z1(k) + u，避免显式求逆。</span></span><br><span class="line">    B = np.column_stack((-z1, np.ones(<span class="built_in">len</span>(z1))))</span><br><span class="line">    beta, _, rank, _ = np.linalg.lstsq(B, scaled[<span class="number">1</span>:], rcond=<span class="literal">None</span>)</span><br><span class="line">    <span class="keyword">if</span> rank &lt; <span class="number">2</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;设计矩阵不满秩，无法唯一估计参数。&quot;</span>)</span><br><span class="line">    a, u_scaled = beta</span><br><span class="line">    u = u_scaled * scale</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 第四步：还原原序列；此等价公式在 a 接近 0 时也稳定。</span></span><br><span class="line">    <span class="comment"># expm1(a) 就是 exp(a)-1，但对很小的 a 计算更准确。</span></span><br><span class="line">    factor = np.expm1(a) / a <span class="keyword">if</span> a != <span class="number">0</span> <span class="keyword">else</span> <span class="number">1.0</span></span><br><span class="line">    m = np.arange(<span class="number">1</span>, <span class="built_in">len</span>(x0) + predict_num)</span><br><span class="line">    restored = ((u_scaled - a*scaled[<span class="number">0</span>]) * factor * np.exp(-a*m)) * scale</span><br><span class="line">    all_values = np.r_[x0[<span class="number">0</span>], restored]  <span class="comment"># 第一项用初始值固定。</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> np.isfinite(u) <span class="keyword">or</span> <span class="keyword">not</span> np.<span class="built_in">all</span>(np.isfinite(all_values)) <span class="keyword">or</span> np.<span class="built_in">any</span>(all_values &lt;= <span class="number">0</span>):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;预测发生数值溢出，请检查数据尺度和预测长度。&quot;</span>)</span><br><span class="line">    fitted = all_values[:<span class="built_in">len</span>(x0)]</span><br><span class="line">    future = all_values[<span class="built_in">len</span>(x0):]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 第五步：从第二项开始计算误差，防止首项人为拉低均值。</span></span><br><span class="line">    relative_error = np.<span class="built_in">abs</span>(x0[<span class="number">1</span>:] - fitted[<span class="number">1</span>:]) / x0[<span class="number">1</span>:]</span><br><span class="line">    level_ratio = x0[:-<span class="number">1</span>] / x0[<span class="number">1</span>:]</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">abs</span>(<span class="number">1</span> + a/<span class="number">2</span>) &lt; <span class="number">1e-12</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;1+a/2 接近 0，级比偏差公式不可用。&quot;</span>)</span><br><span class="line">    eta = np.<span class="built_in">abs</span>(<span class="number">1</span> - (<span class="number">1</span>-a/<span class="number">2</span>)/(<span class="number">1</span>+a/<span class="number">2</span>) * level_ratio)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> np.<span class="built_in">all</span>(np.isfinite(relative_error)) <span class="keyword">or</span> <span class="keyword">not</span> np.<span class="built_in">all</span>(np.isfinite(eta)):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;误差诊断发生溢出, 请检查数据动态范围&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;a&quot;</span>: <span class="built_in">float</span>(a), <span class="string">&quot;u&quot;</span>: <span class="built_in">float</span>(u), <span class="string">&quot;fitted&quot;</span>: fitted,</span><br><span class="line">            <span class="string">&quot;future&quot;</span>: future, <span class="string">&quot;relative_error&quot;</span>: relative_error, <span class="string">&quot;eta&quot;</span>: eta&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>gm11.m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[result, fitted, relative_error, eta, model]</span> = <span class="title">gm11</span><span class="params">(x0, predict_num)</span></span></span><br><span class="line"><span class="comment">% 传统 GM(1,1); 四个数值输出及参数诊断结构体.</span></span><br><span class="line"><span class="keyword">if</span> nargin &lt; <span class="number">2</span>, predict_num = <span class="number">3</span>; <span class="keyword">end</span></span><br><span class="line"><span class="keyword">if</span> ~isnumeric(x0) || ~<span class="built_in">isvector</span>(x0) || <span class="built_in">numel</span>(x0)&lt;<span class="number">4</span> || ~<span class="built_in">isreal</span>(x0) || any(~<span class="built_in">isfinite</span>(x0(:))) || any(x0(:)&lt;=<span class="number">0</span>)</span><br><span class="line">    error(<span class="string">&#x27;gm11:Input&#x27;</span>,<span class="string">&#x27;Need at least four finite positive observations.&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">if</span> ~isnumeric(predict_num) || ~<span class="built_in">isscalar</span>(predict_num) || ~<span class="built_in">isreal</span>(predict_num) || ~<span class="built_in">isfinite</span>(predict_num) || ...</span><br><span class="line">        islogical(predict_num) || predict_num&lt;<span class="number">0</span> || predict_num~=<span class="built_in">floor</span>(predict_num)</span><br><span class="line">    error(<span class="string">&#x27;gm11:Horizon&#x27;</span>,<span class="string">&#x27;Forecast horizon must be a nonnegative integer.&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">x0=double(x0(:)); n=<span class="built_in">length</span>(x0); scale=<span class="built_in">max</span>(x0); scaled=x0/scale;</span><br><span class="line"><span class="keyword">if</span> any(scaled&lt;=<span class="number">0</span>), error(<span class="string">&#x27;gm11:Scale&#x27;</span>,<span class="string">&#x27;Normalization underflow.&#x27;</span>); <span class="keyword">end</span></span><br><span class="line">x1=cumsum(scaled);</span><br><span class="line"><span class="keyword">if</span> any(~<span class="built_in">isfinite</span>(x1)), error(<span class="string">&#x27;gm11:Overflow&#x27;</span>,<span class="string">&#x27;Accumulated values overflow.&#x27;</span>); <span class="keyword">end</span></span><br><span class="line">z1=x1(<span class="number">1</span>:<span class="keyword">end</span><span class="number">-1</span>)/<span class="number">2</span>+x1(<span class="number">2</span>:<span class="keyword">end</span>)/<span class="number">2</span>;</span><br><span class="line">B=[-z1,<span class="built_in">ones</span>(n<span class="number">-1</span>,<span class="number">1</span>)];</span><br><span class="line"><span class="keyword">if</span> rank(B)&lt;<span class="number">2</span>, error(<span class="string">&#x27;gm11:Rank&#x27;</span>,<span class="string">&#x27;Design matrix must have full column rank.&#x27;</span>); <span class="keyword">end</span></span><br><span class="line"><span class="built_in">beta</span>=B\scaled(<span class="number">2</span>:<span class="keyword">end</span>); a=<span class="built_in">beta</span>(<span class="number">1</span>); us=<span class="built_in">beta</span>(<span class="number">2</span>); u=us*scale;</span><br><span class="line"><span class="keyword">if</span> a==<span class="number">0</span>, <span class="built_in">factor</span>=<span class="number">1</span>; <span class="keyword">else</span>, <span class="built_in">factor</span>=<span class="built_in">expm1</span>(a)/a; <span class="keyword">end</span></span><br><span class="line">m=(<span class="number">1</span>:n+predict_num<span class="number">-1</span>).&#x27;;</span><br><span class="line">all_values=[x0(<span class="number">1</span>);((us-a*scaled(<span class="number">1</span>))*<span class="built_in">factor</span>*<span class="built_in">exp</span>(-a*m))*scale];</span><br><span class="line"><span class="keyword">if</span> ~<span class="built_in">isfinite</span>(u) || any(~<span class="built_in">isfinite</span>(all_values)) || any(all_values&lt;=<span class="number">0</span>), error(<span class="string">&#x27;gm11:Overflow&#x27;</span>,<span class="string">&#x27;Restored values overflow.&#x27;</span>); <span class="keyword">end</span></span><br><span class="line">fitted=all_values(<span class="number">1</span>:n); result=all_values(n+<span class="number">1</span>:<span class="keyword">end</span>);</span><br><span class="line">relative_error=<span class="built_in">abs</span>(x0(<span class="number">2</span>:<span class="keyword">end</span>)-fitted(<span class="number">2</span>:<span class="keyword">end</span>))./x0(<span class="number">2</span>:<span class="keyword">end</span>);</span><br><span class="line">level_ratio=x0(<span class="number">1</span>:<span class="keyword">end</span><span class="number">-1</span>)./x0(<span class="number">2</span>:<span class="keyword">end</span>);</span><br><span class="line"><span class="keyword">if</span> <span class="built_in">abs</span>(<span class="number">1</span>+a/<span class="number">2</span>)&lt;<span class="number">1e-12</span>, error(<span class="string">&#x27;gm11:Ratio&#x27;</span>,<span class="string">&#x27;Level deviation denominator is near zero.&#x27;</span>); <span class="keyword">end</span></span><br><span class="line">eta=<span class="built_in">abs</span>(<span class="number">1</span>-(<span class="number">1</span>-a/<span class="number">2</span>)/(<span class="number">1</span>+a/<span class="number">2</span>)*level_ratio);</span><br><span class="line"><span class="keyword">if</span> any(~<span class="built_in">isfinite</span>(relative_error)) || any(~<span class="built_in">isfinite</span>(eta))</span><br><span class="line">    error(<span class="string">&#x27;gm11:Diagnostics&#x27;</span>,<span class="string">&#x27;Diagnostics overflow.&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">model=struct(<span class="string">&#x27;a&#x27;</span>,a,<span class="string">&#x27;u&#x27;</span>,u,<span class="string">&#x27;fitted&#x27;</span>,fitted,<span class="string">&#x27;future&#x27;</span>,result, ...</span><br><span class="line">    <span class="string">&#x27;relative_error&#x27;</span>,relative_error,<span class="string">&#x27;eta&#x27;</span>,eta);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>主计算只需NumPy或基础MATLAB. Python通过字典返回参数与数组.
+MATLAB前四个输出依次是未来值, 历史拟合值, 绝对相对误差和级比偏差,
+第五个输出结构体汇总参数与结果. 两种接口的输出形式不同,
+数学定义相同.</p>
+<h2 id="完成一次预测检验-再重估模型">21.3 完成一次预测检验,
+再重估模型</h2>
+<h3 id="给模型设置两个简单对手">21.3.1 给模型设置两个简单对手</h3>
+<p>在读取留出目标之前, 先固定比较方案. 除GM(1,1)外,
+使用两种只依赖训练数据的基准. 设训练长度为 <span
+class="math inline">\(m\)</span>, 预测步数为 <span
+class="math inline">\(h\)</span>:</p>
+<p><span class="math display">\[
+\widehat x_{m+h,\mathrm{last}}^{(0)}=x_m^{(0)},\qquad
+\widehat x_{m+h,\mathrm{drift}}^{(0)}
+=x_m^{(0)}+h\frac{x_m^{(0)}-x_1^{(0)}}{m-1}.
+\]</span></p>
+<p>末值基准假定未来保持最近水平.
+漂移基准把训练首末值间的平均每期增量延伸出去. 它们不是复杂模型,
+却能帮助判断GM的改善是否只是因为没有与任何趋势方法比较.</p>
+<p>三个方案均在原尺度计算平均绝对百分比误差:</p>
+<p><span class="math display">\[
+\operatorname{MAPE}=\frac{100\%}{H}\sum\limits_{h=1}^{H}
+\frac{|x_{m+h}^{(0)}-\widehat x_{m+h}^{(0)}|}{x_{m+h}^{(0)}}.
+\]</span></p>
+<p>本例分母均为正. 接近零的目标会使该指标不稳定,
+换用其他数据时还应结合MAE等指标与使用代价判断.</p>
+<h3 id="完整例题程序">21.3.2 完整例题程序</h3>
+<p>下面先只向模型传入前七项, 比较三种方案; 再向模型传入十项数据,
+给出全样本拟合和条件外推.
+运行时让例题程序与同语言的模型函数位于同一目录.</p>
+<p><strong>gm_example.py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> gm11 <span class="keyword">import</span> gm11</span><br><span class="line"></span><br><span class="line"><span class="comment"># The last three records are held out in time.</span></span><br><span class="line">years = np.arange(<span class="number">1995</span>, <span class="number">2005</span>)</span><br><span class="line">x = np.array([<span class="number">174</span>,<span class="number">179</span>,<span class="number">183</span>,<span class="number">189</span>,<span class="number">207</span>,<span class="number">234</span>,<span class="number">220.5</span>,<span class="number">256</span>,<span class="number">270</span>,<span class="number">285</span>], dtype=<span class="built_in">float</span>)</span><br><span class="line">train = x[:<span class="number">7</span>]</span><br><span class="line">actual = x[<span class="number">7</span>:]</span><br><span class="line">model = gm11(train, <span class="number">3</span>)</span><br><span class="line">h = np.arange(<span class="number">1</span>, <span class="number">4</span>)</span><br><span class="line">predictions = &#123;</span><br><span class="line">    <span class="string">&quot;GM11&quot;</span>: model[<span class="string">&quot;future&quot;</span>],</span><br><span class="line">    <span class="string">&quot;LastValue&quot;</span>: np.full(<span class="number">3</span>, train[-<span class="number">1</span>]),</span><br><span class="line">    <span class="string">&quot;Drift&quot;</span>: train[-<span class="number">1</span>] + h*(train[-<span class="number">1</span>]-train[<span class="number">0</span>])/(<span class="built_in">len</span>(train)-<span class="number">1</span>)&#125;</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Train parameters:&quot;</span>, model[<span class="string">&quot;a&quot;</span>], model[<span class="string">&quot;u&quot;</span>])</span><br><span class="line"><span class="keyword">for</span> name, pred <span class="keyword">in</span> predictions.items():</span><br><span class="line">    mape = np.mean(np.<span class="built_in">abs</span>(actual-pred)/actual)</span><br><span class="line">    <span class="built_in">print</span>(name, <span class="string">&quot;predictions:&quot;</span>, pred, <span class="string">&quot;MAPE:&quot;</span>, mape)</span><br><span class="line"><span class="comment"># Refit only after evaluating the declared holdout experiment.</span></span><br><span class="line">full = gm11(x, <span class="number">3</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Full parameters:&quot;</span>, full[<span class="string">&quot;a&quot;</span>], full[<span class="string">&quot;u&quot;</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Full fitted values:&quot;</span>, full[<span class="string">&quot;fitted&quot;</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;In-sample MAPE, excluding fixed initial value:&quot;</span>, full[<span class="string">&quot;relative_error&quot;</span>].mean())</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Mean level-ratio deviation:&quot;</span>, full[<span class="string">&quot;eta&quot;</span>].mean())</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Conditional extrapolation for 2005-2007:&quot;</span>, full[<span class="string">&quot;future&quot;</span>])</span><br></pre></td></tr></table></figure>
+<p><strong>gm_example.m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">x = [<span class="number">174</span>,<span class="number">179</span>,<span class="number">183</span>,<span class="number">189</span>,<span class="number">207</span>,<span class="number">234</span>,<span class="number">220.5</span>,<span class="number">256</span>,<span class="number">270</span>,<span class="number">285</span>]&#x27;;</span><br><span class="line">train = x(<span class="number">1</span>:<span class="number">7</span>); actual = x(<span class="number">8</span>:<span class="number">10</span>); h = (<span class="number">1</span>:<span class="number">3</span>)&#x27;;</span><br><span class="line">[future,~,~,~,model] = gm11(train,<span class="number">3</span>);</span><br><span class="line">lastValue = <span class="built_in">repmat</span>(train(<span class="keyword">end</span>),<span class="number">3</span>,<span class="number">1</span>);</span><br><span class="line">drift = train(<span class="keyword">end</span>)+h*(train(<span class="keyword">end</span>)-train(<span class="number">1</span>))/(<span class="built_in">numel</span>(train)<span class="number">-1</span>);</span><br><span class="line">predictions = [future,lastValue,drift];</span><br><span class="line">names = &#123;<span class="string">&#x27;GM11&#x27;</span>,<span class="string">&#x27;LastValue&#x27;</span>,<span class="string">&#x27;Drift&#x27;</span>&#125;;</span><br><span class="line">fprintf(<span class="string">&#x27;Train a=%.10f, u=%.10f\n&#x27;</span>,model.a,model.u);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    fprintf(<span class="string">&#x27;%s MAPE %.6f%%\n&#x27;</span>,names&#123;<span class="built_in">j</span>&#125;,<span class="number">100</span>*<span class="built_in">mean</span>(<span class="built_in">abs</span>(actual-predictions(:,<span class="built_in">j</span>))./actual));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Actual, GM11, last value, drift:&#x27;</span>); <span class="built_in">disp</span>([actual,predictions]);</span><br><span class="line">[future,fitted,relative_error,eta,full] = gm11(x,<span class="number">3</span>);</span><br><span class="line">fprintf(<span class="string">&#x27;Full a=%.10f, u=%.10f\n&#x27;</span>,full.a,full.u);</span><br><span class="line">fprintf(<span class="string">&#x27;In-sample MAPE excluding initial value %.6f%%\n&#x27;</span>,<span class="number">100</span>*<span class="built_in">mean</span>(relative_error));</span><br><span class="line">fprintf(<span class="string">&#x27;Mean level-ratio deviation %.8f\n&#x27;</span>,<span class="built_in">mean</span>(eta));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Full fitted values:&#x27;</span>); <span class="built_in">disp</span>(fitted&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Conditional extrapolation for 2005-2007:&#x27;</span>); <span class="built_in">disp</span>(future&#x27;);</span><br></pre></td></tr></table></figure>
+<h3 id="先读留出结果">21.3.3 先读留出结果</h3>
+<p>七期训练得到的参数为</p>
 <p><span class="math display">\[
 \hat a_{\mathrm{train}}=-0.0533552851,
 \qquad\hat u_{\mathrm{train}}=162.1357867265.
@@ -621,14 +537,16 @@ class="math inline">\(a,u\)</span>.</li>
 <strong>18.2774%</strong>. 本次留出检验中, GM 的表现优于这个基准;
 但三期检验仍很有限, 不能据此断言它对其他数据或更远未来也有优势.</p>
 <p><img src="/images/GreyPredictionGM11/GM11-Holdout.png" alt="" style="width: 100%;"></p>
-<p><strong>图 4: 留出集比较.</strong> 两种预测都只使用 1995-2001
-年的信息, GM 对三年数据均有所低估.</p>
-<p>本例固定使用七期训练, 三期留出的教学方案, 不根据留出误差调节背景值,
-模型形式或预测长度. 这是一项回溯计算演示,
-不代表曾在历史时点事先登记预测方案. 如果反复依据留出表现选模型,
-还需要另外保留最终评价数据, 避免把选模型的数据当成独立检验.</p>
-<h3 id="用全部数据重估并查看历史拟合">4.2
-用全部数据重估并查看历史拟合</h3>
+<p><strong>图21-3　相同训练期下的三种留出预测</strong></p>
+<p>GM与两个基准均只使用1995-2001年的信息. 在本次三期留出中,
+GM均低估给定观测值.</p>
+<p>漂移基准的三期预测分别为228.25, 236.00和243.75, MAPE为12.6354%.
+加上该基准后, GM在这次留出中仍较好. 这只是小规模回溯比较,
+三条留出记录不足以支持对长期预测能力的判断.</p>
+<p>若根据留出误差反复改变模型, 平移常数或背景值, 留出期就参与了选择.
+此时仍需另设最终评价数据, 不能继续称其为未参与选择的检验.</p>
+<h3 id="全样本拟合与未来外推分别解释">21.3.4
+全样本拟合与未来外推分别解释</h3>
 <p>完成留出评价后, 用全部十年重新估计参数, 得到</p>
 <p><span class="math display">\[
 \hat a=-0.0623984986,\qquad\hat u=156.6161747109.
@@ -712,7 +630,6 @@ class="math inline">\(u,-a\)</span>. 本章固定使用"发展系数,
 </table>
 <p>首项被初始条件固定为 174, 不能把首项的零误差当作额外的拟合证据.
 评价拟合时从第二项开始计算.</p>
-<h3 id="三期条件外推">4.3 三期条件外推</h3>
 <p>以 2004 年为历史数据终点, 用全样本模型演示未来三期:</p>
 <table>
 <thead>
@@ -737,16 +654,100 @@ class="math inline">\(u,-a\)</span>. 本章固定使用"发展系数,
 </tbody>
 </table>
 <p><img src="/images/GreyPredictionGM11/GM11-Forecast.png" alt="" style="width: 100%;"></p>
-<p><strong>图 5: 历史拟合与条件外推.</strong>
-虚线右侧展示模型在趋势机制保持适用条件下的外推,
-不是这些年份的示例观测或实际统计记录. 预测线从最后一个拟合值接出,
-不把真实末值当作模型拟合值.</p>
-<p>模型给出的增长因子为 <span class="math inline">\(\mathrm{e}^{-\hat
+<p><strong>图21-4　历史拟合与三期条件外推</strong></p>
+<p>虚线右侧为2005-2007年的模型外推, 没有提供对应观测值.
+预测线从末期拟合值接出, 不把最后一个观测值冒充模型拟合值.
+模型给出的增长因子为 <span class="math inline">\(\mathrm{e}^{-\hat
 a}\approx1.06439\)</span>, 即约 6.44% 的每期增长.
-这是拟合模型的固定增长率, 不是保证兑现的增长率,
-更不是当前年份的预测.</p>
-<h2 id="五-模型检验-指标说明了什么">五, 模型检验: 指标说明了什么</h2>
-<h3 id="残差与平均绝对相对误差">5.1 残差与平均绝对相对误差</h3>
+这是趋势延续假设下的固定增长率, 不保证实际增长率与之相同.</p>
+<h2 id="诊断与滚动检验-数值通过说明了什么">21.4 诊断与滚动检验:
+数值通过说明了什么</h2>
+<h3 id="先区分三种比值">21.4.1 先区分三种比值</h3>
+<p>定义一次累加序列</p>
+<p><span class="math display">\[
+x^{(1)}_k=\sum\limits_{i=1}^{k}x^{(0)}_i,
+\qquad k=1,2,\ldots,n.
+\]</span></p>
+<p>光滑比定义为</p>
+<p><span class="math display">\[
+\rho_k=\frac{x^{(0)}_k}{x^{(1)}_{k-1}},
+\qquad k=2,3,\ldots,n.
+\]</span></p>
+<p>分子是第 <span class="math inline">\(k\)</span> 期新增量,
+分母是此前累加量. 因为</p>
+<p><span class="math display">\[
+\frac{x^{(1)}_k}{x^{(1)}_{k-1}}=1+\rho_k,
+\]</span></p>
+<p>当 <span class="math inline">\(0&lt;\rho_k&lt;0.5\)</span> 时,
+对应的累加级比位于 <span class="math inline">\((1,1.5)\)</span>,
+可以作为观察累加序列变化幅度的一个参考.</p>
+<p>本例全样本光滑比在最初两项较大, 其余低于0.5. 这只是序列结构的描述.
+不将某个占比阈值当作预测可靠性的通行标准.</p>
+<p>不能由"原序列非负"推出 <span
+class="math inline">\(\rho_k\to0\)</span>. 例如 <span
+class="math inline">\(x^{(0)}_k=2^{k-1}\)</span>, 则</p>
+<p><span class="math display">\[
+\rho_k=\frac{2^{k-1}}{2^{k-1}-1}\to1.
+\]</span></p>
+<p>而且有限序列只有有限个比值, 不能仅凭它讨论无限序列的极限.</p>
+<p>本章统一定义原始级比为</p>
+<p><span class="math display">\[
+\lambda_k=\frac{x^{(0)}_{k-1}}{x^{(0)}_k},
+\qquad k=2,\ldots,n.
+\]</span></p>
+<p>一种常用筛查方法, 是查看所有 <span
+class="math inline">\(\lambda_k\)</span> 是否落在</p>
+<p><span class="math display">\[
+\left(\mathrm{e}^{-2/(n+1)},\ \mathrm{e}^{2/(n+1)}\right)
+\]</span></p>
+<p>内. 本例 <span class="math inline">\(n=10\)</span>, 参考区间约为
+<span class="math inline">\((0.833753,1.199396)\)</span>,
+所有原始级比均在其中. 这个筛查也不能保证预测准确.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">比值</th>
+<th style="text-align: center;">定义</th>
+<th style="text-align: center;">关注什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">光滑比 <span
+class="math inline">\(\rho_k\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(x^{(0)}_k/x^{(1)}_{k-1}\)</span></td>
+<td style="text-align: center;">新增量相对于此前累加量的大小</td>
+</tr>
+<tr>
+<td style="text-align: center;">累加级比</td>
+<td style="text-align: center;"><span
+class="math inline">\(x^{(1)}_k/x^{(1)}_{k-1}=1+\rho_k\)</span></td>
+<td style="text-align: center;">累加序列的相邻变化</td>
+</tr>
+<tr>
+<td style="text-align: center;">原始级比 <span
+class="math inline">\(\lambda_k\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(x^{(0)}_{k-1}/x^{(0)}_k\)</span></td>
+<td style="text-align: center;">原序列的相邻变化</td>
+</tr>
+</tbody>
+</table>
+<p>有的资料把原始级比定义为这里的倒数. 两种约定都可以使用,
+但级比偏差公式必须随之调整; 不能在同一公式中混用.</p>
+<p><img src="/images/GreyPredictionGM11/GM11-Smoothness.png" alt="" style="width: 100%;"></p>
+<p><strong>图21-5　光滑比与原始级比的不同含义</strong></p>
+<p>左图比较新增值与此前累加量; 右图比较原始相邻值.
+原始级比区间由训练长度确定,
+这里分别标出七期训练和十期全样本的参考区间.</p>
+<h3 id="相对误差与级比偏差不是同一种精度">21.4.2
+相对误差与级比偏差不是同一种精度</h3>
 <p>有符号残差为</p>
 <p><span class="math display">\[
 e_k=x^{(0)}_k-\hat x^{(0)}_k,
@@ -767,7 +768,6 @@ r=0.02599905\)</span>, 即 <strong>2.5999%</strong>. 若采用某些教学材料
 10%, 20% 的粗略经验分档, 可认为本例训练内误差较小.
 但这些阈值不是通用的预测质量标准; 是否可接受,
 还取决于用途和独立外推表现.</p>
-<h3 id="级比偏差">5.2 级比偏差</h3>
 <p>在本章 <span
 class="math inline">\(\lambda_k=x^{(0)}_{k-1}/x^{(0)}_k\)</span>
 的约定下, 定义</p>
@@ -795,14 +795,146 @@ class="math inline">\((1-0.5a)/(1+0.5a)\)</span>.
 class="math inline">\(\mathrm{e}^{-a}\)</span>. 两者在 <span
 class="math inline">\(a\)</span> 较小时接近, 但一般不完全相等;
 这种差别来自离散近似.</p>
+<p>上述差分关系从 <span class="math inline">\(k=2\)</span> 开始,
+约束的是第3项及以后与前项的关系. 本章仍按常用诊断口径列出 <span
+class="math inline">\(k=2,\ldots,n\)</span> 的级比偏差;
+其中第一项涉及初值与第二项的过渡, 不能据上面的递推推断它也必须为0.</p>
 <p>本例 <span class="math inline">\(\bar\eta=0.04704080\)</span>. 0.1,
 0.2 也只能作为某些教学程序的经验分档; 级比偏差小,
 不等于独立预测误差一定小.</p>
 <p><img src="/images/GreyPredictionGM11/GM11-Residuals.png" alt="" style="width: 100%;"></p>
-<p><strong>图 6: 全样本训练内诊断.</strong>
-上图显示百分数形式的绝对相对误差, 下图显示无量纲的级比偏差;
-不能把两者的纵轴数值直接比较.</p>
-<h3 id="进一步检查与模型局限">5.3 进一步检查与模型局限</h3>
+<p><strong>图21-6　分别检查有符号残差, 相对误差和级比偏差</strong></p>
+<p>有符号残差帮助识别持续低估或高估. 绝对相对误差以百分数显示,
+级比偏差无量纲, 不能混用纵轴数值. 三项均为训练内诊断,
+不代替留出预测误差.</p>
+<h3 id="换几个起点-结论还相近吗">21.4.3 换几个起点, 结论还相近吗</h3>
+<p>固定四个共同预测起点, 分别使用最初4, 5, 6, 7项数据,
+每次预测接下来三期. 三个方法每次都重新只用截至该起点的数据计算.
+这样各预测步长均有四次比较,
+不把短预测步长拥有更多起点的结果直接混在一起.</p>
+<p>这是扩展训练窗口的滚动起点检验. 不同起点可能预测同一个年份,
+训练窗口也有重叠, 因而这十二个误差不是十二次相互独立的实验.
+该比较只补充检查当前序列, 不足以推断其他应用中的排名.</p>
+<p><strong>gm_rolling.py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> gm11 <span class="keyword">import</span> gm11</span><br><span class="line"></span><br><span class="line">x = np.array([<span class="number">174</span>,<span class="number">179</span>,<span class="number">183</span>,<span class="number">189</span>,<span class="number">207</span>,<span class="number">234</span>,<span class="number">220.5</span>,<span class="number">256</span>,<span class="number">270</span>,<span class="number">285</span>], dtype=<span class="built_in">float</span>)</span><br><span class="line"><span class="comment"># Four common origins: use the first 4, 5, 6 or 7 records.</span></span><br><span class="line"><span class="comment"># At each origin, predict three periods without seeing their values.</span></span><br><span class="line">errors = np.zeros((<span class="number">4</span>,<span class="number">3</span>,<span class="number">3</span>))  <span class="comment"># origin, horizon, method</span></span><br><span class="line">names = [<span class="string">&quot;GM11&quot;</span>, <span class="string">&quot;LastValue&quot;</span>, <span class="string">&quot;Drift&quot;</span>]</span><br><span class="line"><span class="keyword">for</span> row, n <span class="keyword">in</span> <span class="built_in">enumerate</span>(<span class="built_in">range</span>(<span class="number">4</span>,<span class="number">8</span>)):</span><br><span class="line">    train = x[:n]</span><br><span class="line">    actual = x[n:n+<span class="number">3</span>]</span><br><span class="line">    h = np.arange(<span class="number">1</span>,<span class="number">4</span>)</span><br><span class="line">    pred = np.column_stack((gm11(train,<span class="number">3</span>)[<span class="string">&quot;future&quot;</span>],</span><br><span class="line">        np.full(<span class="number">3</span>,train[-<span class="number">1</span>]),</span><br><span class="line">        train[-<span class="number">1</span>]+h*(train[-<span class="number">1</span>]-train[<span class="number">0</span>])/(n-<span class="number">1</span>)))</span><br><span class="line">    errors[row] = np.<span class="built_in">abs</span>(actual[:,<span class="literal">None</span>]-pred)/actual[:,<span class="literal">None</span>]</span><br><span class="line"><span class="keyword">for</span> h <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Horizon&quot;</span>,h+<span class="number">1</span>, <span class="built_in">dict</span>(<span class="built_in">zip</span>(names,errors[:,h,:].mean(axis=<span class="number">0</span>))))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Overall MAPE:&quot;</span>,<span class="built_in">dict</span>(<span class="built_in">zip</span>(names,errors.mean(axis=(<span class="number">0</span>,<span class="number">1</span>)))))</span><br></pre></td></tr></table></figure>
+<p><strong>gm_rolling.m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">x = [<span class="number">174</span>,<span class="number">179</span>,<span class="number">183</span>,<span class="number">189</span>,<span class="number">207</span>,<span class="number">234</span>,<span class="number">220.5</span>,<span class="number">256</span>,<span class="number">270</span>,<span class="number">285</span>]&#x27;;</span><br><span class="line">errors = <span class="built_in">zeros</span>(<span class="number">4</span>,<span class="number">3</span>,<span class="number">3</span>); names = &#123;<span class="string">&#x27;GM11&#x27;</span>,<span class="string">&#x27;LastValue&#x27;</span>,<span class="string">&#x27;Drift&#x27;</span>&#125;;</span><br><span class="line"><span class="keyword">for</span> n = <span class="number">4</span>:<span class="number">7</span></span><br><span class="line">    train = x(<span class="number">1</span>:n); actual = x(n+<span class="number">1</span>:n+<span class="number">3</span>); h = (<span class="number">1</span>:<span class="number">3</span>)&#x27;;</span><br><span class="line">    gm = gm11(train,<span class="number">3</span>);</span><br><span class="line">    pred = [gm,<span class="built_in">repmat</span>(train(<span class="keyword">end</span>),<span class="number">3</span>,<span class="number">1</span>), ...</span><br><span class="line">        train(<span class="keyword">end</span>)+h*(train(<span class="keyword">end</span>)-train(<span class="number">1</span>))/(n<span class="number">-1</span>)];</span><br><span class="line">    errors(n<span class="number">-3</span>,:,:) = <span class="built_in">reshape</span>(<span class="built_in">abs</span>(actual-pred)./actual,[<span class="number">1</span>,<span class="number">3</span>,<span class="number">3</span>]);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">for</span> h = <span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    fprintf(<span class="string">&#x27;Horizon %d:\n&#x27;</span>,h);</span><br><span class="line">    <span class="built_in">disp</span>(<span class="built_in">table</span>(names&#x27;,<span class="built_in">reshape</span>(<span class="built_in">mean</span>(errors(:,h,:),<span class="number">1</span>),[<span class="number">3</span>,<span class="number">1</span>]), ...</span><br><span class="line">        <span class="string">&#x27;VariableNames&#x27;</span>,&#123;<span class="string">&#x27;Method&#x27;</span>,<span class="string">&#x27;MAPE&#x27;</span>&#125;));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Overall MAPE:&#x27;</span>); <span class="built_in">disp</span>(<span class="built_in">reshape</span>(<span class="built_in">mean</span>(<span class="built_in">mean</span>(errors,<span class="number">1</span>),<span class="number">2</span>),[<span class="number">1</span>,<span class="number">3</span>]));</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">预测步长</th>
+<th style="text-align: center;">GM(1,1)平均绝对百分比误差</th>
+<th style="text-align: center;">末值基准</th>
+<th style="text-align: center;">漂移基准</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1期</td>
+<td style="text-align: center;">7.6511%</td>
+<td style="text-align: center;">10.0559%</td>
+<td style="text-align: center;">9.1744%</td>
+</tr>
+<tr>
+<td style="text-align: center;">2期</td>
+<td style="text-align: center;">5.8509%</td>
+<td style="text-align: center;">13.0701%</td>
+<td style="text-align: center;">7.4229%</td>
+</tr>
+<tr>
+<td style="text-align: center;">3期</td>
+<td style="text-align: center;">6.0193%</td>
+<td style="text-align: center;">17.3478%</td>
+<td style="text-align: center;">7.8573%</td>
+</tr>
+<tr>
+<td style="text-align: center;">十二个预测位置等权汇总</td>
+<td style="text-align: center;">6.5071%</td>
+<td style="text-align: center;">13.4913%</td>
+<td style="text-align: center;">8.1515%</td>
+</tr>
+</tbody>
+</table>
+<p>本例GM在三种步长的平均表现都较好, 但不意味着每个起点都最好.
+训练样本短, 比较次数少, 表中的差别也不应解释为普遍稳定的优势.
+多步预测误差不必严格随步长增加,
+不同真实波动与方向性偏差都可能影响平均结果.</p>
+<p><img src="/images/GreyPredictionGM11/GM11-Rolling.png" alt="" style="width: 100%;"></p>
+<p><strong>图21-7　按相同起点比较不同预测步长</strong></p>
+<p>每个点是四个共同起点对应误差的平均值. 下方汇总保留各起点的GM误差,
+便于观察平均值掩盖的差异.</p>
+<h2 id="处理边界-缩放-平移与不确定性">21.5 处理边界: 缩放,
+平移与不确定性</h2>
+<h3 id="乘法换单位与加常数不是同一件事">21.5.1
+乘法换单位与加常数不是同一件事</h3>
+<p>将原序列乘以正常数, 在精确运算中 <span
+class="math inline">\(a\)</span> 保持不变, <span
+class="math inline">\(u\)</span> 及拟合和预测按同样倍数缩放.
+程序内部除以最大值利用了这个性质, 用于减轻数值尺度过大或过小的影响,
+并不改变所拟合的数学模型. 极端动态范围仍可能下溢,
+程序会拒绝无效输出.</p>
+<p>若加常数 <span class="math inline">\(c\)</span>,
+累加序列和背景值则变为</p>
+<p><span class="math display">\[
+x_{k,c}^{(1)}=x_k^{(1)}+kc,\qquad
+z_{k,c}^{(1)}=z_k^{(1)}+(k-\tfrac12)c.
+\]</span></p>
+<p>背景值多出的项随期数变化, 重新估计的 <span
+class="math inline">\(a\)</span> 一般也会改变. 所以"加常数建模,
+预测后减去常数"不能保证与直接建模等价.</p>
+<p>对于任意给定的有限序列, 当 <span class="math inline">\(c\)</span>
+足够大时,</p>
+<p><span class="math display">\[
+\frac{x_{k-1}^{(0)}+c}{x_k^{(0)}+c}\longrightarrow1.
+\]</span></p>
+<p>因此原始级比可以因平移而更接近1, 却没有增加任何观测信息.
+即使级比全部落入参考区间, 原尺度外推仍可能变差.
+平移后的相对误差分母增大, 也可能造成误差比例变小的表象;
+最终必须减去平移常数, 回到原尺度评价.</p>
+<h3 id="用同一个留出期检查平移的影响">21.5.2
+用同一个留出期检查平移的影响</h3>
+<p>下面的常数预先给定, 仅作敏感性演示, 不根据留出表现选择它们.
+各模型只使用前七项建模, 预测后减去同一个常数,
+再与未平移的留出值比较.</p>
+<p><strong>gm_shift.py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> gm11 <span class="keyword">import</span> gm11</span><br><span class="line"></span><br><span class="line"><span class="comment"># A constant translation changes the fitted GM11 model.</span></span><br><span class="line">x = np.array([<span class="number">174</span>,<span class="number">179</span>,<span class="number">183</span>,<span class="number">189</span>,<span class="number">207</span>,<span class="number">234</span>,<span class="number">220.5</span>,<span class="number">256</span>,<span class="number">270</span>,<span class="number">285</span>], dtype=<span class="built_in">float</span>)</span><br><span class="line">train, actual = x[:<span class="number">7</span>], x[<span class="number">7</span>:]</span><br><span class="line">lower, upper = np.exp([-<span class="number">2</span>/(<span class="built_in">len</span>(train)+<span class="number">1</span>), <span class="number">2</span>/(<span class="built_in">len</span>(train)+<span class="number">1</span>)])</span><br><span class="line"><span class="keyword">for</span> c <span class="keyword">in</span> [<span class="number">0</span>,<span class="number">100</span>,<span class="number">1000</span>,<span class="number">10000</span>]:</span><br><span class="line">    shifted = train+c</span><br><span class="line">    ratio = shifted[:-<span class="number">1</span>]/shifted[<span class="number">1</span>:]</span><br><span class="line">    pred = gm11(shifted,<span class="number">3</span>)[<span class="string">&quot;future&quot;</span>]-c</span><br><span class="line">    mape = np.mean(np.<span class="built_in">abs</span>(actual-pred)/actual)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;shift&quot;</span>,c,<span class="string">&quot;level screen&quot;</span>,np.<span class="built_in">all</span>((ratio&gt;lower)&amp;(ratio&lt;upper)),</span><br><span class="line">          <span class="string">&quot;original-scale predictions&quot;</span>,pred,<span class="string">&quot;original-scale MAPE&quot;</span>,mape)</span><br></pre></td></tr></table></figure>
+<p><strong>gm_shift.m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">x = [<span class="number">174</span>,<span class="number">179</span>,<span class="number">183</span>,<span class="number">189</span>,<span class="number">207</span>,<span class="number">234</span>,<span class="number">220.5</span>,<span class="number">256</span>,<span class="number">270</span>,<span class="number">285</span>]&#x27;;</span><br><span class="line">train = x(<span class="number">1</span>:<span class="number">7</span>); actual = x(<span class="number">8</span>:<span class="number">10</span>);</span><br><span class="line">bounds = <span class="built_in">exp</span>([<span class="number">-2</span>/(<span class="built_in">numel</span>(train)+<span class="number">1</span>),<span class="number">2</span>/(<span class="built_in">numel</span>(train)+<span class="number">1</span>)]);</span><br><span class="line"><span class="keyword">for</span> c = [<span class="number">0</span>,<span class="number">100</span>,<span class="number">1000</span>,<span class="number">10000</span>]</span><br><span class="line">    shifted = train+c; ratio = shifted(<span class="number">1</span>:<span class="keyword">end</span><span class="number">-1</span>)./shifted(<span class="number">2</span>:<span class="keyword">end</span>);</span><br><span class="line">    pred = gm11(shifted,<span class="number">3</span>)-c;</span><br><span class="line">    passes = all(ratio&gt;bounds(<span class="number">1</span>) &amp; ratio&lt;bounds(<span class="number">2</span>));</span><br><span class="line">    fprintf(<span class="string">&#x27;Shift=%g; screen=%d; original-scale MAPE=%.6f%%\n&#x27;</span>, ...</span><br><span class="line">        c,passes,<span class="number">100</span>*<span class="built_in">mean</span>(<span class="built_in">abs</span>(actual-pred)./actual));</span><br><span class="line">    <span class="built_in">disp</span>(pred&#x27;);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">平移常数</th>
+<th style="text-align: center;">原尺度留出MAPE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">5.2851%</td>
+</tr>
+<tr>
+<td style="text-align: center;">100</td>
+<td style="text-align: center;">5.9350%</td>
+</tr>
+<tr>
+<td style="text-align: center;">1000</td>
+<td style="text-align: center;">6.8947%</td>
+</tr>
+<tr>
+<td style="text-align: center;">10000</td>
+<td style="text-align: center;">7.1732%</td>
+</tr>
+</tbody>
+</table>
+<p>这四种输入的训练级比都通过所用参考区间, 预测误差却不同.
+本例不需要为了通过筛查而平移. 对零值, 负值或缺失项,
+更不能机械加常数或填零, 应先核查指标定义与适当模型.</p>
+<p><img src="/images/GreyPredictionGM11/GM11-Shift.png" alt="" style="width: 100%;"></p>
+<p><strong>图21-8　级比更接近1, 不代表原尺度预测更好</strong></p>
+<p>左图显示四种平移的训练级比范围, 右图显示减去常数后的留出MAPE.
+它们分别描述输入筛查和真正关心的原尺度误差.</p>
+<h3 id="把条件外推作为需要更新的参考">21.5.3
+把条件外推作为需要更新的参考</h3>
 <p>累加曲线看起来平滑, 只是候选模型的线索.
 还应检查原尺度残差是否持续偏向一侧, 个别年份是否误差很大,
 参数是否随训练窗口显著变化, 以及留出期表现是否优于简单基准.</p>
@@ -810,116 +942,15 @@ class="math inline">\(a\)</span> 较小时接近, 但一般不完全相等;
 背景值由同一组观测构造, 误差条件也未必符合独立同方差线性回归假设;
 不能直接把普通回归的区间公式照搬过来. 有足够数据时, 可设计滚动预测评价,
 或在明确误差模型与重采样条件后研究不确定性.</p>
-<h2 id="六-简单可运行的-python-实现">六, 简单可运行的 Python 实现</h2>
-<h3 id="从模型到程序">6.1 从模型到程序</h3>
-<p>安装 NumPy: <code>python -m pip install numpy</code>.
-将下面两段代码分别保存为 <code>gm11.py</code> 和
-<code>GM_MAIN.py</code>, 放在同一目录, 再运行
-<code>python GM_MAIN.py</code>. 程序使用预先固定的三期预测,
-可以直接重复计算.</p>
-<p>下表先按未归一化的数学形式说明各步骤.
-完整函数在归一化尺度执行同样的计算, 再将输出换回原尺度.</p>
-<table>
-<colgroup>
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 25%" />
-</colgroup>
-<thead>
-<tr>
-<th style="text-align: center;">数学步骤</th>
-<th style="text-align: center;">Python</th>
-<th style="text-align: center;">MATLAB</th>
-<th style="text-align: center;">输入与输出的含义</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">一次累加</td>
-<td style="text-align: center;"><code>np.cumsum(x0)</code></td>
-<td style="text-align: center;"><code>cumsum(x0)</code></td>
-<td style="text-align: center;">按时间顺序累加</td>
-</tr>
-<tr>
-<td style="text-align: center;">背景值</td>
-<td style="text-align: center;"><code>x1[:-1]/2 + x1[1:]/2</code></td>
-<td
-style="text-align: center;"><code>x1(1:end-1)/2 + x1(2:end)/2</code></td>
-<td style="text-align: center;">相邻累加值的平均数</td>
-</tr>
-<tr>
-<td style="text-align: center;">设计矩阵</td>
-<td
-style="text-align: center;"><code>np.column_stack((-z1, np.ones(n-1)))</code></td>
-<td style="text-align: center;"><code>[-z1, ones(n-1,1)]</code></td>
-<td style="text-align: center;">第一列对应 <span
-class="math inline">\(a\)</span>, 第二列对应 <span
-class="math inline">\(u\)</span></td>
-</tr>
-<tr>
-<td style="text-align: center;">估计参数</td>
-<td
-style="text-align: center;"><code>np.linalg.lstsq(B, scaled[1:], rcond=None)</code></td>
-<td style="text-align: center;"><code>B \ x0(2:end)</code></td>
-<td style="text-align: center;">求背景值方程的最小二乘解</td>
-</tr>
-<tr>
-<td style="text-align: center;">稳定还原</td>
-<td style="text-align: center;"><code>np.expm1(a)</code> 与指数函数</td>
-<td style="text-align: center;"><code>expm1(a)</code> 与
-<code>exp(...)</code></td>
-<td style="text-align: center;">避免小 <span
-class="math inline">\(a\)</span> 时相减造成精度损失</td>
-</tr>
-<tr>
-<td style="text-align: center;">样本内误差</td>
-<td style="text-align: center;"><code>relative_error</code>,
-<code>eta</code></td>
-<td style="text-align: center;">第三个, 第四个输出</td>
-<td style="text-align: center;">从第二项开始汇总</td>
-</tr>
-<tr>
-<td style="text-align: center;">样本外预测</td>
-<td style="text-align: center;"><code>future</code></td>
-<td style="text-align: center;">第一个输出 <code>result</code></td>
-<td style="text-align: center;">从第 <span
-class="math inline">\(n+1\)</span> 项起, 长度为预测期数</td>
-</tr>
-</tbody>
-</table>
-<p>数学中的列向量在 Python 中可用一维数组表示, MATLAB 中用列数组.
-输入序列必须保留时间顺序; 非等间隔观测不能直接套用本章单位步长公式.
-数据已经是正数时, 不需要额外平移.</p>
-<h3 id="模型函数-gm11.py">6.2 模型函数 gm11.py</h3>
-<p>Python 数组下标从 0 开始: <code>x0[1:]</code> 对应数学中的第 2 项到第
-<span class="math inline">\(n\)</span> 项, <code>x1[:-1]</code> 对应第 1
-项到第 <span class="math inline">\(n-1\)</span> 项. 函数将参数, 拟合,
-预测和误差放在字典中, 调用时可以直接查看键名.</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gm11</span>(<span class="params">x0, predict_num=<span class="number">3</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;传统 GM(1,1)：返回参数、拟合值、预测值和两项误差。&quot;&quot;&quot;</span></span><br><span class="line">    raw = np.asarray(x0)</span><br><span class="line">    <span class="keyword">if</span> np.iscomplexobj(raw) <span class="keyword">or</span> raw.dtype.kind <span class="keyword">not</span> <span class="keyword">in</span> <span class="string">&quot;iuf&quot;</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;数据必须是实数数值数组, 不接受复数, 布尔值或文本&quot;</span>)</span><br><span class="line">    x0 = np.asarray(raw, dtype=<span class="built_in">float</span>)</span><br><span class="line">    <span class="keyword">if</span> x0.ndim == <span class="number">2</span> <span class="keyword">and</span> <span class="number">1</span> <span class="keyword">in</span> x0.shape:</span><br><span class="line">        x0 = x0.ravel()  <span class="comment"># 行向量、列向量都转为一维数组。</span></span><br><span class="line">    <span class="keyword">if</span> x0.ndim != <span class="number">1</span> <span class="keyword">or</span> <span class="built_in">len</span>(x0) &lt; <span class="number">4</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;请输入至少 4 项的一维序列。&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> np.<span class="built_in">all</span>(np.isfinite(x0)) <span class="keyword">or</span> np.<span class="built_in">any</span>(x0 &lt;= <span class="number">0</span>):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;本程序的级比和相对误差要求数据为有限的正数。&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">isinstance</span>(predict_num, <span class="built_in">bool</span>)</span><br><span class="line">            <span class="keyword">or</span> <span class="keyword">not</span> <span class="built_in">isinstance</span>(predict_num, (<span class="built_in">int</span>, np.integer))</span><br><span class="line">            <span class="keyword">or</span> predict_num &lt; <span class="number">0</span>):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;预测期数必须是非负整数。&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 第一步：累加；第二步：计算相邻累加值的平均数。</span></span><br><span class="line">    scale = np.<span class="built_in">max</span>(x0)</span><br><span class="line">    scaled = x0 / scale</span><br><span class="line">    <span class="keyword">if</span> np.<span class="built_in">any</span>(scaled &lt;= <span class="number">0</span>):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;数据动态范围过大, 归一化发生下溢&quot;</span>)</span><br><span class="line">    x1 = np.cumsum(scaled)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> np.isfinite(x1).<span class="built_in">all</span>():</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;累加值发生溢出, 请检查数据尺度&quot;</span>)</span><br><span class="line">    z1 = x1[:-<span class="number">1</span>] / <span class="number">2</span> + x1[<span class="number">1</span>:] / <span class="number">2</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 第三步：拟合 x0(k) = -a*z1(k) + u，避免显式求逆。</span></span><br><span class="line">    B = np.column_stack((-z1, np.ones(<span class="built_in">len</span>(z1))))</span><br><span class="line">    beta, _, rank, _ = np.linalg.lstsq(B, scaled[<span class="number">1</span>:], rcond=<span class="literal">None</span>)</span><br><span class="line">    <span class="keyword">if</span> rank &lt; <span class="number">2</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;设计矩阵不满秩，无法唯一估计参数。&quot;</span>)</span><br><span class="line">    a, u_scaled = beta</span><br><span class="line">    u = u_scaled * scale</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 第四步：还原原序列；此等价公式在 a 接近 0 时也稳定。</span></span><br><span class="line">    <span class="comment"># expm1(a) 就是 exp(a)-1，但对很小的 a 计算更准确。</span></span><br><span class="line">    factor = np.expm1(a) / a <span class="keyword">if</span> a != <span class="number">0</span> <span class="keyword">else</span> <span class="number">1.0</span></span><br><span class="line">    m = np.arange(<span class="number">1</span>, <span class="built_in">len</span>(x0) + predict_num)</span><br><span class="line">    restored = ((u_scaled - a*scaled[<span class="number">0</span>]) * factor * np.exp(-a*m)) * scale</span><br><span class="line">    all_values = np.r_[x0[<span class="number">0</span>], restored]  <span class="comment"># 第一项用初始值固定。</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> np.isfinite(u) <span class="keyword">or</span> <span class="keyword">not</span> np.<span class="built_in">all</span>(np.isfinite(all_values)) <span class="keyword">or</span> np.<span class="built_in">any</span>(all_values &lt;= <span class="number">0</span>):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;预测发生数值溢出，请检查数据尺度和预测长度。&quot;</span>)</span><br><span class="line">    fitted = all_values[:<span class="built_in">len</span>(x0)]</span><br><span class="line">    future = all_values[<span class="built_in">len</span>(x0):]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 第五步：从第二项开始计算误差，防止首项人为拉低均值。</span></span><br><span class="line">    relative_error = np.<span class="built_in">abs</span>(x0[<span class="number">1</span>:] - fitted[<span class="number">1</span>:]) / x0[<span class="number">1</span>:]</span><br><span class="line">    level_ratio = x0[:-<span class="number">1</span>] / x0[<span class="number">1</span>:]</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">abs</span>(<span class="number">1</span> + a/<span class="number">2</span>) &lt; <span class="number">1e-12</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;1+a/2 接近 0，级比偏差公式不可用。&quot;</span>)</span><br><span class="line">    eta = np.<span class="built_in">abs</span>(<span class="number">1</span> - (<span class="number">1</span>-a/<span class="number">2</span>)/(<span class="number">1</span>+a/<span class="number">2</span>) * level_ratio)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> np.<span class="built_in">all</span>(np.isfinite(relative_error)) <span class="keyword">or</span> <span class="keyword">not</span> np.<span class="built_in">all</span>(np.isfinite(eta)):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;误差诊断发生溢出, 请检查数据动态范围&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;a&quot;</span>: <span class="built_in">float</span>(a), <span class="string">&quot;u&quot;</span>: <span class="built_in">float</span>(u), <span class="string">&quot;fitted&quot;</span>: fitted,</span><br><span class="line">            <span class="string">&quot;future&quot;</span>: future, <span class="string">&quot;relative_error&quot;</span>: relative_error, <span class="string">&quot;eta&quot;</span>: eta&#125;</span><br></pre></td></tr></table></figure>
-<p>代码先将输入除以其最大值, 在归一化尺度估计参数和还原序列,
-最后换回原尺度. 发展系数 <span class="math inline">\(a\)</span> 不变,
-灰作用量 <span class="math inline">\(u\)</span> 与序列一起缩放.
-这可减轻数据整体过大或过小导致的数值秩误判, 但不能处理任意大的动态范围.
-预测必须为有限正数; 溢出, 下溢或非正还原值均报错, 不输出误导性结果.</p>
-<h3 id="完整例题程序-gm_main.py">6.3 完整例题程序 GM_MAIN.py</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> gm11 <span class="keyword">import</span> gm11</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run_example</span>():</span><br><span class="line">    <span class="comment"># 教学示例数据, 单位未指定, 不作为真实地区统计记录。</span></span><br><span class="line">    years = np.arange(<span class="number">1995</span>, <span class="number">2005</span>)</span><br><span class="line">    x0 = np.array([<span class="number">174</span>, <span class="number">179</span>, <span class="number">183</span>, <span class="number">189</span>, <span class="number">207</span>,</span><br><span class="line">                   <span class="number">234</span>, <span class="number">220.5</span>, <span class="number">256</span>, <span class="number">270</span>, <span class="number">285</span>], dtype=<span class="built_in">float</span>)</span><br><span class="line">    predict_num = <span class="number">3</span>  <span class="comment"># 本例演示 2005—2007 年的条件外推。</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 光滑比和原始级比是不同的量，分别计算。</span></span><br><span class="line">    x1 = np.cumsum(x0)</span><br><span class="line">    rho = x0[<span class="number">1</span>:] / x1[:-<span class="number">1</span>]</span><br><span class="line">    lam = x0[:-<span class="number">1</span>] / x0[<span class="number">1</span>:]</span><br><span class="line">    lower, upper = np.exp([-<span class="number">2</span>/(<span class="built_in">len</span>(x0)+<span class="number">1</span>), <span class="number">2</span>/(<span class="built_in">len</span>(x0)+<span class="number">1</span>)])</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;光滑比小于 0.5 的占比：<span class="subst">&#123;np.mean(rho &lt; <span class="number">.5</span>):<span class="number">.2</span>%&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;k=4 起的占比：<span class="subst">&#123;np.mean(rho[<span class="number">2</span>:] &lt; <span class="number">.5</span>):<span class="number">.2</span>%&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;原始级比参考区间：(<span class="subst">&#123;lower:<span class="number">.6</span>f&#125;</span>, <span class="subst">&#123;upper:<span class="number">.6</span>f&#125;</span>)&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;各项原始级比均在区间内：<span class="subst">&#123;np.<span class="built_in">all</span>((lam &gt; lower) &amp; (lam &lt; upper))&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 只使用 1995—2001 年训练，再预测此前未使用的三年。</span></span><br><span class="line">    train = gm11(x0[:<span class="number">7</span>], <span class="number">3</span>)</span><br><span class="line">    test_actual = x0[<span class="number">7</span>:]</span><br><span class="line">    test_error = np.<span class="built_in">abs</span>(test_actual - train[<span class="string">&quot;future&quot;</span>]) / test_actual</span><br><span class="line">    naive = np.full(<span class="number">3</span>, x0[<span class="number">6</span>])  <span class="comment"># 基准：一直使用训练期最后一个值。</span></span><br><span class="line">    naive_error = np.<span class="built_in">abs</span>(test_actual - naive) / test_actual</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;训练参数：a=<span class="subst">&#123;train[<span class="string">&#x27;a&#x27;</span>]:<span class="number">.10</span>f&#125;</span>, u=<span class="subst">&#123;train[<span class="string">&#x27;u&#x27;</span>]:<span class="number">.10</span>f&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;留出年份、示例观测值、GM 预测值、绝对相对误差：&quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> year, actual, pred, err <span class="keyword">in</span> <span class="built_in">zip</span>(years[<span class="number">7</span>:], test_actual,</span><br><span class="line">                                      train[<span class="string">&quot;future&quot;</span>], test_error):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;year&#125;</span>: <span class="subst">&#123;actual:<span class="number">.4</span>f&#125;</span>, <span class="subst">&#123;pred:<span class="number">.4</span>f&#125;</span>, <span class="subst">&#123;err:<span class="number">.2</span>%&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;留出集 GM MAPE：<span class="subst">&#123;test_error.mean():<span class="number">.4</span>%&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;留出集末值基准 MAPE：<span class="subst">&#123;naive_error.mean():<span class="number">.4</span>%&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 完成留出评价后，用全数据重新拟合；这不改变留出评价结果。</span></span><br><span class="line">    full = gm11(x0, predict_num)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;全样本参数：a=<span class="subst">&#123;full[<span class="string">&#x27;a&#x27;</span>]:<span class="number">.10</span>f&#125;</span>, u=<span class="subst">&#123;full[<span class="string">&#x27;u&#x27;</span>]:<span class="number">.10</span>f&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;训练内平均绝对相对误差：<span class="subst">&#123;full[<span class="string">&#x27;relative_error&#x27;</span>].mean():<span class="number">.4</span>%&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;平均级比偏差：<span class="subst">&#123;full[<span class="string">&#x27;eta&#x27;</span>].mean():<span class="number">.8</span>f&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> year, actual, fitted <span class="keyword">in</span> <span class="built_in">zip</span>(years, x0, full[<span class="string">&quot;fitted&quot;</span>]):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;拟合 <span class="subst">&#123;year&#125;</span>: 原值=<span class="subst">&#123;actual:<span class="number">.4</span>f&#125;</span>, 拟合值=<span class="subst">&#123;fitted:<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> year, value <span class="keyword">in</span> <span class="built_in">zip</span>(<span class="built_in">range</span>(<span class="number">2005</span>, <span class="number">2005</span>+predict_num), full[<span class="string">&quot;future&quot;</span>]):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;条件外推 <span class="subst">&#123;year&#125;</span>: <span class="subst">&#123;value:<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 将全部数值收集到返回字典, 便于与 MATLAB 或独立计算对照。</span></span><br><span class="line">    results = &#123;<span class="string">&quot;years&quot;</span>: years.tolist(), <span class="string">&quot;x0&quot;</span>: x0.tolist(),</span><br><span class="line">               <span class="string">&quot;rho&quot;</span>: rho.tolist(), <span class="string">&quot;lambda&quot;</span>: lam.tolist(),</span><br><span class="line">               <span class="string">&quot;level_bounds&quot;</span>: [<span class="built_in">float</span>(lower), <span class="built_in">float</span>(upper)],</span><br><span class="line">               <span class="string">&quot;holdout_mape&quot;</span>: <span class="built_in">float</span>(test_error.mean()),</span><br><span class="line">               <span class="string">&quot;naive_mape&quot;</span>: <span class="built_in">float</span>(naive_error.mean())&#125;</span><br><span class="line">    <span class="keyword">for</span> label, model <span class="keyword">in</span> [(<span class="string">&quot;train&quot;</span>, train), (<span class="string">&quot;full&quot;</span>, full)]:</span><br><span class="line">        results[label] = &#123;key: value.tolist() <span class="keyword">if</span> <span class="built_in">isinstance</span>(value, np.ndarray)</span><br><span class="line">                          <span class="keyword">else</span> value <span class="keyword">for</span> key, value <span class="keyword">in</span> model.items()&#125;</span><br><span class="line">    <span class="keyword">return</span> results</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    run_example()</span><br></pre></td></tr></table></figure>
-<h2 id="七-matlab-完整数值实现">七, MATLAB 完整数值实现</h2>
-<h3 id="模型函数">7.1 模型函数</h3>
-<p>将以下代码保存为 <code>gm11.m</code>. 四个主要输出依次是未来值,
-历史拟合值, 绝对相对误差和级比偏差. 第五个输出 <code>model</code> 提供
-<span class="math inline">\(a,u\)</span> 及相应数组, 与 Python
-的字典对应.</p>
-<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[result, fitted, relative_error, eta, model]</span> = <span class="title">gm11</span><span class="params">(x0, predict_num)</span></span></span><br><span class="line"><span class="comment">% 传统 GM(1,1); 四个数值输出及参数诊断结构体.</span></span><br><span class="line"><span class="keyword">if</span> nargin &lt; <span class="number">2</span>, predict_num = <span class="number">3</span>; <span class="keyword">end</span></span><br><span class="line"><span class="keyword">if</span> ~isnumeric(x0) || ~<span class="built_in">isvector</span>(x0) || <span class="built_in">numel</span>(x0)&lt;<span class="number">4</span> || ~<span class="built_in">isreal</span>(x0) || any(~<span class="built_in">isfinite</span>(x0(:))) || any(x0(:)&lt;=<span class="number">0</span>)</span><br><span class="line">    error(<span class="string">&#x27;gm11:Input&#x27;</span>,<span class="string">&#x27;Need at least four finite positive observations.&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">if</span> ~isnumeric(predict_num) || ~<span class="built_in">isscalar</span>(predict_num) || ~<span class="built_in">isreal</span>(predict_num) || ~<span class="built_in">isfinite</span>(predict_num) || ...</span><br><span class="line">        islogical(predict_num) || predict_num&lt;<span class="number">0</span> || predict_num~=<span class="built_in">floor</span>(predict_num)</span><br><span class="line">    error(<span class="string">&#x27;gm11:Horizon&#x27;</span>,<span class="string">&#x27;Forecast horizon must be a nonnegative integer.&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">x0=double(x0(:)); n=<span class="built_in">length</span>(x0); scale=<span class="built_in">max</span>(x0); scaled=x0/scale;</span><br><span class="line"><span class="keyword">if</span> any(scaled&lt;=<span class="number">0</span>), error(<span class="string">&#x27;gm11:Scale&#x27;</span>,<span class="string">&#x27;Normalization underflow.&#x27;</span>); <span class="keyword">end</span></span><br><span class="line">x1=cumsum(scaled);</span><br><span class="line"><span class="keyword">if</span> any(~<span class="built_in">isfinite</span>(x1)), error(<span class="string">&#x27;gm11:Overflow&#x27;</span>,<span class="string">&#x27;Accumulated values overflow.&#x27;</span>); <span class="keyword">end</span></span><br><span class="line">z1=x1(<span class="number">1</span>:<span class="keyword">end</span><span class="number">-1</span>)/<span class="number">2</span>+x1(<span class="number">2</span>:<span class="keyword">end</span>)/<span class="number">2</span>;</span><br><span class="line">B=[-z1,<span class="built_in">ones</span>(n<span class="number">-1</span>,<span class="number">1</span>)];</span><br><span class="line"><span class="keyword">if</span> rank(B)&lt;<span class="number">2</span>, error(<span class="string">&#x27;gm11:Rank&#x27;</span>,<span class="string">&#x27;Design matrix must have full column rank.&#x27;</span>); <span class="keyword">end</span></span><br><span class="line"><span class="built_in">beta</span>=B\scaled(<span class="number">2</span>:<span class="keyword">end</span>); a=<span class="built_in">beta</span>(<span class="number">1</span>); us=<span class="built_in">beta</span>(<span class="number">2</span>); u=us*scale;</span><br><span class="line"><span class="keyword">if</span> a==<span class="number">0</span>, <span class="built_in">factor</span>=<span class="number">1</span>; <span class="keyword">else</span>, <span class="built_in">factor</span>=<span class="built_in">expm1</span>(a)/a; <span class="keyword">end</span></span><br><span class="line">m=(<span class="number">1</span>:n+predict_num<span class="number">-1</span>).&#x27;;</span><br><span class="line">all_values=[x0(<span class="number">1</span>);((us-a*scaled(<span class="number">1</span>))*<span class="built_in">factor</span>*<span class="built_in">exp</span>(-a*m))*scale];</span><br><span class="line"><span class="keyword">if</span> ~<span class="built_in">isfinite</span>(u) || any(~<span class="built_in">isfinite</span>(all_values)) || any(all_values&lt;=<span class="number">0</span>), error(<span class="string">&#x27;gm11:Overflow&#x27;</span>,<span class="string">&#x27;Restored values overflow.&#x27;</span>); <span class="keyword">end</span></span><br><span class="line">fitted=all_values(<span class="number">1</span>:n); result=all_values(n+<span class="number">1</span>:<span class="keyword">end</span>);</span><br><span class="line">relative_error=<span class="built_in">abs</span>(x0(<span class="number">2</span>:<span class="keyword">end</span>)-fitted(<span class="number">2</span>:<span class="keyword">end</span>))./x0(<span class="number">2</span>:<span class="keyword">end</span>);</span><br><span class="line">level_ratio=x0(<span class="number">1</span>:<span class="keyword">end</span><span class="number">-1</span>)./x0(<span class="number">2</span>:<span class="keyword">end</span>);</span><br><span class="line"><span class="keyword">if</span> <span class="built_in">abs</span>(<span class="number">1</span>+a/<span class="number">2</span>)&lt;<span class="number">1e-12</span>, error(<span class="string">&#x27;gm11:Ratio&#x27;</span>,<span class="string">&#x27;Level deviation denominator is near zero.&#x27;</span>); <span class="keyword">end</span></span><br><span class="line">eta=<span class="built_in">abs</span>(<span class="number">1</span>-(<span class="number">1</span>-a/<span class="number">2</span>)/(<span class="number">1</span>+a/<span class="number">2</span>)*level_ratio);</span><br><span class="line"><span class="keyword">if</span> any(~<span class="built_in">isfinite</span>(relative_error)) || any(~<span class="built_in">isfinite</span>(eta))</span><br><span class="line">    error(<span class="string">&#x27;gm11:Diagnostics&#x27;</span>,<span class="string">&#x27;Diagnostics overflow.&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">model=struct(<span class="string">&#x27;a&#x27;</span>,a,<span class="string">&#x27;u&#x27;</span>,u,<span class="string">&#x27;fitted&#x27;</span>,fitted,<span class="string">&#x27;future&#x27;</span>,result, ...</span><br><span class="line">    <span class="string">&#x27;relative_error&#x27;</span>,relative_error,<span class="string">&#x27;eta&#x27;</span>,eta);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
-<h3 id="主程序">7.2 主程序</h3>
-<p>将以下代码保存为 <code>GM_MAIN.m</code>, 与 <code>gm11.m</code>
-放在同一目录, 运行 <code>results = GM_MAIN();</code>.
-程序先按时间留出最后三年, 再用全部数据重估,
-不需要在运行时手动输入是否通过筛查. 筛查规则与预测性能应分别判断,
-不能用人为输入"通过"替代模型评价.</p>
-<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">results</span> = <span class="title">GM_MAIN</span><span class="params">()</span></span></span><br><span class="line"><span class="comment">% 七年训练, 三年留出; 完成评价后才全样本重估.</span></span><br><span class="line">years=(<span class="number">1995</span>:<span class="number">2004</span>).&#x27;;</span><br><span class="line">x0=[<span class="number">174</span> <span class="number">179</span> <span class="number">183</span> <span class="number">189</span> <span class="number">207</span> <span class="number">234</span> <span class="number">220.5</span> <span class="number">256</span> <span class="number">270</span> <span class="number">285</span>].&#x27;;</span><br><span class="line">x1=cumsum(x0); rho=x0(<span class="number">2</span>:<span class="keyword">end</span>)./x1(<span class="number">1</span>:<span class="keyword">end</span><span class="number">-1</span>); lambda=x0(<span class="number">1</span>:<span class="keyword">end</span><span class="number">-1</span>)./x0(<span class="number">2</span>:<span class="keyword">end</span>);</span><br><span class="line">bounds=<span class="built_in">exp</span>([<span class="number">-2</span>/(<span class="built_in">length</span>(x0)+<span class="number">1</span>),<span class="number">2</span>/(<span class="built_in">length</span>(x0)+<span class="number">1</span>)]);</span><br><span class="line">fprintf(<span class="string">&#x27;Smoothness proportions: %.4f%%, %.4f%%\n&#x27;</span>,<span class="number">100</span>*<span class="built_in">mean</span>(rho&lt;<span class="number">.5</span>),<span class="number">100</span>*<span class="built_in">mean</span>(rho(<span class="number">3</span>:<span class="keyword">end</span>)&lt;<span class="number">.5</span>));</span><br><span class="line">[future,~,~,~,train]=gm11(x0(<span class="number">1</span>:<span class="number">7</span>),<span class="number">3</span>);</span><br><span class="line">holdout_mape=<span class="built_in">mean</span>(<span class="built_in">abs</span>(x0(<span class="number">8</span>:<span class="keyword">end</span>)-future)./x0(<span class="number">8</span>:<span class="keyword">end</span>));</span><br><span class="line">naive_mape=<span class="built_in">mean</span>(<span class="built_in">abs</span>(x0(<span class="number">8</span>:<span class="keyword">end</span>)-x0(<span class="number">7</span>))./x0(<span class="number">8</span>:<span class="keyword">end</span>));</span><br><span class="line">[result,fitted,relative_error,eta,full]=gm11(x0,<span class="number">3</span>);</span><br><span class="line">fprintf(<span class="string">&#x27;Train: a=%.10f, u=%.10f\n&#x27;</span>,train.a,train.u);</span><br><span class="line">fprintf(<span class="string">&#x27;Holdout GM MAPE=%.4f%%, last-value MAPE=%.4f%%\n&#x27;</span>,<span class="number">100</span>*holdout_mape,<span class="number">100</span>*naive_mape);</span><br><span class="line">fprintf(<span class="string">&#x27;Full: a=%.10f, u=%.10f\n&#x27;</span>,full.a,full.u);</span><br><span class="line">fprintf(<span class="string">&#x27;In-sample mean absolute relative error=%.4f%%, mean eta=%.8f\n&#x27;</span>,<span class="number">100</span>*<span class="built_in">mean</span>(relative_error),<span class="built_in">mean</span>(eta));</span><br><span class="line"><span class="built_in">disp</span>([years,x0,fitted]); <span class="built_in">disp</span>([(<span class="number">2005</span>:<span class="number">2007</span>).&#x27;,result]);</span><br><span class="line">results=struct(<span class="string">&#x27;years&#x27;</span>,years,<span class="string">&#x27;x0&#x27;</span>,x0,<span class="string">&#x27;rho&#x27;</span>,rho,<span class="string">&#x27;lambda&#x27;</span>,lambda, ...</span><br><span class="line">    <span class="string">&#x27;level_bounds&#x27;</span>,bounds,<span class="string">&#x27;holdout_mape&#x27;</span>,holdout_mape,<span class="string">&#x27;naive_mape&#x27;</span>,naive_mape, ...</span><br><span class="line">    <span class="string">&#x27;train&#x27;</span>,train,<span class="string">&#x27;full&#x27;</span>,full);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
-<h2 id="八-练习与方法评价">八, 练习与方法评价</h2>
-<h3 id="练习">8.1 练习</h3>
+<p>GM(1,1) 参数少, 累加与还原的关系直观, 计算量较小,
+可用作短序列的趋势基准. 但它将第二项以后的变化限制为固定增长因子,
+难以直接表示明显季节性, 趋势反转或机制突变. 信息不足时仍能算出一条曲线,
+不等于未来变得确定.</p>
+<p>光滑比, 原始级比, 残差和级比偏差帮助检查不同方面,
+均不能取代独立预测验证. 对涉及生态治理和公共资源安排的应用,
+应把预测作为需要持续监测和更新的参考, 同时结合指标单位,
+数据来源与领域知识, 不将趋势模型解释为政策因果效果.</p>
+<h2 id="练习">21.6 练习</h2>
 <ol type="1">
 <li>对序列 <span class="math inline">\((2,3,4,5)\)</span> 做一次累加,
 再由累加结果还原原序列. 为什么累加没有增加信息?</li>
@@ -933,54 +964,26 @@ class="math inline">\(x^{(0)}_k/x^{(0)}_{k-1}\)</span>,
 级比偏差公式怎样修改?</li>
 <li>本例训练内平均误差 2.5999%, 留出误差 5.2851%, 两者能否互相替代?
 首项零误差为什么不应计入平均值?</li>
+<li>只用本例前七项计算原始级比与参考区间.
+为什么不能直接沿用十项全样本的区间作为训练时的检查结果?</li>
+<li>验证滚动检验中, 某些起点的GM预测不如简单基准.
+为什么平均误差较小不等于处处较好?</li>
+<li>将全部输入乘以1000, 比较 <span class="math inline">\(a\)</span>,
+<span class="math inline">\(u\)</span> 和预测值的变化.
+再与加1000的结果比较, 解释二者为何不同.</li>
+<li>将一个极大的常数加到正值序列中. 即使原始级比趋近1,
+能否据此证明原尺度趋势稳定? 应检查哪些预测结果?</li>
 </ol>
-<h3 id="参考解答">8.2 参考解答</h3>
-<ol type="1">
-<li>累加得到 <span class="math inline">\((2,5,9,14)\)</span>, 首项保留,
-相邻项相减得到 <span class="math inline">\((2,3,4,5)\)</span>. 变换可逆,
-观测数量和原始信息并未增加.</li>
-<li><span class="math inline">\(\rho_k=2^{k-1}/(2^{k-1}-1)\to1\)</span>,
-而不是 0. 比值极限取决于新增量与已有累加量的相对速度.</li>
-<li><span class="math inline">\(\hat x^{(1)}_k=5+8(k-1)\)</span>,
-还原序列为 <span class="math inline">\((5,8,8,\ldots)\)</span>. <span
-class="math inline">\(a=0\)</span> 时原公式中的 <span
-class="math inline">\(u/a\)</span> 无定义,
-需要使用零系数解或连续延拓公式.</li>
-<li>用 <span
-class="math inline">\(\sigma_k=x^{(0)}_k/x^{(0)}_{k-1}\)</span> 时,
-公式改为 <span
-class="math inline">\(\eta_k=|1-[(1-a/2)/(1+a/2)]/\sigma_k|\)</span>.</li>
-<li>训练内误差评价已用于估计参数的数据,
-留出误差评价未参与参数估计的未来数据, 两者不同.
-首项由初值强制等于原始值, 它的零误差不提供额外拟合证据.</li>
-</ol>
-<h3 id="优点与适用边界">8.3 优点与适用边界</h3>
-<p>GM(1,1) 参数少, 累加与还原的关系直观, 计算量较小,
-可用作短序列的趋势基准. 但它将第二项以后的变化限制为固定增长因子,
-难以直接表示明显季节性, 趋势反转或机制突变. 信息不足时仍能算出一条曲线,
-不等于未来变得确定.</p>
-<p>光滑比, 原始级比, 残差和级比偏差帮助检查不同方面,
-均不能取代独立预测验证. 对涉及生态治理和公共资源安排的应用,
-应把预测作为需要持续监测和更新的参考, 同时结合指标单位,
-数据来源与领域知识, 不将趋势模型解释为政策因果效果.</p>
-<h2 id="九-参考资料">九, 参考资料</h2>
-<ul>
-<li>Deng, J.-L. (1982). <em>Control problems of grey systems</em>.
-Systems &amp; Control Letters, 1(5), 288–294. <a
-target="_blank" rel="noopener" href="https://doi.org/10.1016/S0167-6911(82)80025-X">论文入口</a>.</li>
-<li>Ma, X., Wu, W., Zhang, Y. (2019). <em>Improved GM(1,1) model based
-on Simpson formula and its applications</em>. Journal of Grey System,
-31(4), 33-46. 其中第 2 节回顾传统 GM(1,1) 的基本方程, 背景值和还原公式.
-<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1908.03493">全文</a>.</li>
-<li><em>Digital Twin-based Quality Management Method for the Assembly
-Process of Aerospace Products with the Grey-Markov Model and Apriori
-Algorithm</em> (2022). 原始级比筛查方法的应用实例. <a
-target="_blank" rel="noopener" href="https://link.springer.com/article/10.1186/s10033-022-00763-8">论文</a>.</li>
-<li>NumPy 官方文档: <a
-target="_blank" rel="noopener" href="https://numpy.org/doc/stable/reference/generated/numpy.linalg.lstsq.html">lstsq</a>,
-<a
-target="_blank" rel="noopener" href="https://numpy.org/doc/stable/reference/generated/numpy.expm1.html">expm1</a>.</li>
-</ul>
+<h2 id="参考资料">参考资料</h2>
+<p>[1] DENG J L. Control problems of grey systems[J]. Systems &amp;
+Control Letters, 1982, 1(5): 288-294. DOI:
+10.1016/S0167-6911(82)80025-X.</p>
+<p>[2] MA X, WU W, ZHANG Y. Improved GM(1,1) model based on Simpson
+formula and its applications[EB/OL]. arXiv:1908.03493, 2019.
+https://arxiv.org/abs/1908.03493.</p>
+<p>[3] NumPy developers. numpy.linalg.lstsq; numpy.expm1[EB/OL].
+https://numpy.org/doc/stable/reference/generated/numpy.linalg.lstsq.html;
+https://numpy.org/doc/stable/reference/generated/numpy.expm1.html.</p>
 
       </div>
       

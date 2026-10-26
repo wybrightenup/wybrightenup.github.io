@@ -19,18 +19,18 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="动态规划: 把大问题拆成可以复用的小问题 在资源有限的条件下安排活动, 选择装备或规划路线时, 一个局部看来合理的选择, 未必带来最好的整体结果. 动态规划提供了一种系统的思考方式: 把问题分解成有明确含义的子问题, 保存已经求出的结果, 再按依赖关系逐步求解. 本章以&quot;最少硬币凑金额&quot;和&quot;科普装备选择&quot;为主线, 依次说明状态定义, 转移方程, 初始条件, 计算顺序和方案恢复. Py">
+    <meta name="description" content="动态规划: 从凑硬币到装备选择 用尽量少的硬币恰好付清一本书的价格, 与在运输箱中挑选效益最高的装备, 看似不同, 却可以使用同一种思路: 把已经求过的子问题记下来, 再根据依赖关系找到整体最优方案. 关键不在于记住几行循环, 而在于说明每个状态代表什么, 当前选择从哪里来, 以及怎样从最优值恢复行动方案. 本章先完成两道例题, 再比较记忆化搜索, 空间压缩与不同装载要求. 1 先试">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Hexo">
 <meta property="og:url" content="http://example.com/MathematicalModelingAlgorithms/DynamicProgramming.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="动态规划: 把大问题拆成可以复用的小问题 在资源有限的条件下安排活动, 选择装备或规划路线时, 一个局部看来合理的选择, 未必带来最好的整体结果. 动态规划提供了一种系统的思考方式: 把问题分解成有明确含义的子问题, 保存已经求出的结果, 再按依赖关系逐步求解. 本章以&quot;最少硬币凑金额&quot;和&quot;科普装备选择&quot;为主线, 依次说明状态定义, 转移方程, 初始条件, 计算顺序和方案恢复. Py">
+<meta property="og:description" content="动态规划: 从凑硬币到装备选择 用尽量少的硬币恰好付清一本书的价格, 与在运输箱中挑选效益最高的装备, 看似不同, 却可以使用同一种思路: 把已经求过的子问题记下来, 再根据依赖关系找到整体最优方案. 关键不在于记住几行循环, 而在于说明每个状态代表什么, 当前选择从哪里来, 以及怎样从最优值恢复行动方案. 本章先完成两道例题, 再比较记忆化搜索, 空间压缩与不同装载要求. 1 先试">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/images/DynamicProgramming/DP-1.png">
 <meta property="og:image" content="http://example.com/images/DynamicProgramming/DP-2.png">
 <meta property="og:image" content="http://example.com/images/DynamicProgramming/DP-3.png">
-<meta property="article:published_time" content="2026-10-15T06:01:20.933Z">
-<meta property="article:modified_time" content="2026-10-15T02:20:42.230Z">
+<meta property="article:published_time" content="2026-10-26T06:42:25.115Z">
+<meta property="article:modified_time" content="2026-10-26T06:24:46.000Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/DynamicProgramming/DP-1.png">
@@ -131,20 +131,21 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92-%E6%8A%8A%E5%A4%A7%E9%97%AE%E9%A2%98%E6%8B%86%E6%88%90%E5%8F%AF%E4%BB%A5%E5%A4%8D%E7%94%A8%E7%9A%84%E5%B0%8F%E9%97%AE%E9%A2%98"><span class="nav-number">1.</span> <span class="nav-text">动态规划:
-把大问题拆成可以复用的小问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E4%BB%8E%E4%B8%80%E4%B8%AA%E7%9B%B4%E8%A7%89%E4%B8%8D%E5%8F%AF%E9%9D%A0%E7%9A%84%E4%BE%8B%E5%AD%90%E5%BC%80%E5%A7%8B"><span class="nav-number">1.1.</span> <span class="nav-text">一,
-从一个直觉不可靠的例子开始</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%99%E5%AD%A6%E9%97%AE%E9%A2%98-%E7%94%A8%E6%9C%80%E5%B0%91%E7%9A%84%E7%A1%AC%E5%B8%81%E5%87%91%E5%87%BA-27"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 教学问题: 用最少的硬币凑出
-27</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-5-%E6%9E%9A%E5%B7%B2%E7%BB%8F%E6%9C%80%E5%B0%91"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 为什么 5 枚已经最少</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><span class="nav-number">1.2.</span> <span class="nav-text">二, 动态规划的基本思想</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81-%E9%80%92%E6%8E%A8%E4%B8%8E%E7%BB%93%E6%9E%9C%E5%A4%8D%E7%94%A8"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 状态, 递推与结果复用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E4%B8%AA%E9%9C%80%E8%A6%81%E5%9B%9E%E7%AD%94%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 四个需要回答的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E4%BC%98%E5%AD%90%E7%BB%93%E6%9E%84-%E6%9B%BF%E6%8D%A2%E4%B8%80%E4%B8%AA%E8%BE%83%E5%B7%AE%E7%9A%84%E9%83%A8%E5%88%86"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 最优子结构:
-替换一个较差的部分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E8%A6%81%E4%BF%9D%E5%AD%98%E8%B6%B3%E5%A4%9F%E7%9A%84%E4%BF%A1%E6%81%AF"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 状态要保存足够的信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E5%8F%A0%E5%AD%90%E9%97%AE%E9%A2%98%E4%B8%8E%E8%AE%A1%E7%AE%97%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.2.5.</span> <span class="nav-text">2.5 重叠子问题与计算顺序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89-%E4%BE%8B%E9%A2%98%E4%B8%80-%E6%9C%80%E5%B0%91%E7%A1%AC%E5%B8%81%E9%97%AE%E9%A2%98%E7%9A%84%E5%AE%8C%E6%95%B4%E6%8E%A8%E5%AF%BC"><span class="nav-number">1.3.</span> <span class="nav-text">三, 例题一:
-最少硬币问题的完整推导</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5-%E7%9B%AE%E6%A0%87%E4%B8%8E%E6%95%B4%E6%95%B0%E8%A7%84%E5%88%92%E8%A1%A8%E8%BE%BE"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 输入, 目标与整数规划表达</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E5%AE%9A%E4%B9%89"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 状态定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E6%9C%80%E5%90%8E%E4%B8%80%E6%9E%9A%E7%A1%AC%E5%B8%81%E5%BB%BA%E7%AB%8B%E8%BD%AC%E7%A7%BB"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 从最后一枚硬币建立转移</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E6%9D%A1%E4%BB%B6%E4%B8%8E%E4%B8%8D%E5%8F%AF%E8%BE%BE%E7%8A%B6%E6%80%81"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.4 初始条件与不可达状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E9%A1%BA%E5%BA%8F%E4%B8%8E%E6%AD%A3%E7%A1%AE%E6%80%A7"><span class="nav-number">1.3.5.</span> <span class="nav-text">3.5 计算顺序与正确性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E4%BE%8B%E5%AE%8C%E6%95%B4%E7%8A%B6%E6%80%81%E8%A1%A8"><span class="nav-number">1.3.6.</span> <span class="nav-text">3.6 本例完整状态表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E4%B8%8E%E7%A9%BA%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="nav-number">1.3.7.</span> <span class="nav-text">3.7 时间与空间复杂度</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B-%E6%9C%80%E5%B0%91%E7%A1%AC%E5%B8%81%E9%97%AE%E9%A2%98%E7%9A%84-python-%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.4.</span> <span class="nav-text">四, 最少硬币问题的 Python
-实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%BA%95%E5%90%91%E4%B8%8A-%E5%90%8C%E6%97%B6%E8%BF%94%E5%9B%9E%E6%9C%80%E4%BC%98%E5%80%BC%E4%B8%8E%E6%96%B9%E6%A1%88"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 自底向上:
-同时返回最优值与方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B-%E7%9B%B4%E6%8E%A5%E9%80%92%E5%BD%92%E4%B8%8E%E8%AE%B0%E5%BF%86%E5%8C%96%E6%90%9C%E7%B4%A2"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 自顶向下:
-直接递归与记忆化搜索</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E4%B8%8E%E7%A8%8B%E5%BA%8F%E8%BE%B9%E7%95%8C"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 输入与程序边界</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94-%E4%BE%8B%E9%A2%98%E4%BA%8C-%E7%A7%91%E6%99%AE%E8%A3%85%E5%A4%87%E9%80%89%E6%8B%A9%E4%B8%8E-0-1-%E8%83%8C%E5%8C%85"><span class="nav-number">1.5.</span> <span class="nav-text">五, 例题二: 科普装备选择与
-0-1 背包</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E4%B8%8E%E6%95%99%E5%AD%A6%E6%95%B0%E6%8D%AE"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 题目与教学数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B4%E6%95%B0%E8%A7%84%E5%88%92%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 0-1 整数规划模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E5%BF%85%E9%A1%BB%E5%8C%85%E5%90%AB%E7%89%A9%E5%93%81%E9%98%B6%E6%AE%B5%E4%B8%8E%E5%AE%B9%E9%87%8F"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 状态必须包含物品阶段与容量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%89%E4%B8%8E%E4%B8%8D%E9%80%89%E6%98%AF%E4%B8%A4%E4%B8%AA%E5%80%99%E9%80%89%E5%88%86%E6%94%AF"><span class="nav-number">1.5.4.</span> <span class="nav-text">5.4 选与不选是两个候选分支</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E6%9D%A1%E4%BB%B6%E4%B8%8E%E5%A1%AB%E8%A1%A8%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.5.5.</span> <span class="nav-text">5.5 初始条件与填表顺序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E7%8A%B6%E6%80%81%E8%A1%A8%E4%B8%8E%E6%9C%80%E4%BC%98%E6%96%B9%E6%A1%88"><span class="nav-number">1.5.6.</span> <span class="nav-text">5.6 完整状态表与最优方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%8C%89%E8%AF%84%E5%88%86%E9%87%8D%E9%87%8F%E6%AF%94%E8%B4%AA%E5%BF%83%E4%B9%9F%E5%8F%AF%E8%83%BD%E5%A4%B1%E8%B4%A5"><span class="nav-number">1.5.7.</span> <span class="nav-text">5.7
-为什么按评分重量比贪心也可能失败</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD-0-1-%E8%83%8C%E5%8C%85%E7%9A%84-python-%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.6.</span> <span class="nav-text">六, 0-1 背包的 Python 实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E7%BB%B4%E8%A1%A8%E4%B8%8E%E9%80%89%E7%89%A9%E5%9B%9E%E6%BA%AF"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 二维表与选物回溯</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A9%BA%E9%97%B4%E5%8E%8B%E7%BC%A9-%E5%8F%AA%E4%BF%9D%E5%AD%98%E4%B8%80%E8%A1%8C"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 空间压缩: 只保存一行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%B9%E9%87%8F%E4%B8%8D%E8%B6%85%E8%BF%87%E4%B8%8E%E6%81%B0%E5%A5%BD%E8%A3%85%E6%BB%A1%E8%A6%81%E5%88%86%E5%88%AB%E5%BB%BA%E6%A8%A1"><span class="nav-number">1.6.3.</span> <span class="nav-text">6.3
-&quot;容量不超过&quot;与&quot;恰好装满&quot;要分别建模</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98%E7%9A%84%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%8F%8A%E5%85%B6%E9%99%90%E5%88%B6"><span class="nav-number">1.6.4.</span> <span class="nav-text">6.4 背包问题的复杂度及其限制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83-matlab-%E5%AE%9E%E7%8E%B0-%E6%A0%B8%E5%AF%B9%E4%B8%A4%E7%B1%BB%E7%8A%B6%E6%80%81%E7%9A%84%E4%B8%8B%E6%A0%87"><span class="nav-number">1.7.</span> <span class="nav-text">七, MATLAB 实现:
-核对两类状态的下标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB-%E8%BF%9B%E9%98%B6-%E4%BB%8E%E4%B8%A4%E9%81%93%E4%BE%8B%E9%A2%98%E7%9C%8B%E4%B8%80%E8%88%AC%E5%A4%9A%E9%98%B6%E6%AE%B5%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.8.</span> <span class="nav-text">八, 进阶:
-从两道例题看一般多阶段模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%89%E9%99%90%E9%98%B6%E6%AE%B5%E7%9A%84%E4%BB%B7%E5%80%BC%E5%87%BD%E6%95%B0"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 有限阶段的价值函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E9%81%93%E4%BE%8B%E9%A2%98%E7%9A%84%E5%85%B1%E5%90%8C%E7%82%B9%E4%B8%8E%E4%B8%8D%E5%90%8C%E7%82%B9"><span class="nav-number">1.8.2.</span> <span class="nav-text">8.2 两道例题的共同点与不同点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%93%AA%E4%BA%9B%E5%8F%98%E5%8C%96%E4%BC%9A%E8%A6%81%E6%B1%82%E9%87%8D%E6%96%B0%E8%AE%BE%E8%AE%A1%E7%8A%B6%E6%80%81"><span class="nav-number">1.8.3.</span> <span class="nav-text">8.3 哪些变化会要求重新设计状态</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D-%E6%96%B9%E6%B3%95%E9%80%89%E6%8B%A9%E4%B8%8E%E7%BB%93%E6%9E%9C%E8%A7%A3%E9%87%8A"><span class="nav-number">1.9.</span> <span class="nav-text">九, 方法选择与结果解释</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E7%82%B9%E4%B8%8E%E9%80%82%E7%94%A8%E8%8C%83%E5%9B%B4"><span class="nav-number">1.9.1.</span> <span class="nav-text">9.1 优点与适用范围</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92-%E8%B4%AA%E5%BF%83%E4%B8%8E%E7%9B%B4%E6%8E%A5%E6%9E%9A%E4%B8%BE"><span class="nav-number">1.9.2.</span> <span class="nav-text">9.2 动态规划, 贪心与直接枚举</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%9A%84%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.9.3.</span> <span class="nav-text">9.3 建立动态规划的步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A7%91%E6%99%AE%E8%A3%85%E5%A4%87%E4%BE%8B%E9%A2%98%E7%9A%84%E5%86%B3%E7%AD%96%E8%A7%A3%E9%87%8A"><span class="nav-number">1.9.4.</span> <span class="nav-text">9.4 科普装备例题的决策解释</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81-%E5%B8%B8%E8%A7%81%E9%94%99%E8%AF%AF%E4%B8%8E%E6%A3%80%E6%9F%A5%E6%96%B9%E6%B3%95"><span class="nav-number">1.10.</span> <span class="nav-text">十, 常见错误与检查方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%80-%E7%BB%83%E4%B9%A0%E4%B8%8E%E5%8F%82%E8%80%83%E8%A7%A3%E7%AD%94"><span class="nav-number">1.11.</span> <span class="nav-text">十一, 练习与参考解答</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.11.1.</span> <span class="nav-text">11.1 练习</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%A7%A3%E7%AD%94"><span class="nav-number">1.11.2.</span> <span class="nav-text">11.2 参考解答</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.12.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92-%E4%BB%8E%E5%87%91%E7%A1%AC%E5%B8%81%E5%88%B0%E8%A3%85%E5%A4%87%E9%80%89%E6%8B%A9"><span class="nav-number">1.</span> <span class="nav-text">动态规划: 从凑硬币到装备选择</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E8%AF%95%E4%B8%80%E8%AF%95-%E6%80%8E%E6%A0%B7%E7%94%A8%E6%9C%80%E5%B0%91%E7%9A%84%E7%A1%AC%E5%B8%81%E5%87%91%E5%87%BA-27"><span class="nav-number">1.1.</span> <span class="nav-text">1 先试一试:
+怎样用最少的硬币凑出 27</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%99%E5%AD%A6%E9%97%AE%E9%A2%98-%E7%94%A8%E6%9C%80%E5%B0%91%E7%9A%84%E7%A1%AC%E5%B8%81%E5%87%91%E5%87%BA-27"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 教学问题: 用最少的硬币凑出
+27</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-5-%E6%9E%9A%E5%B7%B2%E7%BB%8F%E6%9C%80%E5%B0%91"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 为什么 5 枚已经最少</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E6%9C%80%E5%90%8E%E4%B8%80%E6%9E%9A%E7%A1%AC%E5%B8%81%E5%BB%BA%E7%AB%8B%E9%80%92%E6%8E%A8"><span class="nav-number">1.2.</span> <span class="nav-text">2 从最后一枚硬币建立递推</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5-%E7%9B%AE%E6%A0%87%E4%B8%8E%E6%95%B4%E6%95%B0%E8%A7%84%E5%88%92%E8%A1%A8%E8%BE%BE"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 输入, 目标与整数规划表达</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E5%AE%9A%E4%B9%89"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 状态定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E6%9C%80%E5%90%8E%E4%B8%80%E6%9E%9A%E7%A1%AC%E5%B8%81%E5%BB%BA%E7%AB%8B%E8%BD%AC%E7%A7%BB"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 从最后一枚硬币建立转移</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E6%9D%A1%E4%BB%B6%E4%B8%8E%E4%B8%8D%E5%8F%AF%E8%BE%BE%E7%8A%B6%E6%80%81"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 初始条件与不可达状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E9%A1%BA%E5%BA%8F%E4%B8%8E%E6%AD%A3%E7%A1%AE%E6%80%A7"><span class="nav-number">1.2.5.</span> <span class="nav-text">2.5 计算顺序与正确性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E4%BE%8B%E5%AE%8C%E6%95%B4%E7%8A%B6%E6%80%81%E8%A1%A8"><span class="nav-number">1.2.6.</span> <span class="nav-text">2.6 本例完整状态表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E4%B8%8E%E7%A9%BA%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="nav-number">1.2.7.</span> <span class="nav-text">2.7 时间与空间复杂度</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E7%A1%AC%E5%B8%81%E9%80%92%E6%8E%A8%E5%86%99%E6%88%90%E7%A8%8B%E5%BA%8F-%E5%86%8D%E6%81%A2%E5%A4%8D%E6%96%B9%E6%A1%88"><span class="nav-number">1.3.</span> <span class="nav-text">3 把硬币递推写成程序,
+再恢复方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E6%9C%80%E4%BC%98%E5%80%BC%E5%92%8C%E6%9C%80%E5%90%8E%E9%80%89%E6%8B%A9%E4%B8%80%E8%B5%B7%E8%AE%B0%E5%BD%95"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 Python:
+最优值和最后选择一起记录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab-%E6%95%B0%E5%AD%A6%E9%87%91%E9%A2%9D-0-%E5%AF%B9%E5%BA%94%E6%95%B0%E7%BB%84%E4%B8%8B%E6%A0%87-1"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 MATLAB: 数学金额 0
+对应数组下标 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%B9%E7%95%8C%E5%BF%85%E9%A1%BB%E6%9C%8D%E4%BB%8E%E7%8A%B6%E6%80%81%E5%90%AB%E4%B9%89"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 边界必须服从状态含义</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%BA%9B%E5%AD%90%E9%97%AE%E9%A2%98%E5%8F%AF%E4%BB%A5%E5%A4%8D%E7%94%A8"><span class="nav-number">1.4.</span> <span class="nav-text">4 为什么这些子问题可以复用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81-%E9%80%92%E6%8E%A8%E4%B8%8E%E7%BB%93%E6%9E%9C%E5%A4%8D%E7%94%A8"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 状态, 递推与结果复用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E4%B8%AA%E9%9C%80%E8%A6%81%E5%9B%9E%E7%AD%94%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 四个需要回答的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E4%BC%98%E5%AD%90%E7%BB%93%E6%9E%84-%E6%9B%BF%E6%8D%A2%E4%B8%80%E4%B8%AA%E8%BE%83%E5%B7%AE%E7%9A%84%E9%83%A8%E5%88%86"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 最优子结构:
+替换一个较差的部分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E8%A6%81%E4%BF%9D%E5%AD%98%E8%B6%B3%E5%A4%9F%E7%9A%84%E4%BF%A1%E6%81%AF"><span class="nav-number">1.4.4.</span> <span class="nav-text">4.4 状态要保存足够的信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E5%8F%A0%E5%AD%90%E9%97%AE%E9%A2%98%E4%B8%8E%E8%AE%A1%E7%AE%97%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.4.5.</span> <span class="nav-text">4.5 重叠子问题与计算顺序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A7%91%E6%99%AE%E8%A3%85%E5%A4%87%E9%80%89%E6%8B%A9-%E6%AF%8F%E4%BB%B6%E7%89%A9%E5%93%81%E5%8F%AA%E8%83%BD%E5%8F%96%E4%B8%80%E6%AC%A1"><span class="nav-number">1.5.</span> <span class="nav-text">5 科普装备选择:
+每件物品只能取一次</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E4%B8%8E%E6%95%99%E5%AD%A6%E6%95%B0%E6%8D%AE"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 题目与教学数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B4%E6%95%B0%E8%A7%84%E5%88%92%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 0-1 整数规划模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E5%BF%85%E9%A1%BB%E5%8C%85%E5%90%AB%E7%89%A9%E5%93%81%E9%98%B6%E6%AE%B5%E4%B8%8E%E5%AE%B9%E9%87%8F"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 状态必须包含物品阶段与容量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%89%E4%B8%8E%E4%B8%8D%E9%80%89%E6%98%AF%E4%B8%A4%E4%B8%AA%E5%80%99%E9%80%89%E5%88%86%E6%94%AF"><span class="nav-number">1.5.4.</span> <span class="nav-text">5.4 选与不选是两个候选分支</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E6%9D%A1%E4%BB%B6%E4%B8%8E%E5%A1%AB%E8%A1%A8%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.5.5.</span> <span class="nav-text">5.5 初始条件与填表顺序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E7%8A%B6%E6%80%81%E8%A1%A8%E4%B8%8E%E6%9C%80%E4%BC%98%E6%96%B9%E6%A1%88"><span class="nav-number">1.5.6.</span> <span class="nav-text">5.6 完整状态表与最优方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%8C%89%E8%AF%84%E5%88%86%E9%87%8D%E9%87%8F%E6%AF%94%E8%B4%AA%E5%BF%83%E4%B9%9F%E5%8F%AF%E8%83%BD%E5%A4%B1%E8%B4%A5"><span class="nav-number">1.5.7.</span> <span class="nav-text">5.7
+为什么按评分重量比贪心也可能失败</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E8%83%8C%E5%8C%85%E7%8A%B6%E6%80%81%E8%A1%A8%E5%86%99%E6%88%90%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.6.</span> <span class="nav-text">6 把背包状态表写成程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E5%85%88%E5%A1%AB%E8%A1%A8-%E5%86%8D%E6%8C%89%E7%89%A9%E5%93%81%E9%98%B6%E6%AE%B5%E5%9B%9E%E6%BA%AF"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 Python: 先填表,
+再按物品阶段回溯</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab-%E5%90%8C%E6%97%B6%E5%81%8F%E7%A7%BB%E9%98%B6%E6%AE%B5%E4%B8%8E%E5%AE%B9%E9%87%8F%E4%B8%8B%E6%A0%87"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 MATLAB:
+同时偏移阶段与容量下标</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%B9%E5%8F%98%E8%AE%A1%E7%AE%97%E6%96%B9%E5%BC%8F%E4%B9%8B%E5%89%8D-%E5%85%88%E7%A1%AE%E8%AE%A4%E7%8A%B6%E6%80%81%E5%90%AB%E4%B9%89"><span class="nav-number">1.7.</span> <span class="nav-text">7 改变计算方式之前,
+先确认状态含义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%B0%E5%BF%86%E5%8C%96%E6%90%9C%E7%B4%A2-%E9%80%92%E5%BD%92%E4%B9%9F%E8%83%BD%E4%BF%9D%E5%AD%98%E7%8A%B6%E6%80%81"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 记忆化搜索:
+递归也能保存状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E7%BB%B4%E5%8E%8B%E7%BC%A9-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AE%B9%E9%87%8F%E5%BF%85%E9%A1%BB%E5%80%92%E5%BA%8F"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 一维压缩:
+为什么容量必须倒序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%81%B0%E5%A5%BD%E8%A3%85%E6%BB%A1-%E4%B8%8D%E5%8F%AF%E8%BE%BE%E7%8A%B6%E6%80%81%E5%BA%94%E6%94%B9%E6%88%90%E8%B4%9F%E6%97%A0%E7%A9%B7"><span class="nav-number">1.7.3.</span> <span class="nav-text">7.3 恰好装满:
+不可达状态应改成负无穷</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E8%A1%A8%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%86%B3%E5%AE%9A%E8%83%BD%E5%90%A6%E8%AE%A1%E7%AE%97"><span class="nav-number">1.7.4.</span> <span class="nav-text">7.4 状态表的大小决定能否计算</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E4%B8%A4%E9%81%93%E4%BE%8B%E9%A2%98%E8%BF%81%E7%A7%BB%E5%88%B0%E5%85%B6%E4%BB%96%E9%97%AE%E9%A2%98"><span class="nav-number">1.8.</span> <span class="nav-text">8 从两道例题迁移到其他问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E7%82%B9%E4%B8%8E%E9%80%82%E7%94%A8%E8%8C%83%E5%9B%B4"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 优点与适用范围</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92-%E8%B4%AA%E5%BF%83%E4%B8%8E%E7%9B%B4%E6%8E%A5%E6%9E%9A%E4%B8%BE"><span class="nav-number">1.8.2.</span> <span class="nav-text">8.2 动态规划, 贪心与直接枚举</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%9A%84%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.8.3.</span> <span class="nav-text">8.3 建立动态规划的步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A7%91%E6%99%AE%E8%A3%85%E5%A4%87%E4%BE%8B%E9%A2%98%E7%9A%84%E5%86%B3%E7%AD%96%E8%A7%A3%E9%87%8A"><span class="nav-number">1.8.4.</span> <span class="nav-text">8.4 科普装备例题的决策解释</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%94%99%E8%AF%AF%E4%B8%8E%E6%A3%80%E6%9F%A5%E6%96%B9%E6%B3%95"><span class="nav-number">1.9.</span> <span class="nav-text">9 常见错误与检查方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.10.</span> <span class="nav-text">10 练习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.11.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -194,19 +195,15 @@
       
       
       <div class="post-body">
-          <h1 id="动态规划-把大问题拆成可以复用的小问题">动态规划:
-把大问题拆成可以复用的小问题</h1>
-<p>在资源有限的条件下安排活动, 选择装备或规划路线时,
-一个局部看来合理的选择, 未必带来最好的整体结果.
-动态规划提供了一种系统的思考方式: 把问题分解成有明确含义的子问题,
-保存已经求出的结果, 再按依赖关系逐步求解.</p>
-<p>本章以"最少硬币凑金额"和"科普装备选择"为主线, 依次说明状态定义,
-转移方程, 初始条件, 计算顺序和方案恢复. Python 是主要实现语言, MATLAB
-用于对照学习. 阅读时先理解每个状态表示什么, 再跟随例题填表,
-最后把代码用于不同输入; 记忆化搜索,
-空间压缩和一般多阶段模型可在掌握两道主例题后继续学习.</p>
-<h2 id="一-从一个直觉不可靠的例子开始">一,
-从一个直觉不可靠的例子开始</h2>
+          <h1 id="动态规划-从凑硬币到装备选择">动态规划: 从凑硬币到装备选择</h1>
+<p>用尽量少的硬币恰好付清一本书的价格, 与在运输箱中挑选效益最高的装备,
+看似不同, 却可以使用同一种思路: 把已经求过的子问题记下来,
+再根据依赖关系找到整体最优方案.</p>
+<p>关键不在于记住几行循环, 而在于说明每个状态代表什么, 当前选择从哪里来,
+以及怎样从最优值恢复行动方案. 本章先完成两道例题, 再比较记忆化搜索,
+空间压缩与不同装载要求.</p>
+<h2 id="先试一试-怎样用最少的硬币凑出-27">1 先试一试:
+怎样用最少的硬币凑出 27</h2>
 <h3 id="教学问题-用最少的硬币凑出-27">1.1 教学问题: 用最少的硬币凑出
 27</h3>
 <p>设有面值为 2, 5, 7 的三种教学硬币, 每种数量不限. 购买一本标价为 27
@@ -263,103 +260,8 @@ class="math inline">\(7+5+5+5+5=27\)</span></td>
 class="math inline">\(7+5+5+5+5=27\)</span>, 最少枚数就是 5.
 这是一个独立的最优性核对方法. 后面的动态规划不仅能处理 27,
 还能统一处理其他目标金额与不可达情况.</p>
-<h2 id="二-动态规划的基本思想">二, 动态规划的基本思想</h2>
-<h3 id="状态-递推与结果复用">2.1 状态, 递推与结果复用</h3>
-<p>动态规划英文为 dynamic programming, 简称 DP.
-它是求解多阶段决策和相关优化问题的重要方法, 也可以用于计数,
-可达性判定等任务. 本章重点讨论最优化问题.</p>
-<p>核心过程是: 定义一组子问题, 通过较小子问题建立递推关系,
-把每个状态的结果保存下来, 避免重复求解. 它可以用于资源分配, 装备选择,
-生产安排, 序列匹配和路径规划等问题. 应用是否合适,
-主要取决于能否设计正确且规模可承受的状态.</p>
-<p>"阶段"不一定是真实时间, 也可以是已经处理的物品数量,
-金额大小或区间长度. 状态表也不一定是数组; 当状态稀疏或形状复杂时,
-可以使用字典等数据结构.</p>
-<h3 id="四个需要回答的问题">2.2 四个需要回答的问题</h3>
-<table>
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
-<thead>
-<tr>
-<th style="text-align: center;">要素</th>
-<th style="text-align: center;">必须说清楚的问题</th>
-<th style="text-align: center;">硬币例题中的对应内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">状态</td>
-<td style="text-align: center;">每个保存的数值表示哪个子问题?</td>
-<td style="text-align: center;"><span
-class="math inline">\(f[x]\)</span> 表示恰好凑出 <span
-class="math inline">\(x\)</span> 的最少枚数</td>
-</tr>
-<tr>
-<td style="text-align: center;">转移方程</td>
-<td style="text-align: center;">当前结果可以由哪些已知结果得到?</td>
-<td style="text-align: center;">枚举最后一枚硬币的面值</td>
-</tr>
-<tr>
-<td style="text-align: center;">初始条件与边界</td>
-<td style="text-align: center;">从哪里开始? 不可行状态怎样表示?</td>
-<td style="text-align: center;"><span
-class="math inline">\(f[0]=0\)</span>, 不可达状态为 <span
-class="math inline">\(+\infty\)</span></td>
-</tr>
-<tr>
-<td style="text-align: center;">计算顺序</td>
-<td style="text-align: center;">怎样保证依赖的结果先得到?</td>
-<td style="text-align: center;">金额从小到大计算</td>
-</tr>
-</tbody>
-</table>
-<p>这四项决定"怎样算". 如果还需要回答"怎样做",
-就要另行记录选择并回溯最优方案.
-最优值与最优方案是两个相关但不同的输出.</p>
-<h3 id="最优子结构-替换一个较差的部分">2.3 最优子结构:
-替换一个较差的部分</h3>
-<p>假设最优的硬币方案最后使用面值 <span
-class="math inline">\(c\)</span>. 前面的部分恰好凑出 <span
-class="math inline">\(N-c\)</span>. 若这个部分不是凑出 <span
-class="math inline">\(N-c\)</span> 的最少枚数方案,
-就可以替换成更少枚数的方案, 再补上同一枚 <span
-class="math inline">\(c\)</span>, 使整体枚数变少. 这与整体最优矛盾.</p>
-<p>因此, 最优方案中相关的子问题部分也必须最优.
-这种"可以替换而不破坏其他条件"的性质称为最优子结构.
-它需要结合具体约束证明; 并不是随意拆开一个问题,
-所得子问题的最优解就都能直接拼成整体最优解.</p>
-<h3 id="状态要保存足够的信息">2.4 状态要保存足够的信息</h3>
-<p>同一个状态下, 后续可选行动和后续收益应由该状态决定,
-而不再需要追问已被省略的历史. 这常被称为状态的无后效性.</p>
-<p>在无限硬币例题中, 已经使用过哪些硬币不会减少以后可用的数量,
-所以金额状态足够. 若每种硬币只有有限枚, 单独记录金额就可能不够,
-还要通过处理到的币种, 剩余数量或相应阶段信息体现供应限制.</p>
-<p>背包问题也不能只记录"已经考虑了前几件物品", 还需要记录容量上限.
-两个同样考虑前 3 件物品的子问题, 容量上限不同,
-允许的物品组合和最优评分就可能不同.</p>
-<h3 id="重叠子问题与计算顺序">2.5 重叠子问题与计算顺序</h3>
-<p>直接递归求 <span class="math inline">\(f[27]\)</span> 时, 需要求
-<span class="math inline">\(f[25]\)</span>, <span
-class="math inline">\(f[22]\)</span>, <span
-class="math inline">\(f[20]\)</span>. 而 <span
-class="math inline">\(f[25]\)</span>, <span
-class="math inline">\(f[22]\)</span> 又会求到 <span
-class="math inline">\(f[20]\)</span>, 产生重复计算.</p>
-<p>下面是部分依赖关系. 图中同一子问题只画一个节点, 多个箭头汇入它,
-表示结果可以复用; 未画出所有分支.</p>
-<p><img src="/images/DynamicProgramming/DP-1.png" alt="" style="width: 100%;"></p>
-<p>图 1　最少硬币问题的部分依赖关系. 箭头由待求状态指向其依赖的子状态,
-箭头旁的数值表示减去的硬币面值.</p>
-<p>重叠子问题使结果复用能够显著减少重复计算.
-并非每个多阶段最优化问题都会出现重叠子问题. 关键是递推正确, 状态充分,
-以及能以合适的顺序求值. 本章两个问题的依赖都是无环的,
-能够直接按顺序计算.</p>
-<h2 id="三-例题一-最少硬币问题的完整推导">三, 例题一:
-最少硬币问题的完整推导</h2>
-<h3 id="输入-目标与整数规划表达">3.1 输入, 目标与整数规划表达</h3>
+<h2 id="从最后一枚硬币建立递推">2 从最后一枚硬币建立递推</h2>
+<h3 id="输入-目标与整数规划表达">2.1 输入, 目标与整数规划表达</h3>
 <p>设面值集合为 <span
 class="math inline">\(C=\{c_1,\ldots,c_m\}\)</span>, 各面值都是正整数,
 每种硬币数量不限, 目标金额 <span class="math inline">\(N\)</span>
@@ -376,7 +278,7 @@ z_j\in\mathbb{Z}_{\geqslant0},\quad j=1,\ldots,m.
 \]</span></p>
 <p>这是一个整数优化模型. 动态规划是它的一种求解方式,
 并不改变"必须恰好凑出目标金额"的要求.</p>
-<h3 id="状态定义">3.2 状态定义</h3>
+<h3 id="状态定义">2.2 状态定义</h3>
 <p>定义</p>
 <p><span class="math display">\[
 f[x]=\text{使用给定面值恰好凑出金额 }x\text{ 的最少硬币枚数}.
@@ -385,7 +287,7 @@ f[x]=\text{使用给定面值恰好凑出金额 }x\text{ 的最少硬币枚数}.
 class="math inline">\(f[x]=+\infty\)</span>. 原问题的答案为 <span
 class="math inline">\(f[N]\)</span>, 不是"尽量接近 <span
 class="math inline">\(N\)</span>"的某个金额.</p>
-<h3 id="从最后一枚硬币建立转移">3.3 从最后一枚硬币建立转移</h3>
+<h3 id="从最后一枚硬币建立转移">2.3 从最后一枚硬币建立转移</h3>
 <p>如果最后一枚硬币面值为 <span class="math inline">\(c\)</span>,
 一个候选方案的枚数为 <span class="math inline">\(f[x-c]+1\)</span>.
 对所有允许的最后面值取最小值, 得到</p>
@@ -405,7 +307,19 @@ class="math inline">\(c\leqslant x\)</span> 的分支, 以免读取负下标.</p
 class="math inline">\(f[x]\)</span> 是它们的最小值.
 当某个分支达到最优时, <span class="math inline">\(f[x]\)</span>
 等于该分支的候选值; 达到最优的分支可以不止一个.</p>
-<h3 id="初始条件与不可达状态">3.4 初始条件与不可达状态</h3>
+<p>直接递归求 <span class="math inline">\(f[27]\)</span> 时, 需要求
+<span class="math inline">\(f[25]\)</span>, <span
+class="math inline">\(f[22]\)</span>, <span
+class="math inline">\(f[20]\)</span>. 而 <span
+class="math inline">\(f[25]\)</span>, <span
+class="math inline">\(f[22]\)</span> 又会求到 <span
+class="math inline">\(f[20]\)</span>, 产生重复计算.</p>
+<p>下面是部分依赖关系. 图中同一子问题只画一个节点, 多个箭头汇入它,
+表示结果可以复用; 未画出所有分支.</p>
+<p><img src="/images/DynamicProgramming/DP-1.png" alt="" style="width: 100%;"></p>
+<p>图 1 最少硬币问题的部分依赖关系. 箭头由待求状态指向其依赖的子状态,
+箭头旁的数值表示减去的硬币面值.</p>
+<h3 id="初始条件与不可达状态">2.4 初始条件与不可达状态</h3>
 <p><span class="math display">\[
 f[0]=0,
 \]</span></p>
@@ -421,7 +335,7 @@ class="math inline">\(+\infty\)</span>, 再由合法转移更新.</p>
 可以直接表达它, 并满足 <span
 class="math inline">\(+\infty+1=+\infty\)</span>. 如果用大整数代替无穷,
 需要保证它不会与可行结果混淆, 并注意所用语言的溢出问题.</p>
-<h3 id="计算顺序与正确性">3.5 计算顺序与正确性</h3>
+<h3 id="计算顺序与正确性">2.5 计算顺序与正确性</h3>
 <p>按照</p>
 <p><span class="math display">\[
 f[0],f[1],\ldots,f[N]
@@ -437,7 +351,7 @@ class="math inline">\(f[x-c]+1\)</span>. 另一方面,
 每个有限的候选值都能由一个子问题最优方案加上一枚 <span
 class="math inline">\(c\)</span> 实现. 因此, 所有候选值的最小值恰为
 <span class="math inline">\(f[x]\)</span>.</p>
-<h3 id="本例完整状态表">3.6 本例完整状态表</h3>
+<h3 id="本例完整状态表">2.6 本例完整状态表</h3>
 <table>
 <thead>
 <tr>
@@ -552,9 +466,9 @@ f[27]&amp;=\min\{f[25]+1,\ f[22]+1,\ f[20]+1\}\\
 改变排列次序就能得到不同的最后一枚.
 一般问题中也可能存在不同的最优数量组合.</p>
 <p><img src="/images/DynamicProgramming/DP-2.png" alt="" style="width: 100%;"></p>
-<p>图 2　金额 0 至 27 的最少硬币枚数. 金额 1, 3 不可达;
+<p>图 2 金额 0 至 27 的最少硬币枚数. 金额 1, 3 不可达;
 橙色标记表示沿代码记录的选择回溯所经过的金额.</p>
-<h3 id="时间与空间复杂度">3.7 时间与空间复杂度</h3>
+<h3 id="时间与空间复杂度">2.7 时间与空间复杂度</h3>
 <p>当 <span class="math inline">\(N,m\)</span> 均为正,
 并将一次数值运算计为常数时间时, 对每个金额检查至多 <span
 class="math inline">\(m\)</span> 种面值, 因此时间复杂度为</p>
@@ -574,49 +488,127 @@ class="math inline">\(O(k)\)</span> 时间.</p>
 \]</span></p>
 <p>次. 这仍未包括初始化, 加法, 比较等全部操作. 不能把 81
 写成程序精确执行的操作次数, 也不能把一个具体数值直接当作渐近复杂度.</p>
-<h2 id="四-最少硬币问题的-python-实现">四, 最少硬币问题的 Python
-实现</h2>
-<h3 id="自底向上-同时返回最优值与方案">4.1 自底向上:
-同时返回最优值与方案</h3>
-<p>以下代码仅使用 Python 标准库. 目标金额必须为非负整数,
-面值必须为正整数; 允许面值集合为空, 此时只能凑出 0. 不可达时返回
-<code>(-1, [])</code>, 目标为 0 时返回 <code>(0, [])</code>.</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> inf</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">coin_change</span>(<span class="params">n, coins=(<span class="params"><span class="number">2</span>, <span class="number">5</span>, <span class="number">7</span></span>)</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;返回（最少枚数，一个最优面值列表）；不可达返回（-1，空列表）。&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">type</span>(n) <span class="keyword">is</span> <span class="keyword">not</span> <span class="built_in">int</span> <span class="keyword">or</span> n &lt; <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;目标金额必须为非负整数。&quot;</span>)</span><br><span class="line">    coins = <span class="built_in">tuple</span>(coins)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">any</span>(<span class="built_in">type</span>(c) <span class="keyword">is</span> <span class="keyword">not</span> <span class="built_in">int</span> <span class="keyword">or</span> c &lt;= <span class="number">0</span> <span class="keyword">for</span> c <span class="keyword">in</span> coins):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;面值必须为正整数。&quot;</span>)</span><br><span class="line">    coins = <span class="built_in">tuple</span>(<span class="built_in">dict</span>.fromkeys(coins))  <span class="comment"># 去重并保留输入顺序</span></span><br><span class="line"></span><br><span class="line">    dp = [inf] * (n + <span class="number">1</span>)</span><br><span class="line">    last = [<span class="literal">None</span>] * (n + <span class="number">1</span>)</span><br><span class="line">    dp[<span class="number">0</span>] = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> amount <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, n + <span class="number">1</span>):</span><br><span class="line">        <span class="keyword">for</span> coin <span class="keyword">in</span> coins:</span><br><span class="line">            <span class="keyword">if</span> coin &lt;= amount:</span><br><span class="line">                candidate = dp[amount - coin] + <span class="number">1</span></span><br><span class="line">                <span class="keyword">if</span> candidate &lt; dp[amount]:</span><br><span class="line">                    dp[amount] = candidate</span><br><span class="line">                    last[amount] = coin</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> dp[n] == inf:</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>, []</span><br><span class="line"></span><br><span class="line">    plan = []</span><br><span class="line">    remaining = n</span><br><span class="line">    <span class="keyword">while</span> remaining &gt; <span class="number">0</span>:</span><br><span class="line">        coin = last[remaining]</span><br><span class="line">        <span class="keyword">if</span> coin <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">raise</span> RuntimeError(<span class="string">&quot;可达状态缺少回溯记录。&quot;</span>)</span><br><span class="line">        plan.append(coin)</span><br><span class="line">        remaining -= coin</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">int</span>(dp[n]), plan</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="keyword">for</span> target, expected <span class="keyword">in</span> [(<span class="number">27</span>, <span class="number">5</span>), (<span class="number">0</span>, <span class="number">0</span>), (<span class="number">1</span>, -<span class="number">1</span>), (<span class="number">3</span>, -<span class="number">1</span>)]:</span><br><span class="line">        count, plan = coin_change(target)</span><br><span class="line">        <span class="keyword">assert</span> count == expected</span><br><span class="line">        <span class="keyword">if</span> count &gt;= <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">assert</span> <span class="built_in">sum</span>(plan) == target <span class="keyword">and</span> <span class="built_in">len</span>(plan) == count</span><br><span class="line">            <span class="keyword">assert</span> <span class="built_in">all</span>(c <span class="keyword">in</span> (<span class="number">2</span>, <span class="number">5</span>, <span class="number">7</span>) <span class="keyword">for</span> c <span class="keyword">in</span> plan)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;目标=<span class="subst">&#123;target&#125;</span>, 最少枚数=<span class="subst">&#123;count&#125;</span>, 方案=<span class="subst">&#123;<span class="built_in">sorted</span>(plan, reverse=<span class="literal">True</span>)&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">assert</span> coin_change(<span class="number">0</span>, ()) == (<span class="number">0</span>, [])</span><br><span class="line">    <span class="keyword">assert</span> coin_change(<span class="number">5</span>, ()) == (-<span class="number">1</span>, [])</span><br></pre></td></tr></table></figure>
-<p>代码末尾的 <code>if __name__ == "__main__":</code>
-使示例在直接运行文件时执行, 而在其他程序导入该函数时不执行.</p>
-<p>对目标 27, 输出最少枚数 5, 方案为 <code>[7, 5, 5, 5, 5]</code>.
-<code>last[amount]</code> 保存的是当前金额状态选择的最后一枚硬币;
-回溯每一步都减去一个正面值, 因此一定向金额 0 前进.</p>
-<p>固定面值为 2, 5, 7 时, 也可以分别写三个条件分支.
-循环处理面值列表与这种写法具有相同的递推含义, 但便于更换面值集合.</p>
-<h3 id="自顶向下-直接递归与记忆化搜索">4.2 自顶向下:
-直接递归与记忆化搜索</h3>
-<p>直接递归反复求同一金额. 记忆化搜索则在第一次求解某金额后缓存结果,
-后续调用直接复用. 它也是动态规划的一种实现方式,
-因此不能把"递归"和"动态规划"简单视为互斥方法.</p>
-<p>下面用同一递推分别计算, 比较函数体的实际执行次数. 为使计数含义明确,
-朴素递归计每次进入函数体,
-记忆化版本用缓存未命中次数计首次计算的状态数.</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> functools <span class="keyword">import</span> cache</span><br><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> inf</span><br><span class="line"></span><br><span class="line">coins = (<span class="number">2</span>, <span class="number">5</span>, <span class="number">7</span>)</span><br><span class="line">naive_calls = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">naive</span>(<span class="params">amount</span>):</span><br><span class="line">    <span class="keyword">global</span> naive_calls</span><br><span class="line">    naive_calls += <span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span> amount == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    answer = inf</span><br><span class="line">    <span class="keyword">for</span> coin <span class="keyword">in</span> coins:</span><br><span class="line">        <span class="keyword">if</span> coin &lt;= amount:</span><br><span class="line">            answer = <span class="built_in">min</span>(answer, naive(amount - coin) + <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> answer</span><br><span class="line"></span><br><span class="line"><span class="meta">@cache</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">memoized</span>(<span class="params">amount</span>):</span><br><span class="line">    <span class="keyword">if</span> amount == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    answer = inf</span><br><span class="line">    <span class="keyword">for</span> coin <span class="keyword">in</span> coins:</span><br><span class="line">        <span class="keyword">if</span> coin &lt;= amount:</span><br><span class="line">            answer = <span class="built_in">min</span>(answer, memoized(amount - coin) + <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> answer</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    plain_answer = naive(<span class="number">27</span>)</span><br><span class="line">    cached_answer = memoized(<span class="number">27</span>)</span><br><span class="line">    info = memoized.cache_info()</span><br><span class="line">    <span class="keyword">assert</span> plain_answer == cached_answer == <span class="number">5</span></span><br><span class="line">    <span class="keyword">assert</span> naive_calls == <span class="number">1672</span></span><br><span class="line">    <span class="keyword">assert</span> info.misses == <span class="number">26</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;最少枚数：&quot;</span>, cached_answer)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;朴素递归的函数体执行次数：&quot;</span>, naive_calls)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;记忆化搜索的函数体执行次数：&quot;</span>, info.misses)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;缓存统计：&quot;</span>, info)</span><br></pre></td></tr></table></figure>
-<p>本段代码使用 Python 3.9 起提供的 <code>functools.cache</code>. [1]
-在给定遍历与边界规则下, 朴素递归执行函数体 1672 次, 记忆化搜索首次计算
-26 个状态. 这些是该段代码的计数, 不是所有实现都必然具有的固定常数.</p>
-<p>自底向上会依次计算 0 至 27 的全部状态;
-自顶向下只计算从目标递归到的状态, 可能略过一部分金额.
-但记忆化搜索仍有递归栈, 金额很大时可能触及 Python 的递归深度限制,
-不能仅加缓存就忽略这个问题.</p>
-<p>本段缓存以金额为键, 面值集合在计算期间固定. 若更改了面值集合,
-应重建函数或清空原缓存, 避免把旧问题的结果用于新问题.</p>
-<h3 id="输入与程序边界">4.3 输入与程序边界</h3>
-<p>数学中的负金额状态约定, 不意味着可以在 Python 中直接读取
-<code>dp[-1]</code>. Python 的负下标会访问列表尾部,
-可能读到另一个金额的结果.</p>
-<p>面值不能为 0, 否则递归可能依赖自身, 方案回溯也不能前进;
-负面值会破坏本例的计算顺序. 若金额或重量以小数表示,
-应先确定统一的离散单位. 例如, 确实精确到角的金额可以换算成整数角,
-再建立表格; 随意四舍五入会改变原问题.</p>
-<h2 id="五-例题二-科普装备选择与-0-1-背包">五, 例题二: 科普装备选择与
-0-1 背包</h2>
+<h2 id="把硬币递推写成程序-再恢复方案">3 把硬币递推写成程序,
+再恢复方案</h2>
+<h3 id="python-最优值和最后选择一起记录">3.1 Python:
+最优值和最后选择一起记录</h3>
+<p><code>dp[amount]</code> 对应数学状态 <span
+class="math inline">\(f[\mathrm{amount}]\)</span>,
+<code>last[amount]</code> 记录改善这个状态时选定的最后面值.
+程序的输入限制对应本例的数学假设: 金额为非负整数, 面值为正整数.
+无法凑出时返回 <code>(-1, [])</code>.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> inf</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">coin_change</span>(<span class="params">n, coins=(<span class="params"><span class="number">2</span>, <span class="number">5</span>, <span class="number">7</span></span>)</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;返回(最少枚数, 一个最优面值列表); 不可达返回(-1, 空列表). &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">type</span>(n) <span class="keyword">is</span> <span class="keyword">not</span> <span class="built_in">int</span> <span class="keyword">or</span> n &lt; <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;目标金额必须为非负整数. &quot;</span>)</span><br><span class="line">    coins = <span class="built_in">tuple</span>(coins)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">any</span>(<span class="built_in">type</span>(c) <span class="keyword">is</span> <span class="keyword">not</span> <span class="built_in">int</span> <span class="keyword">or</span> c &lt;= <span class="number">0</span> <span class="keyword">for</span> c <span class="keyword">in</span> coins):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;面值必须为正整数. &quot;</span>)</span><br><span class="line">    coins = <span class="built_in">tuple</span>(<span class="built_in">dict</span>.fromkeys(coins))  <span class="comment"># 去重并保留输入顺序</span></span><br><span class="line"></span><br><span class="line">    dp = [inf] * (n + <span class="number">1</span>)</span><br><span class="line">    last = [<span class="literal">None</span>] * (n + <span class="number">1</span>)</span><br><span class="line">    dp[<span class="number">0</span>] = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> amount <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, n + <span class="number">1</span>):</span><br><span class="line">        <span class="keyword">for</span> coin <span class="keyword">in</span> coins:</span><br><span class="line">            <span class="keyword">if</span> coin &lt;= amount:</span><br><span class="line">                candidate = dp[amount - coin] + <span class="number">1</span></span><br><span class="line">                <span class="keyword">if</span> candidate &lt; dp[amount]:</span><br><span class="line">                    dp[amount] = candidate</span><br><span class="line">                    last[amount] = coin</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> dp[n] == inf:</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>, []</span><br><span class="line"></span><br><span class="line">    plan = []</span><br><span class="line">    remaining = n</span><br><span class="line">    <span class="keyword">while</span> remaining &gt; <span class="number">0</span>:</span><br><span class="line">        coin = last[remaining]</span><br><span class="line">        <span class="keyword">if</span> coin <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">raise</span> RuntimeError(<span class="string">&quot;可达状态缺少回溯记录. &quot;</span>)</span><br><span class="line">        plan.append(coin)</span><br><span class="line">        remaining -= coin</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">int</span>(dp[n]), plan</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="keyword">for</span> target, expected <span class="keyword">in</span> [(<span class="number">27</span>, <span class="number">5</span>), (<span class="number">0</span>, <span class="number">0</span>), (<span class="number">1</span>, -<span class="number">1</span>), (<span class="number">3</span>, -<span class="number">1</span>)]:</span><br><span class="line">        count, plan = coin_change(target)</span><br><span class="line">        <span class="keyword">assert</span> count == expected</span><br><span class="line">        <span class="keyword">if</span> count &gt;= <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">assert</span> <span class="built_in">sum</span>(plan) == target <span class="keyword">and</span> <span class="built_in">len</span>(plan) == count</span><br><span class="line">            <span class="keyword">assert</span> <span class="built_in">all</span>(c <span class="keyword">in</span> (<span class="number">2</span>, <span class="number">5</span>, <span class="number">7</span>) <span class="keyword">for</span> c <span class="keyword">in</span> plan)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;目标=<span class="subst">&#123;target&#125;</span>, 最少枚数=<span class="subst">&#123;count&#125;</span>, 方案=<span class="subst">&#123;<span class="built_in">sorted</span>(plan, reverse=<span class="literal">True</span>)&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">assert</span> coin_change(<span class="number">0</span>, ()) == (<span class="number">0</span>, [])</span><br><span class="line">    <span class="keyword">assert</span> coin_change(<span class="number">5</span>, ()) == (-<span class="number">1</span>, [])</span><br></pre></td></tr></table></figure>
+<p>填表与回溯完成不同任务. 填表时枚举合法的最后面值, 用
+<code>candidate &lt; dp[amount]</code> 判断是否更新.
+回溯时从目标金额出发, 反复减去 <code>last[remaining]</code>, 直到金额为
+0. 因为面值严格为正, 回溯不会停留在同一金额.</p>
+<p>严格小于的更新规则在并列最优时保留先遇到的分支.
+它只影响返回哪一个最优排列, 不改变最少枚数. 本例回溯得到四个 5 和一个 7;
+排序后显示为 <code>[7, 5, 5, 5, 5]</code>, 排序不参与求解.</p>
+<h3 id="matlab-数学金额-0-对应数组下标-1">3.2 MATLAB: 数学金额 0
+对应数组下标 1</h3>
+<p>MATLAB 中 <span class="math inline">\(f[x]\)</span> 保存在
+<code>dp(x+1)</code> 中, 所以来源状态 <span
+class="math inline">\(f[x-c]\)</span> 应读取 <code>dp(x-c+1)</code>.
+<code>last</code> 使用同样的偏移. 下面的函数不需要优化工具箱.</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[count, plan]</span> = <span class="title">coinChangeDP</span><span class="params">(coins, target)</span></span></span><br><span class="line">    assert(isnumeric(target) &amp;&amp; <span class="built_in">isreal</span>(target) &amp;&amp; <span class="built_in">isscalar</span>(target) &amp;&amp; ...</span><br><span class="line">        <span class="built_in">isfinite</span>(target) &amp;&amp; target &gt;= <span class="number">0</span> &amp;&amp; target == <span class="built_in">floor</span>(target), ...</span><br><span class="line">        <span class="string">&#x27;目标金额必须为非负整数. &#x27;</span>);</span><br><span class="line">    assert(isnumeric(coins) &amp;&amp; <span class="built_in">isreal</span>(coins) &amp;&amp; ...</span><br><span class="line">        all(<span class="built_in">isfinite</span>(coins(:))) &amp;&amp; all(coins(:) &gt; <span class="number">0</span>) &amp;&amp; ...</span><br><span class="line">        all(coins(:) == <span class="built_in">floor</span>(coins(:))), <span class="string">&#x27;面值必须为正整数. &#x27;</span>);</span><br><span class="line">    coins = unique(coins(:).&#x27;, <span class="string">&#x27;stable&#x27;</span>);</span><br><span class="line">    dp = <span class="built_in">inf</span>(<span class="number">1</span>, target+<span class="number">1</span>);</span><br><span class="line">    last = <span class="built_in">zeros</span>(<span class="number">1</span>, target+<span class="number">1</span>);</span><br><span class="line">    dp(<span class="number">1</span>) = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> amount = <span class="number">1</span>:target</span><br><span class="line">        <span class="keyword">for</span> coin = coins</span><br><span class="line">            <span class="keyword">if</span> coin &lt;= amount</span><br><span class="line">                candidate = dp(amount-coin+<span class="number">1</span>) + <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">if</span> candidate &lt; dp(amount+<span class="number">1</span>)</span><br><span class="line">                    dp(amount+<span class="number">1</span>) = candidate;</span><br><span class="line">                    last(amount+<span class="number">1</span>) = coin;</span><br><span class="line">                <span class="keyword">end</span></span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">isinf</span>(dp(target+<span class="number">1</span>))</span><br><span class="line">        count = <span class="number">-1</span>; plan = []; <span class="keyword">return</span>;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    count = dp(target+<span class="number">1</span>);</span><br><span class="line">    plan = <span class="built_in">zeros</span>(<span class="number">1</span>, count);</span><br><span class="line">    remaining = target;</span><br><span class="line">    <span class="keyword">for</span> k = <span class="number">1</span>:count</span><br><span class="line">        coin = last(remaining+<span class="number">1</span>);</span><br><span class="line">        assert(coin &gt; <span class="number">0</span>, <span class="string">&#x27;可达状态缺少回溯记录. &#x27;</span>);</span><br><span class="line">        plan(k) = coin;</span><br><span class="line">        remaining = remaining - coin;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    assert(remaining == <span class="number">0</span>);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>例如 <code>[count,plan] = coinChangeDP([2,5,7],27)</code>
+返回最少枚数 5 和一个最优面值列表. 应再检查 <code>sum(plan)==27</code>,
+<code>numel(plan)==count</code>, 而不只打印结果.
+完整的双语言案例输出均包含目标为 0 和不可达金额的检查.</p>
+<p>MATLAB 示例使用双精度数值; 很大的整数输入或评分不应默认仍能像 Python
+整数一样精确表示. 本章教学数据不存在这一数值范围问题.</p>
+<h3 id="边界必须服从状态含义">3.3 边界必须服从状态含义</h3>
+<p>数学上可约定负金额状态为正无穷, 但不能直接用 Python
+的负下标代替这一约定. 负下标会访问列表尾部, 读取另一个金额的结果.
+代码只在面值不超过当前金额时转移.</p>
+<p>零面值使状态可能依赖自身, 回溯也无法前进;
+负面值则破坏按金额递增的依赖顺序. 如果金额带有小数,
+应先确定精确的离散单位, 再换算为整数建表. 任意四舍五入会改变原问题.</p>
+<h2 id="为什么这些子问题可以复用">4 为什么这些子问题可以复用</h2>
+<h3 id="状态-递推与结果复用">4.1 状态, 递推与结果复用</h3>
+<p>动态规划英文为 dynamic programming, 简称 DP.
+它是求解多阶段决策和相关优化问题的重要方法, 也可以用于计数,
+可达性判定等任务. 本章重点讨论最优化问题.</p>
+<p>核心过程是: 定义一组子问题, 通过较小子问题建立递推关系,
+把每个状态的结果保存下来, 避免重复求解. 它可以用于资源分配, 装备选择,
+生产安排, 序列匹配和路径规划等问题. 应用是否合适,
+主要取决于能否设计正确且规模可承受的状态.</p>
+<p>"阶段"不一定是真实时间, 也可以是已经处理的物品数量,
+金额大小或区间长度. 状态表也不一定是数组; 当状态稀疏或形状复杂时,
+可以使用字典等数据结构.</p>
+<h3 id="四个需要回答的问题">4.2 四个需要回答的问题</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">要素</th>
+<th style="text-align: center;">必须说清楚的问题</th>
+<th style="text-align: center;">硬币例题中的对应内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">状态</td>
+<td style="text-align: center;">每个保存的数值表示哪个子问题?</td>
+<td style="text-align: center;"><span
+class="math inline">\(f[x]\)</span> 表示恰好凑出 <span
+class="math inline">\(x\)</span> 的最少枚数</td>
+</tr>
+<tr>
+<td style="text-align: center;">转移方程</td>
+<td style="text-align: center;">当前结果可以由哪些已知结果得到?</td>
+<td style="text-align: center;">枚举最后一枚硬币的面值</td>
+</tr>
+<tr>
+<td style="text-align: center;">初始条件与边界</td>
+<td style="text-align: center;">从哪里开始? 不可行状态怎样表示?</td>
+<td style="text-align: center;"><span
+class="math inline">\(f[0]=0\)</span>, 不可达状态为 <span
+class="math inline">\(+\infty\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">计算顺序</td>
+<td style="text-align: center;">怎样保证依赖的结果先得到?</td>
+<td style="text-align: center;">金额从小到大计算</td>
+</tr>
+</tbody>
+</table>
+<p>这四项决定"怎样算". 如果还需要回答"怎样做",
+就要另行记录选择并回溯最优方案.
+最优值与最优方案是两个相关但不同的输出.</p>
+<h3 id="最优子结构-替换一个较差的部分">4.3 最优子结构:
+替换一个较差的部分</h3>
+<p>假设最优的硬币方案最后使用面值 <span
+class="math inline">\(c\)</span>. 前面的部分恰好凑出 <span
+class="math inline">\(N-c\)</span>. 若这个部分不是凑出 <span
+class="math inline">\(N-c\)</span> 的最少枚数方案,
+就可以替换成更少枚数的方案, 再补上同一枚 <span
+class="math inline">\(c\)</span>, 使整体枚数变少. 这与整体最优矛盾.</p>
+<p>因此, 最优方案中相关的子问题部分也必须最优.
+这种"可以替换而不破坏其他条件"的性质称为最优子结构.
+它需要结合具体约束证明; 并不是随意拆开一个问题,
+所得子问题的最优解就都能直接拼成整体最优解.</p>
+<h3 id="状态要保存足够的信息">4.4 状态要保存足够的信息</h3>
+<p>同一个状态下, 后续可选行动和后续收益应由该状态决定,
+而不再需要追问已被省略的历史. 这常被称为状态的无后效性.</p>
+<p>在无限硬币例题中, 已经使用过哪些硬币不会减少以后可用的数量,
+所以金额状态足够. 若每种硬币只有有限枚, 单独记录金额就可能不够,
+还要通过处理到的币种, 剩余数量或相应阶段信息体现供应限制.</p>
+<p>背包问题也不能只记录"已经考虑了前几件物品", 还需要记录容量上限.
+两个同样考虑前 3 件物品的子问题, 容量上限不同,
+允许的物品组合和最优评分就可能不同.</p>
+<h3 id="重叠子问题与计算顺序">4.5 重叠子问题与计算顺序</h3>
+<p>重叠子问题使结果复用能够显著减少重复计算.
+并非每个多阶段最优化问题都会出现重叠子问题. 关键是递推正确, 状态充分,
+以及能以合适的顺序求值. 本章两个问题的依赖都是无环的,
+能够直接按顺序计算.</p>
+<h2 id="科普装备选择-每件物品只能取一次">5 科普装备选择:
+每件物品只能取一次</h2>
 <h3 id="题目与教学数据">5.1 题目与教学数据</h3>
 <p>某高校学生团队开展社区科普活动, 需要把装备装入一个最多承载 8
 千克的运输箱. 每类装备只有一件, 可以选择带或不带,
@@ -844,7 +836,7 @@ D[4,8]
 <span class="math inline">\(4+8=12\)</span>. 本例最优方案唯一;
 一般背包问题可能有多个最优集合.</p>
 <p><img src="/images/DynamicProgramming/DP-3.png" alt="" style="width: 100%;"></p>
-<p>图 3　0-1 背包状态表与最优方案回溯. 图中每格为 <span
+<p>图 3 0-1 背包状态表与最优方案回溯. 图中每格为 <span
 class="math inline">\(D[i,j]\)</span>, 橙色箭头由当前状态指向回溯来源;
 斜向箭头表示选择一件物品, 竖直箭头表示不选当前物品.</p>
 <h3 id="为什么按评分重量比贪心也可能失败">5.7
@@ -856,57 +848,134 @@ class="math inline">\(1.5,4/3,1.25,1.6\)</span>. 按比例从高到低尝试,
 <p>该结果低于最优评分 12. 这说明"单位重量效益高的优先"对 0-1
 物品选择不保证最优. 允许物品任意分割的分数背包有不同的结构,
 不能把它的贪心结论直接用于 0-1 背包.</p>
-<h2 id="六-0-1-背包的-python-实现">六, 0-1 背包的 Python 实现</h2>
-<h3 id="二维表与选物回溯">6.1 二维表与选物回溯</h3>
-<p>下面按二维状态表实现递推, 并回溯得到一个最优装备集合.
-重量和容量必须是整数; 评分允许非负的 Python 整数或有限浮点数.
-返回的装备编号从 1 开始, 与题目表格一致. 整数评分使用精确整数运算;
-采用浮点评分时, 应保证可行方案的总评分处于可表示范围内, 并考虑舍入误差.
-需要精确处理有限位小数时, 可以统一缩放为整数评分.</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> isfinite</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">knapsack</span>(<span class="params">weights, values, capacity</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;返回（最大评分，选中编号列表，完整二维状态表）。&quot;&quot;&quot;</span></span><br><span class="line">    weights, values = <span class="built_in">list</span>(weights), <span class="built_in">list</span>(values)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(weights) != <span class="built_in">len</span>(values):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;重量与评分的列表长度必须一致。&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">type</span>(capacity) <span class="keyword">is</span> <span class="keyword">not</span> <span class="built_in">int</span> <span class="keyword">or</span> capacity &lt; <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;容量必须为非负整数。&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">any</span>(<span class="built_in">type</span>(w) <span class="keyword">is</span> <span class="keyword">not</span> <span class="built_in">int</span> <span class="keyword">or</span> w &lt;= <span class="number">0</span> <span class="keyword">for</span> w <span class="keyword">in</span> weights):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;重量必须为正整数。&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">any</span>(<span class="built_in">type</span>(v) <span class="keyword">not</span> <span class="keyword">in</span> (<span class="built_in">int</span>, <span class="built_in">float</span>) <span class="keyword">or</span> v &lt; <span class="number">0</span></span><br><span class="line">           <span class="keyword">or</span> (<span class="built_in">type</span>(v) <span class="keyword">is</span> <span class="built_in">float</span> <span class="keyword">and</span> <span class="keyword">not</span> isfinite(v))</span><br><span class="line">           <span class="keyword">for</span> v <span class="keyword">in</span> values):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;评分必须为非负有限数。&quot;</span>)</span><br><span class="line"></span><br><span class="line">    n = <span class="built_in">len</span>(weights)</span><br><span class="line">    dp = [[<span class="number">0</span>] * (capacity + <span class="number">1</span>) <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(n + <span class="number">1</span>)]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, n + <span class="number">1</span>):</span><br><span class="line">        weight, value = weights[i - <span class="number">1</span>], values[i - <span class="number">1</span>]</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(capacity + <span class="number">1</span>):</span><br><span class="line">            dp[i][j] = dp[i - <span class="number">1</span>][j]</span><br><span class="line">            <span class="keyword">if</span> weight &lt;= j:</span><br><span class="line">                dp[i][j] = <span class="built_in">max</span>(dp[i][j],</span><br><span class="line">                               dp[i - <span class="number">1</span>][j - weight] + value)</span><br><span class="line"></span><br><span class="line">    selected = []</span><br><span class="line">    j = capacity</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n, <span class="number">0</span>, -<span class="number">1</span>):</span><br><span class="line">        <span class="keyword">if</span> dp[i][j] &gt; dp[i - <span class="number">1</span>][j]:</span><br><span class="line">            selected.append(i)</span><br><span class="line">            j -= weights[i - <span class="number">1</span>]</span><br><span class="line">    selected.reverse()</span><br><span class="line">    <span class="keyword">return</span> dp[n][capacity], selected, dp</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    weights = [<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]</span><br><span class="line">    values = [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">8</span>]</span><br><span class="line">    best, selected, table = knapsack(weights, values, <span class="number">8</span>)</span><br><span class="line">    used_weight = <span class="built_in">sum</span>(weights[i - <span class="number">1</span>] <span class="keyword">for</span> i <span class="keyword">in</span> selected)</span><br><span class="line">    used_value = <span class="built_in">sum</span>(values[i - <span class="number">1</span>] <span class="keyword">for</span> i <span class="keyword">in</span> selected)</span><br><span class="line">    <span class="keyword">assert</span> best == used_value == <span class="number">12</span></span><br><span class="line">    <span class="keyword">assert</span> selected == [<span class="number">2</span>, <span class="number">4</span>]</span><br><span class="line">    <span class="keyword">assert</span> used_weight == <span class="number">8</span></span><br><span class="line">    <span class="keyword">assert</span> <span class="built_in">len</span>(selected) == <span class="built_in">len</span>(<span class="built_in">set</span>(selected))</span><br><span class="line">    <span class="keyword">assert</span> knapsack([], [], <span class="number">8</span>)[<span class="number">0</span>] == <span class="number">0</span></span><br><span class="line">    <span class="keyword">assert</span> knapsack(weights, values, <span class="number">0</span>)[<span class="number">0</span>] == <span class="number">0</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;最大评分：&quot;</span>, best)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;选中编号：&quot;</span>, selected)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;总重量：&quot;</span>, used_weight)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;最后一行：&quot;</span>, table[-<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
-<p>若两分支评分相同, 代码采用"不选当前物品"的并列处理规则.
-这只决定返回哪一个最优方案, 并不影响最优值. 完整表可以帮助解释和回溯;
-仅返回表右下角的数值, 无法直接告诉使用者该带哪些装备.</p>
-<p>Python 的二维数组应逐行创建. <code>[[0] * (W + 1)] * (n + 1)</code>
-会让多行引用同一个列表, 修改一行可能同时修改其他行,
-破坏阶段之间的独立性.</p>
-<h3 id="空间压缩-只保存一行">6.2 空间压缩: 只保存一行</h3>
-<p>如果只需最优值, 可以用一维数组保存状态, 空间从 <span
-class="math inline">\(O(nW)\)</span> 降到 <span
-class="math inline">\(O(W)\)</span>. 外层仍遍历物品,
-内层容量必须从大到小更新:</p>
+<h2 id="把背包状态表写成程序">6 把背包状态表写成程序</h2>
+<h3 id="python-先填表-再按物品阶段回溯">6.1 Python: 先填表,
+再按物品阶段回溯</h3>
+<p>程序中的 <code>dp[i][j]</code> 正好对应数学状态 <span
+class="math inline">\(D[i,j]\)</span>. 每次处理第 <span
+class="math inline">\(i\)</span> 件物品, 两个候选来源都在第 <span
+class="math inline">\(i-1\)</span> 行. 重量与容量为整数,
+评分允许非负整数或有限浮点数; 整数评分使用 Python 整数运算.
+若使用浮点评分, 还应考虑总和的可表示范围与舍入误差.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> isfinite</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">knapsack</span>(<span class="params">weights, values, capacity</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;返回(最大评分, 选中编号列表, 完整二维状态表). &quot;&quot;&quot;</span></span><br><span class="line">    weights, values = <span class="built_in">list</span>(weights), <span class="built_in">list</span>(values)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(weights) != <span class="built_in">len</span>(values):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;重量与评分的列表长度必须一致. &quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">type</span>(capacity) <span class="keyword">is</span> <span class="keyword">not</span> <span class="built_in">int</span> <span class="keyword">or</span> capacity &lt; <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;容量必须为非负整数. &quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">any</span>(<span class="built_in">type</span>(w) <span class="keyword">is</span> <span class="keyword">not</span> <span class="built_in">int</span> <span class="keyword">or</span> w &lt;= <span class="number">0</span> <span class="keyword">for</span> w <span class="keyword">in</span> weights):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;重量必须为正整数. &quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">any</span>(<span class="built_in">type</span>(v) <span class="keyword">not</span> <span class="keyword">in</span> (<span class="built_in">int</span>, <span class="built_in">float</span>) <span class="keyword">or</span> v &lt; <span class="number">0</span></span><br><span class="line">           <span class="keyword">or</span> (<span class="built_in">type</span>(v) <span class="keyword">is</span> <span class="built_in">float</span> <span class="keyword">and</span> <span class="keyword">not</span> isfinite(v))</span><br><span class="line">           <span class="keyword">for</span> v <span class="keyword">in</span> values):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;评分必须为非负有限数. &quot;</span>)</span><br><span class="line"></span><br><span class="line">    n = <span class="built_in">len</span>(weights)</span><br><span class="line">    dp = [[<span class="number">0</span>] * (capacity + <span class="number">1</span>) <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(n + <span class="number">1</span>)]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, n + <span class="number">1</span>):</span><br><span class="line">        weight, value = weights[i - <span class="number">1</span>], values[i - <span class="number">1</span>]</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(capacity + <span class="number">1</span>):</span><br><span class="line">            dp[i][j] = dp[i - <span class="number">1</span>][j]</span><br><span class="line">            <span class="keyword">if</span> weight &lt;= j:</span><br><span class="line">                dp[i][j] = <span class="built_in">max</span>(dp[i][j],</span><br><span class="line">                               dp[i - <span class="number">1</span>][j - weight] + value)</span><br><span class="line"></span><br><span class="line">    selected = []</span><br><span class="line">    j = capacity</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n, <span class="number">0</span>, -<span class="number">1</span>):</span><br><span class="line">        <span class="keyword">if</span> dp[i][j] &gt; dp[i - <span class="number">1</span>][j]:</span><br><span class="line">            selected.append(i)</span><br><span class="line">            j -= weights[i - <span class="number">1</span>]</span><br><span class="line">    selected.reverse()</span><br><span class="line">    <span class="keyword">return</span> dp[n][capacity], selected, dp</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    weights = [<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]</span><br><span class="line">    values = [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">8</span>]</span><br><span class="line">    best, selected, table = knapsack(weights, values, <span class="number">8</span>)</span><br><span class="line">    used_weight = <span class="built_in">sum</span>(weights[i - <span class="number">1</span>] <span class="keyword">for</span> i <span class="keyword">in</span> selected)</span><br><span class="line">    used_value = <span class="built_in">sum</span>(values[i - <span class="number">1</span>] <span class="keyword">for</span> i <span class="keyword">in</span> selected)</span><br><span class="line">    <span class="keyword">assert</span> best == used_value == <span class="number">12</span></span><br><span class="line">    <span class="keyword">assert</span> selected == [<span class="number">2</span>, <span class="number">4</span>]</span><br><span class="line">    <span class="keyword">assert</span> used_weight == <span class="number">8</span></span><br><span class="line">    <span class="keyword">assert</span> <span class="built_in">len</span>(selected) == <span class="built_in">len</span>(<span class="built_in">set</span>(selected))</span><br><span class="line">    <span class="keyword">assert</span> knapsack([], [], <span class="number">8</span>)[<span class="number">0</span>] == <span class="number">0</span></span><br><span class="line">    <span class="keyword">assert</span> knapsack(weights, values, <span class="number">0</span>)[<span class="number">0</span>] == <span class="number">0</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;最大评分: &quot;</span>, best)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;选中编号: &quot;</span>, selected)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;总重量: &quot;</span>, used_weight)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;最后一行: &quot;</span>, table[-<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
+<p>填表时先复制“不选”的值, 再在装得下时与“选”的值比较. 回溯时, 若
+<code>dp[i][j] &gt; dp[i-1][j]</code>, 说明当前最优值必须选择第 <span
+class="math inline">\(i\)</span> 件; 记录编号后把剩余容量减去该物品重量.
+若两行相等, 代码选择不带当前物品, 这是并列最优的处理规则.</p>
+<p>对本例, 回溯依次经过 <span
+class="math inline">\((i,j)=(4,8),(3,3),(2,3),(1,0),(0,0)\)</span>. 第 4
+件和第 2 件被选中, 最后得到编号 <code>[2,4]</code>. 阶段始终减一,
+所以不会重复使用同一件物品.</p>
+<p>每一行状态应独立创建. Python 的 <code>[[0]*(W+1)]*(n+1)</code>
+会让多行引用同一个列表, 破坏“上一阶段保持独立”的前提;
+示例采用逐行创建.</p>
+<h3 id="matlab-同时偏移阶段与容量下标">6.2 MATLAB:
+同时偏移阶段与容量下标</h3>
+<p>数学状态 <span class="math inline">\(D[i,j]\)</span> 保存在
+<code>dp(i+1,j+1)</code> 中. 因而不选分支的上一阶段为
+<code>dp(i,j+1)</code>, 选分支的来源为
+<code>dp(i,j-weights(i)+1)</code>.</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[best, selected, dp]</span> = <span class="title">knapsackDP</span><span class="params">(weights, values, capacity)</span></span></span><br><span class="line">    assert(isnumeric(capacity) &amp;&amp; <span class="built_in">isreal</span>(capacity) &amp;&amp; <span class="built_in">isscalar</span>(capacity) &amp;&amp; ...</span><br><span class="line">        <span class="built_in">isfinite</span>(capacity) &amp;&amp; capacity &gt;= <span class="number">0</span> &amp;&amp; capacity == <span class="built_in">floor</span>(capacity), ...</span><br><span class="line">        <span class="string">&#x27;容量必须为非负整数. &#x27;</span>);</span><br><span class="line">    assert(isnumeric(weights) &amp;&amp; <span class="built_in">isreal</span>(weights) &amp;&amp; ...</span><br><span class="line">        all(<span class="built_in">isfinite</span>(weights(:))) &amp;&amp; all(weights(:) &gt; <span class="number">0</span>) &amp;&amp; ...</span><br><span class="line">        all(weights(:) == <span class="built_in">floor</span>(weights(:))), <span class="string">&#x27;重量必须为正整数. &#x27;</span>);</span><br><span class="line">    assert(isnumeric(values) &amp;&amp; <span class="built_in">isreal</span>(values) &amp;&amp; ...</span><br><span class="line">        all(<span class="built_in">isfinite</span>(values(:))) &amp;&amp; all(values(:) &gt;= <span class="number">0</span>), ...</span><br><span class="line">        <span class="string">&#x27;评分必须为非负有限数. &#x27;</span>);</span><br><span class="line">    weights = weights(:).&#x27;; values = values(:).&#x27;;</span><br><span class="line">    assert(<span class="built_in">numel</span>(weights) == <span class="built_in">numel</span>(values), <span class="string">&#x27;重量与评分数量必须一致. &#x27;</span>);</span><br><span class="line">    n = <span class="built_in">numel</span>(weights);</span><br><span class="line">    dp = <span class="built_in">zeros</span>(n+<span class="number">1</span>, capacity+<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:n</span><br><span class="line">        <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">0</span>:capacity</span><br><span class="line">            dp(<span class="built_in">i</span>+<span class="number">1</span>,<span class="built_in">j</span>+<span class="number">1</span>) = dp(<span class="built_in">i</span>,<span class="built_in">j</span>+<span class="number">1</span>);</span><br><span class="line">            <span class="keyword">if</span> weights(<span class="built_in">i</span>) &lt;= <span class="built_in">j</span></span><br><span class="line">                dp(<span class="built_in">i</span>+<span class="number">1</span>,<span class="built_in">j</span>+<span class="number">1</span>) = <span class="built_in">max</span>(dp(<span class="built_in">i</span>+<span class="number">1</span>,<span class="built_in">j</span>+<span class="number">1</span>), ...</span><br><span class="line">                    dp(<span class="built_in">i</span>,<span class="built_in">j</span>-weights(<span class="built_in">i</span>)+<span class="number">1</span>) + values(<span class="built_in">i</span>));</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    best = dp(n+<span class="number">1</span>,capacity+<span class="number">1</span>);</span><br><span class="line">    selected = []; <span class="built_in">j</span> = capacity;</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span> = n:<span class="number">-1</span>:<span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> dp(<span class="built_in">i</span>+<span class="number">1</span>,<span class="built_in">j</span>+<span class="number">1</span>) &gt; dp(<span class="built_in">i</span>,<span class="built_in">j</span>+<span class="number">1</span>)</span><br><span class="line">            selected(<span class="keyword">end</span>+<span class="number">1</span>) = <span class="built_in">i</span>;</span><br><span class="line">            <span class="built_in">j</span> = <span class="built_in">j</span> - weights(<span class="built_in">i</span>);</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    selected = <span class="built_in">fliplr</span>(selected);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>调用
+<code>[best,selected,table] = knapsackDP([2,3,4,5],[3,4,5,8],8)</code>
+可得最大评分 12, 编号 <code>[2,4]</code>. 还应回代原重量与评分,
+检查总重量为 8, 总评分为 12, 并确认编号没有重复.
+<code>dynamic_examples.m</code> 汇总了硬币与背包两组 MATLAB 计算.</p>
+<h2 id="改变计算方式之前-先确认状态含义">7 改变计算方式之前,
+先确认状态含义</h2>
+<h3 id="记忆化搜索-递归也能保存状态">7.1 记忆化搜索:
+递归也能保存状态</h3>
+<p>递归与动态规划并不互斥. 朴素递归会重复计算相同金额;
+记忆化搜索在第一次计算后缓存结果, 后续直接使用. 在固定面值
+<code>(2,5,7)</code>, 目标 27 及本章的边界规则下, 两种程序都得到最少 5
+枚, 但工作量明显不同.</p>
+<table>
+<thead>
+<tr>
+<th>实现</th>
+<th>计数对象</th>
+<th style="text-align: right;">本例计数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>朴素递归</td>
+<td>每次进入函数体</td>
+<td style="text-align: right;">1672</td>
+</tr>
+<tr>
+<td>记忆化搜索</td>
+<td>缓存未命中, 即首次计算状态</td>
+<td style="text-align: right;">26</td>
+</tr>
+</tbody>
+</table>
+<p>自底向上依次计算金额 0 至 27 的全部状态;
+自顶向下只计算由目标递归到达的状态. 缓存减少重复计算,
+但不消除递归深度限制. 面值改变时, 旧缓存也不能继续当作新问题的结果.</p>
+<p>双语言完整对照见 <code>DynamicProgrammingVariants.md</code>. Python
+使用 <code>functools.cache</code>, MATLAB 用显式数组缓存,
+两者采用相同的递推与计数规则.</p>
+<h3 id="一维压缩-为什么容量必须倒序">7.2 一维压缩:
+为什么容量必须倒序</h3>
+<p>二维背包表只依赖上一行. 如果仅求最优值, 可以用一个数组反复更新,
+将空间从 <span class="math inline">\(O(nW)\)</span> 降到 <span
+class="math inline">\(O(W)\)</span>:</p>
 <p><span class="math display">\[
 d[j]\leftarrow\max\{d[j],d[j-w_i]+v_i\},
 \qquad j=W,W-1,\ldots,w_i.
 \]</span></p>
-<p>更新 <span class="math inline">\(j\)</span> 时, 较小容量 <span
-class="math inline">\(j-w_i\)</span> 尚未被当前物品更新,
-保存的仍是上一阶段的值. 因此, 当前物品只使用一次.</p>
-<p>若容量从小到大, 较小状态可能已经包含当前物品,
-再从它转移就会重复选择当前物品. 这不是无关紧要的代码顺序差异,
-而是模型含义发生变化.</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> isfinite</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">knapsack_1d</span>(<span class="params">weights, values, capacity</span>):</span><br><span class="line">    weights, values = <span class="built_in">list</span>(weights), <span class="built_in">list</span>(values)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(weights) != <span class="built_in">len</span>(values):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;重量与评分的列表长度必须一致。&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">type</span>(capacity) <span class="keyword">is</span> <span class="keyword">not</span> <span class="built_in">int</span> <span class="keyword">or</span> capacity &lt; <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;容量必须为非负整数。&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">any</span>(<span class="built_in">type</span>(w) <span class="keyword">is</span> <span class="keyword">not</span> <span class="built_in">int</span> <span class="keyword">or</span> w &lt;= <span class="number">0</span> <span class="keyword">for</span> w <span class="keyword">in</span> weights):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;重量必须为正整数。&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">any</span>(<span class="built_in">type</span>(v) <span class="keyword">not</span> <span class="keyword">in</span> (<span class="built_in">int</span>, <span class="built_in">float</span>) <span class="keyword">or</span> v &lt; <span class="number">0</span></span><br><span class="line">           <span class="keyword">or</span> (<span class="built_in">type</span>(v) <span class="keyword">is</span> <span class="built_in">float</span> <span class="keyword">and</span> <span class="keyword">not</span> isfinite(v))</span><br><span class="line">           <span class="keyword">for</span> v <span class="keyword">in</span> values):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;评分必须为非负有限数。&quot;</span>)</span><br><span class="line"></span><br><span class="line">    dp = [<span class="number">0</span>] * (capacity + <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">for</span> weight, value <span class="keyword">in</span> <span class="built_in">zip</span>(weights, values):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(capacity, weight - <span class="number">1</span>, -<span class="number">1</span>):</span><br><span class="line">            dp[j] = <span class="built_in">max</span>(dp[j], dp[j - weight] + value)</span><br><span class="line">    <span class="keyword">return</span> dp[capacity]</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="keyword">assert</span> knapsack_1d([<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>], [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">8</span>], <span class="number">8</span>) == <span class="number">12</span></span><br><span class="line">    <span class="keyword">assert</span> knapsack_1d([<span class="number">2</span>], [<span class="number">3</span>], <span class="number">4</span>) == <span class="number">3</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 反例：错误地正序遍历，会把唯一的一件物品重复使用。</span></span><br><span class="line">    wrong = [<span class="number">0</span>] * <span class="number">5</span></span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>, <span class="number">5</span>):</span><br><span class="line">        wrong[j] = <span class="built_in">max</span>(wrong[j], wrong[j - <span class="number">2</span>] + <span class="number">3</span>)</span><br><span class="line">    <span class="keyword">assert</span> wrong[<span class="number">4</span>] == <span class="number">6</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;装备例题最优评分：&quot;</span>, knapsack_1d([<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>], [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">8</span>], <span class="number">8</span>))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;只有一件重 2、评分 3 的物品时，正确结果为 3；正序误得：&quot;</span>, wrong[<span class="number">4</span>])</span><br></pre></td></tr></table></figure>
-<p>这个压缩版本只返回最优值. 如果需要选物方案,
-可以保留二维表或阶段选择记录.
-不能简单地在可覆盖的一维表中保存可变父指针,
-再默认仍能恢复正确的历史方案; 后续更新可能改变父状态对应的阶段.</p>
-<h3 id="容量不超过与恰好装满要分别建模">6.3
-"容量不超过"与"恰好装满"要分别建模</h3>
-<p>如果要求恰好装满, 将状态改为</p>
+<p>倒序更新时, 较小容量 <span class="math inline">\(j-w_i\)</span>
+还没有加入当前物品, 仍代表上一阶段. 下面的短程序直接计算装备例题,
+与二维表结果一致.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">weights = [<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]</span><br><span class="line">values = [<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">8</span>]</span><br><span class="line">capacity = <span class="number">8</span></span><br><span class="line">best = [<span class="number">0</span>]*(capacity+<span class="number">1</span>)</span><br><span class="line"><span class="keyword">for</span> weight,value <span class="keyword">in</span> <span class="built_in">zip</span>(weights,values):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(capacity,weight-<span class="number">1</span>,-<span class="number">1</span>):</span><br><span class="line">        best[j] = <span class="built_in">max</span>(best[j],best[j-weight]+value)</span><br><span class="line"><span class="keyword">assert</span> best[capacity]==<span class="number">12</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Maximum score:&#x27;</span>,best[capacity])</span><br></pre></td></tr></table></figure>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">weights = [<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]; values = [<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">8</span>]; capacity = <span class="number">8</span>;</span><br><span class="line">best = <span class="built_in">zeros</span>(<span class="number">1</span>,capacity+<span class="number">1</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="built_in">numel</span>(weights)</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">j</span> = capacity:<span class="number">-1</span>:weights(<span class="built_in">i</span>)</span><br><span class="line">        best(<span class="built_in">j</span>+<span class="number">1</span>) = <span class="built_in">max</span>(best(<span class="built_in">j</span>+<span class="number">1</span>),best(<span class="built_in">j</span>-weights(<span class="built_in">i</span>)+<span class="number">1</span>)+values(<span class="built_in">i</span>));</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">assert(best(capacity+<span class="number">1</span>)==<span class="number">12</span>);</span><br><span class="line">fprintf(<span class="string">&#x27;Maximum score: %g\n&#x27;</span>,best(capacity+<span class="number">1</span>));</span><br></pre></td></tr></table></figure>
+<p>若容量改为正序, 来源状态可能已经包含当前物品,
+从它再转移就会重复选择当前物品. 例如只有一件重量 2, 评分 3 的物品,
+容量为 4 时正确答案为 3, 正序更新却会得到 6.
+计算顺序在这里决定了物品是否能够重复使用.</p>
+<p>这个一维版本只返回最优值. 若要恢复装备集合,
+可保留二维表或阶段选择记录. 不能默认可变的一维父指针仍记录正确历史,
+因为后续更新可能改变父状态所属阶段.</p>
+<h3 id="恰好装满-不可达状态应改成负无穷">7.3 恰好装满:
+不可达状态应改成负无穷</h3>
+<p>如果要求总重量恰好等于容量, 状态改为</p>
 <p><span class="math display">\[
 E[i,j]=\text{从前 }i\text{ 件物品中选择、总重量恰好为 }j\text{
 的最大评分}.
 \]</span></p>
-<p>此时</p>
+<p>此时只有</p>
 <p><span class="math display">\[
 E[0,0]=0,\qquad E[0,j]=-\infty\quad(j&gt;0).
 \]</span></p>
-<p>不可达状态必须标记为负无穷, 而不能全初始化为 0.
-转移仍比较"不选"和"选", 并保留相应的合法性判断.</p>
-<p>例如只有一件重量 3, 评分 4 的物品, 容量 4 时, "不超过 4"的最优评分为
-4, 但"恰好达到 4"无解.</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> inf, isfinite</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">knapsack_exact</span>(<span class="params">weights, values, capacity</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;总重量必须恰好等于容量；无解时返回 None。&quot;&quot;&quot;</span></span><br><span class="line">    weights, values = <span class="built_in">list</span>(weights), <span class="built_in">list</span>(values)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(weights) != <span class="built_in">len</span>(values):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;重量与评分的列表长度必须一致。&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">type</span>(capacity) <span class="keyword">is</span> <span class="keyword">not</span> <span class="built_in">int</span> <span class="keyword">or</span> capacity &lt; <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;容量必须为非负整数。&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">any</span>(<span class="built_in">type</span>(w) <span class="keyword">is</span> <span class="keyword">not</span> <span class="built_in">int</span> <span class="keyword">or</span> w &lt;= <span class="number">0</span> <span class="keyword">for</span> w <span class="keyword">in</span> weights):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;重量必须为正整数。&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">any</span>(<span class="built_in">type</span>(v) <span class="keyword">not</span> <span class="keyword">in</span> (<span class="built_in">int</span>, <span class="built_in">float</span>) <span class="keyword">or</span> v &lt; <span class="number">0</span></span><br><span class="line">           <span class="keyword">or</span> (<span class="built_in">type</span>(v) <span class="keyword">is</span> <span class="built_in">float</span> <span class="keyword">and</span> <span class="keyword">not</span> isfinite(v))</span><br><span class="line">           <span class="keyword">for</span> v <span class="keyword">in</span> values):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;评分必须为非负有限数。&quot;</span>)</span><br><span class="line"></span><br><span class="line">    dp = [-inf] * (capacity + <span class="number">1</span>)</span><br><span class="line">    dp[<span class="number">0</span>] = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> weight, value <span class="keyword">in</span> <span class="built_in">zip</span>(weights, values):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(capacity, weight - <span class="number">1</span>, -<span class="number">1</span>):</span><br><span class="line">            <span class="keyword">if</span> dp[j - weight] != -inf:</span><br><span class="line">                dp[j] = <span class="built_in">max</span>(dp[j], dp[j - weight] + value)</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span> <span class="keyword">if</span> dp[capacity] == -inf <span class="keyword">else</span> dp[capacity]</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="keyword">assert</span> knapsack_exact([<span class="number">3</span>], [<span class="number">4</span>], <span class="number">4</span>) <span class="keyword">is</span> <span class="literal">None</span></span><br><span class="line">    <span class="keyword">assert</span> knapsack_exact([<span class="number">3</span>], [<span class="number">4</span>], <span class="number">3</span>) == <span class="number">4</span></span><br><span class="line">    <span class="keyword">assert</span> knapsack_exact([<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>], [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">8</span>], <span class="number">8</span>) == <span class="number">12</span></span><br><span class="line">    <span class="keyword">assert</span> knapsack_exact([], [], <span class="number">0</span>) == <span class="number">0</span></span><br><span class="line">    <span class="keyword">assert</span> knapsack_exact([], [], <span class="number">1</span>) <span class="keyword">is</span> <span class="literal">None</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;只有重 3 的一件物品，要求恰好装满 4：&quot;</span>, knapsack_exact([<span class="number">3</span>], [<span class="number">4</span>], <span class="number">4</span>))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;装备例题恰好装满 8 时的最大评分：&quot;</span>,</span><br><span class="line">          knapsack_exact([<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>], [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">8</span>], <span class="number">8</span>))</span><br></pre></td></tr></table></figure>
-<h3 id="背包问题的复杂度及其限制">6.4 背包问题的复杂度及其限制</h3>
+<p>没有物品时, 无法组成正重量. 若仍把所有空阶段状态初始化为 0,
+就把不可达重量误判成可行. 两类问题的差别如下.</p>
+<table>
+<thead>
+<tr>
+<th>要求</th>
+<th>一件重 3, 评分 4 的物品, 容量 4</th>
+<th>空阶段初始值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>重量不超过容量</td>
+<td>可选该物品, 最优评分 4</td>
+<td>所有容量为 0</td>
+</tr>
+<tr>
+<td>重量恰好等于容量</td>
+<td>无解</td>
+<td>仅重量 0 为 0, 其余为负无穷</td>
+</tr>
+</tbody>
+</table>
+<p>完整函数 <code>knapsack_exact.py</code> 与
+<code>knapsackExact.m</code> 见配套阅读材料. Python 无解返回
+<code>None</code>, MATLAB 无解返回 <code>-Inf</code>;
+二者都应解释为恰好装满不可达, 不是评分为零.</p>
+<h3 id="状态表的大小决定能否计算">7.4 状态表的大小决定能否计算</h3>
 <p>二维表有 <span class="math inline">\((n+1)(W+1)\)</span> 个状态,
 每个状态比较至多两个分支, 时间复杂度为 <span
 class="math inline">\(O(nW)\)</span>, 表格空间为 <span
@@ -933,187 +1002,15 @@ class="math inline">\(O(nW)\)</span> 是<strong>伪多项式时间</strong>,
 或有多项资源限制, 动态规划可能不可承受. 应根据数据规模考虑整数规划,
 稀疏状态, 按评分维度建表或其他方法,
 不能仅因为循环结构简单就判断它一定高效.</p>
-<h2 id="七-matlab-实现-核对两类状态的下标">七, MATLAB 实现:
-核对两类状态的下标</h2>
-<p>下面用 MATLAB 完成同样的两组教学计算, 便于与 Python 对照,
-不需要优化工具箱. 可保存为一个 <code>.m</code> 脚本,
-局部函数放在脚本末尾.</p>
-<p>MATLAB 下标从 1 开始, 所以数学状态 <span
-class="math inline">\(f[x]\)</span> 存在 <code>dp(x+1)</code> 中, <span
-class="math inline">\(D[i,j]\)</span> 存在 <code>dp(i+1,j+1)</code> 中.
-换算时尤其要注意"上一阶段"和"剩余容量".</p>
-<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">%% 动态规划：最少硬币与 0-1 背包</span></span><br><span class="line">clear; clc;</span><br><span class="line">[count, plan] = coinChangeDP([<span class="number">2</span>, <span class="number">5</span>, <span class="number">7</span>], <span class="number">27</span>);</span><br><span class="line">assert(count == <span class="number">5</span> &amp;&amp; sum(plan) == <span class="number">27</span> &amp;&amp; <span class="built_in">numel</span>(plan) == <span class="number">5</span>);</span><br><span class="line">fprintf(<span class="string">&#x27;最少硬币枚数：%d\n&#x27;</span>, count);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;一个最优面值列表：&#x27;</span>); <span class="built_in">disp</span>(<span class="built_in">sort</span>(plan, <span class="string">&#x27;descend&#x27;</span>));</span><br><span class="line">[count0, plan0] = coinChangeDP([<span class="number">2</span>, <span class="number">5</span>, <span class="number">7</span>], <span class="number">0</span>);</span><br><span class="line">assert(count0 == <span class="number">0</span> &amp;&amp; <span class="built_in">isempty</span>(plan0));</span><br><span class="line">[count1, plan1] = coinChangeDP([<span class="number">2</span>, <span class="number">5</span>, <span class="number">7</span>], <span class="number">1</span>);</span><br><span class="line">assert(count1 == <span class="number">-1</span> &amp;&amp; <span class="built_in">isempty</span>(plan1));</span><br><span class="line"></span><br><span class="line">weights = [<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];</span><br><span class="line">values = [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">8</span>];</span><br><span class="line">[best, selected, <span class="built_in">table</span>] = knapsackDP(weights, values, <span class="number">8</span>);</span><br><span class="line">assert(best == <span class="number">12</span> &amp;&amp; <span class="built_in">isequal</span>(selected, [<span class="number">2</span>, <span class="number">4</span>]));</span><br><span class="line">assert(sum(weights(selected)) == <span class="number">8</span>);</span><br><span class="line">fprintf(<span class="string">&#x27;最大评分：%g\n&#x27;</span>, best);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;选中装备编号：&#x27;</span>); <span class="built_in">disp</span>(selected);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;最终状态行：&#x27;</span>); <span class="built_in">disp</span>(<span class="built_in">table</span>(<span class="keyword">end</span>,:));</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[count, plan]</span> = <span class="title">coinChangeDP</span><span class="params">(coins, target)</span></span></span><br><span class="line">    assert(isnumeric(target) &amp;&amp; <span class="built_in">isreal</span>(target) &amp;&amp; <span class="built_in">isscalar</span>(target) &amp;&amp; ...</span><br><span class="line">        <span class="built_in">isfinite</span>(target) &amp;&amp; target &gt;= <span class="number">0</span> &amp;&amp; target == <span class="built_in">floor</span>(target), ...</span><br><span class="line">        <span class="string">&#x27;目标金额必须为非负整数。&#x27;</span>);</span><br><span class="line">    assert(isnumeric(coins) &amp;&amp; <span class="built_in">isreal</span>(coins) &amp;&amp; ...</span><br><span class="line">        all(<span class="built_in">isfinite</span>(coins(:))) &amp;&amp; all(coins(:) &gt; <span class="number">0</span>) &amp;&amp; ...</span><br><span class="line">        all(coins(:) == <span class="built_in">floor</span>(coins(:))), <span class="string">&#x27;面值必须为正整数。&#x27;</span>);</span><br><span class="line">    coins = unique(coins(:).&#x27;, <span class="string">&#x27;stable&#x27;</span>);</span><br><span class="line">    dp = <span class="built_in">inf</span>(<span class="number">1</span>, target+<span class="number">1</span>);</span><br><span class="line">    last = <span class="built_in">zeros</span>(<span class="number">1</span>, target+<span class="number">1</span>);</span><br><span class="line">    dp(<span class="number">1</span>) = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> amount = <span class="number">1</span>:target</span><br><span class="line">        <span class="keyword">for</span> coin = coins</span><br><span class="line">            <span class="keyword">if</span> coin &lt;= amount</span><br><span class="line">                candidate = dp(amount-coin+<span class="number">1</span>) + <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">if</span> candidate &lt; dp(amount+<span class="number">1</span>)</span><br><span class="line">                    dp(amount+<span class="number">1</span>) = candidate;</span><br><span class="line">                    last(amount+<span class="number">1</span>) = coin;</span><br><span class="line">                <span class="keyword">end</span></span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">isinf</span>(dp(target+<span class="number">1</span>))</span><br><span class="line">        count = <span class="number">-1</span>; plan = []; <span class="keyword">return</span>;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    count = dp(target+<span class="number">1</span>);</span><br><span class="line">    plan = <span class="built_in">zeros</span>(<span class="number">1</span>, count);</span><br><span class="line">    remaining = target;</span><br><span class="line">    <span class="keyword">for</span> k = <span class="number">1</span>:count</span><br><span class="line">        coin = last(remaining+<span class="number">1</span>);</span><br><span class="line">        assert(coin &gt; <span class="number">0</span>, <span class="string">&#x27;可达状态缺少回溯记录。&#x27;</span>);</span><br><span class="line">        plan(k) = coin;</span><br><span class="line">        remaining = remaining - coin;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    assert(remaining == <span class="number">0</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[best, selected, dp]</span> = <span class="title">knapsackDP</span><span class="params">(weights, values, capacity)</span></span></span><br><span class="line">    assert(isnumeric(capacity) &amp;&amp; <span class="built_in">isreal</span>(capacity) &amp;&amp; <span class="built_in">isscalar</span>(capacity) &amp;&amp; ...</span><br><span class="line">        <span class="built_in">isfinite</span>(capacity) &amp;&amp; capacity &gt;= <span class="number">0</span> &amp;&amp; capacity == <span class="built_in">floor</span>(capacity), ...</span><br><span class="line">        <span class="string">&#x27;容量必须为非负整数。&#x27;</span>);</span><br><span class="line">    assert(isnumeric(weights) &amp;&amp; <span class="built_in">isreal</span>(weights) &amp;&amp; ...</span><br><span class="line">        all(<span class="built_in">isfinite</span>(weights(:))) &amp;&amp; all(weights(:) &gt; <span class="number">0</span>) &amp;&amp; ...</span><br><span class="line">        all(weights(:) == <span class="built_in">floor</span>(weights(:))), <span class="string">&#x27;重量必须为正整数。&#x27;</span>);</span><br><span class="line">    assert(isnumeric(values) &amp;&amp; <span class="built_in">isreal</span>(values) &amp;&amp; ...</span><br><span class="line">        all(<span class="built_in">isfinite</span>(values(:))) &amp;&amp; all(values(:) &gt;= <span class="number">0</span>), ...</span><br><span class="line">        <span class="string">&#x27;评分必须为非负有限数。&#x27;</span>);</span><br><span class="line">    weights = weights(:).&#x27;; values = values(:).&#x27;;</span><br><span class="line">    assert(<span class="built_in">numel</span>(weights) == <span class="built_in">numel</span>(values), <span class="string">&#x27;重量与评分数量必须一致。&#x27;</span>);</span><br><span class="line">    n = <span class="built_in">numel</span>(weights);</span><br><span class="line">    dp = <span class="built_in">zeros</span>(n+<span class="number">1</span>, capacity+<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:n</span><br><span class="line">        <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">0</span>:capacity</span><br><span class="line">            dp(<span class="built_in">i</span>+<span class="number">1</span>,<span class="built_in">j</span>+<span class="number">1</span>) = dp(<span class="built_in">i</span>,<span class="built_in">j</span>+<span class="number">1</span>);</span><br><span class="line">            <span class="keyword">if</span> weights(<span class="built_in">i</span>) &lt;= <span class="built_in">j</span></span><br><span class="line">                dp(<span class="built_in">i</span>+<span class="number">1</span>,<span class="built_in">j</span>+<span class="number">1</span>) = <span class="built_in">max</span>(dp(<span class="built_in">i</span>+<span class="number">1</span>,<span class="built_in">j</span>+<span class="number">1</span>), ...</span><br><span class="line">                    dp(<span class="built_in">i</span>,<span class="built_in">j</span>-weights(<span class="built_in">i</span>)+<span class="number">1</span>) + values(<span class="built_in">i</span>));</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    best = dp(n+<span class="number">1</span>,capacity+<span class="number">1</span>);</span><br><span class="line">    selected = []; <span class="built_in">j</span> = capacity;</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span> = n:<span class="number">-1</span>:<span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> dp(<span class="built_in">i</span>+<span class="number">1</span>,<span class="built_in">j</span>+<span class="number">1</span>) &gt; dp(<span class="built_in">i</span>,<span class="built_in">j</span>+<span class="number">1</span>)</span><br><span class="line">            selected(<span class="keyword">end</span>+<span class="number">1</span>) = <span class="built_in">i</span>;</span><br><span class="line">            <span class="built_in">j</span> = <span class="built_in">j</span> - weights(<span class="built_in">i</span>);</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    selected = <span class="built_in">fliplr</span>(selected);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
-<p>MATLAB 中 <code>...</code> 表示将同一条语句续写到下一行.
-代码得到的结果与 Python 一致: 27 的最少硬币数为 5; 装备选择为编号 2, 4,
-总评分为 12.</p>
-<h2 id="八-进阶-从两道例题看一般多阶段模型">八, 进阶:
-从两道例题看一般多阶段模型</h2>
-<h3 id="有限阶段的价值函数">8.1 有限阶段的价值函数</h3>
-<p>设有 <span class="math inline">\(T\)</span> 个阶段, 第 <span
-class="math inline">\(t\)</span> 阶段的状态空间为 <span
-class="math inline">\(\mathcal{X}_t\)</span>. 当前状态为 <span
-class="math inline">\(s\in\mathcal{X}_t\)</span>, 可选行动为 <span
-class="math inline">\(a\in A_t(s)\)</span>, 阶段费用为 <span
-class="math inline">\(g_t(s,a)\)</span>, 下一状态为 <span
-class="math inline">\(S_t(s,a)\in\mathcal{X}_{t+1}\)</span>, 终端费用为
-<span class="math inline">\(h(s)\)</span>. 阶段费用取有限实数;
-终端费用也取有限实数, 或用 <span class="math inline">\(+\infty\)</span>
-表示终点要求未满足.</p>
-<p>若初始状态为 <span class="math inline">\(s_{\mathrm{init}}\)</span>,
-整个决策问题可写为</p>
-<p><span class="math display">\[
-\begin{aligned}
-&amp;\min\quad \sum\limits_{t=1}^{T}g_t(s_t,a_t)+h(s_{T+1}),\\
-&amp;\mathrm{s.t.}\quad\begin{cases}
-s_1=s_{\mathrm{init}},\\
-s_t\in\mathcal{X}_t,\quad t=1,\ldots,T+1,\\
-a_t\in A_t(s_t),\quad t=1,\ldots,T,\\
-s_{t+1}=S_t(s_t,a_t),\quad t=1,\ldots,T.
-\end{cases}
-\end{aligned}
-\]</span></p>
-<p>目标是全部阶段费用与终端费用之和.
-状态转移约束把相邻阶段的决策连接起来.</p>
-<p>定义 <span class="math inline">\(V_t(s)\)</span> 为从第 <span
-class="math inline">\(t\)</span> 阶段开始, 当前状态为 <span
-class="math inline">\(s\)</span> 时, 到终点的最小总费用.
-对于可按阶段求解的确定性问题, 递推为</p>
-<p><span class="math display">\[
-V_t(s)=\min_{a\in A_t(s)}
-\{g_t(s,a)+V_{t+1}(S_t(s,a))\},
-\qquad t=T,T-1,\ldots,1,
-\]</span></p>
-<p>终端条件为</p>
-<p><span class="math display">\[
-V_{T+1}(s)=h(s).
-\]</span></p>
-<p>这里要求状态充分地描述后续决策条件, 并且总费用按阶段可加.
-有限候选行动可直接取最小值; 连续行动情况下, 最小值是否能够取到,
-如何求得还需要额外分析; 若只能讨论下确界而不能取到最小值, 应将 <span
-class="math inline">\(\min\)</span> 改为 <span
-class="math inline">\(\inf\)</span>.
-随机状态转移则需引入相应期望与概率模型, 本章不展开.</p>
-<p>对于没有合法行动, 或所有行动都无法到达可行终点的状态, 最小费用记为
-<span class="math inline">\(+\infty\)</span>,
-与硬币例题的不可达标记一致. 终端费用也可以用 <span
-class="math inline">\(+\infty\)</span> 标记不满足终点要求的状态.</p>
-<p>这类"当前最优值等于当前行动费用加后续最优值的最小值"称为 Bellman
-递推. 最大收益问题则把最小值改为最大值, 并相应定义阶段收益.</p>
-<h3 id="两道例题的共同点与不同点">8.2 两道例题的共同点与不同点</h3>
-<table>
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
-<thead>
-<tr>
-<th style="text-align: center;">项目</th>
-<th style="text-align: center;">最少硬币问题</th>
-<th style="text-align: center;">0-1 背包问题</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">输入中的数量限制</td>
-<td style="text-align: center;">每种面值可以重复使用</td>
-<td style="text-align: center;">每件物品至多使用一次</td>
-</tr>
-<tr>
-<td style="text-align: center;">主要状态</td>
-<td style="text-align: center;">金额 <span
-class="math inline">\(x\)</span></td>
-<td style="text-align: center;">物品数量 <span
-class="math inline">\(i\)</span> 与容量 <span
-class="math inline">\(j\)</span></td>
-</tr>
-<tr>
-<td style="text-align: center;">保存的数值</td>
-<td style="text-align: center;">最少枚数</td>
-<td style="text-align: center;">最大总评分</td>
-</tr>
-<tr>
-<td style="text-align: center;">候选行动</td>
-<td style="text-align: center;">选择最后一个面值</td>
-<td style="text-align: center;">选择或不选择当前物品</td>
-</tr>
-<tr>
-<td style="text-align: center;">关键依赖</td>
-<td style="text-align: center;">更小金额 <span
-class="math inline">\(x-c\)</span></td>
-<td style="text-align: center;">上一物品阶段 <span
-class="math inline">\(i-1\)</span></td>
-</tr>
-<tr>
-<td style="text-align: center;">空状态</td>
-<td style="text-align: center;">金额 0 的枚数为 0</td>
-<td style="text-align: center;">不选物品的评分为 0</td>
-</tr>
-<tr>
-<td style="text-align: center;">不可行标记</td>
-<td style="text-align: center;">不可达金额为 <span
-class="math inline">\(+\infty\)</span></td>
-<td style="text-align: center;">容量上限版空集合可行; 恰好装满版用 <span
-class="math inline">\(-\infty\)</span></td>
-</tr>
-<tr>
-<td style="text-align: center;">核心计算顺序</td>
-<td style="text-align: center;">金额递增</td>
-<td style="text-align: center;">阶段递增; 一维压缩容量倒序</td>
-</tr>
-</tbody>
-</table>
-<p>硬币问题可以把金额看作递推规模, 背包问题则有显式的物品阶段.
-理解依赖方向, 比机械记忆某一种"动态规划循环模板"更可靠.</p>
-<h3 id="哪些变化会要求重新设计状态">8.3 哪些变化会要求重新设计状态</h3>
-<table>
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
-<thead>
-<tr>
-<th style="text-align: center;">新要求</th>
-<th style="text-align: center;">为什么原状态可能不够</th>
-<th style="text-align: center;">处理方向</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">每种硬币只有有限枚</td>
-<td style="text-align: center;">金额没有体现供应限制</td>
-<td style="text-align: center;">引入币种阶段或有限数量处理</td>
-</tr>
-<tr>
-<td style="text-align: center;">装备还受体积限制</td>
-<td style="text-align: center;">相同重量下可用体积不同</td>
-<td style="text-align: center;">增加资源维度或采用其他优化模型</td>
-</tr>
-<tr>
-<td style="text-align: center;">两件装备一起携带才产生额外效益</td>
-<td style="text-align: center;">总评分不再简单逐件相加</td>
-<td style="text-align: center;">记录必要的组合信息</td>
-</tr>
-<tr>
-<td style="text-align: center;">必须选且只选某一组中的一件</td>
-<td style="text-align: center;">独立选与不选不再充分</td>
-<td style="text-align: center;">使用分组决策与相应阶段</td>
-</tr>
-<tr>
-<td style="text-align: center;">路线代价依赖此前访问过的地点</td>
-<td style="text-align: center;">当前地点无法决定全部后续条件</td>
-<td style="text-align: center;">必要时扩充访问历史状态</td>
-</tr>
-</tbody>
-</table>
-<p>扩充状态会增加计算量. 例如同时按重量, 体积建表, 可能产生约 <span
-class="math inline">\(nWB\)</span> 个状态, 其中 <span
-class="math inline">\(B\)</span> 为离散化后的体积上限.
-这就是常说的状态空间膨胀: 模型更完整,
-但算法未必还能在可接受时间内运行.</p>
-<h2 id="九-方法选择与结果解释">九, 方法选择与结果解释</h2>
-<h3 id="优点与适用范围">9.1 优点与适用范围</h3>
+<h2 id="从两道例题迁移到其他问题">8 从两道例题迁移到其他问题</h2>
+<p>动态规划的状态必须保存足以决定后续合法行动和收益的信息.
+如果装备还受体积限制, 仅有物品阶段和重量容量就可能不够;
+如果两件装备同时携带才有额外效益, 简单的逐件可加评分也需要调整.</p>
+<p>有限阶段模型可以把当前行动的费用与下一状态的最优费用相加,
+再在合法行动中取最小值, 得到 Bellman 递推. 完整模型,
+终端条件和两道例题的对应关系见 <code>MultistageModels.md</code>.
+不应只凭“能拆成小问题”, 就认定拆分后的最优解可以任意拼接.</p>
+<h3 id="优点与适用范围">8.1 优点与适用范围</h3>
 <p>动态规划把"考虑所有可能选择"组织成可复用的状态计算. 在本章假设下,
 递推遍历全部合法分支, 得到全局最优值, 而不是一个凭直觉选择的近似结果.
 状态表还便于解释, 检查和恢复方案.</p>
@@ -1122,7 +1019,7 @@ class="math inline">\(B\)</span> 为离散化后的体积上限.
 错误更新顺序都会让程序稳定地算出另一个问题的答案.</p>
 <p>对于规模可控的离散资源分配和组合选择问题, 它往往很实用; 对于高维状态,
 很大的数值上限或难以形成合理递推的问题, 则要评估其他求解方式.</p>
-<h3 id="动态规划-贪心与直接枚举">9.2 动态规划, 贪心与直接枚举</h3>
+<h3 id="动态规划-贪心与直接枚举">8.2 动态规划, 贪心与直接枚举</h3>
 <table>
 <colgroup>
 <col style="width: 33%" />
@@ -1169,7 +1066,7 @@ class="math inline">\(B\)</span> 为离散化后的体积上限.
 递归的效率取决于子问题是否被重复计算. 本章数据表明,
 两种特定的贪心规则会失败;
 加缓存的递归则可以与表格递推具有相同数量级的状态计算.</p>
-<h3 id="建立动态规划的步骤">9.3 建立动态规划的步骤</h3>
+<h3 id="建立动态规划的步骤">8.3 建立动态规划的步骤</h3>
 <ol type="1">
 <li>说明输入, 单位, 目标与全部约束.</li>
 <li>判断需要哪些信息才能决定后续选择, 定义状态.</li>
@@ -1180,14 +1077,14 @@ class="math inline">\(B\)</span> 为离散化后的体积上限.
 <li>回溯方案, 并用原问题的约束与目标核验.</li>
 <li>分析状态数, 每状态工作量和内存需求.</li>
 </ol>
-<h3 id="科普装备例题的决策解释">9.4 科普装备例题的决策解释</h3>
+<h3 id="科普装备例题的决策解释">8.4 科普装备例题的决策解释</h3>
 <p>将每件装备视为至多使用一次的独立物品, 假设活动效益评分可逐件相加,
 以运输箱重量不超过 8 千克为约束. 建立以"已处理物品数量,
 容量上限"为状态的 0-1 背包动态规划, 求得最大评分为 12.
 回溯结果选择互动答题设备与便携展台, 总重量为 8 千克, 满足承载限制.
 该结论依赖例题给定的重量, 评分及可加性假设; 若增加必须搭配或体积限制,
 需重新建模.</p>
-<h2 id="十-常见错误与检查方法">十, 常见错误与检查方法</h2>
+<h2 id="常见错误与检查方法">9 常见错误与检查方法</h2>
 <table>
 <colgroup>
 <col style="width: 33%" />
@@ -1269,8 +1166,7 @@ class="math inline">\(O(Nm)\)</span> 并说明计数对象</td>
 </tr>
 </tbody>
 </table>
-<h2 id="十一-练习与参考解答">十一, 练习与参考解答</h2>
-<h3 id="练习">11.1 练习</h3>
+<h2 id="练习">10 练习</h2>
 <ol type="1">
 <li>仍用 2, 5, 7, 分别凑出 1, 3, 6, 14, 20,
 求最少枚数并给出可行时的一种最优组合.</li>
@@ -1283,76 +1179,6 @@ class="math inline">\(O(Nm)\)</span> 并说明计数对象</td>
 <li>仅有一件重量 3, 评分 4 的物品, 容量为 4.
 写出"容量不超过"和"恰好装满"的状态初始条件, 并比较答案.</li>
 </ol>
-<h3 id="参考解答">11.2 参考解答</h3>
-<p><strong>第 1 题.</strong> 金额 1, 3 不可达. 金额 6 只能用三个 2, 最少
-3 枚; 金额 14 可用 <span class="math inline">\(7+7\)</span>, 最少 2 枚;
-金额 20 可用 <span class="math inline">\(7+7+2+2+2\)</span>, 这有 5 枚,
-但 <span class="math inline">\(5+5+5+5\)</span> 只有 4 枚.
-动态规划取所有候选分支的最小值, 得到 20 的最少枚数为 4. 2
-枚及以下最多凑出 14; 3 枚最大为 21, 若从三个 7 的总额 21 减到 20,
-需要减少 1, 但更换面值只能减少 2 或 5, 所以 3 枚不可能.</p>
-<p><strong>第 2 题.</strong> 贪心先选 4, 再选两个 1, 共 3 枚.
-动态规划有</p>
-<p><span class="math display">\[
-f[6]=\min\{f[5]+1,f[3]+1,f[2]+1\}
-=\min\{3,2,3\}=2,
-\]</span></p>
-<p>对应 <span class="math inline">\(3+3\)</span>.
-该例再次说明一般面值集合下, 最大面值优先不保证最少枚数.</p>
-<p><strong>第 3 题.</strong> 仍采用原装备的重量与评分:</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">容量</th>
-<th style="text-align: center;">一个最优编号集合</th>
-<th style="text-align: center;">总重量</th>
-<th style="text-align: center;">最大评分</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">7</td>
-<td style="text-align: center;"><span
-class="math inline">\(\{1,4\}\)</span></td>
-<td style="text-align: center;">7</td>
-<td style="text-align: center;">11</td>
-</tr>
-<tr>
-<td style="text-align: center;">9</td>
-<td style="text-align: center;"><span
-class="math inline">\(\{3,4\}\)</span></td>
-<td style="text-align: center;">9</td>
-<td style="text-align: center;">13</td>
-</tr>
-<tr>
-<td style="text-align: center;">10</td>
-<td style="text-align: center;"><span
-class="math inline">\(\{1,2,4\}\)</span></td>
-<td style="text-align: center;">10</td>
-<td style="text-align: center;">15</td>
-</tr>
-</tbody>
-</table>
-<p>可用同一递推重新填表, 也可在仅有 4 件装备时枚举 <span
-class="math inline">\(2^4=16\)</span> 个子集核对.</p>
-<p><strong>第 4 题.</strong> 正序时, 先更新 <span
-class="math inline">\(d[2]=3\)</span>; 更新 <span
-class="math inline">\(d[4]\)</span> 时又使用已含当前物品的 <span
-class="math inline">\(d[2]\)</span>, 得到 <span
-class="math inline">\(d[4]=d[2]+3=6\)</span>, 相当于装了两件.
-倒序时先更新 <span class="math inline">\(d[4]\)</span>, 其来源 <span
-class="math inline">\(d[2]\)</span> 仍为上一阶段的 0, 得到 3,
-不会重复使用.</p>
-<p><strong>第 5 题.</strong> 容量上限状态的空阶段是 <span
-class="math inline">\(D[0,j]=0\)</span>, 因为不选物品对所有容量都可行,
-答案为 4. 恰好装满状态只有 <span
-class="math inline">\(E[0,0]=0\)</span>, 其余 <span
-class="math inline">\(E[0,j]=-\infty\)</span>; 一件重量 3
-的物品无法恰好组成 4, 答案为不可达. 区别来自可行性要求,
-而不只是输出格式不同.</p>
-<p>练习时应先写一句完整的状态定义, 再检查候选来源属于哪个阶段,
-是否满足边界, 是否已经求出. 能说清楚这些关系,
-就比仅记住几行循环更接近掌握动态规划.</p>
 <h2 id="参考资料">参考资料</h2>
 <ol type="1">
 <li>Python 官方文档: <a

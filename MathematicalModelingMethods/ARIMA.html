@@ -19,12 +19,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="第22章 ARIMA: 从历史依赖到样本外预测 序列过去相邻的记录往往有关联, 但把历史拟合得很贴合, 并不等于能够预测下一段记录. 本章用一份历史教学价格文件完成一次ARIMA实验: 先划分时间, 在训练期决定差分与候选阶数, 再一次性预测整段留出数据. 这次实验中, 常用库选中的模型未能优于末值基准. 围绕这个结果, 本章逐步检查模型, 解释预测区间, 追查估计设置的影响, 并讨">
+    <meta name="description" content="第13章 ARIMA: 从历史依赖到样本外预测 序列过去相邻的记录往往有关联, 但把历史拟合得很贴合, 并不等于能够预测下一段记录. 本章用一份历史教学价格文件完成一次ARIMA实验: 先划分时间, 在训练期决定差分与候选阶数, 再一次性预测整段留出数据. 这次实验中, 常用库选中的模型未能优于末值基准. 围绕这个结果, 本章逐步检查模型, 解释预测区间, 追查估计设置的影响, 并讨">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Hexo">
 <meta property="og:url" content="http://example.com/MathematicalModelingMethods/ARIMA.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="第22章 ARIMA: 从历史依赖到样本外预测 序列过去相邻的记录往往有关联, 但把历史拟合得很贴合, 并不等于能够预测下一段记录. 本章用一份历史教学价格文件完成一次ARIMA实验: 先划分时间, 在训练期决定差分与候选阶数, 再一次性预测整段留出数据. 这次实验中, 常用库选中的模型未能优于末值基准. 围绕这个结果, 本章逐步检查模型, 解释预测区间, 追查估计设置的影响, 并讨">
+<meta property="og:description" content="第13章 ARIMA: 从历史依赖到样本外预测 序列过去相邻的记录往往有关联, 但把历史拟合得很贴合, 并不等于能够预测下一段记录. 本章用一份历史教学价格文件完成一次ARIMA实验: 先划分时间, 在训练期决定差分与候选阶数, 再一次性预测整段留出数据. 这次实验中, 常用库选中的模型未能优于末值基准. 围绕这个结果, 本章逐步检查模型, 解释预测区间, 追查估计设置的影响, 并讨">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/images/ARIMA/ARIMA-4.png">
 <meta property="og:image" content="http://example.com/images/ARIMA/ARIMA-7.png">
@@ -36,8 +36,8 @@
 <meta property="og:image" content="http://example.com/images/ARIMA/ARIMA-19.png">
 <meta property="og:image" content="http://example.com/images/ARIMA/ARIMA-22.png">
 <meta property="og:image" content="http://example.com/images/ARIMA/ARIMA-23.png">
-<meta property="article:published_time" content="2026-10-25T06:44:38.910Z">
-<meta property="article:modified_time" content="2026-10-25T07:35:16.000Z">
+<meta property="article:published_time" content="2026-10-26T08:36:37.436Z">
+<meta property="article:modified_time" content="2026-10-26T08:36:22.982Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/ARIMA/ARIMA-4.png">
@@ -138,22 +138,22 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC22%E7%AB%A0-arima-%E4%BB%8E%E5%8E%86%E5%8F%B2%E4%BE%9D%E8%B5%96%E5%88%B0%E6%A0%B7%E6%9C%AC%E5%A4%96%E9%A2%84%E6%B5%8B"><span class="nav-number">1.</span> <span class="nav-text">第22章 ARIMA:
-从历史依赖到样本外预测</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E5%AE%9A%E9%A2%84%E6%B5%8B%E4%BB%BB%E5%8A%A1-%E5%86%8D%E7%9C%8B%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text">22.1 先定预测任务, 再看模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AF%8F%E4%B8%80%E6%AD%A5%E7%A9%B6%E7%AB%9F%E4%BB%A3%E8%A1%A8%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.1.</span> <span class="nav-text">22.1.1 每一步究竟代表什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E4%B8%AA%E9%98%B6%E6%95%B0%E5%88%86%E5%88%AB%E5%81%9A%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.2.</span> <span class="nav-text">22.1.2 三个阶数分别做什么</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%AE%E5%88%86%E5%89%8D%E5%90%8E-%E6%A8%A1%E5%9E%8B%E5%9C%A8%E4%BB%80%E4%B9%88%E5%BA%8F%E5%88%97%E4%B8%8A%E5%B7%A5%E4%BD%9C"><span class="nav-number">1.2.</span> <span class="nav-text">22.2 差分前后:
-模型在什么序列上工作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E6%B0%B4%E5%B9%B3%E5%8F%98%E5%8C%96%E5%86%99%E6%88%90%E5%B7%AE%E5%88%86"><span class="nav-number">1.2.1.</span> <span class="nav-text">22.2.1 把水平变化写成差分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ar%E4%B8%8Ema%E5%88%86%E5%88%AB%E6%8F%8F%E8%BF%B0%E5%93%AA%E4%B8%80%E7%A7%8D%E4%BE%9D%E8%B5%96"><span class="nav-number">1.2.2.</span> <span class="nav-text">22.2.2 AR与MA分别描述哪一种依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B3%E7%A8%B3%E4%B8%8E%E5%8D%95%E4%BD%8D%E6%A0%B9%E6%A3%80%E9%AA%8C%E4%B8%8D%E8%83%BD%E4%BA%92%E7%9B%B8%E6%9B%BF%E4%BB%A3"><span class="nav-number">1.2.3.</span> <span class="nav-text">22.2.3
-平稳与单位根检验不能互相替代</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8acf%E4%B8%8Epacf%E7%BC%A9%E5%B0%8F%E5%80%99%E9%80%89-%E4%B8%8D%E7%94%A8%E5%9B%BE%E5%BD%A2%E4%BB%A3%E6%9B%BF%E9%AA%8C%E8%AF%81"><span class="nav-number">1.2.4.</span> <span class="nav-text">22.2.4
-用ACF与PACF缩小候选, 不用图形代替验证</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E5%A5%97%E5%AE%8C%E6%95%B4%E7%A8%8B%E5%BA%8F-%E5%8F%AA%E5%9C%A8%E8%AE%AD%E7%BB%83%E9%83%A8%E5%88%86%E6%AF%94%E8%BE%83%E5%80%99%E9%80%89"><span class="nav-number">1.3.</span> <span class="nav-text">22.3 一套完整程序:
-只在训练部分比较候选</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E6%81%AF%E5%87%86%E5%88%99%E9%9C%80%E8%A6%81%E7%BB%9F%E4%B8%80%E7%9A%84%E6%AF%94%E8%BE%83%E5%8F%A3%E5%BE%84"><span class="nav-number">1.3.1.</span> <span class="nav-text">22.3.1
-信息准则需要统一的比较口径</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E6%8C%89%E4%B8%89%E9%A1%B9%E4%BB%BB%E5%8A%A1%E9%98%85%E8%AF%BBpython%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.3.2.</span> <span class="nav-text">22.3.2
-先按三项任务阅读Python程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab%E7%9A%84%E5%AE%8C%E6%95%B4%E5%BA%93%E5%87%BD%E6%95%B0%E6%B5%81%E7%A8%8B"><span class="nav-number">1.3.3.</span> <span class="nav-text">22.3.3 MATLAB的完整库函数流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%8E%E6%A0%B7%E8%AF%BB%E8%BF%99%E6%AC%A1%E9%80%89%E6%8B%A9%E7%BB%93%E6%9E%9C"><span class="nav-number">1.3.4.</span> <span class="nav-text">22.3.4 怎样读这次选择结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E9%80%89%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9E%8B%E5%B1%95%E5%BC%80-%E9%A2%84%E6%B5%8B%E5%9D%87%E5%80%BC%E4%B8%8E%E5%8C%BA%E9%97%B4"><span class="nav-number">1.4.</span> <span class="nav-text">22.4 把选中的模型展开:
-预测均值与区间</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA%E6%B8%B8%E8%B5%B0%E6%80%8E%E6%A0%B7%E9%A2%84%E6%B5%8B"><span class="nav-number">1.4.1.</span> <span class="nav-text">22.4.1 随机游走怎样预测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E9%97%AD%E5%BC%8F%E5%85%AC%E5%BC%8F%E6%A3%80%E6%9F%A5%E5%BA%93%E5%87%BD%E6%95%B0%E7%9A%84%E5%90%AB%E4%B9%89"><span class="nav-number">1.4.2.</span> <span class="nav-text">22.4.2
-用闭式公式检查库函数的含义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E6%AC%A165%E6%AD%A5%E7%95%99%E5%87%BA-%E4%B8%8D%E7%AD%89%E4%BA%8E65%E6%AC%A1%E7%8B%AC%E7%AB%8B%E5%AE%9E%E9%AA%8C"><span class="nav-number">1.4.3.</span> <span class="nav-text">22.4.3 一次65步留出,
-不等于65次独立实验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AE%8B%E5%B7%AE%E8%AF%8A%E6%96%AD%E5%B8%AE%E5%8A%A9%E6%89%BE%E9%97%AE%E9%A2%98-%E4%B8%8D%E8%83%BD%E8%AF%81%E6%98%8E%E6%A8%A1%E5%9E%8B%E6%AD%A3%E7%A1%AE"><span class="nav-number">1.4.4.</span> <span class="nav-text">22.4.4 残差诊断帮助找问题,
-不能证明模型正确</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%8D%A2%E4%BA%86%E8%AF%84%E5%88%86%E5%8C%BA%E9%97%B4-%E9%A2%84%E6%B5%8B%E6%96%B9%E5%90%91%E4%BC%9A%E6%94%B9%E5%8F%98"><span class="nav-number">1.5.</span> <span class="nav-text">22.5 为什么换了评分区间,
-预测方向会改变</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E4%B8%80%E6%A8%A1%E5%9E%8B-%E5%85%88%E6%A0%B8%E5%AF%B9%E6%BC%82%E7%A7%BB%E4%BB%8E%E5%93%AA%E9%87%8C%E6%9D%A5"><span class="nav-number">1.5.1.</span> <span class="nav-text">22.5.1 同一模型,
-先核对漂移从哪里来</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%96%B0%E8%B5%B7%E7%82%B9%E6%A3%80%E6%9F%A5%E5%9B%BA%E5%AE%9A%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%95%8F%E6%84%9F%E6%80%A7"><span class="nav-number">1.5.2.</span> <span class="nav-text">22.5.2
-用新起点检查固定模型的敏感性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8arima%E5%89%8D%E5%90%8E%E9%83%BD%E8%A6%81%E5%9B%9E%E7%AD%94%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.6.</span> <span class="nav-text">22.6
-使用ARIMA前后都要回答的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.7.</span> <span class="nav-text">22.7 练习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.8.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC13%E7%AB%A0-arima-%E4%BB%8E%E5%8E%86%E5%8F%B2%E4%BE%9D%E8%B5%96%E5%88%B0%E6%A0%B7%E6%9C%AC%E5%A4%96%E9%A2%84%E6%B5%8B"><span class="nav-number">1.</span> <span class="nav-text">第13章 ARIMA:
+从历史依赖到样本外预测</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E5%AE%9A%E9%A2%84%E6%B5%8B%E4%BB%BB%E5%8A%A1-%E5%86%8D%E7%9C%8B%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text">13.1 先定预测任务, 再看模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AF%8F%E4%B8%80%E6%AD%A5%E7%A9%B6%E7%AB%9F%E4%BB%A3%E8%A1%A8%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.1.</span> <span class="nav-text">13.1.1 每一步究竟代表什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E4%B8%AA%E9%98%B6%E6%95%B0%E5%88%86%E5%88%AB%E5%81%9A%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.2.</span> <span class="nav-text">13.1.2 三个阶数分别做什么</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%AE%E5%88%86%E5%89%8D%E5%90%8E-%E6%A8%A1%E5%9E%8B%E5%9C%A8%E4%BB%80%E4%B9%88%E5%BA%8F%E5%88%97%E4%B8%8A%E5%B7%A5%E4%BD%9C"><span class="nav-number">1.2.</span> <span class="nav-text">13.2 差分前后:
+模型在什么序列上工作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E6%B0%B4%E5%B9%B3%E5%8F%98%E5%8C%96%E5%86%99%E6%88%90%E5%B7%AE%E5%88%86"><span class="nav-number">1.2.1.</span> <span class="nav-text">13.2.1 把水平变化写成差分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ar%E4%B8%8Ema%E5%88%86%E5%88%AB%E6%8F%8F%E8%BF%B0%E5%93%AA%E4%B8%80%E7%A7%8D%E4%BE%9D%E8%B5%96"><span class="nav-number">1.2.2.</span> <span class="nav-text">13.2.2 AR与MA分别描述哪一种依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B3%E7%A8%B3%E4%B8%8E%E5%8D%95%E4%BD%8D%E6%A0%B9%E6%A3%80%E9%AA%8C%E4%B8%8D%E8%83%BD%E4%BA%92%E7%9B%B8%E6%9B%BF%E4%BB%A3"><span class="nav-number">1.2.3.</span> <span class="nav-text">13.2.3
+平稳与单位根检验不能互相替代</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8acf%E4%B8%8Epacf%E7%BC%A9%E5%B0%8F%E5%80%99%E9%80%89-%E4%B8%8D%E7%94%A8%E5%9B%BE%E5%BD%A2%E4%BB%A3%E6%9B%BF%E9%AA%8C%E8%AF%81"><span class="nav-number">1.2.4.</span> <span class="nav-text">13.2.4
+用ACF与PACF缩小候选, 不用图形代替验证</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E5%A5%97%E5%AE%8C%E6%95%B4%E7%A8%8B%E5%BA%8F-%E5%8F%AA%E5%9C%A8%E8%AE%AD%E7%BB%83%E9%83%A8%E5%88%86%E6%AF%94%E8%BE%83%E5%80%99%E9%80%89"><span class="nav-number">1.3.</span> <span class="nav-text">13.3 一套完整程序:
+只在训练部分比较候选</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E6%81%AF%E5%87%86%E5%88%99%E9%9C%80%E8%A6%81%E7%BB%9F%E4%B8%80%E7%9A%84%E6%AF%94%E8%BE%83%E5%8F%A3%E5%BE%84"><span class="nav-number">1.3.1.</span> <span class="nav-text">13.3.1
+信息准则需要统一的比较口径</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E6%8C%89%E4%B8%89%E9%A1%B9%E4%BB%BB%E5%8A%A1%E9%98%85%E8%AF%BBpython%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.3.2.</span> <span class="nav-text">13.3.2
+先按三项任务阅读Python程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab%E7%9A%84%E5%AE%8C%E6%95%B4%E5%BA%93%E5%87%BD%E6%95%B0%E6%B5%81%E7%A8%8B"><span class="nav-number">1.3.3.</span> <span class="nav-text">13.3.3 MATLAB的完整库函数流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%8E%E6%A0%B7%E8%AF%BB%E8%BF%99%E6%AC%A1%E9%80%89%E6%8B%A9%E7%BB%93%E6%9E%9C"><span class="nav-number">1.3.4.</span> <span class="nav-text">13.3.4 怎样读这次选择结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E9%80%89%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9E%8B%E5%B1%95%E5%BC%80-%E9%A2%84%E6%B5%8B%E5%9D%87%E5%80%BC%E4%B8%8E%E5%8C%BA%E9%97%B4"><span class="nav-number">1.4.</span> <span class="nav-text">13.4 把选中的模型展开:
+预测均值与区间</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA%E6%B8%B8%E8%B5%B0%E6%80%8E%E6%A0%B7%E9%A2%84%E6%B5%8B"><span class="nav-number">1.4.1.</span> <span class="nav-text">13.4.1 随机游走怎样预测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E9%97%AD%E5%BC%8F%E5%85%AC%E5%BC%8F%E6%A3%80%E6%9F%A5%E5%BA%93%E5%87%BD%E6%95%B0%E7%9A%84%E5%90%AB%E4%B9%89"><span class="nav-number">1.4.2.</span> <span class="nav-text">13.4.2
+用闭式公式检查库函数的含义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E6%AC%A165%E6%AD%A5%E7%95%99%E5%87%BA-%E4%B8%8D%E7%AD%89%E4%BA%8E65%E6%AC%A1%E7%8B%AC%E7%AB%8B%E5%AE%9E%E9%AA%8C"><span class="nav-number">1.4.3.</span> <span class="nav-text">13.4.3 一次65步留出,
+不等于65次独立实验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AE%8B%E5%B7%AE%E8%AF%8A%E6%96%AD%E5%B8%AE%E5%8A%A9%E6%89%BE%E9%97%AE%E9%A2%98-%E4%B8%8D%E8%83%BD%E8%AF%81%E6%98%8E%E6%A8%A1%E5%9E%8B%E6%AD%A3%E7%A1%AE"><span class="nav-number">1.4.4.</span> <span class="nav-text">13.4.4 残差诊断帮助找问题,
+不能证明模型正确</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%8D%A2%E4%BA%86%E8%AF%84%E5%88%86%E5%8C%BA%E9%97%B4-%E9%A2%84%E6%B5%8B%E6%96%B9%E5%90%91%E4%BC%9A%E6%94%B9%E5%8F%98"><span class="nav-number">1.5.</span> <span class="nav-text">13.5 为什么换了评分区间,
+预测方向会改变</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E4%B8%80%E6%A8%A1%E5%9E%8B-%E5%85%88%E6%A0%B8%E5%AF%B9%E6%BC%82%E7%A7%BB%E4%BB%8E%E5%93%AA%E9%87%8C%E6%9D%A5"><span class="nav-number">1.5.1.</span> <span class="nav-text">13.5.1 同一模型,
+先核对漂移从哪里来</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%96%B0%E8%B5%B7%E7%82%B9%E6%A3%80%E6%9F%A5%E5%9B%BA%E5%AE%9A%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%95%8F%E6%84%9F%E6%80%A7"><span class="nav-number">1.5.2.</span> <span class="nav-text">13.5.2
+用新起点检查固定模型的敏感性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8arima%E5%89%8D%E5%90%8E%E9%83%BD%E8%A6%81%E5%9B%9E%E7%AD%94%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.6.</span> <span class="nav-text">13.6
+使用ARIMA前后都要回答的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.7.</span> <span class="nav-text">13.7 练习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.8.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -203,7 +203,7 @@
       
       
       <div class="post-body">
-          <h1 id="第22章-arima-从历史依赖到样本外预测">第22章 ARIMA:
+          <h1 id="第13章-arima-从历史依赖到样本外预测">第13章 ARIMA:
 从历史依赖到样本外预测</h1>
 <p>序列过去相邻的记录往往有关联, 但把历史拟合得很贴合,
 并不等于能够预测下一段记录. 本章用一份历史教学价格文件完成一次ARIMA实验:
@@ -211,8 +211,8 @@
 <p>这次实验中, 常用库选中的模型未能优于末值基准. 围绕这个结果,
 本章逐步检查模型, 解释预测区间, 追查估计设置的影响,
 并讨论怎样判断一套预测是否值得使用.</p>
-<h2 id="先定预测任务-再看模型">22.1 先定预测任务, 再看模型</h2>
-<h3 id="每一步究竟代表什么">22.1.1 每一步究竟代表什么</h3>
+<h2 id="先定预测任务-再看模型">13.1 先定预测任务, 再看模型</h2>
+<h3 id="每一步究竟代表什么">13.1.1 每一步究竟代表什么</h3>
 <p>例题使用公开教学资料中的 <code>ChinaBank.csv</code>, 包含日期,
 开盘价, 最高价, 最低价, 收盘价和成交量. 取得的版本有 <strong>345
 条记录</strong>, 范围为 <strong>2014-01-02 至 2015-04-30</strong>.
@@ -270,10 +270,10 @@ class="math inline">\(d\)</span>, 也不能先用测试集判断最佳预测曲�
 用来研究初始化与评分区间的影响. 两者都按同一时间范围使用数据,
 不把它们的似然值混入同一张评分表.</p>
 <p><img src="/images/ARIMA/ARIMA-4.png" alt="" style="width: 100%;"></p>
-<p><strong>图22-1　先固定数据边界和比较规则</strong></p>
+<p><strong>图13-1　先固定数据边界和比较规则</strong></p>
 <p>训练部分用于检验, 选阶和估计, 留出部分用于方案固定后的预测评价.
 末值基准与ARIMA使用相同的信息截止点.</p>
-<h3 id="三个阶数分别做什么">22.1.2 三个阶数分别做什么</h3>
+<h3 id="三个阶数分别做什么">13.1.2 三个阶数分别做什么</h3>
 <p>ARIMA 是 Autoregressive Integrated Moving Average 的缩写,
 常译为差分自回归移动平均模型. ARIMA(<span
 class="math inline">\(p,d,q\)</span>) 中:</p>
@@ -308,9 +308,9 @@ class="math inline">\(q\)</span></td>
 </table>
 <p>ARIMA先对原序列差分, 再对差分序列建立ARMA模型; 不需要差分时,
 它就是ARMA.</p>
-<h2 id="差分前后-模型在什么序列上工作">22.2 差分前后:
+<h2 id="差分前后-模型在什么序列上工作">13.2 差分前后:
 模型在什么序列上工作</h2>
-<h3 id="把水平变化写成差分">22.2.1 把水平变化写成差分</h3>
+<h3 id="把水平变化写成差分">13.2.1 把水平变化写成差分</h3>
 <p>一阶差分为</p>
 <p><span class="math display">\[
 \nabla y_t=y_t-y_{t-1}.
@@ -335,10 +335,10 @@ w_t=c+\sum\limits_{i=1}^{p}\phi_iw_{t-i}
 表示常数均值加创新项. 差分的目的不是让图像越平越好.
 本例只用训练期画水平, 一阶与二阶差分图, 不让更晚的观测参与差分选择.</p>
 <p><img src="/images/ARIMA/ARIMA-7.png" alt="" style="width: 100%;"></p>
-<p><strong>图22-2　训练期水平值与两次差分</strong></p>
+<p><strong>图13-2　训练期水平值与两次差分</strong></p>
 <p>前一个或前两个差分值不存在, 直接从图中排除, 不填零.
 低阶差分已经足够时, 更小的ADF p值不构成继续差分的理由.</p>
-<h3 id="ar与ma分别描述哪一种依赖">22.2.2 AR与MA分别描述哪一种依赖</h3>
+<h3 id="ar与ma分别描述哪一种依赖">13.2.2 AR与MA分别描述哪一种依赖</h3>
 <p>自回归模型写成</p>
 <p><span class="math display">\[
 y_t=c+\sum\limits_{i=1}^{p}\phi_i y_{t-i}+\varepsilon_t.
@@ -393,7 +393,7 @@ class="math inline">\(1-\sum\limits_{i=1}^{p}\phi_i\ne0\)</span>, 则</p>
 <p><span class="math display">\[
 c=\mu\left(1-\sum\limits_{i=1}^{p}\phi_i\right).
 \]</span></p>
-<h3 id="平稳与单位根检验不能互相替代">22.2.3
+<h3 id="平稳与单位根检验不能互相替代">13.2.3
 平稳与单位根检验不能互相替代</h3>
 <p>宽平稳要求</p>
 <p><span class="math display">\[
@@ -488,10 +488,10 @@ class="math inline">\(d=1\)</span> 唯一正确.</p>
 class="math inline">\(p\)</span>
 值和有限样本临界值的近似可能在边界处略有差异, 应明确采用的判定约定.</p>
 <p><img src="/images/ARIMA/ARIMA-8.png" alt="" style="width: 100%;"></p>
-<p><strong>图22-3　固定滞后设置下的训练期ADF结果</strong></p>
+<p><strong>图13-3　固定滞后设置下的训练期ADF结果</strong></p>
 <p>统计量与5%临界值比较作出本例判定. 图中只使用训练数据, 并列给出0, 1,
 2次差分的结果, 不把p值大小当作差分次数的优化目标.</p>
-<h3 id="用acf与pacf缩小候选-不用图形代替验证">22.2.4
+<h3 id="用acf与pacf缩小候选-不用图形代替验证">13.2.4
 用ACF与PACF缩小候选, 不用图形代替验证</h3>
 <p>在宽平稳条件下, 滞后 <span class="math inline">\(k\)</span>
 的自相关为</p>
@@ -512,7 +512,7 @@ class="math inline">\(\pm1.96/\sqrt n\)</span>,
 不表示全部柱同时以95%概率位于其中. 有限样本估计会波动,
 不能把最后一根越界的柱直接当作模型阶数.</p>
 <p><img src="/images/ARIMA/ARIMA-9.png" alt="" style="width: 100%;"></p>
-<p><strong>图22-4　训练期一阶差分的ACF与PACF</strong></p>
+<p><strong>图13-4　训练期一阶差分的ACF与PACF</strong></p>
 <p>ACF使用去均值后的同一分母估计, PACF采用与其一致的Yule-Walker口径.
 这些图用于提出低阶候选, 不是平稳性或因果关系的证明.</p>
 <p>在非退化且无公共因子抵消等通常条件下:</p>
@@ -550,9 +550,9 @@ class="math inline">\(p,q\)</span>)</td>
 <p>理论截尾表示超过某阶后严格为0, 拖尾可能是指数衰减,
 交替衰减或阻尼振荡. 样本图不会像理论图那样整齐.
 更系统的理论形态见配套的相关结构阅读.</p>
-<h2 id="一套完整程序-只在训练部分比较候选">22.3 一套完整程序:
+<h2 id="一套完整程序-只在训练部分比较候选">13.3 一套完整程序:
 只在训练部分比较候选</h2>
-<h3 id="信息准则需要统一的比较口径">22.3.1
+<h3 id="信息准则需要统一的比较口径">13.3.1
 信息准则需要统一的比较口径</h3>
 <p>对同一数据, 同一似然约定下的候选模型, 定义</p>
 <p><span class="math display">\[
@@ -579,7 +579,7 @@ class="math inline">\(p,q=0,1,2\)</span>, 差分按已说明的ADF方案取 <spa
 class="math inline">\(d=1\)</span>. 所有候选估计漂移与创新方差,
 包括ARIMA(0,1,0). AR和MA参数受平稳与可逆性约束.
 只有优化收敛且BIC有限的候选参与比较, 警告与失败记录均保存.</p>
-<h3 id="先按三项任务阅读python程序">22.3.2
+<h3 id="先按三项任务阅读python程序">13.3.2
 先按三项任务阅读Python程序</h3>
 <p>第一项任务是划分与差分筛查. 日期掩码先取出训练和留出,
 <code>adfuller</code>仅接收训练部分. 兼容包装只处理不同版本的返回接口,
@@ -598,7 +598,7 @@ class="math inline">\(d=1\)</span>,
 与末值基准比较.</p>
 <p><strong>code/ARIMA_MAIN.py</strong></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pathlib <span class="keyword">import</span> Path</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> warnings</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> statsmodels.tsa.stattools <span class="keyword">import</span> adfuller <span class="keyword">as</span> _adfuller</span><br><span class="line"><span class="keyword">import</span> inspect</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">adfuller</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;result_object&#x27;</span> <span class="keyword">in</span> inspect.signature(_adfuller).parameters:</span><br><span class="line">        kwargs[<span class="string">&#x27;result_object&#x27;</span>] = <span class="literal">False</span></span><br><span class="line">    <span class="keyword">return</span> _adfuller(*args, **kwargs)</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> statsmodels.tsa.arima.model <span class="keyword">import</span> ARIMA</span><br><span class="line"><span class="keyword">from</span> statsmodels.stats.diagnostic <span class="keyword">import</span> acorr_ljungbox</span><br><span class="line"></span><br><span class="line"><span class="comment"># 此文件使用 statsmodels 的状态空间似然；不是 MATLAB 条件估计的移植。</span></span><br><span class="line">folder = Path(__file__).resolve().parents[<span class="number">1</span>] / <span class="string">&quot;data&quot;</span></span><br><span class="line">(folder.parent / <span class="string">&quot;results&quot;</span>).mkdir(exist_ok=<span class="literal">True</span>)</span><br><span class="line">data = pd.read_csv(folder / <span class="string">&quot;ChinaBank.csv&quot;</span>, parse_dates=[<span class="string">&quot;Date&quot;</span>])</span><br><span class="line"><span class="keyword">assert</span> data[<span class="string">&quot;Date&quot;</span>].is_monotonic_increasing <span class="keyword">and</span> data[<span class="string">&quot;Date&quot;</span>].is_unique</span><br><span class="line"><span class="keyword">assert</span> np.isfinite(data[<span class="string">&quot;Close&quot;</span>]).<span class="built_in">all</span>() <span class="keyword">and</span> (data[<span class="string">&quot;Close&quot;</span>] &gt; <span class="number">0</span>).<span class="built_in">all</span>()</span><br><span class="line">train = data.loc[(data.Date &gt;= <span class="string">&quot;2014-01-01&quot;</span>) &amp; (data.Date &lt; <span class="string">&quot;2014-04-01&quot;</span>), <span class="string">&quot;Close&quot;</span>].to_numpy()</span><br><span class="line">test = data.loc[(data.Date &gt;= <span class="string">&quot;2014-04-01&quot;</span>) &amp; (data.Date &lt; <span class="string">&quot;2014-07-01&quot;</span>), <span class="string">&quot;Close&quot;</span>].to_numpy()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 明确与 MATLAB ADF 的确定性项、滞后项设置保持一致。</span></span><br><span class="line">adf0 = adfuller(train, maxlag=<span class="number">1</span>, regression=<span class="string">&quot;c&quot;</span>, autolag=<span class="literal">None</span>)</span><br><span class="line">adf1 = adfuller(np.diff(train), maxlag=<span class="number">1</span>, regression=<span class="string">&quot;c&quot;</span>, autolag=<span class="literal">None</span>)</span><br><span class="line">d = <span class="number">0</span> <span class="keyword">if</span> adf0[<span class="number">0</span>] &lt; adf0[<span class="number">4</span>][<span class="string">&quot;5%&quot;</span>] <span class="keyword">else</span> <span class="number">1</span></span><br><span class="line"><span class="keyword">if</span> d == <span class="number">1</span>:</span><br><span class="line">    <span class="keyword">assert</span> adf1[<span class="number">0</span>] &lt; adf1[<span class="number">4</span>][<span class="string">&quot;5%&quot;</span>], <span class="string">&quot;一阶差分未通过当前单位根筛查。&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># d=0 估计均值；d=1 的线性趋势在差分方程中对应常数漂移。</span></span><br><span class="line">trend = <span class="string">&quot;c&quot;</span> <span class="keyword">if</span> d == <span class="number">0</span> <span class="keyword">else</span> <span class="string">&quot;t&quot;</span></span><br><span class="line">candidates = []</span><br><span class="line">search_log = []</span><br><span class="line"><span class="keyword">for</span> p <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">    <span class="keyword">for</span> q <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">with</span> warnings.catch_warnings(record=<span class="literal">True</span>) <span class="keyword">as</span> captured:</span><br><span class="line">                warnings.simplefilter(<span class="string">&quot;always&quot;</span>)</span><br><span class="line">                fitted = ARIMA(train, order=(p, d, q), trend=trend).fit()</span><br><span class="line">            search_log.append(&#123;<span class="string">&quot;p&quot;</span>:p,<span class="string">&quot;q&quot;</span>:q,<span class="string">&quot;bic&quot;</span>:<span class="built_in">float</span>(fitted.bic),</span><br><span class="line">                               <span class="string">&quot;converged&quot;</span>:<span class="built_in">bool</span>(fitted.mle_retvals.get(<span class="string">&quot;converged&quot;</span>, <span class="literal">False</span>)),</span><br><span class="line">                               <span class="string">&quot;warnings&quot;</span>:[<span class="built_in">str</span>(w.message) <span class="keyword">for</span> w <span class="keyword">in</span> captured]&#125;)</span><br><span class="line">            <span class="keyword">if</span> fitted.mle_retvals.get(<span class="string">&quot;converged&quot;</span>, <span class="literal">False</span>) <span class="keyword">and</span> np.isfinite(fitted.bic):</span><br><span class="line">                candidates.append((fitted.bic, p, q, fitted))</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">f&quot;跳过未收敛候选：p=<span class="subst">&#123;p&#125;</span>, q=<span class="subst">&#123;q&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">except</span> (ValueError, np.linalg.LinAlgError) <span class="keyword">as</span> error:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;跳过失败候选：p=<span class="subst">&#123;p&#125;</span>, q=<span class="subst">&#123;q&#125;</span>，<span class="subst">&#123;error&#125;</span>&quot;</span>)</span><br><span class="line"><span class="keyword">assert</span> candidates, <span class="string">&quot;没有有效候选模型。&quot;</span></span><br><span class="line">_, p, q, model = <span class="built_in">min</span>(candidates, key=<span class="keyword">lambda</span> row: row[<span class="number">0</span>])</span><br><span class="line">forecast = model.get_forecast(steps=<span class="built_in">len</span>(test))</span><br><span class="line">prediction = np.asarray(forecast.predicted_mean)</span><br><span class="line">interval = np.asarray(forecast.conf_int(alpha=<span class="number">.05</span>))</span><br><span class="line">rmse = np.sqrt(np.mean((test - prediction)**<span class="number">2</span>))</span><br><span class="line">naive_rmse = np.sqrt(np.mean((test - train[-<span class="number">1</span>])**<span class="number">2</span>))</span><br><span class="line">residual = np.asarray(model.resid)[<span class="built_in">max</span>(<span class="number">2</span>, d):]</span><br><span class="line">lb = acorr_ljungbox(residual, lags=[<span class="number">10</span>], model_df=p+q, return_df=<span class="literal">True</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;状态空间 BIC 定阶：(<span class="subst">&#123;p&#125;</span>,<span class="subst">&#123;d&#125;</span>,<span class="subst">&#123;q&#125;</span>)&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;测试 RMSE：ARIMA=<span class="subst">&#123;rmse:<span class="number">.8</span>f&#125;</span>，末值基准=<span class="subst">&#123;naive_rmse:<span class="number">.8</span>f&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(lb)</span><br><span class="line">result = &#123;<span class="string">&quot;residual&quot;</span>:residual.tolist(), <span class="string">&quot;lb_Q&quot;</span>:<span class="built_in">float</span>(lb.iloc[<span class="number">0</span>][<span class="string">&quot;lb_stat&quot;</span>]), <span class="string">&quot;lb_p&quot;</span>:<span class="built_in">float</span>(lb.iloc[<span class="number">0</span>][<span class="string">&quot;lb_pvalue&quot;</span>]), <span class="string">&quot;adf0&quot;</span>:<span class="built_in">list</span>(adf0[:<span class="number">4</span>]), <span class="string">&quot;adf1&quot;</span>:<span class="built_in">list</span>(adf1[:<span class="number">4</span>]), <span class="string">&quot;method&quot;</span>: <span class="string">&quot;statsmodels state-space likelihood&quot;</span>,</span><br><span class="line">          <span class="string">&quot;order&quot;</span>: [p, d, q], <span class="string">&quot;bic&quot;</span>: <span class="built_in">float</span>(model.bic),</span><br><span class="line">          <span class="string">&quot;rmse&quot;</span>: <span class="built_in">float</span>(rmse), <span class="string">&quot;naive_rmse&quot;</span>: <span class="built_in">float</span>(naive_rmse),</span><br><span class="line">          <span class="string">&quot;prediction&quot;</span>: prediction.tolist(), <span class="string">&quot;interval95&quot;</span>: interval.tolist(),</span><br><span class="line">          <span class="string">&quot;parameters&quot;</span>:<span class="built_in">dict</span>(<span class="built_in">zip</span>(model.param_names,<span class="built_in">map</span>(<span class="built_in">float</span>,model.params))),</span><br><span class="line">          <span class="string">&quot;mae&quot;</span>:<span class="built_in">float</span>(np.mean(<span class="built_in">abs</span>(test-prediction))),</span><br><span class="line">          <span class="string">&quot;naive_mae&quot;</span>:<span class="built_in">float</span>(np.mean(<span class="built_in">abs</span>(test-train[-<span class="number">1</span>]))),</span><br><span class="line">          <span class="string">&quot;search_log&quot;</span>:search_log&#125;</span><br><span class="line">(folder.parent / <span class="string">&quot;results&quot;</span> / <span class="string">&quot;Python-results.json&quot;</span>).write_text(json.dumps(result, indent=<span class="number">2</span>), encoding=<span class="string">&quot;utf-8&quot;</span>)</span><br></pre></td></tr></table></figure>
-<h3 id="matlab的完整库函数流程">22.3.3 MATLAB的完整库函数流程</h3>
+<h3 id="matlab的完整库函数流程">13.3.3 MATLAB的完整库函数流程</h3>
 <p>下面使用Econometrics Toolbox.
 <code>adftest</code>设置为含常数的ARD模型与一个滞后差分项.
 MATLAB的检验分布近似与Python的MacKinnon近似并不完全相同,
@@ -614,7 +614,7 @@ class="math inline">\(c=\mu(1-\sum\limits_i\phi_i)\)</span> 联系.</p>
 原基础MATLAB条件估计的全部函数另作完整数值实现阅读.</p>
 <p><strong>code/arima_toolbox.m</strong></p>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">% Requires Econometrics Toolbox.</span></span><br><span class="line">clear; clc;</span><br><span class="line">root = fileparts(fileparts(mfilename(<span class="string">&#x27;fullpath&#x27;</span>)));</span><br><span class="line">T = <span class="built_in">readtable</span>(fullfile(root,<span class="string">&#x27;data&#x27;</span>,<span class="string">&#x27;ChinaBank.csv&#x27;</span>));</span><br><span class="line"><span class="keyword">if</span> isdatetime(T.Date)</span><br><span class="line">    dates = T.Date;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    dates = datetime(T.Date,<span class="string">&#x27;InputFormat&#x27;</span>,<span class="string">&#x27;yyyy-MM-dd&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">train = T.Close(dates&gt;=datetime(<span class="number">2014</span>,<span class="number">1</span>,<span class="number">1</span>) &amp; dates&lt;datetime(<span class="number">2014</span>,<span class="number">4</span>,<span class="number">1</span>));</span><br><span class="line">test = T.Close(dates&gt;=datetime(<span class="number">2014</span>,<span class="number">4</span>,<span class="number">1</span>) &amp; dates&lt;datetime(<span class="number">2014</span>,<span class="number">7</span>,<span class="number">1</span>));</span><br><span class="line">[h0,p0] = adftest(train,<span class="string">&#x27;Model&#x27;</span>,<span class="string">&#x27;ARD&#x27;</span>,<span class="string">&#x27;Lags&#x27;</span>,<span class="number">1</span>,<span class="string">&#x27;Alpha&#x27;</span>,<span class="number">0.05</span>);</span><br><span class="line">[h1,p1] = adftest(diff(train),<span class="string">&#x27;Model&#x27;</span>,<span class="string">&#x27;ARD&#x27;</span>,<span class="string">&#x27;Lags&#x27;</span>,<span class="number">1</span>,<span class="string">&#x27;Alpha&#x27;</span>,<span class="number">0.05</span>);</span><br><span class="line">d = double(~h0); assert(d==<span class="number">0</span> || h1,<span class="string">&#x27;Review differencing before fitting.&#x27;</span>);</span><br><span class="line">models = cell(<span class="number">3</span>); bic = Inf(<span class="number">3</span>); aic = Inf(<span class="number">3</span>); failures = &#123;&#125;;</span><br><span class="line"><span class="comment">% A common presample supplies two observations plus the differencing order.</span></span><br><span class="line"><span class="comment">% This gives the same estimation response length for all candidate orders.</span></span><br><span class="line">pre = train(<span class="number">1</span>:<span class="number">2</span>+d); response = train(<span class="number">3</span>+d:<span class="keyword">end</span>); N = <span class="built_in">numel</span>(response);</span><br><span class="line"><span class="keyword">for</span> p = <span class="number">0</span>:<span class="number">2</span></span><br><span class="line">    <span class="keyword">for</span> q = <span class="number">0</span>:<span class="number">2</span></span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">            Mdl = arima(p,d,q);</span><br><span class="line">            [Est,~,logL,info] = estimate(Mdl,response,<span class="string">&#x27;Y0&#x27;</span>,pre,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;off&#x27;</span>);</span><br><span class="line">            assert(info.exitflag&gt;<span class="number">0</span> &amp;&amp; <span class="built_in">isfinite</span>(logL),<span class="string">&#x27;Invalid optimization result.&#x27;</span>);</span><br><span class="line">            K = p+q+<span class="number">2</span>;</span><br><span class="line">            models&#123;p+<span class="number">1</span>,q+<span class="number">1</span>&#125; = Est;</span><br><span class="line">            aic(p+<span class="number">1</span>,q+<span class="number">1</span>) = <span class="number">-2</span>*logL+<span class="number">2</span>*K;</span><br><span class="line">            bic(p+<span class="number">1</span>,q+<span class="number">1</span>) = <span class="number">-2</span>*logL+K*<span class="built_in">log</span>(N);</span><br><span class="line">        <span class="keyword">catch</span> err</span><br><span class="line">            failures&#123;<span class="keyword">end</span>+<span class="number">1</span>&#125; = sprintf(<span class="string">&#x27;p=%d,q=%d: %s&#x27;</span>,p,q,err.message);</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">[best,idx] = <span class="built_in">min</span>(bic(:)); assert(<span class="built_in">isfinite</span>(best),<span class="string">&#x27;No valid candidate.&#x27;</span>);</span><br><span class="line">[pidx,qidx] = <span class="built_in">ind2sub</span>(<span class="built_in">size</span>(bic),idx); Est = models&#123;pidx,qidx&#125;;</span><br><span class="line">[pred,mse] = forecast(Est,<span class="built_in">numel</span>(test),train);</span><br><span class="line">lower = pred<span class="number">-1.959963984540054</span>*<span class="built_in">sqrt</span>(mse);</span><br><span class="line">upper = pred+<span class="number">1.959963984540054</span>*<span class="built_in">sqrt</span>(mse);</span><br><span class="line">fprintf(<span class="string">&#x27;ADF p values %.8g, %.8g\n&#x27;</span>,p0,p1);</span><br><span class="line">fprintf(<span class="string">&#x27;Selected (%d,%d,%d); RMSE %.8f; last-value RMSE %.8f\n&#x27;</span>, ...</span><br><span class="line">    pidx<span class="number">-1</span>,d,qidx<span class="number">-1</span>,<span class="built_in">sqrt</span>(<span class="built_in">mean</span>((test-pred).^<span class="number">2</span>)),<span class="built_in">sqrt</span>(<span class="built_in">mean</span>((test-train(<span class="keyword">end</span>)).^<span class="number">2</span>)));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;BIC: rows=p, columns=q&#x27;</span>); <span class="built_in">disp</span>(bic); <span class="built_in">disp</span>(<span class="string">&#x27;Failures:&#x27;</span>); <span class="built_in">disp</span>(failures);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;First three forecasts and intervals:&#x27;</span>); <span class="built_in">disp</span>([pred(<span class="number">1</span>:<span class="number">3</span>),lower(<span class="number">1</span>:<span class="number">3</span>),upper(<span class="number">1</span>:<span class="number">3</span>)]);</span><br></pre></td></tr></table></figure>
-<h3 id="怎样读这次选择结果">22.3.4 怎样读这次选择结果</h3>
+<h3 id="怎样读这次选择结果">13.3.4 怎样读这次选择结果</h3>
 <p>Python状态空间程序的有效BIC如下;
 两个高阶候选因未收敛而未参与选择.</p>
 <table>
@@ -690,12 +690,12 @@ class="math inline">\(q\)</span></th>
 有效候选中BIC最低, 只说明它在当前训练数据与估计约定下被选中,
 不能提前宣布它在测试期最好.</p>
 <p><img src="/images/ARIMA/ARIMA-15.png" alt="" style="width: 100%;"></p>
-<p><strong>图22-5　同一状态空间设置下的候选BIC</strong></p>
+<p><strong>图13-5　同一状态空间设置下的候选BIC</strong></p>
 <p>图中失败格只显示未收敛, 不把优化器暂时输出的数值当作有效评分.
 它与条件估计的评分表采用不同似然和初始化, 不能混合比较.</p>
-<h2 id="把选中的模型展开-预测均值与区间">22.4 把选中的模型展开:
+<h2 id="把选中的模型展开-预测均值与区间">13.4 把选中的模型展开:
 预测均值与区间</h2>
-<h3 id="随机游走怎样预测">22.4.1 随机游走怎样预测</h3>
+<h3 id="随机游走怎样预测">13.4.1 随机游走怎样预测</h3>
 <p>选中模型为</p>
 <p><span class="math display">\[
 \nabla y_t=\mu+\varepsilon_t,\qquad
@@ -715,7 +715,7 @@ T}\pm1.959964\sqrt{\operatorname{MSE}_h}\)</span>. 这不是均值置信区间,
 这里还没有计入参数估计的不确定性.</p>
 <p>本次状态空间估计漂移约为-0.0003328733, 创新方差约为0.0005968560.
 训练末值为2.59, 因而点预测缓慢下降, 不是一条追随每次未来波动的曲线.</p>
-<h3 id="用闭式公式检查库函数的含义">22.4.2
+<h3 id="用闭式公式检查库函数的含义">13.4.2
 用闭式公式检查库函数的含义</h3>
 <p>对该特定模型, 不需要复杂优化也能在给定评分约定下估计漂移.
 用全部61项训练差分时,</p>
@@ -733,11 +733,11 @@ y_t-\widehat\mu)^2.
 <p><strong>code/random_walk.m</strong></p>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">root = fileparts(fileparts(mfilename(<span class="string">&#x27;fullpath&#x27;</span>)));</span><br><span class="line">T = <span class="built_in">readtable</span>(fullfile(root,<span class="string">&#x27;data&#x27;</span>,<span class="string">&#x27;ChinaBank.csv&#x27;</span>));</span><br><span class="line"><span class="keyword">if</span> isdatetime(T.Date)</span><br><span class="line">    dates = T.Date;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    dates = datetime(T.Date,<span class="string">&#x27;InputFormat&#x27;</span>,<span class="string">&#x27;yyyy-MM-dd&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">train = T.Close(dates&gt;=datetime(<span class="number">2014</span>,<span class="number">1</span>,<span class="number">1</span>) &amp; dates&lt;datetime(<span class="number">2014</span>,<span class="number">4</span>,<span class="number">1</span>));</span><br><span class="line">test = T.Close(dates&gt;=datetime(<span class="number">2014</span>,<span class="number">4</span>,<span class="number">1</span>) &amp; dates&lt;datetime(<span class="number">2014</span>,<span class="number">7</span>,<span class="number">1</span>));</span><br><span class="line">w = diff(train); mu = <span class="built_in">mean</span>(w); variance = <span class="built_in">mean</span>((w-mu).^<span class="number">2</span>);</span><br><span class="line">h = (<span class="number">1</span>:<span class="built_in">numel</span>(test))&#x27;; prediction = train(<span class="keyword">end</span>)+h*mu;</span><br><span class="line">mse = h*variance;</span><br><span class="line">lower = prediction<span class="number">-1.959963984540054</span>*<span class="built_in">sqrt</span>(mse);</span><br><span class="line">upper = prediction+<span class="number">1.959963984540054</span>*<span class="built_in">sqrt</span>(mse);</span><br><span class="line">fprintf(<span class="string">&#x27;Full-increment drift %.12f, variance %.12f\n&#x27;</span>,mu,variance);</span><br><span class="line">fprintf(<span class="string">&#x27;Test RMSE %.8f; last-value RMSE %.8f\n&#x27;</span>, ...</span><br><span class="line">    <span class="built_in">sqrt</span>(<span class="built_in">mean</span>((test-prediction).^<span class="number">2</span>)),<span class="built_in">sqrt</span>(<span class="built_in">mean</span>((test-train(<span class="keyword">end</span>)).^<span class="number">2</span>)));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;h, prediction, lower, upper:&#x27;</span>); <span class="built_in">disp</span>([h([<span class="number">1</span>,<span class="number">2</span>,<span class="number">5</span>,<span class="number">10</span>,<span class="number">20</span>,<span class="number">65</span>]), ...</span><br><span class="line">    prediction([<span class="number">1</span>,<span class="number">2</span>,<span class="number">5</span>,<span class="number">10</span>,<span class="number">20</span>,<span class="number">65</span>]),lower([<span class="number">1</span>,<span class="number">2</span>,<span class="number">5</span>,<span class="number">10</span>,<span class="number">20</span>,<span class="number">65</span>]),upper([<span class="number">1</span>,<span class="number">2</span>,<span class="number">5</span>,<span class="number">10</span>,<span class="number">20</span>,<span class="number">65</span>])]);</span><br></pre></td></tr></table></figure>
 <p><img src="/images/ARIMA/ARIMA-24.png" alt="" style="width: 100%;"></p>
-<p><strong>图22-6　区间变宽来自未来创新的累积</strong></p>
+<p><strong>图13-6　区间变宽来自未来创新的累积</strong></p>
 <p>左图给出随机游走预测标准误差随步数的变化;
 右图区分一个步长的区间与多个未来位置的预测范围.
 全部使用给定参数下的模型方差, 不表示已获得实际覆盖率保证.</p>
-<h3 id="一次65步留出-不等于65次独立实验">22.4.3 一次65步留出,
+<h3 id="一次65步留出-不等于65次独立实验">13.4.3 一次65步留出,
 不等于65次独立实验</h3>
 <table>
 <thead>
@@ -765,12 +765,12 @@ y_t-\widehat\mu)^2.
 未优于基准仍是有价值的结果, 应报告并分析,
 而不是改用训练拟合图来替代它.</p>
 <p><img src="/images/ARIMA/ARIMA-20.png" alt="" style="width: 100%;"></p>
-<p><strong>图22-7　真正的固定起点留出预测</strong></p>
+<p><strong>图13-7　真正的固定起点留出预测</strong></p>
 <p>训练实值, 留出实值, 点预测与末值基准分开绘制.
 阴影为状态空间模型逐点预测区间. 横轴按文件观测步排列,
 不称为严格交易日预测. 本窗口65条留出值均在区间内, 但它们来自同一个起点,
 不能据此认定模型具有可靠的长期95%覆盖率.</p>
-<h3 id="残差诊断帮助找问题-不能证明模型正确">22.4.4 残差诊断帮助找问题,
+<h3 id="残差诊断帮助找问题-不能证明模型正确">13.4.4 残差诊断帮助找问题,
 不能证明模型正确</h3>
 <p>对选定模型用于诊断的残差, 绘制 ACF, 并进行 Ljung–Box 检验:</p>
 <p><span class="math display">\[
@@ -787,13 +787,13 @@ class="math inline">\(p\approx0.249819\)</span>, 没有在 5%
 软件给出的极大似然参数检验通常是渐近近似, 不应一概称为严格的有限样本
 <span class="math inline">\(t\)</span> 检验.</p>
 <p><img src="/images/ARIMA/ARIMA-19.png" alt="" style="width: 100%;"></p>
-<p><strong>图22-8　状态空间模型的残差与相关性</strong></p>
+<p><strong>图13-8　状态空间模型的残差与相关性</strong></p>
 <p>程序为诊断剔除初始两个原序列位置的残差, 共60项,
 与条件估计使用的59项评分残差不是同一组. 未拒绝Ljung-Box不等于证明独立,
 正态或预测有效.</p>
-<h2 id="为什么换了评分区间-预测方向会改变">22.5 为什么换了评分区间,
+<h2 id="为什么换了评分区间-预测方向会改变">13.5 为什么换了评分区间,
 预测方向会改变</h2>
-<h3 id="同一模型-先核对漂移从哪里来">22.5.1 同一模型,
+<h3 id="同一模型-先核对漂移从哪里来">13.5.1 同一模型,
 先核对漂移从哪里来</h3>
 <p>原条件估计程序为让九个候选使用共同评分区间,
 对61项差分统一排除最初两项. 这两项恰好是-0.05与-0.03.
@@ -842,10 +842,10 @@ class="math inline">\(p\approx0.249819\)</span>, 没有在 5%
 两种模型的信息准则不能混在同一张排序表中,
 同一留出窗口上的预测误差则可以比较.</p>
 <p><img src="/images/ARIMA/ARIMA-22.png" alt="" style="width: 100%;"></p>
-<p><strong>图22-9　相同阶数下的初始化敏感性</strong></p>
+<p><strong>图13-9　相同阶数下的初始化敏感性</strong></p>
 <p>左图对比用于估计漂移的增量范围, 右图对比相同训练末点出发的预测.
 改变评分区间改变了估计目标, 不是Python与MATLAB语言本身造成的差异.</p>
-<h3 id="用新起点检查固定模型的敏感性">22.5.2
+<h3 id="用新起点检查固定模型的敏感性">13.5.2
 用新起点检查固定模型的敏感性</h3>
 <p>下面在原训练期终点起, 每增加10条已知记录重新估计一次ARIMA(0,1,0),
 向前预测5步, 共七个起点. 每次只使用截至当时的数据, 比较全部差分,
@@ -888,10 +888,10 @@ class="math inline">\(p\approx0.249819\)</span>, 没有在 5%
 不能直接把这里的五步误差数值与前面的65步误差大小相比较后,
 就说模型已得到改善.</p>
 <p><img src="/images/ARIMA/ARIMA-23.png" alt="" style="width: 100%;"></p>
-<p><strong>图22-10　同一固定模型在不同起点上的五步预测</strong></p>
+<p><strong>图13-10　同一固定模型在不同起点上的五步预测</strong></p>
 <p>图中每根线都汇总七个共同起点. 接近的误差不构成某个模型普遍占优的证据,
 更不能据这组结果反复修改方案后仍把它当最终独立检验.</p>
-<h2 id="使用arima前后都要回答的问题">22.6
+<h2 id="使用arima前后都要回答的问题">13.6
 使用ARIMA前后都要回答的问题</h2>
 <p>从数据开始, 先说明每个观测步与缺失处理, 再按时间留出.
 只在训练部分检查差分与相关结构, 用明确的候选范围和同口径评分选阶.
@@ -903,7 +903,7 @@ class="math inline">\(p\approx0.249819\)</span>, 没有在 5%
 <p>对于更多的AR与MA理论形态, 可进一步阅读相关结构示例.
 对不依赖Econometrics Toolbox的实现, 可阅读完整条件估计程序.
 它们用于深化原理与数值过程, 不改变正文的训练与评价边界.</p>
-<h2 id="练习">22.7 练习</h2>
+<h2 id="练习">13.7 练习</h2>
 <ol type="1">
 <li>对序列 <span class="math inline">\((2,3,5,8)\)</span>
 计算一阶与二阶差分, 并计算间隔两期的差. 三者是否相同?</li>

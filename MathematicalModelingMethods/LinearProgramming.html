@@ -19,20 +19,20 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="线性规划: 把资源限制转化为可执行方案 志愿者工时有限, 服务场次有限, 怎样安排活动才能服务更多人? 资金总额固定, 风险额度有限, 怎样比较不同配置的收益? 这两类问题都需要先明确&quot;决定什么, 优化什么, 必须满足什么&quot;, 再把数据交给求解器. 本章先用活动安排建立模型, 将数学式逐项对应到 Python 与 MATLAB 的求解器输入, 再用几何图形和资源变化解释解的含义.">
+    <meta name="description" content="第23章 线性规划: 把资源限制转化为可执行方案 志愿者工时有限, 服务场次有限, 怎样安排活动才能服务更多人? 资金总额固定, 风险额度有限, 怎样比较不同配置的收益? 这两类问题都需要先明确&quot;决定什么, 优化什么, 必须满足什么&quot;, 再把数据交给求解器. 本章先用活动安排建立模型, 将数学式逐项对应到 Python 与 MATLAB 的求解器输入, 再用几何图形和资源变化解释解的">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Hexo">
 <meta property="og:url" content="http://example.com/MathematicalModelingMethods/LinearProgramming.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="线性规划: 把资源限制转化为可执行方案 志愿者工时有限, 服务场次有限, 怎样安排活动才能服务更多人? 资金总额固定, 风险额度有限, 怎样比较不同配置的收益? 这两类问题都需要先明确&quot;决定什么, 优化什么, 必须满足什么&quot;, 再把数据交给求解器. 本章先用活动安排建立模型, 将数学式逐项对应到 Python 与 MATLAB 的求解器输入, 再用几何图形和资源变化解释解的含义.">
+<meta property="og:description" content="第23章 线性规划: 把资源限制转化为可执行方案 志愿者工时有限, 服务场次有限, 怎样安排活动才能服务更多人? 资金总额固定, 风险额度有限, 怎样比较不同配置的收益? 这两类问题都需要先明确&quot;决定什么, 优化什么, 必须满足什么&quot;, 再把数据交给求解器. 本章先用活动安排建立模型, 将数学式逐项对应到 Python 与 MATLAB 的求解器输入, 再用几何图形和资源变化解释解的">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/images/LinearProgramming/LP-1.png">
 <meta property="og:image" content="http://example.com/images/LinearProgramming/LP-2.png">
 <meta property="og:image" content="http://example.com/images/LinearProgramming/LP-3.png">
 <meta property="og:image" content="http://example.com/images/LinearProgramming/LP-4.png">
 <meta property="og:image" content="http://example.com/images/LinearProgramming/LP-5.png">
-<meta property="article:published_time" content="2026-10-26T03:24:36.454Z">
-<meta property="article:modified_time" content="2026-10-26T03:00:36.000Z">
+<meta property="article:published_time" content="2026-10-27T00:21:35.739Z">
+<meta property="article:modified_time" content="2026-10-27T00:18:14.000Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/LinearProgramming/LP-1.png">
@@ -133,19 +133,26 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92-%E6%8A%8A%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6%E8%BD%AC%E5%8C%96%E4%B8%BA%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%B9%E6%A1%88"><span class="nav-number">1.</span> <span class="nav-text">线性规划:
-把资源限制转化为可执行方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E6%B4%BB%E5%8A%A8%E5%AE%89%E6%8E%92%E5%BC%80%E5%A7%8B-%E6%89%BE%E5%88%B0%E6%96%B9%E6%A1%88-%E8%BF%98%E8%A6%81%E8%AF%81%E6%98%8E%E6%9C%80%E4%BC%98"><span class="nav-number">1.1.</span> <span class="nav-text">1. 从活动安排开始:
-找到方案, 还要证明最优</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%8E%E6%A0%B7%E5%AE%89%E6%8E%92%E7%A7%91%E6%99%AE%E6%B4%BB%E5%8A%A8"><span class="nav-number">1.1.1.</span> <span class="nav-text">怎样安排科普活动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E9%A2%98%E7%9B%AE%E7%BF%BB%E8%AF%91%E6%88%90%E6%95%B0%E5%AD%A6%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.2.</span> <span class="nav-text">把题目翻译成数学模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E5%8F%AF%E8%A1%8C%E6%96%B9%E6%A1%88-%E6%80%8E%E6%A0%B7%E8%AF%81%E6%98%8E%E5%AE%83%E6%9C%80%E4%BC%98"><span class="nav-number">1.1.3.</span> <span class="nav-text">一个可行方案, 怎样证明它最优</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E7%BB%AD%E5%8F%98%E9%87%8F%E4%B8%8E%E6%95%B4%E6%95%B0%E5%8F%98%E9%87%8F"><span class="nav-number">1.1.4.</span> <span class="nav-text">连续变量与整数变量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E6%95%B0%E5%AD%A6%E6%A8%A1%E5%9E%8B%E5%88%B0%E4%B8%A4%E7%A7%8D-linprog-%E7%9A%84%E6%A0%87%E5%87%86%E8%BE%93%E5%85%A5"><span class="nav-number">1.2.</span> <span class="nav-text">2. 从数学模型到两种 linprog
-的标准输入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%8E%E6%A0%B7%E5%88%A4%E6%96%AD%E6%A8%A1%E5%9E%8B%E6%98%AF%E5%90%A6%E7%BA%BF%E6%80%A7"><span class="nav-number">1.2.1.</span> <span class="nav-text">怎样判断模型是否线性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E4%B8%AA%E5%B8%B8%E7%94%A8%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.2.2.</span> <span class="nav-text">三个常用转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AF%8F%E8%A1%8C%E6%98%AF%E4%B8%80%E6%9D%A1%E7%BA%A6%E6%9D%9F-%E6%AF%8F%E5%88%97%E6%98%AF%E4%B8%80%E4%B8%AA%E5%8F%98%E9%87%8F"><span class="nav-number">1.2.3.</span> <span class="nav-text">每行是一条约束,
-每列是一个变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E6%B1%82%E8%A7%A3%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8"><span class="nav-number">1.2.4.</span> <span class="nav-text">标准求解模型与函数调用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E8%BF%9E%E7%BB%AD%E6%A8%A1%E5%9E%8B-%E6%9C%8D%E5%8A%A1%E6%97%B6%E9%95%BF%E5%A6%82%E4%BD%95%E5%88%86%E9%85%8D"><span class="nav-number">1.3.</span> <span class="nav-text">3. 一个连续模型:
-服务时长如何分配?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E5%8C%85%E5%90%AB%E7%AD%89%E5%BC%8F%E5%92%8C%E4%B8%8A%E4%B8%8B%E7%95%8C%E7%9A%84%E5%AE%8C%E6%95%B4%E4%BE%8B%E9%A2%98"><span class="nav-number">1.3.1.</span> <span class="nav-text">一个包含等式和上下界的完整例题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%89%E6%95%B0%E5%AD%A6%E4%BB%BB%E5%8A%A1%E9%98%85%E8%AF%BB%E8%BF%99%E6%AE%B5%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.3.2.</span> <span class="nav-text">按数学任务阅读这段程序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9E%E5%88%B0%E6%B4%BB%E5%8A%A8%E5%9C%BA%E6%95%B0-%E6%AF%94%E8%BE%83%E8%BF%9E%E7%BB%AD%E6%9D%BE%E5%BC%9B%E4%B8%8E%E6%95%B4%E6%95%B0%E6%96%B9%E6%A1%88"><span class="nav-number">1.4.</span> <span class="nav-text">4. 回到活动场数:
-比较连续松弛与整数方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.4.1.</span> <span class="nav-text">Python 实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab-%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.4.2.</span> <span class="nav-text">MATLAB 实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%8E%E6%A0%B7%E8%AF%BB%E6%87%82%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%9C"><span class="nav-number">1.4.3.</span> <span class="nav-text">怎样读懂程序结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E5%9B%BE%E7%9C%8B%E6%B8%85%E5%8F%AF%E8%A1%8C%E5%9F%9F-%E4%B9%9F%E7%9C%8B%E6%B8%85%E8%88%8D%E5%85%A5%E7%9A%84%E9%A3%8E%E9%99%A9"><span class="nav-number">1.5.</span> <span class="nav-text">5. 用图看清可行域,
-也看清舍入的风险</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AF%8F%E6%9D%A1%E7%BA%A6%E6%9D%9F%E5%88%92%E5%87%BA%E4%B8%80%E4%B8%AA%E5%8C%BA%E5%9F%9F"><span class="nav-number">1.5.1.</span> <span class="nav-text">每条约束划出一个区域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E7%9B%B4%E6%8E%A5%E6%8A%8A%E8%BF%9E%E7%BB%AD%E8%A7%A3%E5%9B%9B%E8%88%8D%E4%BA%94%E5%85%A5"><span class="nav-number">1.5.2.</span> <span class="nav-text">为什么不能直接把连续解四舍五入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E8%83%BD%E5%87%BA%E7%8E%B0%E5%93%AA%E4%BA%9B%E6%B1%82%E8%A7%A3%E7%BB%93%E6%9E%9C"><span class="nav-number">1.5.3.</span> <span class="nav-text">可能出现哪些求解结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B5%84%E6%BA%90%E5%A2%9E%E5%8A%A0%E4%B8%80%E5%8D%95%E4%BD%8D-%E6%9C%8D%E5%8A%A1%E9%87%8F%E6%80%8E%E6%A0%B7%E6%94%B9%E5%8F%98"><span class="nav-number">1.6.</span> <span class="nav-text">6. 资源增加一单位,
-服务量怎样改变?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%BE%E5%BC%9B%E9%87%8F%E4%B8%8E%E7%B4%A7%E7%BA%A6%E6%9D%9F"><span class="nav-number">1.6.1.</span> <span class="nav-text">松弛量与紧约束</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E7%BB%AD%E6%A8%A1%E5%9E%8B%E4%B8%8E%E6%95%B4%E6%95%B0%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%8F%98%E5%8C%96%E4%B8%8D%E5%90%8C"><span class="nav-number">1.6.2.</span> <span class="nav-text">连续模型与整数模型的变化不同</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E4%B8%A4%E7%A7%8D%E8%AF%AD%E8%A8%80%E5%A4%8D%E7%AE%97%E5%B7%A5%E6%97%B6%E5%8F%98%E5%8C%96"><span class="nav-number">1.6.3.</span> <span class="nav-text">用两种语言复算工时变化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B1%82%E8%A7%A3%E5%99%A8%E8%BE%93%E5%85%A5%E5%BD%A2%E5%BC%8F%E4%B8%8E%E6%95%B0%E5%AD%A6%E6%A0%87%E5%87%86%E5%9E%8B"><span class="nav-number">1.6.4.</span> <span class="nav-text">求解器输入形式与数学标准型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B5%84%E9%87%91%E9%85%8D%E7%BD%AE-%E7%94%A8%E7%BA%BF%E6%80%A7%E7%BA%A6%E6%9D%9F%E6%8E%A7%E5%88%B6%E9%A3%8E%E9%99%A9%E9%A2%9D%E5%BA%A6"><span class="nav-number">1.7.</span> <span class="nav-text">7. 资金配置:
-用线性约束控制风险额度</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E4%B8%8E%E6%95%B0%E6%8D%AE"><span class="nav-number">1.7.1.</span> <span class="nav-text">问题与数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B5%84%E9%87%91%E5%B9%B3%E8%A1%A1%E4%B8%8E%E5%87%80%E6%94%B6%E7%9B%8A"><span class="nav-number">1.7.2.</span> <span class="nav-text">资金平衡与净收益</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A3%8E%E9%99%A9%E4%B8%8A%E9%99%90%E6%80%8E%E6%A0%B7%E5%8F%98%E6%88%90%E7%BA%BF%E6%80%A7%E7%BA%A6%E6%9D%9F"><span class="nav-number">1.7.3.</span> <span class="nav-text">风险上限怎样变成线性约束</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E7%9A%84%E6%AF%94%E4%BE%8B%E6%89%8B%E7%BB%AD%E8%B4%B9%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.7.4.</span> <span class="nav-text">完整的比例手续费模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E5%AE%9E%E7%8E%B0-1"><span class="nav-number">1.7.5.</span> <span class="nav-text">Python 实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab-%E5%AE%9E%E7%8E%B0-1"><span class="nav-number">1.7.6.</span> <span class="nav-text">MATLAB 实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%87%8A%E6%B1%82%E8%A7%A3%E7%BB%93%E6%9E%9C"><span class="nav-number">1.7.7.</span> <span class="nav-text">解释求解结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E7%A8%8B%E5%BA%8F%E7%9A%84%E7%9F%A9%E9%98%B5%E4%B8%8E%E6%A8%A1%E5%9E%8B%E9%80%90%E9%A1%B9%E5%AF%B9%E7%85%A7"><span class="nav-number">1.7.8.</span> <span class="nav-text">把程序的矩阵与模型逐项对照</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%98%E5%8C%96%E9%A3%8E%E9%99%A9%E9%A2%9D%E5%BA%A6-%E4%BB%8E%E6%95%B0%E5%80%BC%E6%9B%B2%E7%BA%BF%E5%88%B0%E7%BB%93%E6%9E%84%E8%A7%A3%E9%87%8A"><span class="nav-number">1.8.</span> <span class="nav-text">8. 变化风险额度:
-从数值曲线到结构解释</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E7%9C%8B%E6%9B%B2%E7%BA%BF-%E5%86%8D%E8%A7%A3%E9%87%8A%E5%8F%98%E5%8C%96"><span class="nav-number">1.8.1.</span> <span class="nav-text">先看曲线, 再解释变化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%B5%84%E9%87%91%E4%BC%98%E5%85%88%E6%B5%81%E5%90%91%E6%9F%90%E4%BA%9B%E8%B5%84%E4%BA%A7"><span class="nav-number">1.8.2.</span> <span class="nav-text">为什么资金优先流向某些资产</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AC%E6%8A%98%E7%82%B9%E4%BB%8E%E5%93%AA%E9%87%8C%E6%9D%A5"><span class="nav-number">1.8.3.</span> <span class="nav-text">转折点从哪里来</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E8%AF%BB-%E6%9C%80%E4%BD%8E%E6%89%8B%E7%BB%AD%E8%B4%B9%E6%80%8E%E6%A0%B7%E6%94%B9%E5%8F%98%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.9.</span> <span class="nav-text">9. 选读:
-最低手续费怎样改变模型?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%95%E6%97%B6%E9%9C%80%E8%A6%81%E6%94%B9%E8%BF%9B%E6%AF%94%E4%BE%8B%E8%B4%B9%E7%94%A8%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.9.1.</span> <span class="nav-text">何时需要改进比例费用模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E4%B9%B0%E6%88%96%E4%B8%8D%E4%B9%B0%E5%86%99%E6%88%90%E4%BA%8C%E5%85%83%E5%8F%98%E9%87%8F"><span class="nav-number">1.9.2.</span> <span class="nav-text">把&quot;买或不买&quot;写成二元变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E5%AE%9E%E7%8E%B0-%E6%9E%9A%E4%B8%BE%E5%90%AF%E7%94%A8%E7%BB%84%E5%90%88"><span class="nav-number">1.9.3.</span> <span class="nav-text">Python 实现: 枚举启用组合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab-%E5%AE%9E%E7%8E%B0-%E5%90%8C%E4%B8%80%E7%BB%84%E7%BB%84%E5%90%88"><span class="nav-number">1.9.4.</span> <span class="nav-text">MATLAB 实现: 同一组组合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AF%94%E8%BE%83%E4%B8%A4%E7%A7%8D%E8%B4%B9%E7%94%A8%E8%A7%84%E5%88%99"><span class="nav-number">1.9.5.</span> <span class="nav-text">比较两种费用规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E4%BD%8E%E8%B4%B9%E7%94%A8%E5%A6%82%E4%BD%95%E6%94%B9%E5%8F%98%E6%94%B6%E7%9B%8A%E6%9B%B2%E7%BA%BF"><span class="nav-number">1.9.6.</span> <span class="nav-text">最低费用如何改变收益曲线</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E8%AF%BB-%E7%BB%99%E5%AE%9A%E6%94%B6%E7%9B%8A%E8%A6%81%E6%B1%82-%E5%8F%8D%E8%BF%87%E6%9D%A5%E6%9C%80%E5%B0%8F%E5%8C%96%E9%A3%8E%E9%99%A9"><span class="nav-number">1.10.</span> <span class="nav-text">10. 选读: 给定收益要求,
-反过来最小化风险</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%A6%E4%B8%80%E7%A7%8D%E6%94%B6%E7%9B%8A%E4%B8%8E%E9%A3%8E%E9%99%A9%E7%9A%84%E5%8F%96%E8%88%8D"><span class="nav-number">1.10.1.</span> <span class="nav-text">另一种收益与风险的取舍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%86%E4%B8%A4%E7%A7%8D%E7%9B%AE%E6%A0%87%E8%BD%AC%E6%8D%A2%E4%B8%BA%E7%A8%8B%E5%BA%8F%E8%BE%93%E5%85%A5"><span class="nav-number">1.10.2.</span> <span class="nav-text">将两种目标转换为程序输入</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.11.</span> <span class="nav-text">11. 练习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">1.12.</span> <span class="nav-text">参考文献</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC23%E7%AB%A0-%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92-%E6%8A%8A%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6%E8%BD%AC%E5%8C%96%E4%B8%BA%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%B9%E6%A1%88"><span class="nav-number">1.</span> <span class="nav-text">第23章 线性规划:
+把资源限制转化为可执行方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E6%B4%BB%E5%8A%A8%E5%AE%89%E6%8E%92%E5%BC%80%E5%A7%8B-%E6%89%BE%E5%88%B0%E6%96%B9%E6%A1%88-%E8%BF%98%E8%A6%81%E8%AF%81%E6%98%8E%E6%9C%80%E4%BC%98"><span class="nav-number">1.1.</span> <span class="nav-text">23.1 从活动安排开始:
+找到方案, 还要证明最优</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%8E%E6%A0%B7%E5%AE%89%E6%8E%92%E7%A7%91%E6%99%AE%E6%B4%BB%E5%8A%A8"><span class="nav-number">1.1.1.</span> <span class="nav-text">23.1.1 怎样安排科普活动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E9%A2%98%E7%9B%AE%E7%BF%BB%E8%AF%91%E6%88%90%E6%95%B0%E5%AD%A6%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.2.</span> <span class="nav-text">23.1.2 把题目翻译成数学模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E5%8F%AF%E8%A1%8C%E6%96%B9%E6%A1%88-%E6%80%8E%E6%A0%B7%E8%AF%81%E6%98%8E%E5%AE%83%E6%9C%80%E4%BC%98"><span class="nav-number">1.1.3.</span> <span class="nav-text">23.1.3 一个可行方案,
+怎样证明它最优</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E7%BB%AD%E5%8F%98%E9%87%8F%E4%B8%8E%E6%95%B4%E6%95%B0%E5%8F%98%E9%87%8F"><span class="nav-number">1.1.4.</span> <span class="nav-text">23.1.4 连续变量与整数变量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E6%95%B0%E5%AD%A6%E6%A8%A1%E5%9E%8B%E5%88%B0%E4%B8%A4%E7%A7%8D-linprog-%E7%9A%84%E6%A0%87%E5%87%86%E8%BE%93%E5%85%A5"><span class="nav-number">1.2.</span> <span class="nav-text">23.2 从数学模型到两种
+linprog 的标准输入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%8E%E6%A0%B7%E5%88%A4%E6%96%AD%E6%A8%A1%E5%9E%8B%E6%98%AF%E5%90%A6%E7%BA%BF%E6%80%A7"><span class="nav-number">1.2.1.</span> <span class="nav-text">23.2.1 怎样判断模型是否线性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E4%B8%AA%E5%B8%B8%E7%94%A8%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.2.2.</span> <span class="nav-text">23.2.2 三个常用转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AF%8F%E8%A1%8C%E6%98%AF%E4%B8%80%E6%9D%A1%E7%BA%A6%E6%9D%9F-%E6%AF%8F%E5%88%97%E6%98%AF%E4%B8%80%E4%B8%AA%E5%8F%98%E9%87%8F"><span class="nav-number">1.2.3.</span> <span class="nav-text">23.2.3 每行是一条约束,
+每列是一个变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E6%B1%82%E8%A7%A3%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8"><span class="nav-number">1.2.4.</span> <span class="nav-text">23.2.4 标准求解模型与函数调用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E8%BF%9E%E7%BB%AD%E6%A8%A1%E5%9E%8B-%E6%9C%8D%E5%8A%A1%E6%97%B6%E9%95%BF%E5%A6%82%E4%BD%95%E5%88%86%E9%85%8D"><span class="nav-number">1.3.</span> <span class="nav-text">23.3 一个连续模型:
+服务时长如何分配?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E5%8C%85%E5%90%AB%E7%AD%89%E5%BC%8F%E5%92%8C%E4%B8%8A%E4%B8%8B%E7%95%8C%E7%9A%84%E5%AE%8C%E6%95%B4%E4%BE%8B%E9%A2%98"><span class="nav-number">1.3.1.</span> <span class="nav-text">23.3.1
+一个包含等式和上下界的完整例题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%89%E6%95%B0%E5%AD%A6%E4%BB%BB%E5%8A%A1%E9%98%85%E8%AF%BB%E8%BF%99%E6%AE%B5%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.3.2.</span> <span class="nav-text">23.3.2 按数学任务阅读这段程序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9E%E5%88%B0%E6%B4%BB%E5%8A%A8%E5%9C%BA%E6%95%B0-%E6%AF%94%E8%BE%83%E8%BF%9E%E7%BB%AD%E6%9D%BE%E5%BC%9B%E4%B8%8E%E6%95%B4%E6%95%B0%E6%96%B9%E6%A1%88"><span class="nav-number">1.4.</span> <span class="nav-text">23.4 回到活动场数:
+比较连续松弛与整数方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.4.1.</span> <span class="nav-text">23.4.1 Python 实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab-%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.4.2.</span> <span class="nav-text">23.4.2 MATLAB 实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%8E%E6%A0%B7%E8%AF%BB%E6%87%82%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%9C"><span class="nav-number">1.4.3.</span> <span class="nav-text">23.4.3 怎样读懂程序结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E5%9B%BE%E7%9C%8B%E6%B8%85%E5%8F%AF%E8%A1%8C%E5%9F%9F-%E4%B9%9F%E7%9C%8B%E6%B8%85%E8%88%8D%E5%85%A5%E7%9A%84%E9%A3%8E%E9%99%A9"><span class="nav-number">1.5.</span> <span class="nav-text">23.5 用图看清可行域,
+也看清舍入的风险</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AF%8F%E6%9D%A1%E7%BA%A6%E6%9D%9F%E5%88%92%E5%87%BA%E4%B8%80%E4%B8%AA%E5%8C%BA%E5%9F%9F"><span class="nav-number">1.5.1.</span> <span class="nav-text">23.5.1 每条约束划出一个区域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E7%9B%B4%E6%8E%A5%E6%8A%8A%E8%BF%9E%E7%BB%AD%E8%A7%A3%E5%9B%9B%E8%88%8D%E4%BA%94%E5%85%A5"><span class="nav-number">1.5.2.</span> <span class="nav-text">23.5.2
+为什么不能直接把连续解四舍五入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E8%83%BD%E5%87%BA%E7%8E%B0%E5%93%AA%E4%BA%9B%E6%B1%82%E8%A7%A3%E7%BB%93%E6%9E%9C"><span class="nav-number">1.5.3.</span> <span class="nav-text">23.5.3 可能出现哪些求解结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B5%84%E6%BA%90%E5%A2%9E%E5%8A%A0%E4%B8%80%E5%8D%95%E4%BD%8D-%E6%9C%8D%E5%8A%A1%E9%87%8F%E6%80%8E%E6%A0%B7%E6%94%B9%E5%8F%98"><span class="nav-number">1.6.</span> <span class="nav-text">23.6 资源增加一单位,
+服务量怎样改变?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%BE%E5%BC%9B%E9%87%8F%E4%B8%8E%E7%B4%A7%E7%BA%A6%E6%9D%9F"><span class="nav-number">1.6.1.</span> <span class="nav-text">23.6.1 松弛量与紧约束</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E7%BB%AD%E6%A8%A1%E5%9E%8B%E4%B8%8E%E6%95%B4%E6%95%B0%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%8F%98%E5%8C%96%E4%B8%8D%E5%90%8C"><span class="nav-number">1.6.2.</span> <span class="nav-text">23.6.2
+连续模型与整数模型的变化不同</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E4%B8%A4%E7%A7%8D%E8%AF%AD%E8%A8%80%E5%A4%8D%E7%AE%97%E5%B7%A5%E6%97%B6%E5%8F%98%E5%8C%96"><span class="nav-number">1.6.3.</span> <span class="nav-text">23.6.3 用两种语言复算工时变化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B1%82%E8%A7%A3%E5%99%A8%E8%BE%93%E5%85%A5%E5%BD%A2%E5%BC%8F%E4%B8%8E%E6%95%B0%E5%AD%A6%E6%A0%87%E5%87%86%E5%9E%8B"><span class="nav-number">1.6.4.</span> <span class="nav-text">23.6.4
+求解器输入形式与数学标准型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B5%84%E9%87%91%E9%85%8D%E7%BD%AE-%E7%94%A8%E7%BA%BF%E6%80%A7%E7%BA%A6%E6%9D%9F%E6%8E%A7%E5%88%B6%E9%A3%8E%E9%99%A9%E9%A2%9D%E5%BA%A6"><span class="nav-number">1.7.</span> <span class="nav-text">23.7 资金配置:
+用线性约束控制风险额度</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E4%B8%8E%E6%95%B0%E6%8D%AE"><span class="nav-number">1.7.1.</span> <span class="nav-text">23.7.1 问题与数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B5%84%E9%87%91%E5%B9%B3%E8%A1%A1%E4%B8%8E%E5%87%80%E6%94%B6%E7%9B%8A"><span class="nav-number">1.7.2.</span> <span class="nav-text">23.7.2 资金平衡与净收益</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A3%8E%E9%99%A9%E4%B8%8A%E9%99%90%E6%80%8E%E6%A0%B7%E5%8F%98%E6%88%90%E7%BA%BF%E6%80%A7%E7%BA%A6%E6%9D%9F"><span class="nav-number">1.7.3.</span> <span class="nav-text">23.7.3 风险上限怎样变成线性约束</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E7%9A%84%E6%AF%94%E4%BE%8B%E6%89%8B%E7%BB%AD%E8%B4%B9%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.7.4.</span> <span class="nav-text">23.7.4 完整的比例手续费模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E5%AE%9E%E7%8E%B0-1"><span class="nav-number">1.7.5.</span> <span class="nav-text">23.7.5 Python 实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab-%E5%AE%9E%E7%8E%B0-1"><span class="nav-number">1.7.6.</span> <span class="nav-text">23.7.6 MATLAB 实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%87%8A%E6%B1%82%E8%A7%A3%E7%BB%93%E6%9E%9C"><span class="nav-number">1.7.7.</span> <span class="nav-text">23.7.7 解释求解结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E7%A8%8B%E5%BA%8F%E7%9A%84%E7%9F%A9%E9%98%B5%E4%B8%8E%E6%A8%A1%E5%9E%8B%E9%80%90%E9%A1%B9%E5%AF%B9%E7%85%A7"><span class="nav-number">1.7.8.</span> <span class="nav-text">23.7.8
+把程序的矩阵与模型逐项对照</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%98%E5%8C%96%E9%A3%8E%E9%99%A9%E9%A2%9D%E5%BA%A6-%E4%BB%8E%E6%95%B0%E5%80%BC%E6%9B%B2%E7%BA%BF%E5%88%B0%E7%BB%93%E6%9E%84%E8%A7%A3%E9%87%8A"><span class="nav-number">1.8.</span> <span class="nav-text">23.8 变化风险额度:
+从数值曲线到结构解释</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E7%9C%8B%E6%9B%B2%E7%BA%BF-%E5%86%8D%E8%A7%A3%E9%87%8A%E5%8F%98%E5%8C%96"><span class="nav-number">1.8.1.</span> <span class="nav-text">23.8.1 先看曲线, 再解释变化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%B5%84%E9%87%91%E4%BC%98%E5%85%88%E6%B5%81%E5%90%91%E6%9F%90%E4%BA%9B%E8%B5%84%E4%BA%A7"><span class="nav-number">1.8.2.</span> <span class="nav-text">23.8.2
+为什么资金优先流向某些资产</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AC%E6%8A%98%E7%82%B9%E4%BB%8E%E5%93%AA%E9%87%8C%E6%9D%A5"><span class="nav-number">1.8.3.</span> <span class="nav-text">23.8.3 转折点从哪里来</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E8%AF%BB-%E6%9C%80%E4%BD%8E%E6%89%8B%E7%BB%AD%E8%B4%B9%E6%80%8E%E6%A0%B7%E6%94%B9%E5%8F%98%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.9.</span> <span class="nav-text">23.9 选读:
+最低手续费怎样改变模型?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%95%E6%97%B6%E9%9C%80%E8%A6%81%E6%94%B9%E8%BF%9B%E6%AF%94%E4%BE%8B%E8%B4%B9%E7%94%A8%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.9.1.</span> <span class="nav-text">23.9.1 何时需要改进比例费用模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E4%B9%B0%E6%88%96%E4%B8%8D%E4%B9%B0%E5%86%99%E6%88%90%E4%BA%8C%E5%85%83%E5%8F%98%E9%87%8F"><span class="nav-number">1.9.2.</span> <span class="nav-text">23.9.2 把&quot;买或不买&quot;写成二元变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E5%AE%9E%E7%8E%B0-%E6%9E%9A%E4%B8%BE%E5%90%AF%E7%94%A8%E7%BB%84%E5%90%88"><span class="nav-number">1.9.3.</span> <span class="nav-text">23.9.3 Python 实现: 枚举启用组合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab-%E5%AE%9E%E7%8E%B0-%E5%90%8C%E4%B8%80%E7%BB%84%E7%BB%84%E5%90%88"><span class="nav-number">1.9.4.</span> <span class="nav-text">23.9.4 MATLAB 实现: 同一组组合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AF%94%E8%BE%83%E4%B8%A4%E7%A7%8D%E8%B4%B9%E7%94%A8%E8%A7%84%E5%88%99"><span class="nav-number">1.9.5.</span> <span class="nav-text">23.9.5 比较两种费用规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E4%BD%8E%E8%B4%B9%E7%94%A8%E5%A6%82%E4%BD%95%E6%94%B9%E5%8F%98%E6%94%B6%E7%9B%8A%E6%9B%B2%E7%BA%BF"><span class="nav-number">1.9.6.</span> <span class="nav-text">23.9.6 最低费用如何改变收益曲线</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E8%AF%BB-%E7%BB%99%E5%AE%9A%E6%94%B6%E7%9B%8A%E8%A6%81%E6%B1%82-%E5%8F%8D%E8%BF%87%E6%9D%A5%E6%9C%80%E5%B0%8F%E5%8C%96%E9%A3%8E%E9%99%A9"><span class="nav-number">1.10.</span> <span class="nav-text">23.10 选读: 给定收益要求,
+反过来最小化风险</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%A6%E4%B8%80%E7%A7%8D%E6%94%B6%E7%9B%8A%E4%B8%8E%E9%A3%8E%E9%99%A9%E7%9A%84%E5%8F%96%E8%88%8D"><span class="nav-number">1.10.1.</span> <span class="nav-text">23.10.1 另一种收益与风险的取舍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%86%E4%B8%A4%E7%A7%8D%E7%9B%AE%E6%A0%87%E8%BD%AC%E6%8D%A2%E4%B8%BA%E7%A8%8B%E5%BA%8F%E8%BE%93%E5%85%A5"><span class="nav-number">1.10.2.</span> <span class="nav-text">23.10.2 将两种目标转换为程序输入</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.11.</span> <span class="nav-text">23.11 练习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">1.12.</span> <span class="nav-text">参考文献</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -195,7 +202,7 @@
       
       
       <div class="post-body">
-          <h1 id="线性规划-把资源限制转化为可执行方案">线性规划:
+          <h1 id="第23章-线性规划-把资源限制转化为可执行方案">第23章 线性规划:
 把资源限制转化为可执行方案</h1>
 <p>志愿者工时有限, 服务场次有限, 怎样安排活动才能服务更多人?
 资金总额固定, 风险额度有限, 怎样比较不同配置的收益?
@@ -206,9 +213,9 @@
 资金配置案例进一步展示等式约束, 风险上限和费用规则如何进入模型.
 最低手续费与收益风险权衡作为选读拓展,
 可在掌握连续线性规划后继续学习.</p>
-<h2 id="从活动安排开始-找到方案-还要证明最优">1. 从活动安排开始:
+<h2 id="从活动安排开始-找到方案-还要证明最优">23.1 从活动安排开始:
 找到方案, 还要证明最优</h2>
-<h3 id="怎样安排科普活动">怎样安排科普活动</h3>
+<h3 id="怎样安排科普活动">23.1.1 怎样安排科普活动</h3>
 <p>学校科普服务团队准备开展 A, B, C 三类活动. 本例为教学设定,
 表中数据用于演示建模, 不代表实际调查结果. 假设报名需求充足,
 各类活动每场的服务容量和所需志愿者工时固定.</p>
@@ -242,7 +249,7 @@
 怎样安排, 才能使总服务人次最多?</p>
 <p>"人时"是人数与工作时间的乘积. 例如, 2 名志愿者各服务 2 小时, 共计 4
 人时. "人次"按参加活动的次数统计, 同一人参加两场活动, 计为两人次.</p>
-<h3 id="把题目翻译成数学模型">把题目翻译成数学模型</h3>
+<h3 id="把题目翻译成数学模型">23.1.2 把题目翻译成数学模型</h3>
 <p>设 <span class="math inline">\(x_1,x_2,x_3\)</span> 分别为 A, B, C
 类活动的场数. 需要决定的量就是<strong>决策变量</strong>.</p>
 <p>希望总服务人次最大. 结合工时, 场数和整数条件, 模型为:</p>
@@ -261,7 +268,8 @@ x_1,x_2,x_3\in\mathbb Z_{\geqslant0}.
 也不能把半场活动当作一场完整活动执行.</p>
 <p><strong>变量, 目标, 约束</strong>构成了模型的主干. 写好模型后,
 题目就变成了: 在所有满足限制的方案中, 找到目标值最大的一个.</p>
-<h3 id="一个可行方案-怎样证明它最优">一个可行方案, 怎样证明它最优</h3>
+<h3 id="一个可行方案-怎样证明它最优">23.1.3 一个可行方案,
+怎样证明它最优</h3>
 <p>安排 15 场 A 类, 5 场 B 类, 不安排 C 类, 得到:</p>
 <p><span class="math display">\[
 4\times15+8\times5=100\text{ 人时},\qquad15+5=20\text{ 场},
@@ -286,7 +294,7 @@ class="math inline">\((15,5,0)\)</span> 恰好达到 450,
 所以它是<strong>最优方案</strong>.</p>
 <p>这也展示了检查结果的两个层次: 先确认方案满足约束,
 再确认没有更好的可行方案.</p>
-<h3 id="连续变量与整数变量">连续变量与整数变量</h3>
+<h3 id="连续变量与整数变量">23.1.4 连续变量与整数变量</h3>
 <p>连续线性规划(Linear Programming, LP)研究的是: 在线性等式,
 线性不等式及变量边界构成的可行域内, 使线性目标函数达到最大值或最小值.
 连续变量可以取小数; 整数规划则进一步限制某些变量只能取整数.</p>
@@ -301,9 +309,9 @@ class="math inline">\((15,5,0)\)</span>, 因此能够直接作为整数方案;
 其他问题未必如此.</p>
 <p>金额, 质量等可分割的量常用连续变量; 人数, 车辆数,
 活动场数通常需要整数变量. 变量类型应由实际含义决定.</p>
-<h2 id="从数学模型到两种-linprog-的标准输入">2. 从数学模型到两种 linprog
-的标准输入</h2>
-<h3 id="怎样判断模型是否线性">怎样判断模型是否线性</h3>
+<h2 id="从数学模型到两种-linprog-的标准输入">23.2 从数学模型到两种
+linprog 的标准输入</h2>
+<h3 id="怎样判断模型是否线性">23.2.1 怎样判断模型是否线性</h3>
 <p>在线性表达式中, 变量以一次项出现, 变量之间不相乘,
 各项系数都是已知常数. 例如:</p>
 <p><span class="math display">\[
@@ -325,7 +333,7 @@ class="math inline">\(20x_1+30x_2+100\)</span>. 严格地说,
 <p>绝对值, 最大值和分段费用不能直接作为普通线性表达式输入;
 其中一些可以通过增加变量或约束转成线性规划.
 本章的风险上限就是一个例子.</p>
-<h3 id="三个常用转换">三个常用转换</h3>
+<h3 id="三个常用转换">23.2.2 三个常用转换</h3>
 <p>Python 中的 <code>scipy.optimize.linprog</code> 与 MATLAB 中的
 <code>linprog</code> 均用于求解目标函数最小化的线性规划问题[1,3]. 这里,
 "最小化"表示优化方向, 目标函数则是被优化的函数. 使用这两个求解器时,
@@ -368,7 +376,7 @@ MATLAB可设置对应下界为 <code>-Inf</code>, 上界为 <code>Inf</code>.
 另一种代数处理是令 <span class="math inline">\(x_j=x_j^+-x_j^-\)</span>,
 并规定 <span class="math inline">\(x_j^+,x_j^-\geqslant0\)</span>.
 连续LP不会自动保证整数性, 应明确采用整数接口或设置整数条件.</p>
-<h3 id="每行是一条约束-每列是一个变量">每行是一条约束,
+<h3 id="每行是一条约束-每列是一个变量">23.2.3 每行是一条约束,
 每列是一个变量</h3>
 <p>设有 <span class="math inline">\(n\)</span> 个变量和 <span
 class="math inline">\(m\)</span> 条资源约束,
@@ -419,7 +427,7 @@ class="math inline">\(b\)</span> 的维度一致.</p>
 <p><span class="math inline">\(A\)</span> 的第一行记录工时限制,
 第二行记录场数限制; 第一, 二, 三列始终对应 A, B, C 类活动. 目标系数,
 约束系数和变量边界必须采用同一顺序.</p>
-<h3 id="标准求解模型与函数调用">标准求解模型与函数调用</h3>
+<h3 id="标准求解模型与函数调用">23.2.4 标准求解模型与函数调用</h3>
 <p>把问题交给求解器前, 应按固定的变量顺序准备四类数据: <strong>目标系数,
 不等式约束, 等式约束, 变量上下界</strong>.
 下面分别列出两种接口采用的数学形式及其调用方式;
@@ -578,10 +586,10 @@ class="math inline">\(k\times1\)</span>. Python 接口中的系数,
 不自动添加非负条件.</strong> 因此, 凡是模型规定变量非负,
 都应明确填写相应边界. 变量是否为整数属于另一类限制,
 应另行使用整数求解接口.</p>
-<h2 id="一个连续模型-服务时长如何分配">3. 一个连续模型:
+<h2 id="一个连续模型-服务时长如何分配">23.3 一个连续模型:
 服务时长如何分配?</h2>
-<h3
-id="一个包含等式和上下界的完整例题">一个包含等式和上下界的完整例题</h3>
+<h3 id="一个包含等式和上下界的完整例题">23.3.1
+一个包含等式和上下界的完整例题</h3>
 <p>作为另一个教学例题, 设社区科普团队在两个服务点 A, B 安排讲解.
 设两处的服务时长分别为 <span class="math inline">\(x_1,x_2\)</span>
 小时, 时长可以取小数. 两处合计服务 6 小时; A 点每小时需要 2 人时, B
@@ -674,21 +682,21 @@ class="math inline">\(z\)</span> 最大. 该点满足全部边界,
 <span class="math inline">\(\geqslant\)</span> 约束转换为接口采用的形式,
 填入四类数据, 检查终止状态, 再将解代回原模型. 变量表示时长时可以取小数;
 变量表示场数时, 还需处理整数条件, 下一节将比较这两种情况.</p>
-<h3 id="按数学任务阅读这段程序">按数学任务阅读这段程序</h3>
+<h3 id="按数学任务阅读这段程序">23.3.2 按数学任务阅读这段程序</h3>
 <p><code>benefit</code> 对应原题的收益系数, 取相反数后才交给最小化接口.
 <code>A_ub,b_ub</code> 或 <code>A,b</code> 保存工时上限,
 <code>A_eq,b_eq</code> 或 <code>Aeq,beq</code> 保存总时长等式,
 变量边界保存各服务点可安排时长. 这些数据都按同一变量顺序填写.
 求解状态确认之后, 再分别检查不等式, 等式, 边界和目标值,
 才形成完整的结果检验.</p>
-<h2 id="回到活动场数-比较连续松弛与整数方案">4. 回到活动场数:
+<h2 id="回到活动场数-比较连续松弛与整数方案">23.4 回到活动场数:
 比较连续松弛与整数方案</h2>
 <p>单纯形法可以理解为沿可行域的顶点寻找更优方案;
 内点法则通过区域内部的路径逼近最优解. 现代求解器还会进行预处理,
 缩放与数值检验. 整数问题通常结合分支定界, 割平面等方法处理离散条件.</p>
 <p>Python 与 MATLAB 是两种实现方式, 可先选择熟悉的一种.
 代码先求连续松弛, 再明确求解整数模型, 以便比较二者.</p>
-<h3 id="python-实现">Python 实现</h3>
+<h3 id="python-实现">23.4.1 Python 实现</h3>
 <p>以下代码使用 NumPy 和 SciPy. 首次使用时, 可运行
 <code>python -m pip install numpy scipy</code>. 连续问题用
 <code>linprog</code>, 整数问题用 <code>milp</code>[1–2].</p>
@@ -698,12 +706,12 @@ class="math inline">\(z\)</span> 最大. 该点满足全部边界,
 <p>连续解和整数解都为 <span class="math inline">\((15,5,0)\)</span>,
 目标值均为 450. 代码里的舍入用于整理已通过整数性检查的浮点结果,
 并不是用舍入代替整数求解.</p>
-<h3 id="matlab-实现">MATLAB 实现</h3>
+<h3 id="matlab-实现">23.4.2 MATLAB 实现</h3>
 <p>下面代码使用 MATLAB 的 Optimization Toolbox[3–4].
 <code>linprog</code> 求连续模型, <code>intlinprog</code> 求整数模型;
 参数 <code>1:3</code> 指定三个变量为整数.</p>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">benefit = [<span class="number">20</span>,<span class="number">30</span>,<span class="number">45</span>].&#x27;;</span><br><span class="line">A = [<span class="number">4</span>,<span class="number">8</span>,<span class="number">15</span>;<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>];</span><br><span class="line">b = [<span class="number">100</span>,<span class="number">20</span>].&#x27;;</span><br><span class="line">lb = <span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">3</span>).&#x27;;</span><br><span class="line">options = optimoptions(<span class="string">&#x27;linprog&#x27;</span>,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;none&#x27;</span>);</span><br><span class="line">[xLP,fLP,flag,out] = linprog(-benefit,A,b,[],[],lb,[],options);</span><br><span class="line"><span class="keyword">if</span> flag ~= <span class="number">1</span></span><br><span class="line">    error(<span class="string">&#x27;连续模型未确认最优解：%s&#x27;</span>,out.message);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">if</span> any(xLP &lt; <span class="number">-1e-6</span>) || any(A*xLP &gt; b+<span class="number">1e-6</span>) || <span class="built_in">abs</span>(benefit&#x27;*xLP+fLP)&gt;<span class="number">1e-6</span></span><br><span class="line">    error(<span class="string">&#x27;连续解回代失败&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;连续解：&#x27;</span>); <span class="built_in">disp</span>(xLP);</span><br><span class="line">fprintf(<span class="string">&#x27;连续最优服务人次：%.2f\n&#x27;</span>,-fLP);</span><br><span class="line"></span><br><span class="line">options = optimoptions(<span class="string">&#x27;intlinprog&#x27;</span>,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;off&#x27;</span>, ...</span><br><span class="line">                       <span class="string">&#x27;RelativeGapTolerance&#x27;</span>,<span class="number">0</span>);</span><br><span class="line">[x,fval,flag,out] = intlinprog( ...</span><br><span class="line">    -benefit,<span class="number">1</span>:<span class="number">3</span>,A,b,[],[],lb,[],[],options);</span><br><span class="line"><span class="keyword">if</span> flag ~= <span class="number">1</span></span><br><span class="line">    error(<span class="string">&#x27;整数模型未确认最优解：%s&#x27;</span>,out.message);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">assert(all(<span class="built_in">abs</span>(x-<span class="built_in">round</span>(x)) &lt; <span class="number">1e-6</span>));</span><br><span class="line">x = <span class="built_in">round</span>(x);</span><br><span class="line">assert(all(x &gt;= <span class="number">0</span>) &amp;&amp; all(A*x &lt;= b+<span class="number">1e-6</span>));</span><br><span class="line">assert(<span class="built_in">abs</span>(benefit&#x27;*x+fval) &lt; <span class="number">1e-6</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;整数方案：&#x27;</span>); <span class="built_in">disp</span>(x);</span><br><span class="line">fprintf(<span class="string">&#x27;总服务人次：%.0f\n&#x27;</span>,benefit&#x27;*x);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;工时与场数：&#x27;</span>); <span class="built_in">disp</span>(A*x);</span><br></pre></td></tr></table></figure>
-<h3 id="怎样读懂程序结果">怎样读懂程序结果</h3>
+<h3 id="怎样读懂程序结果">23.4.3 怎样读懂程序结果</h3>
 <p>求解后, 依次回答四个问题:</p>
 <ol type="1">
 <li><strong>求解成功了吗?</strong> 先检查终止状态, 再读取变量值.
@@ -718,9 +726,9 @@ class="math inline">\(z\)</span> 最大. 该点满足全部边界,
 <p>程序只能求解已经写入的模型. 例如, 本例没有要求每一类活动都必须举办.
 如果教学任务要求三类活动均有安排, 就应加入 <span
 class="math inline">\(x_1,x_2,x_3\geqslant1\)</span>, 重新求解.</p>
-<h2 id="用图看清可行域-也看清舍入的风险">5. 用图看清可行域,
+<h2 id="用图看清可行域-也看清舍入的风险">23.5 用图看清可行域,
 也看清舍入的风险</h2>
-<h3 id="每条约束划出一个区域">每条约束划出一个区域</h3>
+<h3 id="每条约束划出一个区域">23.5.1 每条约束划出一个区域</h3>
 <p>为了在平面上画图, 先只考虑 A, B 两类活动, 并允许场数取连续值:</p>
 <p><span class="math display">\[
 \begin{aligned}
@@ -735,7 +743,7 @@ x_1,x_2\geqslant0.
 <p>"s.t."表示"满足下列约束". 每条不等式在平面上确定一个半平面;
 同时满足所有约束的点构成<strong>可行域</strong>, 即图中的阴影区域.</p>
 <p><img src="/images/LinearProgramming/LP-1.png" alt="" style="width: 100%;"></p>
-<p>图 1 两变量模型的可行域与目标等值线.</p>
+<p>图 23-1 两变量模型的可行域与目标等值线.</p>
 <p>直线 <span class="math inline">\(20x_1+30x_2=z\)</span> 上的所有点,
 都具有相同的目标值. 增大 <span class="math inline">\(z\)</span>,
 直线平行移动; 在提高目标值的方向上, 它最后接触可行域的位置是 <span
@@ -784,10 +792,10 @@ class="math inline">\((0,12.5)\)</span></td>
 <p>对于非空, 有界的多面体可行域, 线性目标函数至少在一个顶点取得最优值.
 若目标等值线与某条边平行, 并在该边达到最优值,
 则整条边上的点都可能是最优解.</p>
-<p>图 1 展示的是两变量连续模型; 三变量问题的最优性,
+<p>图 23-1 展示的是两变量连续模型; 三变量问题的最优性,
 已在活动案例开头通过不等式证明.</p>
-<h3
-id="为什么不能直接把连续解四舍五入">为什么不能直接把连续解四舍五入</h3>
+<h3 id="为什么不能直接把连续解四舍五入">23.5.2
+为什么不能直接把连续解四舍五入</h3>
 <p>仍只安排 A, B 两类活动, 把工时预算改为 99 人时. 连续松弛模型为:</p>
 <p><span class="math display">\[
 \begin{aligned}
@@ -807,11 +815,11 @@ x_1,x_2\geqslant0.
 会使用 100 人时, 超过预算. 整数模型的最优方案是 <span
 class="math inline">\((16,4)\)</span>, 使用 96 人时, 服务 440 人次.</p>
 <p><img src="/images/LinearProgramming/LP-2.png" alt="" style="width: 100%;"></p>
-<p>图 2 连续可行域, 整数格点与舍入后的不可行方案.</p>
+<p>图 23-2 连续可行域, 整数格点与舍入后的不可行方案.</p>
 <p>整数可行解只是连续可行域中的整数格点. 舍入可能把点移出可行域;
 即使舍入后仍可行, 也不能保证最优. 因此, 带整数条件的模型,
 应使用整数求解方法.</p>
-<h3 id="可能出现哪些求解结果">可能出现哪些求解结果</h3>
+<h3 id="可能出现哪些求解结果">23.5.3 可能出现哪些求解结果</h3>
 <table>
 <thead>
 <tr>
@@ -842,7 +850,7 @@ class="math inline">\((16,4)\)</span>, 使用 96 人时, 服务 440 人次.</p>
 </tr>
 </tbody>
 </table>
-<p>图 1 的模型具有唯一最优解. 下面的模型则有多个最优解:</p>
+<p>图 23-1 的模型具有唯一最优解. 下面的模型则有多个最优解:</p>
 <p><span class="math display">\[
 \begin{aligned}
 &amp;\max\quad z=x_1+x_2,\\
@@ -884,9 +892,9 @@ x\geqslant0.
 \]</span></p>
 <p>它的可行域无界, 但最优解是 <span
 class="math inline">\(x=0\)</span>.</p>
-<h2 id="资源增加一单位-服务量怎样改变">6. 资源增加一单位,
+<h2 id="资源增加一单位-服务量怎样改变">23.6 资源增加一单位,
 服务量怎样改变?</h2>
-<h3 id="松弛量与紧约束">松弛量与紧约束</h3>
+<h3 id="松弛量与紧约束">23.6.1 松弛量与紧约束</h3>
 <p>对于线性不等式约束 <span class="math inline">\(Ax\leqslant
 b\)</span>, 定义<strong>松弛向量</strong> <span
 class="math inline">\(s=b-Ax\)</span>. 若有 <span
@@ -902,7 +910,8 @@ s=(s_1,\ldots,s_m)^{\mathsf T},\qquad s_i=b_i-\sum\limits_j a_{ij}x_j.
 同时用完工时和场数额度, 两条资源约束都是紧约束.
 但"资源用完了"不自动意味着增加该资源一定能提高目标值,
 仍需要分析其他限制.</p>
-<h3 id="连续模型与整数模型的变化不同">连续模型与整数模型的变化不同</h3>
+<h3 id="连续模型与整数模型的变化不同">23.6.2
+连续模型与整数模型的变化不同</h3>
 <p>把三类活动的工时预算改为 <span class="math inline">\(B\)</span>,
 总场数仍最多 20 场. 在连续松弛模型中, 当 <span
 class="math inline">\(80\leqslant B\leqslant160\)</span> 时,
@@ -918,12 +927,12 @@ z^*(B)=200+2.5B.
 因此确实最优. 预算变化前后都处于这一范围内时, 连续模型每增加1人时,
 最优服务量增加2.5人次.</p>
 <p><img src="/images/LinearProgramming/LP-3.png" alt="" style="width: 100%;"></p>
-<p>图 3 工时预算改变时, 连续松弛模型与整数模型的最优值.</p>
+<p>图 23-3 工时预算改变时, 连续松弛模型与整数模型的最优值.</p>
 <p>恢复整数条件后, 场数不能连续变化, 服务量呈台阶式增长.
 图中整数预算逐一计算, 预算在相邻整数之间时, 可行整数方案不变,
 因为每个整数方案的工时用量都是整数. 因此,
 连续模型的斜率不能直接当作整数方案每增加 1 人时的实际增益.</p>
-<h3 id="用两种语言复算工时变化">用两种语言复算工时变化</h3>
+<h3 id="用两种语言复算工时变化">23.6.3 用两种语言复算工时变化</h3>
 <p>将活动数据写入 <code>solve_activity</code> 后, 每次改变工时预算,
 同时求连续与整数模型. Python 的函数保存在
 <code>activity_budget.py</code>, MATLAB 函数保存在
@@ -937,7 +946,8 @@ z^*(B)=200+2.5B.
 <span class="math inline">\((17,2,1)\)</span>, 服务445人次.
 两个结果对应不同的变量限制, 不能混为同一个整数模型.
 图中的三类活动整数曲线应使用完整三变量模型复算.</p>
-<h3 id="求解器输入形式与数学标准型">求解器输入形式与数学标准型</h3>
+<h3 id="求解器输入形式与数学标准型">23.6.4
+求解器输入形式与数学标准型</h3>
 <p>前述接口形式可直接接收不等式, 等式和变量边界.
 一些教材将以下形式称为线性规划的标准型:</p>
 <p><span class="math display">\[
@@ -956,9 +966,9 @@ x\geqslant0.
 <p><span class="math inline">\(s\)</span> 表示剩余工时.
 这种改写有助于理解标准型及其理论; 使用 <code>linprog</code> 时,
 可以直接提交不等式, 无需手工添加松弛变量.</p>
-<h2 id="资金配置-用线性约束控制风险额度">7. 资金配置:
+<h2 id="资金配置-用线性约束控制风险额度">23.7 资金配置:
 用线性约束控制风险额度</h2>
-<h3 id="问题与数据">问题与数据</h3>
+<h3 id="问题与数据">23.7.1 问题与数据</h3>
 <p>某单位有 10000 元资金, 可以存入银行, 也可以购买四类资产.
 希望在规定的风险额度内, 使一个投资期间的净收益最大.</p>
 <p>本例据1998年全国大学生数学建模竞赛A题《投资的收益和风险》的四资产情形改编[5].
@@ -1028,7 +1038,7 @@ class="math inline">\(s_i\)</span> 的购买本金. 手续费另行支付,
 <p>先学习<strong>比例手续费模型</strong>: 每项费用为 <span
 class="math inline">\(p_ix_i\)</span>. 实际交易还可能收取最低费用,
 最低手续费一节再讨论这一情形.</p>
-<h3 id="资金平衡与净收益">资金平衡与净收益</h3>
+<h3 id="资金平衡与净收益">23.7.2 资金平衡与净收益</h3>
 <p>购买 <span class="math inline">\(x_i\)</span> 元本金, 需要支付 <span
 class="math inline">\((1+p_i)x_i\)</span> 元, 因此资金平衡为:</p>
 <p><span class="math display">\[
@@ -1046,7 +1056,7 @@ Q(x)&amp;=(1+0.05)x_0+\sum\limits_{i=1}^{4}(1+r_i)x_i-M\\
 &amp;=0.05x_0+\sum\limits_{i=1}^{4}(r_i-p_i)x_i.
 \end{aligned}
 \]</span></p>
-<h3 id="风险上限怎样变成线性约束">风险上限怎样变成线性约束</h3>
+<h3 id="风险上限怎样变成线性约束">23.7.3 风险上限怎样变成线性约束</h3>
 <p>本例用"最大单项风险暴露"衡量风险:</p>
 <p><span class="math display">\[
 R(x)=\max_{1\leqslant i\leqslant4}\left\{\frac{q_ix_i}{M}\right\}.
@@ -1073,7 +1083,7 @@ q_ix_i\leqslant aM,\qquad i=1,2,3,4.
 \]</span></p>
 <p>于是, 收益与风险的取舍转化为"在风险上限内最大化净收益".
 这四条风险约束都是线性的.</p>
-<h3 id="完整的比例手续费模型">完整的比例手续费模型</h3>
+<h3 id="完整的比例手续费模型">23.7.4 完整的比例手续费模型</h3>
 <p><span class="math display">\[
 \begin{aligned}
 &amp;\max\quad 0.05x_0+0.27x_1+0.19x_2+0.185x_3+0.185x_4,\\
@@ -1089,7 +1099,7 @@ x_0,x_1,x_2,x_3,x_4\geqslant0.
 \]</span></p>
 <p>所有金额均以元为单位. 代码中的百分数应转换为小数, 例如 2.5% 写为
 <code>0.025</code>.</p>
-<h3 id="python-实现-1">Python 实现</h3>
+<h3 id="python-实现-1">23.7.5 Python 实现</h3>
 <p>将以下程序保存为 <code>portfolio.py</code>. 变量顺序为"银行, <span
 class="math inline">\(s_1\)</span>, <span
 class="math inline">\(s_2\)</span>, <span
@@ -1097,7 +1107,7 @@ class="math inline">\(s_3\)</span>, <span
 class="math inline">\(s_4\)</span>". <code>A_eq,b_eq</code>
 用来提交资金平衡等式.</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linprog</span><br><span class="line"></span><br><span class="line">M = <span class="number">10000.0</span></span><br><span class="line">r0 = <span class="number">0.05</span></span><br><span class="line">r = np.array([<span class="number">0.28</span>, <span class="number">0.21</span>, <span class="number">0.23</span>, <span class="number">0.25</span>])</span><br><span class="line">p = np.array([<span class="number">0.01</span>, <span class="number">0.02</span>, <span class="number">0.045</span>, <span class="number">0.065</span>])</span><br><span class="line">q = np.array([<span class="number">0.025</span>, <span class="number">0.015</span>, <span class="number">0.055</span>, <span class="number">0.026</span>])</span><br><span class="line">u = np.array([<span class="number">103.0</span>, <span class="number">198.0</span>, <span class="number">52.0</span>, <span class="number">40.0</span>])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">solve_portfolio</span>(<span class="params">a</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;比例手续费模型，返回本金、净收益和实际风险。&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> np.isscalar(a) <span class="keyword">or</span> np.iscomplexobj(a) <span class="keyword">or</span> <span class="keyword">not</span> np.isfinite(a) <span class="keyword">or</span> a &lt; <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;风险上限必须是非负有限数&quot;</span>)</span><br><span class="line">    net = np.concatenate(([r0], r - p))</span><br><span class="line">    A = np.column_stack((np.zeros(<span class="number">4</span>), np.diag(q)))</span><br><span class="line">    Aeq = np.array([[<span class="number">1.0</span>, <span class="number">1.01</span>, <span class="number">1.02</span>, <span class="number">1.045</span>, <span class="number">1.065</span>]])</span><br><span class="line"></span><br><span class="line">    result = linprog(-net, A_ub=A, b_ub=np.full(<span class="number">4</span>, a*M),</span><br><span class="line">                     A_eq=Aeq, b_eq=[M],</span><br><span class="line">                     bounds=(<span class="number">0</span>, <span class="literal">None</span>), method=<span class="string">&quot;highs&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> result.success:</span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(result.message)</span><br><span class="line"></span><br><span class="line">    x = result.x</span><br><span class="line">    tol = <span class="number">1e-6</span></span><br><span class="line">    <span class="keyword">if</span> (np.<span class="built_in">any</span>(x &lt; -tol) <span class="keyword">or</span> np.<span class="built_in">any</span>(A @ x &gt; a*M + tol)</span><br><span class="line">            <span class="keyword">or</span> <span class="built_in">abs</span>((Aeq @ x)[<span class="number">0</span>] - M) &gt; tol</span><br><span class="line">            <span class="keyword">or</span> <span class="built_in">abs</span>(net @ x + result.fun) &gt; tol):</span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(<span class="string">&quot;资金、风险或目标值回代失败&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> x, -result.fun, np.<span class="built_in">max</span>(q*x[<span class="number">1</span>:])/M</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    x, Q, R = solve_portfolio(<span class="number">0.006</span>)</span><br><span class="line">    fees = p*x[<span class="number">1</span>:]</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;本金顺序：银行、s1、s2、s3、s4&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(np.<span class="built_in">round</span>(x, <span class="number">4</span>))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;手续费：&quot;</span>, np.<span class="built_in">round</span>(fees, <span class="number">4</span>))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;净收益：<span class="subst">&#123;Q:<span class="number">.4</span>f&#125;</span> 元；实际风险：<span class="subst">&#123;R:<span class="number">.6</span>f&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;资金合计：&quot;</span>, x.<span class="built_in">sum</span>() + fees.<span class="built_in">sum</span>())</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;小额购买：&quot;</span>, (x[<span class="number">1</span>:] &gt; <span class="number">1e-6</span>) &amp; (x[<span class="number">1</span>:] &lt; u - <span class="number">1e-6</span>))</span><br></pre></td></tr></table></figure>
-<h3 id="matlab-实现-1">MATLAB 实现</h3>
+<h3 id="matlab-实现-1">23.7.6 MATLAB 实现</h3>
 <p>将以下函数保存为 <code>solve_portfolio.m</code>, 它返回本金向量 <span
 class="math inline">\(x\)</span>, 最优净收益 <span
 class="math inline">\(Q\)</span> 和实际风险 <span
@@ -1105,7 +1115,7 @@ class="math inline">\(R\)</span>.</p>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[x,Q,R]</span> = <span class="title">solve_portfolio</span><span class="params">(a)</span></span></span><br><span class="line"><span class="comment">% 比例手续费模型；本金顺序：银行、s1、s2、s3、s4。</span></span><br><span class="line">validateattributes(a,&#123;<span class="string">&#x27;numeric&#x27;</span>&#125;,&#123;<span class="string">&#x27;scalar&#x27;</span>,<span class="string">&#x27;real&#x27;</span>,<span class="string">&#x27;finite&#x27;</span>,<span class="string">&#x27;nonnegative&#x27;</span>&#125;);</span><br><span class="line">M = <span class="number">10000</span>;</span><br><span class="line">r = [<span class="number">0.28</span>,<span class="number">0.21</span>,<span class="number">0.23</span>,<span class="number">0.25</span>].&#x27;;</span><br><span class="line">p = [<span class="number">0.01</span>,<span class="number">0.02</span>,<span class="number">0.045</span>,<span class="number">0.065</span>].&#x27;;</span><br><span class="line">q = [<span class="number">0.025</span>,<span class="number">0.015</span>,<span class="number">0.055</span>,<span class="number">0.026</span>].&#x27;;</span><br><span class="line">net = [<span class="number">0.05</span>,(r-p).&#x27;].&#x27;;</span><br><span class="line">A = [<span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">4</span>).&#x27;,<span class="built_in">diag</span>(q)];</span><br><span class="line">b = a*M*<span class="built_in">ones</span>(<span class="number">1</span>,<span class="number">4</span>).&#x27;;</span><br><span class="line">Aeq = [<span class="number">1</span>,(<span class="number">1</span>+p)&#x27;];</span><br><span class="line">options = optimoptions(<span class="string">&#x27;linprog&#x27;</span>,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;none&#x27;</span>);</span><br><span class="line">[x,fval,flag,out] = linprog(-net,A,b,Aeq,M,<span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">5</span>).&#x27;,[],options);</span><br><span class="line"><span class="keyword">if</span> flag ~= <span class="number">1</span></span><br><span class="line">    error(<span class="string">&#x27;未确认最优解：%s&#x27;</span>,out.message);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">assert(all(x &gt;= <span class="number">-1e-6</span>) &amp;&amp; all(A*x &lt;= b+<span class="number">1e-6</span>));</span><br><span class="line">assert(<span class="built_in">abs</span>(Aeq*x-M) &lt; <span class="number">1e-6</span>);</span><br><span class="line">assert(<span class="built_in">abs</span>(net&#x27;*x+fval) &lt; <span class="number">1e-6</span>);</span><br><span class="line">Q = -fval;</span><br><span class="line">R = <span class="built_in">max</span>(q.*x(<span class="number">2</span>:<span class="number">5</span>))/M;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
 <p>下面调用函数计算固定风险上限下的配置:</p>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">[x,Q,R] = solve_portfolio(<span class="number">0.006</span>);</span><br><span class="line">p = [<span class="number">0.01</span>,<span class="number">0.02</span>,<span class="number">0.045</span>,<span class="number">0.065</span>].&#x27;;</span><br><span class="line">u = [<span class="number">103</span>,<span class="number">198</span>,<span class="number">52</span>,<span class="number">40</span>].&#x27;;</span><br><span class="line">fees = p.*x(<span class="number">2</span>:<span class="number">5</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;本金顺序：银行、s1、s2、s3、s4&#x27;</span>); <span class="built_in">disp</span>(x);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;手续费：&#x27;</span>); <span class="built_in">disp</span>(fees);</span><br><span class="line">fprintf(<span class="string">&#x27;净收益：%.4f 元；实际风险：%.6f\n&#x27;</span>,Q,R);</span><br><span class="line">fprintf(<span class="string">&#x27;资金合计：%.4f 元\n&#x27;</span>,sum(x)+sum(fees));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;正购买额是否低于最低计费金额：&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>(x(<span class="number">2</span>:<span class="number">5</span>)&gt;<span class="number">1e-6</span> &amp; x(<span class="number">2</span>:<span class="number">5</span>)&lt;u<span class="number">-1e-6</span>);</span><br></pre></td></tr></table></figure>
-<h3 id="解释求解结果">解释求解结果</h3>
+<h3 id="解释求解结果">23.7.7 解释求解结果</h3>
 <p>取 <span class="math inline">\(a=0.006\)</span>,
 即允许的最大单项风险损失额为 <span class="math inline">\(aM=60\)</span>
 元. 求解结果如下, 显示值保留两位小数.</p>
@@ -1162,21 +1172,22 @@ Q(x)\approx2019.0764\text{ 元},\qquad R(x)=0.006.
 \]</span></p>
 <p>本例的四项购买金额均高于各自的最低计费金额,
 因此这一方案的费用也符合最低手续费一节的最低费用规则.</p>
-<h3 id="把程序的矩阵与模型逐项对照">把程序的矩阵与模型逐项对照</h3>
+<h3 id="把程序的矩阵与模型逐项对照">23.7.8
+把程序的矩阵与模型逐项对照</h3>
 <p>本金向量按银行与四项资产排列. <code>net</code> 保存净收益系数,
 所以输入目标为 <code>-net</code>; <code>diag(q)</code> 只把第 <span
 class="math inline">\(i\)</span> 项资产的本金乘以其风险系数, 银行列补0;
 资金等式中各资产系数为 <span class="math inline">\(1+p_i\)</span>,
 包括购买本金与手续费. 返回的实际风险由求得本金重新计算,
 不直接照抄允许的风险上限.</p>
-<h2 id="变化风险额度-从数值曲线到结构解释">8. 变化风险额度:
+<h2 id="变化风险额度-从数值曲线到结构解释">23.8 变化风险额度:
 从数值曲线到结构解释</h2>
-<h3 id="先看曲线-再解释变化">先看曲线, 再解释变化</h3>
+<h3 id="先看曲线-再解释变化">23.8.1 先看曲线, 再解释变化</h3>
 <p>逐步改变 <span class="math inline">\(a\)</span>,
-每次重新求解比例手续费模型, 得到图 4. 横轴的单位是百分数, 例如 0.6 对应
-<span class="math inline">\(a=0.006\)</span>.</p>
+每次重新求解比例手续费模型, 得到图 23-4. 横轴的单位是百分数, 例如 0.6
+对应 <span class="math inline">\(a=0.006\)</span>.</p>
 <p><img src="/images/LinearProgramming/LP-4.png" alt="" style="width: 100%;"></p>
-<p>图 4 比例手续费模型的最优净收益与本金配置随风险上限的变化.</p>
+<p>图 23-4 比例手续费模型的最优净收益与本金配置随风险上限的变化.</p>
 <p>上图显示: 风险上限放宽时, 最优净收益先增加, 随后进入平台. 下图显示:
 资金逐渐转向每单位总支出净收益更高的资产,
 银行存款和其他资产的配置先后减少.</p>
@@ -1241,7 +1252,8 @@ class="math inline">\(R(x)\)</span></th>
 <strong>允许的风险上限与实际风险是两个不同的量</strong>: 进入平台后,
 即使继续提高 <span class="math inline">\(a\)</span>,
 实际风险也不再增加.</p>
-<h3 id="为什么资金优先流向某些资产">为什么资金优先流向某些资产</h3>
+<h3 id="为什么资金优先流向某些资产">23.8.2
+为什么资金优先流向某些资产</h3>
 <p>每购买 <span class="math inline">\(x_i\)</span> 元本金, 实际花费
 <span class="math inline">\((1+p_i)x_i\)</span> 元. 因此比较资产时,
 应比较每单位总支出的净收益:</p>
@@ -1293,7 +1305,7 @@ class="math inline">\(x_i\leqslant aM/q_i\)</span>. 因此,
 可以优先买单位收益较高的资产, 达到上限后再买下一项, 余款存银行.</p>
 <p>这一方法依赖本例的特殊结构. 当不同资产还共同消耗其他资源,
 或约束相互耦合时, 不能把这条配置顺序当作一般线性规划的求解规则.</p>
-<h3 id="转折点从哪里来">转折点从哪里来</h3>
+<h3 id="转折点从哪里来">23.8.3 转折点从哪里来</h3>
 <p>风险额度较小时, 四项资产均达到各自上限, 剩余资金存银行. 随着上限放宽,
 银行存款先降为 0, 之后较低优先级的资产依次退出.</p>
 <p>前 <span class="math inline">\(k\)</span> 项资产恰好用完资金时:</p>
@@ -1343,9 +1355,9 @@ a_{\mathrm{sat}}=\frac{q_1}{1+p_1}
 <p>在比例手续费模型中, 这条曲线连续, 非递减, 且分段线性.
 转折点表示配置结构发生变化, 有助于讨论风险与收益的取舍; 选择哪一点,
 仍取决于事先规定的风险承受范围或收益要求.</p>
-<h2 id="选读-最低手续费怎样改变模型">9. 选读:
+<h2 id="选读-最低手续费怎样改变模型">23.9 选读:
 最低手续费怎样改变模型?</h2>
-<h3 id="何时需要改进比例费用模型">何时需要改进比例费用模型</h3>
+<h3 id="何时需要改进比例费用模型">23.9.1 何时需要改进比例费用模型</h3>
 <p>假设交易规则为: 不购买不收费; 购买金额为正且不超过 <span
 class="math inline">\(u_i\)</span> 时, 按 <span
 class="math inline">\(u_i\)</span> 计费; 超过 <span
@@ -1376,7 +1388,7 @@ class="math inline">\(u_i\)</span>: 若都达到, 费用一致; 若有未达到�
 因此比例模型的最优收益是完整费用模型的上界. 在 <span
 class="math inline">\(a=0.006\)</span> 时,
 比例最优方案又满足完整费用规则, 所以它也是完整模型的最优方案.</p>
-<h3 id="把买或不买写成二元变量">把"买或不买"写成二元变量</h3>
+<h3 id="把买或不买写成二元变量">23.9.2 把"买或不买"写成二元变量</h3>
 <p>令 <span class="math inline">\(z_i\in\{0,1\}\)</span> 表示是否启用第
 <span class="math inline">\(i\)</span> 项购买, <span
 class="math inline">\(t_i\)</span> 表示手续费, 并取有效本金上界 <span
@@ -1412,7 +1424,7 @@ class="math inline">\(F_i\)</span> 来自本金上界和最低计费规则,
 class="math inline">\(2^4=16\)</span> 种启用组合. 在每种组合中固定 <span
 class="math inline">\(z_i\)</span>, 求一个连续线性规划,
 再选出净收益最大的组合. 两种方法求解的是同一个费用模型.</p>
-<h3 id="python-实现-枚举启用组合">Python 实现: 枚举启用组合</h3>
+<h3 id="python-实现-枚举启用组合">23.9.3 Python 实现: 枚举启用组合</h3>
 <p>四项资产共有16种"买或不买"的组合. 下面的 <code>exact_fees.py</code>
 用 <code>product([0,1],repeat=4)</code> 逐一生成组合. 固定启用状态后,
 购买本金与手续费都是连续变量, 每个子问题由 <code>linprog</code> 求解.
@@ -1426,14 +1438,14 @@ class="math inline">\(t_i\geqslant p_ix_i\)</span>.</p>
 <p>组合不可行时跳过; 若出现其他求解失败, 则停止并报告.
 只有全部组合都完成求解后,
 才能确认其中最好的方案是完整费用模型的最优方案.</p>
-<h3 id="matlab-实现-同一组组合">MATLAB 实现: 同一组组合</h3>
+<h3 id="matlab-实现-同一组组合">23.9.4 MATLAB 实现: 同一组组合</h3>
 <p>函数 <code>solve_exact_fees.m</code>
 用整数的四个二进制位表示启用状态, 通过 <code>bitget</code> 读取各位;
 这与 Python 的 16 种组合枚举等价.</p>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[x,fees,Q]</span> = <span class="title">solve_exact_fees</span><span class="params">(a)</span></span></span><br><span class="line"><span class="comment">% 枚举16种购买组合；每种组合求一个连续LP。</span></span><br><span class="line">validateattributes(a,&#123;<span class="string">&#x27;numeric&#x27;</span>&#125;,&#123;<span class="string">&#x27;scalar&#x27;</span>,<span class="string">&#x27;real&#x27;</span>,<span class="string">&#x27;finite&#x27;</span>,<span class="string">&#x27;nonnegative&#x27;</span>&#125;);</span><br><span class="line">M = <span class="number">10000</span>;</span><br><span class="line">r = [<span class="number">0.28</span>,<span class="number">0.21</span>,<span class="number">0.23</span>,<span class="number">0.25</span>].&#x27;;</span><br><span class="line">p = [<span class="number">0.01</span>,<span class="number">0.02</span>,<span class="number">0.045</span>,<span class="number">0.065</span>].&#x27;;</span><br><span class="line">q = [<span class="number">0.025</span>,<span class="number">0.015</span>,<span class="number">0.055</span>,<span class="number">0.026</span>].&#x27;;</span><br><span class="line">u = [<span class="number">103</span>,<span class="number">198</span>,<span class="number">52</span>,<span class="number">40</span>].&#x27;;</span><br><span class="line">c = [<span class="number">-0.05</span>,-r.&#x27;,<span class="built_in">ones</span>(<span class="number">1</span>,<span class="number">4</span>)].&#x27;;</span><br><span class="line">A = <span class="built_in">zeros</span>(<span class="number">4</span>,<span class="number">9</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="number">4</span></span><br><span class="line">    A(<span class="built_in">i</span>,<span class="number">1</span>+<span class="built_in">i</span>) = p(<span class="built_in">i</span>);</span><br><span class="line">    A(<span class="built_in">i</span>,<span class="number">5</span>+<span class="built_in">i</span>) = <span class="number">-1</span>;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">options = optimoptions(<span class="string">&#x27;linprog&#x27;</span>,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;none&#x27;</span>);</span><br><span class="line">bestValue = <span class="built_in">inf</span>;</span><br><span class="line">best = [];</span><br><span class="line"><span class="keyword">for</span> mask = <span class="number">0</span>:<span class="number">15</span></span><br><span class="line">    active = bitget(mask,<span class="number">1</span>:<span class="number">4</span>)&#x27;;</span><br><span class="line">    caps = <span class="built_in">min</span>(M./(<span class="number">1</span>+p),a*M./q);</span><br><span class="line">    lb = [<span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">5</span>),(p.*u.*active).&#x27;].&#x27;;</span><br><span class="line">    ub = [M,(caps.*active).&#x27;,<span class="built_in">inf</span>(<span class="number">1</span>,<span class="number">4</span>)].&#x27;;</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="number">4</span></span><br><span class="line">        <span class="keyword">if</span> active(<span class="built_in">i</span>) == <span class="number">0</span></span><br><span class="line">            ub(<span class="number">5</span>+<span class="built_in">i</span>) = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    [v,value,flag,out] = linprog(c,A,<span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">4</span>).&#x27;, ...</span><br><span class="line">        <span class="built_in">ones</span>(<span class="number">1</span>,<span class="number">9</span>),M,lb,ub,options);</span><br><span class="line">    <span class="keyword">if</span> flag == <span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> value &lt; bestValue</span><br><span class="line">            bestValue = value;</span><br><span class="line">            best = v;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">elseif</span> flag ~= <span class="number">-2</span></span><br><span class="line">        error(<span class="string">&#x27;购买组合未完成求解：%s&#x27;</span>,out.message);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">if</span> <span class="built_in">isempty</span>(best)</span><br><span class="line">    error(<span class="string">&#x27;没有可行的购买组合&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">x = best(<span class="number">1</span>:<span class="number">5</span>);</span><br><span class="line">fees = best(<span class="number">6</span>:<span class="number">9</span>);</span><br><span class="line">expected = <span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">4</span>).&#x27;;</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="number">4</span></span><br><span class="line">    <span class="keyword">if</span> x(<span class="number">1</span>+<span class="built_in">i</span>) &gt; <span class="number">1e-6</span></span><br><span class="line">        expected(<span class="built_in">i</span>) = p(<span class="built_in">i</span>)*<span class="built_in">max</span>(x(<span class="number">1</span>+<span class="built_in">i</span>),u(<span class="built_in">i</span>));</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">assert(all(<span class="built_in">abs</span>(fees-expected) &lt; <span class="number">1e-6</span>));</span><br><span class="line">assert(<span class="built_in">abs</span>(sum(x)+sum(fees)-M) &lt; <span class="number">1e-6</span>);</span><br><span class="line">assert(<span class="built_in">max</span>(q.*x(<span class="number">2</span>:<span class="number">5</span>)) &lt;= a*M+<span class="number">1e-6</span>);</span><br><span class="line">Q = <span class="number">0.05</span>*x(<span class="number">1</span>)+r&#x27;*x(<span class="number">2</span>:<span class="number">5</span>)-sum(fees);</span><br><span class="line">assert(<span class="built_in">abs</span>(Q+bestValue) &lt; <span class="number">1e-6</span>);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
 <p>下面的 <code>exact_fees.m</code> 比较两种费用规则.</p>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line"><span class="keyword">for</span> a = [<span class="number">0</span>,<span class="number">0.0001</span>,<span class="number">0.001</span>,<span class="number">0.006</span>,<span class="number">0.05</span>]</span><br><span class="line">    [x,fees,Q] = solve_exact_fees(a);</span><br><span class="line">    [~,approxQ,~] = solve_portfolio(a);</span><br><span class="line">    fprintf(<span class="string">&#x27;a=%.4f，比例费用收益=%.6f，完整费用收益=%.6f\n&#x27;</span>, ...</span><br><span class="line">             a,approxQ,Q);</span><br><span class="line">    <span class="built_in">disp</span>(<span class="string">&#x27;本金：&#x27;</span>); <span class="built_in">disp</span>(x&#x27;);</span><br><span class="line">    <span class="built_in">disp</span>(<span class="string">&#x27;手续费：&#x27;</span>); <span class="built_in">disp</span>(fees&#x27;);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
-<h3 id="比较两种费用规则">比较两种费用规则</h3>
+<h3 id="比较两种费用规则">23.9.5 比较两种费用规则</h3>
 <table>
 <thead>
 <tr>
@@ -1482,13 +1494,14 @@ class="math inline">\(u_i\)</span> 都要一起转换.
 比例费用模型可以按资金规模等比例缩放,
 若只改变总资金而保持最低计费金额不变,
 则完整费用模型一般不再具有这一缩放性质.</p>
-<h3 id="最低费用如何改变收益曲线">最低费用如何改变收益曲线</h3>
-<p>图 5 放大小额购买区间. 比例费用模型允许任意小的购买额只支付比例费用,
+<h3 id="最低费用如何改变收益曲线">23.9.6 最低费用如何改变收益曲线</h3>
+<p>图 23-5 放大小额购买区间.
+比例费用模型允许任意小的购买额只支付比例费用,
 因此收益线从银行收益开始上升; 完整费用模型需要抵消最低费用的影响,
 部分区间仍以银行存款为最优方案.
 两条曲线之间的差距就是忽略最低费用造成的最优净收益高估.</p>
 <p><img src="/images/LinearProgramming/LP-5.png" alt="" style="width: 100%;"></p>
-<p>图 5 小风险额度下, 比例费用与完整费用模型的最优净收益.</p>
+<p>图 23-5 小风险额度下, 比例费用与完整费用模型的最优净收益.</p>
 <p>完整费用模型的最优值仍随风险上限放宽而不下降,
 但不能未经分析就沿用比例模型的凹折线性质.
 离散启用选择可能使边际收益出现不同的变化.</p>
@@ -1496,9 +1509,9 @@ class="math inline">\(u_i\)</span> 都要一起转换.
 因此完整费用模型不能直接作为普通连续LP提交. 枚举启用组合后,
 每个固定组合内的子问题才是连续LP. 比较所有组合的最优结果,
 才能得到完整费用模型的全局最优值.</p>
-<h2 id="选读-给定收益要求-反过来最小化风险">10. 选读: 给定收益要求,
+<h2 id="选读-给定收益要求-反过来最小化风险">23.10 选读: 给定收益要求,
 反过来最小化风险</h2>
-<h3 id="另一种收益与风险的取舍">另一种收益与风险的取舍</h3>
+<h3 id="另一种收益与风险的取舍">23.10.1 另一种收益与风险的取舍</h3>
 <p>前面的比例费用模型固定风险上限, 最大化收益. 也可以规定最低净收益
 <span class="math inline">\(\overline Q\)</span>, 再最小化风险. 引入
 <span class="math inline">\(t\geqslant0\)</span>,
@@ -1536,7 +1549,7 @@ t\geqslant0.
 class="math inline">\(\lambda=0\)</span> 时, <span
 class="math inline">\(t\)</span> 不必等于实际风险, 应另行用本金计算
 <span class="math inline">\(R(x)\)</span>.</p>
-<h3 id="将两种目标转换为程序输入">将两种目标转换为程序输入</h3>
+<h3 id="将两种目标转换为程序输入">23.10.2 将两种目标转换为程序输入</h3>
 <p>给定最低收益时, 变量顺序为银行本金, 四项资产本金和风险上界 <span
 class="math inline">\(t\)</span>. 目标系数只有 <span
 class="math inline">\(t\)</span> 对应的位置为1. 加权模型则把目标 <span
@@ -1550,7 +1563,7 @@ class="math inline">\(-Q/M+\lambda t\)</span>.
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linprog</span><br><span class="line"><span class="keyword">from</span> portfolio <span class="keyword">import</span> M, r0, r, p, q</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_solve</span>(<span class="params">c, A, b</span>):</span><br><span class="line">    <span class="comment"># Variables: bank, s1, s2, s3, s4, risk upper bound t.</span></span><br><span class="line">    Aeq = np.array([[<span class="number">1.0</span>, *(<span class="number">1</span> + p), <span class="number">0.0</span>]])</span><br><span class="line">    result = linprog(c, A_ub=A, b_ub=b, A_eq=Aeq, b_eq=[M],</span><br><span class="line">                     bounds=(<span class="number">0</span>, <span class="literal">None</span>), method=<span class="string">&quot;highs&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> result.success:</span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(result.message)</span><br><span class="line">    v = result.x</span><br><span class="line">    <span class="keyword">if</span> (np.<span class="built_in">any</span>(v &lt; -<span class="number">1e-6</span>) <span class="keyword">or</span> np.<span class="built_in">any</span>(A @ v &gt; b + <span class="number">1e-6</span>)</span><br><span class="line">            <span class="keyword">or</span> <span class="built_in">abs</span>((Aeq @ v)[<span class="number">0</span>] - M) &gt; <span class="number">1e-6</span></span><br><span class="line">            <span class="keyword">or</span> <span class="built_in">abs</span>(c @ v - result.fun) &gt; <span class="number">1e-6</span>):</span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(<span class="string">&quot;Constraint check failed.&quot;</span>)</span><br><span class="line">    x, t = v[:<span class="number">5</span>], v[<span class="number">5</span>]</span><br><span class="line">    Q = r0*x[<span class="number">0</span>] + (r - p) @ x[<span class="number">1</span>:]</span><br><span class="line">    R = np.<span class="built_in">max</span>(q*x[<span class="number">1</span>:])/M</span><br><span class="line">    <span class="keyword">return</span> x, Q, R, t</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">minimum_risk</span>(<span class="params">required_return</span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> np.isfinite(required_return):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;Required return must be finite.&quot;</span>)</span><br><span class="line">    net = np.r_[r0, r - p]</span><br><span class="line">    A = np.zeros((<span class="number">5</span>, <span class="number">6</span>))</span><br><span class="line">    A[:<span class="number">4</span>, <span class="number">1</span>:<span class="number">5</span>] = np.diag(q)</span><br><span class="line">    A[:<span class="number">4</span>, <span class="number">5</span>] = -M</span><br><span class="line">    A[<span class="number">4</span>, :<span class="number">5</span>] = -net</span><br><span class="line">    b = np.r_[np.zeros(<span class="number">4</span>), -required_return]</span><br><span class="line">    <span class="keyword">return</span> _solve(np.r_[np.zeros(<span class="number">5</span>), <span class="number">1.0</span>], A, b)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">weighted_tradeoff</span>(<span class="params">weight</span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> np.isfinite(weight) <span class="keyword">or</span> weight &lt; <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;Weight must be finite and nonnegative.&quot;</span>)</span><br><span class="line">    net = np.r_[r0, r - p]</span><br><span class="line">    A = np.zeros((<span class="number">4</span>, <span class="number">6</span>))</span><br><span class="line">    A[:, <span class="number">1</span>:<span class="number">5</span>] = np.diag(q)</span><br><span class="line">    A[:, <span class="number">5</span>] = -M</span><br><span class="line">    <span class="keyword">return</span> _solve(np.r_[-net/M, weight], A, np.zeros(<span class="number">4</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Minimum risk for return 2000:&quot;</span>, minimum_risk(<span class="number">2000</span>))</span><br><span class="line">    <span class="keyword">for</span> weight <span class="keyword">in</span> [<span class="number">0</span>, <span class="number">5</span>, <span class="number">15</span>, <span class="number">30</span>]:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Weighted model:&quot;</span>, weight, weighted_tradeoff(weight))</span><br></pre></td></tr></table></figure>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[x,Q,R,t]</span> = <span class="title">solve_tradeoff</span><span class="params">(mode,value)</span></span></span><br><span class="line"><span class="comment">% mode=&#x27;minimum_risk&#x27; (value is required return) or &#x27;weighted&#x27; (risk weight).</span></span><br><span class="line">validateattributes(value,&#123;<span class="string">&#x27;numeric&#x27;</span>&#125;,&#123;<span class="string">&#x27;scalar&#x27;</span>,<span class="string">&#x27;real&#x27;</span>,<span class="string">&#x27;finite&#x27;</span>&#125;);</span><br><span class="line">M=<span class="number">10000</span>; r0=<span class="number">0.05</span>;</span><br><span class="line">r=[<span class="number">0.28</span>,<span class="number">0.21</span>,<span class="number">0.23</span>,<span class="number">0.25</span>].&#x27;; p=[<span class="number">0.01</span>,<span class="number">0.02</span>,<span class="number">0.045</span>,<span class="number">0.065</span>].&#x27;;</span><br><span class="line">q=[<span class="number">0.025</span>,<span class="number">0.015</span>,<span class="number">0.055</span>,<span class="number">0.026</span>].&#x27;; net=[r0,(r-p).&#x27;].&#x27;;</span><br><span class="line">A=[<span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">4</span>).&#x27;,<span class="built_in">diag</span>(q),-M*<span class="built_in">ones</span>(<span class="number">1</span>,<span class="number">4</span>).&#x27;];</span><br><span class="line">b=<span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">4</span>).&#x27;;</span><br><span class="line"><span class="keyword">if</span> strcmp(mode,<span class="string">&#x27;minimum_risk&#x27;</span>)</span><br><span class="line">    A=[A; -net.&#x27;,<span class="number">0</span>]; b=[b.&#x27;,-value].&#x27;;</span><br><span class="line">    c=[<span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">5</span>),<span class="number">1</span>].&#x27;;</span><br><span class="line"><span class="keyword">elseif</span> strcmp(mode,<span class="string">&#x27;weighted&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> value&lt;<span class="number">0</span>, error(<span class="string">&#x27;Risk weight must be nonnegative.&#x27;</span>); <span class="keyword">end</span></span><br><span class="line">    c=[(-net/M).&#x27;,value].&#x27;;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    error(<span class="string">&#x27;Unknown mode.&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">Aeq=[<span class="number">1</span>,(<span class="number">1</span>+p).&#x27;,<span class="number">0</span>];</span><br><span class="line">options=optimoptions(<span class="string">&#x27;linprog&#x27;</span>,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;none&#x27;</span>);</span><br><span class="line">[v,fval,flag,out]=linprog(c,A,b,Aeq,M,<span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">6</span>).&#x27;,[],options);</span><br><span class="line"><span class="keyword">if</span> flag~=<span class="number">1</span>, error(<span class="string">&#x27;Optimality not confirmed: %s&#x27;</span>,out.message); <span class="keyword">end</span></span><br><span class="line">assert(all(v&gt;=<span class="number">-1e-6</span>) &amp;&amp; all(A*v&lt;=b+<span class="number">1e-6</span>));</span><br><span class="line">assert(<span class="built_in">abs</span>(Aeq*v-M)&lt;<span class="number">1e-6</span> &amp;&amp; <span class="built_in">abs</span>(c.&#x27;*v-fval)&lt;<span class="number">1e-6</span>);</span><br><span class="line">x=v(<span class="number">1</span>:<span class="number">5</span>); Q=net.&#x27;*x; R=<span class="built_in">max</span>(q.*x(<span class="number">2</span>:<span class="number">5</span>))/M; t=v(<span class="number">6</span>);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">[x,Q,R,t]=solve_tradeoff(<span class="string">&#x27;minimum_risk&#x27;</span>,<span class="number">2000</span>);</span><br><span class="line"><span class="built_in">disp</span>(x); <span class="built_in">disp</span>([Q,R,t]);</span><br><span class="line"><span class="keyword">for</span> weight=[<span class="number">0</span>,<span class="number">5</span>,<span class="number">15</span>,<span class="number">30</span>]</span><br><span class="line">    [x,Q,R,t]=solve_tradeoff(<span class="string">&#x27;weighted&#x27;</span>,weight);</span><br><span class="line">    <span class="built_in">disp</span>(x); <span class="built_in">disp</span>([weight,Q,R,t]);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
-<h2 id="练习">11. 练习</h2>
+<h2 id="练习">23.11 练习</h2>
 <ol type="1">
 <li>将下列模型写成 <code>linprog</code> 的输入形式,
 并判断目标是否有有限最大值.</li>

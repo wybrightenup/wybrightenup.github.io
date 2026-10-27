@@ -19,20 +19,20 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="最小生成树: 从通信网络建设理解安全的贪心选择 六座城市准备建设一张基础通信网络. 每条候选线路都有给定的建设代价, 只要城市之间可以通过线路中转通信, 就不必为每对城市单独铺线. 怎样选择线路, 才能在连接全部城市的同时使总代价最小? 本章用同一张六城市网络完成一次建模与求解: 先核对一个完整建设方案, 再分别用 Kruskal 合并分量, 用 Prim 扩大连接范围, 解释两种贪">
+    <meta name="description" content="第22章 最小生成树: 从通信网络建设理解安全的贪心选择 六座城市准备建设一张基础通信网络. 每条候选线路都有给定的建设代价, 只要城市之间可以通过线路中转通信, 就不必为每对城市单独铺线. 怎样选择线路, 才能在连接全部城市的同时使总代价最小? 本章用同一张六城市网络完成一次建模与求解: 先核对一个完整建设方案, 再分别用 Kruskal 合并分量, 用 Prim 扩大连接范围,">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Hexo">
 <meta property="og:url" content="http://example.com/MathematicalModelingMethods/MinimumSpanningTree.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="最小生成树: 从通信网络建设理解安全的贪心选择 六座城市准备建设一张基础通信网络. 每条候选线路都有给定的建设代价, 只要城市之间可以通过线路中转通信, 就不必为每对城市单独铺线. 怎样选择线路, 才能在连接全部城市的同时使总代价最小? 本章用同一张六城市网络完成一次建模与求解: 先核对一个完整建设方案, 再分别用 Kruskal 合并分量, 用 Prim 扩大连接范围, 解释两种贪">
+<meta property="og:description" content="第22章 最小生成树: 从通信网络建设理解安全的贪心选择 六座城市准备建设一张基础通信网络. 每条候选线路都有给定的建设代价, 只要城市之间可以通过线路中转通信, 就不必为每对城市单独铺线. 怎样选择线路, 才能在连接全部城市的同时使总代价最小? 本章用同一张六城市网络完成一次建模与求解: 先核对一个完整建设方案, 再分别用 Kruskal 合并分量, 用 Prim 扩大连接范围,">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/images/MinimumSpanningTree/candidate_network.png">
 <meta property="og:image" content="http://example.com/images/MinimumSpanningTree/kruskal_steps.png">
 <meta property="og:image" content="http://example.com/images/MinimumSpanningTree/prim_steps.png">
 <meta property="og:image" content="http://example.com/images/MinimumSpanningTree/tree_comparison.png">
 <meta property="og:image" content="http://example.com/images/MinimumSpanningTree/cost_sensitivity.png">
-<meta property="article:published_time" content="2026-10-26T03:23:44.857Z">
-<meta property="article:modified_time" content="2026-10-26T02:32:08.000Z">
+<meta property="article:published_time" content="2026-10-27T00:21:35.741Z">
+<meta property="article:modified_time" content="2026-10-27T00:18:14.000Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/MinimumSpanningTree/candidate_network.png">
@@ -133,12 +133,18 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91-%E4%BB%8E%E9%80%9A%E4%BF%A1%E7%BD%91%E7%BB%9C%E5%BB%BA%E8%AE%BE%E7%90%86%E8%A7%A3%E5%AE%89%E5%85%A8%E7%9A%84%E8%B4%AA%E5%BF%83%E9%80%89%E6%8B%A9"><span class="nav-number">1.</span> <span class="nav-text">最小生成树:
-从通信网络建设理解安全的贪心选择</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E7%9C%8B%E9%80%9A%E4%BF%A1%E7%BD%91%E7%BB%9C%E7%9A%84%E8%BE%93%E5%85%A5%E4%B8%8E%E8%BE%93%E5%87%BA"><span class="nav-number">1.1.</span> <span class="nav-text">1. 先看通信网络的输入与输出</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E6%A8%A1%E5%AF%B9%E8%B1%A1%E4%B8%8E%E5%81%87%E8%AE%BE"><span class="nav-number">1.1.1.</span> <span class="nav-text">建模对象与假设</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E5%9F%8E%E5%B8%82%E6%95%B0%E6%8D%AE"><span class="nav-number">1.1.2.</span> <span class="nav-text">六城市数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E9%80%9A-%E6%A0%91%E4%B8%8E%E7%94%9F%E6%88%90%E6%A0%91"><span class="nav-number">1.1.3.</span> <span class="nav-text">连通, 树与生成树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E5%BA%93%E5%87%BD%E6%95%B0%E5%85%88%E6%B1%82%E4%B8%80%E4%B8%AA%E5%AE%8C%E6%95%B4%E6%96%B9%E6%A1%88"><span class="nav-number">1.1.4.</span> <span class="nav-text">用库函数先求一个完整方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%98%8E%E7%A1%AE%E6%A8%A1%E5%9E%8B-%E4%B8%8D%E6%8A%8A%E5%BB%BA%E8%AE%BE%E8%B4%B9%E7%94%A8%E4%B8%8E%E9%80%9A%E8%A1%8C%E8%B7%9D%E7%A6%BB%E6%B7%B7%E6%B7%86"><span class="nav-number">1.2.</span> <span class="nav-text">2. 明确模型,
-不把建设费用与通行距离混淆</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E5%AD%A6%E7%9B%AE%E6%A0%87"><span class="nav-number">1.2.1.</span> <span class="nav-text">数学目标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%B7%A5%E7%A8%8B%E4%B8%AD%E7%9A%84%E6%9C%80%E4%BC%98%E8%BF%9E%E6%8E%A5%E5%8F%AF%E4%BB%A5%E5%8F%96%E4%B8%BA%E6%A0%91"><span class="nav-number">1.2.2.</span> <span class="nav-text">为什么工程中的最优连接可以取为树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91%E4%B9%9F%E5%85%81%E8%AE%B8%E8%B4%9F%E6%9D%83"><span class="nav-number">1.2.3.</span> <span class="nav-text">最小生成树也允许负权</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E%E6%9C%80%E7%9F%AD%E8%B7%AF%E5%BE%84%E6%AF%94%E8%BE%83"><span class="nav-number">1.2.4.</span> <span class="nav-text">与最短路径比较</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E9%80%9A%E7%BA%A6%E6%9D%9F%E7%9A%84%E5%BD%A2%E5%BC%8F%E5%8C%96%E8%A1%A8%E8%BE%BE%E8%BF%9B%E9%98%B6"><span class="nav-number">1.2.5.</span> <span class="nav-text">连通约束的形式化表达(进阶)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%AF%E4%BB%A5%E5%AE%89%E5%85%A8%E5%9C%B0%E9%80%89%E6%8B%A9%E6%9C%80%E8%BD%BB%E8%B7%A8%E5%89%B2%E8%BE%B9"><span class="nav-number">1.3.</span> <span class="nav-text">3.
-为什么可以安全地选择最轻跨割边?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%B2%E4%B8%8E%E6%9C%80%E8%BD%BB%E8%B7%A8%E5%89%B2%E8%BE%B9"><span class="nav-number">1.3.1.</span> <span class="nav-text">割与最轻跨割边</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E4%BA%A4%E6%8D%A2%E8%AE%BA%E8%AF%81"><span class="nav-number">1.3.2.</span> <span class="nav-text">一个交换论证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E7%A7%8D%E7%AE%97%E6%B3%95%E5%A6%82%E4%BD%95%E8%BF%90%E7%94%A8%E5%89%B2%E6%80%A7%E8%B4%A8"><span class="nav-number">1.3.3.</span> <span class="nav-text">两种算法如何运用割性质</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kruskal-%E4%BB%8E%E7%8B%AC%E7%AB%8B%E5%9F%8E%E5%B8%82%E9%80%90%E6%AD%A5%E5%90%88%E5%B9%B6"><span class="nav-number">1.4.</span> <span class="nav-text">4. Kruskal: 从独立城市逐步合并</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.4.1.</span> <span class="nav-text">算法步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E5%9F%8E%E5%B8%82%E9%80%90%E6%AD%A5%E6%8E%A8%E6%BC%94"><span class="nav-number">1.4.2.</span> <span class="nav-text">六城市逐步推演</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E5%B9%B6%E6%9F%A5%E9%9B%86%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E6%88%90%E7%8E%AF"><span class="nav-number">1.4.3.</span> <span class="nav-text">用并查集判断是否成环</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E7%94%A8%E5%B9%B6%E6%9F%A5%E9%9B%86%E8%AE%B0%E5%BD%95%E5%88%86%E9%87%8F"><span class="nav-number">1.4.4.</span> <span class="nav-text">Python: 用并查集记录分量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E6%8E%92%E5%BA%8F%E4%B8%8E%E5%AE%89%E5%85%A8%E5%8A%A0%E8%BE%B9"><span class="nav-number">1.4.5.</span> <span class="nav-text">Python: 排序与安全加边</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab-%E7%9B%B8%E5%90%8C%E7%9A%84%E5%88%86%E9%87%8F%E5%90%88%E5%B9%B6%E8%BF%87%E7%A8%8B"><span class="nav-number">1.4.6.</span> <span class="nav-text">MATLAB: 相同的分量合并过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#prim-%E4%BB%8E%E4%B8%80%E5%BA%A7%E5%9F%8E%E5%B8%82%E9%80%90%E6%AD%A5%E6%89%A9%E5%B1%95"><span class="nav-number">1.5.</span> <span class="nav-text">5. Prim: 从一座城市逐步扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E6%AD%A5%E9%AA%A4-1"><span class="nav-number">1.5.1.</span> <span class="nav-text">算法步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E5%9F%8E%E5%B8%82-1-%E5%BC%80%E5%A7%8B%E7%9A%84%E6%8E%A8%E6%BC%94"><span class="nav-number">1.5.2.</span> <span class="nav-text">从城市 1 开始的推演</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E-dijkstra-%E7%9A%84%E8%B7%9D%E7%A6%BB%E5%8C%BA%E5%88%86"><span class="nav-number">1.5.3.</span> <span class="nav-text">与 Dijkstra 的&quot;距离&quot;区分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E7%BB%B4%E6%8A%A4%E6%9C%80%E8%BD%BB%E6%8E%A5%E5%85%A5%E8%BE%B9"><span class="nav-number">1.5.4.</span> <span class="nav-text">Python: 维护最轻接入边</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab-%E5%AF%B9%E7%85%A7%E6%89%AB%E6%8F%8F%E4%B8%8E%E6%9B%B4%E6%96%B0"><span class="nav-number">1.5.5.</span> <span class="nav-text">MATLAB: 对照扫描与更新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E5%90%8C%E4%B8%80%E7%BB%84%E6%95%B0%E6%8D%AE%E8%BF%90%E8%A1%8C%E4%B8%A4%E7%A7%8D%E7%AE%97%E6%B3%95"><span class="nav-number">1.5.6.</span> <span class="nav-text">用同一组数据运行两种算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E9%AA%8C%E5%8F%AF%E8%A1%8C%E6%80%A7-%E6%9C%80%E4%BC%98%E6%80%A7%E4%B8%8E%E5%94%AF%E4%B8%80%E6%80%A7"><span class="nav-number">1.6.</span> <span class="nav-text">6. 核验可行性, 最优性与唯一性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E7%A1%AE%E8%AE%A4%E7%BB%93%E6%9E%9C%E6%98%AF%E4%B8%80%E6%A3%B5%E7%94%9F%E6%88%90%E6%A0%91"><span class="nav-number">1.6.1.</span> <span class="nav-text">先确认结果是一棵生成树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%89%E5%90%8C%E6%9D%83%E8%BE%B9-%E4%B9%9F%E5%8F%AF%E4%BB%A5%E6%9C%89%E5%94%AF%E4%B8%80%E6%9C%80%E4%BC%98%E8%A7%A3"><span class="nav-number">1.6.2.</span> <span class="nav-text">有同权边, 也可以有唯一最优解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E5%94%AF%E4%B8%80%E6%9C%80%E8%BD%BB%E8%B7%A8%E5%89%B2%E8%BE%B9%E8%AF%81%E6%98%8E%E6%9C%AC%E4%BE%8B%E5%94%AF%E4%B8%80"><span class="nav-number">1.6.3.</span> <span class="nav-text">用唯一最轻跨割边证明本例唯一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E4%B8%80%E5%BC%A0%E5%9B%BE%E5%8F%AF%E4%BB%A5%E6%9C%89%E5%A4%9A%E6%A3%B5%E7%94%9F%E6%88%90%E6%A0%91"><span class="nav-number">1.6.4.</span> <span class="nav-text">同一张图可以有多棵生成树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E5%B0%8F%E5%9B%BE%E6%9E%9A%E4%B8%BE%E4%BD%9C%E7%8B%AC%E7%AB%8B%E6%A0%B8%E9%AA%8C"><span class="nav-number">1.6.5.</span> <span class="nav-text">用小图枚举作独立核验</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BD%93%E7%BA%BF%E8%B7%AF%E6%8A%A5%E4%BB%B7%E6%94%B9%E5%8F%98%E6%97%B6-%E5%BB%BA%E8%AE%BE%E6%96%B9%E6%A1%88%E5%A6%82%E4%BD%95%E8%B0%83%E6%95%B4"><span class="nav-number">1.7.</span> <span class="nav-text">7. 当线路报价改变时,
-建设方案如何调整?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E8%BF%9E%E9%80%9A-%E9%9B%B6%E6%9D%83%E8%BE%B9%E4%B8%8E%E6%8E%A5%E5%8F%A3%E7%BA%A6%E5%AE%9A"><span class="nav-number">1.8.</span> <span class="nav-text">8. 不连通, 零权边与接口约定</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E8%BE%B9%E6%9D%83%E6%95%B0%E6%8D%AE%E5%88%B0%E5%87%BD%E6%95%B0%E8%BE%93%E5%85%A5"><span class="nav-number">1.8.1.</span> <span class="nav-text">从边权数据到函数输入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%BB%98%E8%AE%A4%E5%8F%82%E6%95%B0%E4%B8%8E%E4%B8%8D%E8%BF%9E%E9%80%9A%E5%9B%BE"><span class="nav-number">1.8.2.</span> <span class="nav-text">默认参数与不连通图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E7%A8%8B%E5%BA%8F%E4%B8%AD%E6%98%8E%E7%A1%AE%E8%BE%B9%E7%95%8C%E8%A1%8C%E4%B8%BA"><span class="nav-number">1.8.3.</span> <span class="nav-text">在程序中明确边界行为</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E5%BB%BA%E5%9B%BE%E5%8F%AA%E6%98%AF%E4%B8%80%E7%A7%8D%E8%BE%93%E5%85%A5%E6%96%B9%E5%BC%8F"><span class="nav-number">1.8.4.</span> <span class="nav-text">矩阵建图只是一种输入方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B9%E6%8D%AE%E8%A7%84%E6%A8%A1%E9%80%89%E7%AE%97%E6%B3%95-%E6%A0%B9%E6%8D%AE%E9%9C%80%E6%B1%82%E6%A3%80%E6%9F%A5%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.9.</span> <span class="nav-text">9. 根据规模选算法,
-根据需求检查模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B9%E6%8D%AE%E6%95%B0%E6%8D%AE%E8%A1%A8%E7%A4%BA%E5%92%8C%E5%AE%9E%E7%8E%B0%E9%80%89%E6%8B%A9%E7%AE%97%E6%B3%95"><span class="nav-number">1.9.1.</span> <span class="nav-text">根据数据表示和实现选择算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E8%BF%9E%E9%80%9A%E6%97%B6%E5%BE%97%E5%88%B0%E5%A4%9A%E5%B0%91%E6%9D%A1%E6%A3%AE%E6%9E%97%E8%BE%B9"><span class="nav-number">1.9.2.</span> <span class="nav-text">不连通时得到多少条森林边</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E7%A8%8B%E7%BA%A6%E6%9D%9F%E8%B6%85%E5%87%BA%E6%A8%A1%E5%9E%8B%E6%97%B6"><span class="nav-number">1.9.3.</span> <span class="nav-text">工程约束超出模型时</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%94%99%E8%AF%AF%E4%B8%8E%E4%BF%AE%E6%AD%A3"><span class="nav-number">1.9.4.</span> <span class="nav-text">常见错误与修正</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.10.</span> <span class="nav-text">10. 练习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.11.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC22%E7%AB%A0-%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91-%E4%BB%8E%E9%80%9A%E4%BF%A1%E7%BD%91%E7%BB%9C%E5%BB%BA%E8%AE%BE%E7%90%86%E8%A7%A3%E5%AE%89%E5%85%A8%E7%9A%84%E8%B4%AA%E5%BF%83%E9%80%89%E6%8B%A9"><span class="nav-number">1.</span> <span class="nav-text">第22章
+最小生成树: 从通信网络建设理解安全的贪心选择</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E7%9C%8B%E9%80%9A%E4%BF%A1%E7%BD%91%E7%BB%9C%E7%9A%84%E8%BE%93%E5%85%A5%E4%B8%8E%E8%BE%93%E5%87%BA"><span class="nav-number">1.1.</span> <span class="nav-text">22.1 先看通信网络的输入与输出</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E6%A8%A1%E5%AF%B9%E8%B1%A1%E4%B8%8E%E5%81%87%E8%AE%BE"><span class="nav-number">1.1.1.</span> <span class="nav-text">22.1.1 建模对象与假设</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E5%9F%8E%E5%B8%82%E6%95%B0%E6%8D%AE"><span class="nav-number">1.1.2.</span> <span class="nav-text">22.1.2 六城市数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E9%80%9A-%E6%A0%91%E4%B8%8E%E7%94%9F%E6%88%90%E6%A0%91"><span class="nav-number">1.1.3.</span> <span class="nav-text">22.1.3 连通, 树与生成树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E5%BA%93%E5%87%BD%E6%95%B0%E5%85%88%E6%B1%82%E4%B8%80%E4%B8%AA%E5%AE%8C%E6%95%B4%E6%96%B9%E6%A1%88"><span class="nav-number">1.1.4.</span> <span class="nav-text">22.1.4 用库函数先求一个完整方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%98%8E%E7%A1%AE%E6%A8%A1%E5%9E%8B-%E4%B8%8D%E6%8A%8A%E5%BB%BA%E8%AE%BE%E8%B4%B9%E7%94%A8%E4%B8%8E%E9%80%9A%E8%A1%8C%E8%B7%9D%E7%A6%BB%E6%B7%B7%E6%B7%86"><span class="nav-number">1.2.</span> <span class="nav-text">22.2 明确模型,
+不把建设费用与通行距离混淆</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E5%AD%A6%E7%9B%AE%E6%A0%87"><span class="nav-number">1.2.1.</span> <span class="nav-text">22.2.1 数学目标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%B7%A5%E7%A8%8B%E4%B8%AD%E7%9A%84%E6%9C%80%E4%BC%98%E8%BF%9E%E6%8E%A5%E5%8F%AF%E4%BB%A5%E5%8F%96%E4%B8%BA%E6%A0%91"><span class="nav-number">1.2.2.</span> <span class="nav-text">22.2.2
+为什么工程中的最优连接可以取为树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91%E4%B9%9F%E5%85%81%E8%AE%B8%E8%B4%9F%E6%9D%83"><span class="nav-number">1.2.3.</span> <span class="nav-text">22.2.3 最小生成树也允许负权</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E%E6%9C%80%E7%9F%AD%E8%B7%AF%E5%BE%84%E6%AF%94%E8%BE%83"><span class="nav-number">1.2.4.</span> <span class="nav-text">22.2.4 与最短路径比较</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E9%80%9A%E7%BA%A6%E6%9D%9F%E7%9A%84%E5%BD%A2%E5%BC%8F%E5%8C%96%E8%A1%A8%E8%BE%BE%E8%BF%9B%E9%98%B6"><span class="nav-number">1.2.5.</span> <span class="nav-text">22.2.5 连通约束的形式化表达(进阶)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%AF%E4%BB%A5%E5%AE%89%E5%85%A8%E5%9C%B0%E9%80%89%E6%8B%A9%E6%9C%80%E8%BD%BB%E8%B7%A8%E5%89%B2%E8%BE%B9"><span class="nav-number">1.3.</span> <span class="nav-text">22.3
+为什么可以安全地选择最轻跨割边?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%B2%E4%B8%8E%E6%9C%80%E8%BD%BB%E8%B7%A8%E5%89%B2%E8%BE%B9"><span class="nav-number">1.3.1.</span> <span class="nav-text">22.3.1 割与最轻跨割边</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E4%BA%A4%E6%8D%A2%E8%AE%BA%E8%AF%81"><span class="nav-number">1.3.2.</span> <span class="nav-text">22.3.2 一个交换论证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E7%A7%8D%E7%AE%97%E6%B3%95%E5%A6%82%E4%BD%95%E8%BF%90%E7%94%A8%E5%89%B2%E6%80%A7%E8%B4%A8"><span class="nav-number">1.3.3.</span> <span class="nav-text">22.3.3 两种算法如何运用割性质</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kruskal-%E4%BB%8E%E7%8B%AC%E7%AB%8B%E5%9F%8E%E5%B8%82%E9%80%90%E6%AD%A5%E5%90%88%E5%B9%B6"><span class="nav-number">1.4.</span> <span class="nav-text">22.4 Kruskal:
+从独立城市逐步合并</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.4.1.</span> <span class="nav-text">22.4.1 算法步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E5%9F%8E%E5%B8%82%E9%80%90%E6%AD%A5%E6%8E%A8%E6%BC%94"><span class="nav-number">1.4.2.</span> <span class="nav-text">22.4.2 六城市逐步推演</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E5%B9%B6%E6%9F%A5%E9%9B%86%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E6%88%90%E7%8E%AF"><span class="nav-number">1.4.3.</span> <span class="nav-text">22.4.3 用并查集判断是否成环</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E7%94%A8%E5%B9%B6%E6%9F%A5%E9%9B%86%E8%AE%B0%E5%BD%95%E5%88%86%E9%87%8F"><span class="nav-number">1.4.4.</span> <span class="nav-text">22.4.4 Python: 用并查集记录分量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E6%8E%92%E5%BA%8F%E4%B8%8E%E5%AE%89%E5%85%A8%E5%8A%A0%E8%BE%B9"><span class="nav-number">1.4.5.</span> <span class="nav-text">22.4.5 Python: 排序与安全加边</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab-%E7%9B%B8%E5%90%8C%E7%9A%84%E5%88%86%E9%87%8F%E5%90%88%E5%B9%B6%E8%BF%87%E7%A8%8B"><span class="nav-number">1.4.6.</span> <span class="nav-text">22.4.6 MATLAB:
+相同的分量合并过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#prim-%E4%BB%8E%E4%B8%80%E5%BA%A7%E5%9F%8E%E5%B8%82%E9%80%90%E6%AD%A5%E6%89%A9%E5%B1%95"><span class="nav-number">1.5.</span> <span class="nav-text">22.5 Prim: 从一座城市逐步扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E6%AD%A5%E9%AA%A4-1"><span class="nav-number">1.5.1.</span> <span class="nav-text">22.5.1 算法步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E5%9F%8E%E5%B8%82-1-%E5%BC%80%E5%A7%8B%E7%9A%84%E6%8E%A8%E6%BC%94"><span class="nav-number">1.5.2.</span> <span class="nav-text">22.5.2 从城市 1 开始的推演</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E-dijkstra-%E7%9A%84%E8%B7%9D%E7%A6%BB%E5%8C%BA%E5%88%86"><span class="nav-number">1.5.3.</span> <span class="nav-text">22.5.3 与 Dijkstra 的&quot;距离&quot;区分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E7%BB%B4%E6%8A%A4%E6%9C%80%E8%BD%BB%E6%8E%A5%E5%85%A5%E8%BE%B9"><span class="nav-number">1.5.4.</span> <span class="nav-text">22.5.4 Python: 维护最轻接入边</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab-%E5%AF%B9%E7%85%A7%E6%89%AB%E6%8F%8F%E4%B8%8E%E6%9B%B4%E6%96%B0"><span class="nav-number">1.5.5.</span> <span class="nav-text">22.5.5 MATLAB: 对照扫描与更新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E5%90%8C%E4%B8%80%E7%BB%84%E6%95%B0%E6%8D%AE%E8%BF%90%E8%A1%8C%E4%B8%A4%E7%A7%8D%E7%AE%97%E6%B3%95"><span class="nav-number">1.5.6.</span> <span class="nav-text">22.5.6 用同一组数据运行两种算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E9%AA%8C%E5%8F%AF%E8%A1%8C%E6%80%A7-%E6%9C%80%E4%BC%98%E6%80%A7%E4%B8%8E%E5%94%AF%E4%B8%80%E6%80%A7"><span class="nav-number">1.6.</span> <span class="nav-text">22.6 核验可行性, 最优性与唯一性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E7%A1%AE%E8%AE%A4%E7%BB%93%E6%9E%9C%E6%98%AF%E4%B8%80%E6%A3%B5%E7%94%9F%E6%88%90%E6%A0%91"><span class="nav-number">1.6.1.</span> <span class="nav-text">22.6.1 先确认结果是一棵生成树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%89%E5%90%8C%E6%9D%83%E8%BE%B9-%E4%B9%9F%E5%8F%AF%E4%BB%A5%E6%9C%89%E5%94%AF%E4%B8%80%E6%9C%80%E4%BC%98%E8%A7%A3"><span class="nav-number">1.6.2.</span> <span class="nav-text">22.6.2 有同权边,
+也可以有唯一最优解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E5%94%AF%E4%B8%80%E6%9C%80%E8%BD%BB%E8%B7%A8%E5%89%B2%E8%BE%B9%E8%AF%81%E6%98%8E%E6%9C%AC%E4%BE%8B%E5%94%AF%E4%B8%80"><span class="nav-number">1.6.3.</span> <span class="nav-text">22.6.3
+用唯一最轻跨割边证明本例唯一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E4%B8%80%E5%BC%A0%E5%9B%BE%E5%8F%AF%E4%BB%A5%E6%9C%89%E5%A4%9A%E6%A3%B5%E7%94%9F%E6%88%90%E6%A0%91"><span class="nav-number">1.6.4.</span> <span class="nav-text">22.6.4 同一张图可以有多棵生成树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E5%B0%8F%E5%9B%BE%E6%9E%9A%E4%B8%BE%E4%BD%9C%E7%8B%AC%E7%AB%8B%E6%A0%B8%E9%AA%8C"><span class="nav-number">1.6.5.</span> <span class="nav-text">22.6.5 用小图枚举作独立核验</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BD%93%E7%BA%BF%E8%B7%AF%E6%8A%A5%E4%BB%B7%E6%94%B9%E5%8F%98%E6%97%B6-%E5%BB%BA%E8%AE%BE%E6%96%B9%E6%A1%88%E5%A6%82%E4%BD%95%E8%B0%83%E6%95%B4"><span class="nav-number">1.7.</span> <span class="nav-text">22.7 当线路报价改变时,
+建设方案如何调整?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E8%BF%9E%E9%80%9A-%E9%9B%B6%E6%9D%83%E8%BE%B9%E4%B8%8E%E6%8E%A5%E5%8F%A3%E7%BA%A6%E5%AE%9A"><span class="nav-number">1.8.</span> <span class="nav-text">22.8 不连通, 零权边与接口约定</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E8%BE%B9%E6%9D%83%E6%95%B0%E6%8D%AE%E5%88%B0%E5%87%BD%E6%95%B0%E8%BE%93%E5%85%A5"><span class="nav-number">1.8.1.</span> <span class="nav-text">22.8.1 从边权数据到函数输入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%BB%98%E8%AE%A4%E5%8F%82%E6%95%B0%E4%B8%8E%E4%B8%8D%E8%BF%9E%E9%80%9A%E5%9B%BE"><span class="nav-number">1.8.2.</span> <span class="nav-text">22.8.2 默认参数与不连通图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E7%A8%8B%E5%BA%8F%E4%B8%AD%E6%98%8E%E7%A1%AE%E8%BE%B9%E7%95%8C%E8%A1%8C%E4%B8%BA"><span class="nav-number">1.8.3.</span> <span class="nav-text">22.8.3 在程序中明确边界行为</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E5%BB%BA%E5%9B%BE%E5%8F%AA%E6%98%AF%E4%B8%80%E7%A7%8D%E8%BE%93%E5%85%A5%E6%96%B9%E5%BC%8F"><span class="nav-number">1.8.4.</span> <span class="nav-text">22.8.4 矩阵建图只是一种输入方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B9%E6%8D%AE%E8%A7%84%E6%A8%A1%E9%80%89%E7%AE%97%E6%B3%95-%E6%A0%B9%E6%8D%AE%E9%9C%80%E6%B1%82%E6%A3%80%E6%9F%A5%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.9.</span> <span class="nav-text">22.9 根据规模选算法,
+根据需求检查模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B9%E6%8D%AE%E6%95%B0%E6%8D%AE%E8%A1%A8%E7%A4%BA%E5%92%8C%E5%AE%9E%E7%8E%B0%E9%80%89%E6%8B%A9%E7%AE%97%E6%B3%95"><span class="nav-number">1.9.1.</span> <span class="nav-text">22.9.1
+根据数据表示和实现选择算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E8%BF%9E%E9%80%9A%E6%97%B6%E5%BE%97%E5%88%B0%E5%A4%9A%E5%B0%91%E6%9D%A1%E6%A3%AE%E6%9E%97%E8%BE%B9"><span class="nav-number">1.9.2.</span> <span class="nav-text">22.9.2 不连通时得到多少条森林边</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E7%A8%8B%E7%BA%A6%E6%9D%9F%E8%B6%85%E5%87%BA%E6%A8%A1%E5%9E%8B%E6%97%B6"><span class="nav-number">1.9.3.</span> <span class="nav-text">22.9.3 工程约束超出模型时</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%94%99%E8%AF%AF%E4%B8%8E%E4%BF%AE%E6%AD%A3"><span class="nav-number">1.9.4.</span> <span class="nav-text">22.9.4 常见错误与修正</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.10.</span> <span class="nav-text">22.10 练习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.11.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -188,8 +194,8 @@
       
       
       <div class="post-body">
-          <h1 id="最小生成树-从通信网络建设理解安全的贪心选择">最小生成树:
-从通信网络建设理解安全的贪心选择</h1>
+          <h1 id="第22章-最小生成树-从通信网络建设理解安全的贪心选择">第22章
+最小生成树: 从通信网络建设理解安全的贪心选择</h1>
 <p>六座城市准备建设一张基础通信网络. 每条候选线路都有给定的建设代价,
 只要城市之间可以通过线路中转通信, 就不必为每对城市单独铺线.
 怎样选择线路, 才能在连接全部城市的同时使总代价最小?</p>
@@ -197,8 +203,8 @@
 再分别用 Kruskal 合并分量, 用 Prim 扩大连接范围,
 解释两种贪心选择为什么安全. 随后检查最优性, 唯一性及线路报价变化, 并用
 Python 与 MATLAB 复算.</p>
-<h2 id="先看通信网络的输入与输出">1. 先看通信网络的输入与输出</h2>
-<h3 id="建模对象与假设">建模对象与假设</h3>
+<h2 id="先看通信网络的输入与输出">22.1 先看通信网络的输入与输出</h2>
+<h3 id="建模对象与假设">22.1.1 建模对象与假设</h3>
 <p>用顶点表示城市, 用无向边表示允许施工的线路,
 用边权表示该线路的长度或建设费用. 只有边表中的线路可被选择,
 不能直接增添一条未给出的"捷径".</p>
@@ -208,7 +214,7 @@ Python 与 MATLAB 复算.</p>
 <p>本例假设线路可双向通信, 选中线路的代价可以相加, 不另外限制线路容量,
 城市连接数量或通信绕行长度. 权重使用统一的教学长度单位,
 不代表实际城市工程测量.</p>
-<h3 id="六城市数据">六城市数据</h3>
+<h3 id="六城市数据">22.1.2 六城市数据</h3>
 <p>顶点统一编号为 <span class="math inline">\(1,2,\ldots,6\)</span>. 共
 10 条候选线路, 数据如下.</p>
 <table>
@@ -264,8 +270,9 @@ Python 与 MATLAB 复算.</p>
 <p>每条无向边只代表一条候选线路, 例如 1—2 与 2—1 是同一条边.
 示意图中的位置和线长只用于展示, 真正参与优化的是连接关系及边权.</p>
 <p><img src="/images/MinimumSpanningTree/candidate_network.png" alt="" style="width: 100%;"></p>
-<p>图 1 六城市候选通信网络. 数字是线路权重, 图上位置不表示实际距离.</p>
-<h3 id="连通-树与生成树">连通, 树与生成树</h3>
+<p>图 22-1 六城市候选通信网络. 数字是线路权重,
+图上位置不表示实际距离.</p>
+<h3 id="连通-树与生成树">22.1.3 连通, 树与生成树</h3>
 <table>
 <colgroup>
 <col style="width: 50%" />
@@ -313,7 +320,7 @@ class="math inline">\(n-1\)</span> 条边; 或无环且有 <span
 class="math inline">\(n-1\)</span> 条边. 不能只数边而忽略连通性或环.</p>
 <p>树上两点之间的路径虽然唯一, 却未必是原图中的最短路径.
 最小生成树的"最小", 针对的是全部选中边的总和.</p>
-<h3 id="用库函数先求一个完整方案">用库函数先求一个完整方案</h3>
+<h3 id="用库函数先求一个完整方案">22.1.4 用库函数先求一个完整方案</h3>
 <p>两种语言都采用城市编号1至6, 输入边表的每行表示一条无向候选线路.
 Python 将边表保存为 <code>mst_data.py</code>.</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">N = <span class="number">6</span></span><br><span class="line">EDGES = [</span><br><span class="line">    (<span class="number">1</span>, <span class="number">2</span>, <span class="number">14</span>),</span><br><span class="line">    (<span class="number">1</span>, <span class="number">3</span>, <span class="number">18</span>),</span><br><span class="line">    (<span class="number">2</span>, <span class="number">3</span>, <span class="number">13</span>),</span><br><span class="line">    (<span class="number">2</span>, <span class="number">4</span>, <span class="number">18</span>),</span><br><span class="line">    (<span class="number">2</span>, <span class="number">5</span>, <span class="number">16</span>),</span><br><span class="line">    (<span class="number">3</span>, <span class="number">4</span>, <span class="number">12</span>),</span><br><span class="line">    (<span class="number">3</span>, <span class="number">5</span>, <span class="number">16</span>),</span><br><span class="line">    (<span class="number">4</span>, <span class="number">5</span>, <span class="number">14</span>),</span><br><span class="line">    (<span class="number">4</span>, <span class="number">6</span>, <span class="number">19</span>),</span><br><span class="line">    (<span class="number">5</span>, <span class="number">6</span>, <span class="number">10</span>),</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
@@ -330,9 +337,9 @@ E_T=\{1—2,2—3,3—4,4—5,5—6\},
 这个方案包含全部城市, 连通且没有圈.
 但"得到一棵树"还不能独立证明它最便宜;
 下面从模型与选边规则解释最优性.</p>
-<h2 id="明确模型-不把建设费用与通行距离混淆">2. 明确模型,
+<h2 id="明确模型-不把建设费用与通行距离混淆">22.2 明确模型,
 不把建设费用与通行距离混淆</h2>
-<h3 id="数学目标">数学目标</h3>
+<h3 id="数学目标">22.2.1 数学目标</h3>
 <p>给定有限的连通无向带权图 <span
 class="math inline">\(G=(V,E,w)\)</span>, 求生成树 <span
 class="math inline">\(T=(V,E_T)\)</span>, 使</p>
@@ -344,15 +351,15 @@ class="math inline">\(L^*\)</span>. 不同生成树可能达到同一个最优�
 因此最优边集不一定唯一, 但最优总权重是一个确定的数值.</p>
 <p>单个顶点本身就是一棵树, 边数为 0, 总权重为 0. 若输入图不连通,
 就不存在覆盖全部顶点的一棵生成树; 不能把森林误报为已经连接所有城市.</p>
-<h3
-id="为什么工程中的最优连接可以取为树">为什么工程中的最优连接可以取为树</h3>
+<h3 id="为什么工程中的最优连接可以取为树">22.2.2
+为什么工程中的最优连接可以取为树</h3>
 <p>本例权重严格为正. 若一套连通建设方案含有一个环,
 删除环上的任意一条边仍能保持连通, 而且降低总费用. 反复删去环,
 最终得到一棵树.</p>
 <p>当边权仅要求非负时, 删去零权边可能不降低总费用,
 但至少存在一棵与最优连通方案同样便宜的生成树. 因此, 在非负建设费用,
 没有额外可靠性或容量约束时, 最小生成树能回答"最低总代价连接"的问题.</p>
-<h3 id="最小生成树也允许负权">最小生成树也允许负权</h3>
+<h3 id="最小生成树也允许负权">22.2.3 最小生成树也允许负权</h3>
 <p>作为数学问题, 最小生成树不要求边权非负; Kruskal 和 Prim
 都允许有限的零权, 负权. 树只有固定的 <span
 class="math inline">\(n-1\)</span> 条边, 不允许反复绕圈,
@@ -362,7 +369,7 @@ class="math inline">\(n-1\)</span> 条边, 不允许反复绕圈,
 最小生成树总权重为 <span class="math inline">\(-2\)</span>;
 若允许保留环, 选全部三条边反而得到更小的 <span
 class="math inline">\(-3\)</span>. 工程建模不能忽略这个目标差别.</p>
-<h3 id="与最短路径比较">与最短路径比较</h3>
+<h3 id="与最短路径比较">22.2.4 与最短路径比较</h3>
 <table>
 <colgroup>
 <col style="width: 25%" />
@@ -399,7 +406,7 @@ class="math inline">\(1—2—3—4—5—6\)</span>, 总权重 63</td>
 <p>本例最小生成树中, 城市 1 到 6 的唯一路径长度为 63,
 而原图中两点的最短距离是 40. 这正说明,
 最低建设费用与最短传输距离是两个不同目标.</p>
-<h3 id="连通约束的形式化表达进阶">连通约束的形式化表达(进阶)</h3>
+<h3 id="连通约束的形式化表达进阶">22.2.5 连通约束的形式化表达(进阶)</h3>
 <p>令 <span class="math inline">\(x_e\in\{0,1\}\)</span> 表示是否选取边
 <span class="math inline">\(e\)</span>. 对非空真子集 <span
 class="math inline">\(S\subset V\)</span>, 记 <span
@@ -424,16 +431,16 @@ class="math inline">\(n-1\)</span> 条边就保证所选图为树.
 本章的数据没有自环, 这个模型中的边也连接两个不同顶点.</p>
 <p>上述模型帮助说明约束, 却无需逐条列出全部子集再调用通用优化器;
 最小生成树的专门算法可以更直接地求解.</p>
-<h2 id="为什么可以安全地选择最轻跨割边">3.
+<h2 id="为什么可以安全地选择最轻跨割边">22.3
 为什么可以安全地选择最轻跨割边?</h2>
-<h3 id="割与最轻跨割边">割与最轻跨割边</h3>
+<h3 id="割与最轻跨割边">22.3.1 割与最轻跨割边</h3>
 <p>将全部顶点分成非空的 <span class="math inline">\(S\)</span> 与 <span
 class="math inline">\(V\setminus S\)</span>, 就得到一个割.
 连接两侧的边叫跨割边. 任何生成树都必须至少选取一条跨割边,
 否则两侧无法通信.</p>
 <p><strong>割性质: 割上的一条最轻边, 至少属于某棵最小生成树;
 若它是这个割上唯一最轻的边, 则属于所有最小生成树.</strong></p>
-<h3 id="一个交换论证">一个交换论证</h3>
+<h3 id="一个交换论证">22.3.2 一个交换论证</h3>
 <p>设最轻跨割边为 <span class="math inline">\(e\)</span>,
 取一棵最小生成树 <span class="math inline">\(T\)</span>. 若 <span
 class="math inline">\(e\)</span> 已在 <span
@@ -459,7 +466,7 @@ class="math inline">\(L(T&#39;)&lt;L(T)\)</span>, 矛盾,
 若当前边集没有跨越这个割,
 就可以对一棵包含当前边集的最小生成树进行上述交换,
 删去的跨割边不会属于当前边集. 于是新边也是安全选择.</p>
-<h3 id="两种算法如何运用割性质">两种算法如何运用割性质</h3>
+<h3 id="两种算法如何运用割性质">22.3.3 两种算法如何运用割性质</h3>
 <p>Prim 维护一棵逐步扩大的树,
 选择"已加入顶点集合与外部顶点集合之间"的最轻边. 当前树边均在集合内部,
 满足安全加边的条件.</p>
@@ -471,8 +478,9 @@ class="math inline">\(L(T&#39;)&lt;L(T)\)</span>, 矛盾,
 可以安全加入.</p>
 <p>两种算法在各自正确的选边规则下都得到全局最优解.
 "采用贪心策略"并不等于"只能得到局部最优".</p>
-<h2 id="kruskal-从独立城市逐步合并">4. Kruskal: 从独立城市逐步合并</h2>
-<h3 id="算法步骤">算法步骤</h3>
+<h2 id="kruskal-从独立城市逐步合并">22.4 Kruskal:
+从独立城市逐步合并</h2>
+<h3 id="算法步骤">22.4.1 算法步骤</h3>
 <ol type="1">
 <li>保留所有顶点, 初始没有选中边, 每个顶点独自构成一个分量.</li>
 <li>将全部候选边按权重从小到大排序.</li>
@@ -484,7 +492,7 @@ class="math inline">\(L(T&#39;)&lt;L(T)\)</span>, 矛盾,
 </ol>
 <p>结果边集初始为空, 输入边表仍被完整保留. 跳过成环候选后,
 继续考察排序中的下一条边.</p>
-<h3 id="六城市逐步推演">六城市逐步推演</h3>
+<h3 id="六城市逐步推演">22.4.2 六城市逐步推演</h3>
 <p>为固定展示顺序, 同权边按端点编号排序.
 每一行都表示加入该边之后的分量情况.</p>
 <table>
@@ -559,22 +567,22 @@ L^*=10+12+13+14+14=\boxed{63}.
 class="math inline">\(2—3—4—5\)</span>, 再加入它就形成环,
 所以不能加入生成树.</p>
 <p><img src="/images/MinimumSpanningTree/kruskal_steps.png" alt="" style="width: 100%;"></p>
-<p>图 2 Kruskal 的五次分量合并. 红色边为已选线路,
+<p>图 22-2 Kruskal 的五次分量合并. 红色边为已选线路,
 各子图标题注明新增边与累计权重. 最后一个子图另示若考察2—5,
 该候选边会形成圈而被跳过; 它不是实际执行中的第六次加边.</p>
-<h3 id="用并查集判断是否成环">用并查集判断是否成环</h3>
+<h3 id="用并查集判断是否成环">22.4.3 用并查集判断是否成环</h3>
 <p>并查集维护"哪些顶点属于同一个连通分量". <code>find(v)</code>
 返回分量代表; <code>union(u,v)</code> 合并两个不同分量.</p>
 <p>若 <code>find(u)==find(v)</code>, 说明已选边已经连接了两端,
 新边会形成环. 若代表不同, 加入新边恰好将两个分量合并, 不会成环.
 路径压缩与按规模合并可以加速这一操作.</p>
-<h3 id="python-用并查集记录分量">Python: 用并查集记录分量</h3>
+<h3 id="python-用并查集记录分量">22.4.4 Python: 用并查集记录分量</h3>
 <p><code>DisjointSet</code> 不保存通信路线, 只记录顶点所属分量.
 <code>find</code> 沿父指针寻找代表, 并压缩路径; <code>union</code>
 先判断两端是否已连通, 再把较小分量合并到较大分量.
 合并成功才减少分量数.</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> isfinite</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DisjointSet</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, n</span>):</span><br><span class="line">        <span class="variable language_">self</span>.parent = <span class="built_in">list</span>(<span class="built_in">range</span>(n + <span class="number">1</span>))</span><br><span class="line">        <span class="variable language_">self</span>.size = [<span class="number">1</span>] * (n + <span class="number">1</span>)</span><br><span class="line">        <span class="variable language_">self</span>.components = n</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">find</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="keyword">while</span> <span class="variable language_">self</span>.parent[x] != x:</span><br><span class="line">            <span class="variable language_">self</span>.parent[x] = <span class="variable language_">self</span>.parent[<span class="variable language_">self</span>.parent[x]]</span><br><span class="line">            x = <span class="variable language_">self</span>.parent[x]</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">union</span>(<span class="params">self, u, v</span>):</span><br><span class="line">        ru, rv = <span class="variable language_">self</span>.find(u), <span class="variable language_">self</span>.find(v)</span><br><span class="line">        <span class="keyword">if</span> ru == rv:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.size[ru] &lt; <span class="variable language_">self</span>.size[rv]:</span><br><span class="line">            ru, rv = rv, ru</span><br><span class="line">        <span class="variable language_">self</span>.parent[rv] = ru</span><br><span class="line">        <span class="variable language_">self</span>.size[ru] += <span class="variable language_">self</span>.size[rv]</span><br><span class="line">        <span class="variable language_">self</span>.components -= <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br></pre></td></tr></table></figure>
-<h3 id="python-排序与安全加边">Python: 排序与安全加边</h3>
+<h3 id="python-排序与安全加边">22.4.5 Python: 排序与安全加边</h3>
 <p>下面的函数与并查集放在同一个 <code>kruskal.py</code> 文件中.
 它先将每条边的两个端点按编号排序, 再按"权重, 端点"固定处理顺序. 若
 <code>union</code> 返回 <code>False</code>,
@@ -585,13 +593,14 @@ class="math inline">\(2—3—4—5\)</span>, 再加入它就形成环,
 <p>默认要求连接全部顶点; <code>require_connected=False</code>
 则返回各分量的最小生成森林. 返回值依次为选边, 总权重和分量数.
 分量数为1时, 才能将结果解释为连接全部城市的一棵生成树.</p>
-<h3 id="matlab-相同的分量合并过程">MATLAB: 相同的分量合并过程</h3>
+<h3 id="matlab-相同的分量合并过程">22.4.6 MATLAB:
+相同的分量合并过程</h3>
 <p>MATLAB 使用数组 <code>parent</code> 与 <code>sizes</code> 保存并查集,
 局部函数 <code>find_root</code> 同时返回代表与更新后的父指针数组.
 两种语言的排序和选边规则相同.</p>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[selected,total,components]</span> = <span class="title">kruskal</span><span class="params">(n,E,require_connected)</span></span></span><br><span class="line"><span class="comment">% Vertices 1:n; each row of E is [u,v,weight].</span></span><br><span class="line"><span class="keyword">if</span> nargin&lt;<span class="number">3</span>, require_connected=<span class="built_in">true</span>; <span class="keyword">end</span></span><br><span class="line">validateattributes(n,&#123;<span class="string">&#x27;numeric&#x27;</span>&#125;,&#123;<span class="string">&#x27;scalar&#x27;</span>,<span class="string">&#x27;integer&#x27;</span>,<span class="string">&#x27;positive&#x27;</span>&#125;);</span><br><span class="line">validateattributes(E,&#123;<span class="string">&#x27;numeric&#x27;</span>&#125;,&#123;<span class="string">&#x27;2d&#x27;</span>,<span class="string">&#x27;real&#x27;</span>,<span class="string">&#x27;finite&#x27;</span>,<span class="string">&#x27;ncols&#x27;</span>,<span class="number">3</span>&#125;);</span><br><span class="line">validateattributes(E(:,<span class="number">1</span>:<span class="number">2</span>),&#123;<span class="string">&#x27;numeric&#x27;</span>&#125;,&#123;<span class="string">&#x27;integer&#x27;</span>,<span class="string">&#x27;&gt;=&#x27;</span>,<span class="number">1</span>,<span class="string">&#x27;&lt;=&#x27;</span>,n&#125;);</span><br><span class="line">E(:,<span class="number">1</span>:<span class="number">2</span>)=<span class="built_in">sort</span>(E(:,<span class="number">1</span>:<span class="number">2</span>),<span class="number">2</span>);</span><br><span class="line">E=<span class="built_in">sortrows</span>(E,[<span class="number">3</span>,<span class="number">1</span>,<span class="number">2</span>]);</span><br><span class="line">parent=<span class="number">1</span>:n; sizes=<span class="built_in">ones</span>(<span class="number">1</span>,n); components=n;</span><br><span class="line">selected=<span class="built_in">zeros</span>(<span class="number">0</span>,<span class="number">3</span>); total=<span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> k=<span class="number">1</span>:<span class="built_in">size</span>(E,<span class="number">1</span>)</span><br><span class="line">    u=E(k,<span class="number">1</span>); v=E(k,<span class="number">2</span>); w=E(k,<span class="number">3</span>);</span><br><span class="line">    [ru,parent]=find_root(parent,u);</span><br><span class="line">    [rv,parent]=find_root(parent,v);</span><br><span class="line">    <span class="keyword">if</span> ru==rv, <span class="keyword">continue</span>; <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">if</span> sizes(ru)&lt;sizes(rv), tmp=ru; ru=rv; rv=tmp; <span class="keyword">end</span></span><br><span class="line">    parent(rv)=ru; sizes(ru)=sizes(ru)+sizes(rv);</span><br><span class="line">    components=components<span class="number">-1</span>;</span><br><span class="line">    selected(<span class="keyword">end</span>+<span class="number">1</span>,:)=[u,v,w]; <span class="comment">%#ok&lt;AGROW&gt;</span></span><br><span class="line">    total=total+w;</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">size</span>(selected,<span class="number">1</span>)==n<span class="number">-1</span>, <span class="keyword">break</span>; <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">if</span> require_connected &amp;&amp; components~=<span class="number">1</span></span><br><span class="line">    error(<span class="string">&#x27;Disconnected graph: no spanning tree covering all vertices.&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[root,parent]</span> = <span class="title">find_root</span><span class="params">(parent,x)</span></span></span><br><span class="line"><span class="keyword">while</span> parent(x)~=x</span><br><span class="line">    parent(x)=parent(parent(x));</span><br><span class="line">    x=parent(x);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">root=x;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
-<h2 id="prim-从一座城市逐步扩展">5. Prim: 从一座城市逐步扩展</h2>
-<h3 id="算法步骤-1">算法步骤</h3>
+<h2 id="prim-从一座城市逐步扩展">22.5 Prim: 从一座城市逐步扩展</h2>
+<h3 id="算法步骤-1">22.5.1 算法步骤</h3>
 <ol type="1">
 <li>任选起点, 把它加入顶点集合 <span class="math inline">\(U\)</span>,
 初始没有树边.</li>
@@ -606,7 +615,7 @@ class="math inline">\(U\)</span>.</li>
 <p>第二步选择的是与<strong>整个已加入集合</strong>相连的最轻跨割边,
 不能仅从上一步新增的顶点挑一条最轻边,
 也不能选取两端均已在集合内的边.</p>
-<h3 id="从城市-1-开始的推演">从城市 1 开始的推演</h3>
+<h3 id="从城市-1-开始的推演">22.5.2 从城市 1 开始的推演</h3>
 <table>
 <thead>
 <tr>
@@ -668,9 +677,9 @@ class="math inline">\(\{1,2,3,4,5\}\)</span></td>
 class="math inline">\(14,13,12,14,10\)</span>, 并不单调递增.
 它只要求每一轮在当前跨割候选中选最轻边, 不要求遵循全图统一排序.</p>
 <p><img src="/images/MinimumSpanningTree/prim_steps.png" alt="" style="width: 100%;"></p>
-<p>图 3 从城市1开始的 Prim 扩展过程, 包含初始状态与五次加边.
+<p>图 22-3 从城市1开始的 Prim 扩展过程, 包含初始状态与五次加边.
 蓝色顶点组成当前集合, 红色边为已选线路; 所选边的权重不要求单调增加.</p>
-<h3 id="与-dijkstra-的距离区分">与 Dijkstra 的"距离"区分</h3>
+<h3 id="与-dijkstra-的距离区分">22.5.3 与 Dijkstra 的"距离"区分</h3>
 <p>扫描版本的 Prim 可维护 <code>key[v]</code>: 当前集合 <span
 class="math inline">\(U\)</span> 通过一条边接入 <span
 class="math inline">\(v\)</span> 的最小边权, 同时记录相应前驱.
@@ -680,7 +689,7 @@ class="math inline">\(v\)</span> 的最小边权, 同时记录相应前驱.
 class="math inline">\(d[u]+w(u,v)\)</span> 与 <span
 class="math inline">\(d[v]\)</span>. 两种算法虽然都可以逐个选顶点,
 目标与更新公式不同, 不能混用.</p>
-<h3 id="python-维护最轻接入边">Python: 维护最轻接入边</h3>
+<h3 id="python-维护最轻接入边">22.5.4 Python: 维护最轻接入边</h3>
 <p><code>key[v]</code> 为当前集合接入城市 <span
 class="math inline">\(v\)</span> 的最轻单边权重. <code>parent[v]</code>
 记录这条边在集合内部的端点. 每轮选择 <code>key</code> 最小的外部城市,
@@ -691,19 +700,19 @@ class="math inline">\(v\)</span> 的最轻单边权重. <code>parent[v]</code>
 所以不会向结果或总费用贡献一条边. 新增顶点之后,
 所有外部城市此前从整个集合得到的最好接入候选仍被保留,
 并非只看上一个城市.</p>
-<h3 id="matlab-对照扫描与更新">MATLAB: 对照扫描与更新</h3>
+<h3 id="matlab-对照扫描与更新">22.5.5 MATLAB: 对照扫描与更新</h3>
 <p>MATLAB 的 <code>min</code> 在并列时返回最小位置, 与 Python
 按编号选点的规则一致. <code>parent=0</code> 表示没有前驱.
 若最小接入权重仍为无穷, 剩余城市无法接入, 程序报告不连通.</p>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[selected,total]</span> = <span class="title">prim</span><span class="params">(n,E,start)</span></span></span><br><span class="line"><span class="comment">% key is the cheapest single edge into the current tree, not a distance.</span></span><br><span class="line"><span class="keyword">if</span> nargin&lt;<span class="number">3</span>, start=<span class="number">1</span>; <span class="keyword">end</span></span><br><span class="line">validateattributes(n,&#123;<span class="string">&#x27;numeric&#x27;</span>&#125;,&#123;<span class="string">&#x27;scalar&#x27;</span>,<span class="string">&#x27;integer&#x27;</span>,<span class="string">&#x27;positive&#x27;</span>&#125;);</span><br><span class="line">validateattributes(start,&#123;<span class="string">&#x27;numeric&#x27;</span>&#125;,&#123;<span class="string">&#x27;scalar&#x27;</span>,<span class="string">&#x27;integer&#x27;</span>,<span class="string">&#x27;&gt;=&#x27;</span>,<span class="number">1</span>,<span class="string">&#x27;&lt;=&#x27;</span>,n&#125;);</span><br><span class="line">validateattributes(E,&#123;<span class="string">&#x27;numeric&#x27;</span>&#125;,&#123;<span class="string">&#x27;2d&#x27;</span>,<span class="string">&#x27;real&#x27;</span>,<span class="string">&#x27;finite&#x27;</span>,<span class="string">&#x27;ncols&#x27;</span>,<span class="number">3</span>&#125;);</span><br><span class="line">validateattributes(E(:,<span class="number">1</span>:<span class="number">2</span>),&#123;<span class="string">&#x27;numeric&#x27;</span>&#125;,&#123;<span class="string">&#x27;integer&#x27;</span>,<span class="string">&#x27;&gt;=&#x27;</span>,<span class="number">1</span>,<span class="string">&#x27;&lt;=&#x27;</span>,n&#125;);</span><br><span class="line">adj=cell(n,<span class="number">1</span>);</span><br><span class="line"><span class="keyword">for</span> k=<span class="number">1</span>:<span class="built_in">size</span>(E,<span class="number">1</span>)</span><br><span class="line">    u=E(k,<span class="number">1</span>); v=E(k,<span class="number">2</span>); w=E(k,<span class="number">3</span>);</span><br><span class="line">    adj&#123;u&#125;(<span class="keyword">end</span>+<span class="number">1</span>,:)=[v,w]; adj&#123;v&#125;(<span class="keyword">end</span>+<span class="number">1</span>,:)=[u,w];</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">key=<span class="built_in">inf</span>(<span class="number">1</span>,n); parent=<span class="built_in">zeros</span>(<span class="number">1</span>,n); used=<span class="built_in">false</span>(<span class="number">1</span>,n);</span><br><span class="line">key(start)=<span class="number">0</span>; selected=<span class="built_in">zeros</span>(<span class="number">0</span>,<span class="number">3</span>); total=<span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">round</span>=<span class="number">1</span>:n</span><br><span class="line">    candidates=key; candidates(used)=Inf;</span><br><span class="line">    [best,u]=<span class="built_in">min</span>(candidates);</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">isinf</span>(best), error(<span class="string">&#x27;Disconnected graph: no spanning tree.&#x27;</span>); <span class="keyword">end</span></span><br><span class="line">    used(u)=<span class="built_in">true</span>;</span><br><span class="line">    <span class="keyword">if</span> parent(u)~=<span class="number">0</span></span><br><span class="line">        endpoints=<span class="built_in">sort</span>([parent(u),u]);</span><br><span class="line">        selected(<span class="keyword">end</span>+<span class="number">1</span>,:)=[endpoints,key(u)]; <span class="comment">%#ok&lt;AGROW&gt;</span></span><br><span class="line">        total=total+key(u);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">for</span> k=<span class="number">1</span>:<span class="built_in">size</span>(adj&#123;u&#125;,<span class="number">1</span>)</span><br><span class="line">        v=adj&#123;u&#125;(k,<span class="number">1</span>); w=adj&#123;u&#125;(k,<span class="number">2</span>);</span><br><span class="line">        <span class="keyword">if</span> ~used(v) &amp;&amp; w&lt;key(v)</span><br><span class="line">            key(v)=w; parent(v)=u;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
-<h3 id="用同一组数据运行两种算法">用同一组数据运行两种算法</h3>
+<h3 id="用同一组数据运行两种算法">22.5.6 用同一组数据运行两种算法</h3>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mst_data <span class="keyword">import</span> N, EDGES</span><br><span class="line"><span class="keyword">from</span> kruskal <span class="keyword">import</span> kruskal</span><br><span class="line"><span class="keyword">from</span> prim <span class="keyword">import</span> prim</span><br><span class="line">edges_k, total_k, components = kruskal(N, EDGES)</span><br><span class="line">edges_p, total_p = prim(N, EDGES, start=<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Kruskal:&quot;</span>, edges_k, total_k, components)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Prim:&quot;</span>, edges_p, total_p)</span><br><span class="line"><span class="keyword">assert</span> total_k == total_p == <span class="number">63</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">E=mst_data();</span><br><span class="line">[edges_k,total_k,components]=kruskal(<span class="number">6</span>,E);</span><br><span class="line">[edges_p,total_p]=prim(<span class="number">6</span>,E,<span class="number">1</span>);</span><br><span class="line"><span class="built_in">disp</span>(edges_k); <span class="built_in">disp</span>(total_k); <span class="built_in">disp</span>(components);</span><br><span class="line"><span class="built_in">disp</span>(edges_p); <span class="built_in">disp</span>(total_p);</span><br><span class="line">assert(total_k==<span class="number">63</span> &amp;&amp; total_p==<span class="number">63</span> &amp;&amp; components==<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
 <p>两种算法的选边顺序不同, 却都得到相同的五条建设线路, 总权重为63.
 对一般同权网络, 两个程序也可能输出不同最优边集; 应检查结构和总权重,
 不应要求所有案例都逐行相同.</p>
-<h2 id="核验可行性-最优性与唯一性">6. 核验可行性, 最优性与唯一性</h2>
-<h3 id="先确认结果是一棵生成树">先确认结果是一棵生成树</h3>
+<h2 id="核验可行性-最优性与唯一性">22.6 核验可行性, 最优性与唯一性</h2>
+<h3 id="先确认结果是一棵生成树">22.6.1 先确认结果是一棵生成树</h3>
 <p>选中边集为</p>
 <p><span class="math display">\[
 E_T=\{1—2,\ 2—3,\ 3—4,\ 4—5,\ 5—6\}.
@@ -713,12 +722,14 @@ E_T=\{1—2,\ 2—3,\ 3—4,\ 4—5,\ 5—6\}.
 割性质或算法正确性保证它的最优性.</p>
 <p>只验证"六个顶点, 五条边"不能独立证明最优;
 任意生成树都满足这个计数条件.</p>
-<h3 id="有同权边-也可以有唯一最优解">有同权边, 也可以有唯一最优解</h3>
+<h3 id="有同权边-也可以有唯一最优解">22.6.2 有同权边,
+也可以有唯一最优解</h3>
 <p>本例存在权重为 14, 16, 18 的重复值, 但最小生成树仍然唯一.
 判断唯一性不能只看是否存在相等权重.</p>
 <p>边权两两不同是唯一性的充分条件, 却不是必要条件. 全为权重 1
 的三角形有三棵不同的最小生成树, 说明同权也确实可能带来多个最优方案.</p>
-<h3 id="用唯一最轻跨割边证明本例唯一">用唯一最轻跨割边证明本例唯一</h3>
+<h3 id="用唯一最轻跨割边证明本例唯一">22.6.3
+用唯一最轻跨割边证明本例唯一</h3>
 <p>考虑以下五个割. 每个割上的最轻边都严格比其他跨割边更轻.</p>
 <table>
 <thead>
@@ -764,7 +775,7 @@ class="math inline">\(\{1,2,3,4,5\}\)</span></td>
 </table>
 <p>由割性质, 五条边分别属于所有最小生成树; 它们已经组成一棵生成树,
 因此不能再有另一组最优边集. 这证明本例的最小生成树唯一.</p>
-<h3 id="同一张图可以有多棵生成树">同一张图可以有多棵生成树</h3>
+<h3 id="同一张图可以有多棵生成树">22.6.4 同一张图可以有多棵生成树</h3>
 <table>
 <thead>
 <tr>
@@ -796,11 +807,11 @@ class="math inline">\(\{1,2,3,4,5\}\)</span></td>
 </tbody>
 </table>
 <p>这三种方案均包含六个顶点, 五条边且连通, 但总代价不同.
-"生成树"只解决结构可行性, "最小生成树"还要比较目标值. 图 4
+"生成树"只解决结构可行性, "最小生成树"还要比较目标值. 图 22-4
 在同一个顶点布局下展示三种方案, 便于比较它们的连接结构.</p>
 <p><img src="/images/MinimumSpanningTree/tree_comparison.png" alt="" style="width: 100%;"></p>
-<p>图 4 候选网络与三棵生成树. 连通结构都可行, 总权重却不同.</p>
-<h3 id="用小图枚举作独立核验">用小图枚举作独立核验</h3>
+<p>图 22-4 候选网络与三棵生成树. 连通结构都可行, 总权重却不同.</p>
+<h3 id="用小图枚举作独立核验">22.6.5 用小图枚举作独立核验</h3>
 <p>本例共有10条边, 生成树需要5条边, 因而只需检查 <span
 class="math inline">\(\binom{10}{5}=252\)</span> 个子集.
 对每个子集从城市1开始反复扩展可达顶点, 若六座城市全部可达,
@@ -810,7 +821,7 @@ class="math inline">\(\binom{10}{5}=252\)</span> 个子集.
 <p>运行结果为100棵生成树, 最优权重63, 最优边集只有一组.
 这与割性质证明一致. 枚举用于小例子的独立核验,
 不能替代大网络上的专门算法.</p>
-<h2 id="当线路报价改变时-建设方案如何调整">7. 当线路报价改变时,
+<h2 id="当线路报价改变时-建设方案如何调整">22.7 当线路报价改变时,
 建设方案如何调整?</h2>
 <p>将5—6的权重从10改为 <span class="math inline">\(t\geqslant0\)</span>,
 其他线路不变. 城市1至5的四条相邻连接边总权重为53. 城市6可以通过5—6接入,
@@ -826,15 +837,15 @@ class="math inline">\(t&gt;19\)</span> 时改选4—6; 当 <span
 class="math inline">\(t=19\)</span> 时两种接入方式同样最优.
 这个临界值来自给定网络, 并非一般工程阈值.</p>
 <p><img src="/images/MinimumSpanningTree/cost_sensitivity.png" alt="" style="width: 100%;"></p>
-<p>图 5 线路5—6报价变化对最优总权重的影响. 报价低于19时总权重随之增加,
-超过19后转而选择4—6, 最优总权重保持72.</p>
+<p>图 22-5 线路5—6报价变化对最优总权重的影响.
+报价低于19时总权重随之增加, 超过19后转而选择4—6, 最优总权重保持72.</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mst_data <span class="keyword">import</span> N, EDGES</span><br><span class="line"><span class="keyword">from</span> kruskal <span class="keyword">import</span> kruskal</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">cost_at</span>(<span class="params">t</span>):</span><br><span class="line">    changed = [(u, v, t <span class="keyword">if</span> (u, v) == (<span class="number">5</span>, <span class="number">6</span>) <span class="keyword">else</span> w) <span class="keyword">for</span> u, v, w <span class="keyword">in</span> EDGES]</span><br><span class="line">    <span class="keyword">return</span> kruskal(N, changed)[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="keyword">for</span> t <span class="keyword">in</span> [<span class="number">0</span>, <span class="number">10</span>, <span class="number">18</span>, <span class="number">19</span>, <span class="number">20</span>, <span class="number">30</span>]:</span><br><span class="line">        <span class="built_in">print</span>(t, cost_at(t))</span><br></pre></td></tr></table></figure>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">E=mst_data(); row=<span class="built_in">find</span>(E(:,<span class="number">1</span>)==<span class="number">5</span> &amp; E(:,<span class="number">2</span>)==<span class="number">6</span>);</span><br><span class="line"><span class="keyword">for</span> t=[<span class="number">0</span>,<span class="number">10</span>,<span class="number">18</span>,<span class="number">19</span>,<span class="number">20</span>,<span class="number">30</span>]</span><br><span class="line">    changed=E; changed(row,<span class="number">3</span>)=t;</span><br><span class="line">    [~,total]=kruskal(<span class="number">6</span>,changed);</span><br><span class="line">    <span class="built_in">disp</span>([t,total]);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
 <p>删除5—6也会强制改用4—6, 此时最优总权重为72.
 即使某次变动可以用简单公式解释, 仍应在修改后的边集上复算,
 确认其他连接没有同时改变.</p>
-<h2 id="不连通-零权边与接口约定">8. 不连通, 零权边与接口约定</h2>
-<h3 id="从边权数据到函数输入">从边权数据到函数输入</h3>
+<h2 id="不连通-零权边与接口约定">22.8 不连通, 零权边与接口约定</h2>
+<h3 id="从边权数据到函数输入">22.8.1 从边权数据到函数输入</h3>
 <p>求解本例时, 函数接收的是无向图对象, 而不是通用线性规划的约束矩阵.
 先明确候选线路及权重, 再构造图, 最后读取生成树和总权重.</p>
 <table>
@@ -898,7 +909,7 @@ style="text-align: center;"><code>minspantree(G, 'Method', 'dense')</code></td>
 </table>
 <p>Python 两个标准库实现则直接接收 <code>n</code> 和三元组边列表.
 它们与库函数求解的是同一个模型, 输入形式不同.</p>
-<h3 id="默认参数与不连通图">默认参数与不连通图</h3>
+<h3 id="默认参数与不连通图">22.8.2 默认参数与不连通图</h3>
 <table>
 <colgroup>
 <col style="width: 50%" />
@@ -940,7 +951,7 @@ style="text-align: center;"><code>minspantree(G, 'Method', 'dense')</code></td>
 <p>不同软件的默认算法和不连通输入处理方式不一致.
 若业务目标是连接全部城市, 应先验证图连通; 若目标是分量内分别优化,
 应明确选择森林模式, 不能仅凭函数名判断覆盖范围.</p>
-<h3 id="在程序中明确边界行为">在程序中明确边界行为</h3>
+<h3 id="在程序中明确边界行为">22.8.3 在程序中明确边界行为</h3>
 <p>下面的脚本核对零权, 负权, 自环, 孤立点和单顶点. 自环无法连接两个分量,
 也不能加入树, 即使权重很小也应跳过. 输入为不连通图时,
 若要优化全部分量内部的连接, 必须明确选择森林模式.</p>
@@ -949,15 +960,16 @@ style="text-align: center;"><code>minspantree(G, 'Method', 'dense')</code></td>
 <code>kruskal(5,[(1,2,2),(3,4,3)],require_connected=False)</code>
 得到两条森林边, 总权重5和三个分量. 默认模式以及本章 Prim
 实现都会拒绝不连通输入. 单个顶点则无需建设任何边, 总权重为0.</p>
-<h3 id="矩阵建图只是一种输入方式">矩阵建图只是一种输入方式</h3>
+<h3 id="矩阵建图只是一种输入方式">22.8.4 矩阵建图只是一种输入方式</h3>
 <p>若所有实际边权非零, 可以在数值矩阵的非零位置记录边权, 再用 MATLAB 的
 <code>graph(A,names,'upper')</code> 只读取上三角.
 但权重为0的真实线路会在此约定中消失; 要保留零权边,
 应使用本章的显式端点和权重列表.
 不要将最短路径初始矩阵中的无穷元素直接作为建设边输入.</p>
-<h2 id="根据规模选算法-根据需求检查模型">9. 根据规模选算法,
+<h2 id="根据规模选算法-根据需求检查模型">22.9 根据规模选算法,
 根据需求检查模型</h2>
-<h3 id="根据数据表示和实现选择算法">根据数据表示和实现选择算法</h3>
+<h3 id="根据数据表示和实现选择算法">22.9.1
+根据数据表示和实现选择算法</h3>
 <p>设顶点数为 <span class="math inline">\(n\)</span>, 边数为 <span
 class="math inline">\(m\)</span>. Kruskal 的主要工作是边排序与分量合并;
 Prim 的计算量与邻接结构, 优先队列实现有关.
@@ -1008,7 +1020,7 @@ class="math inline">\(O(n+m)\)</span>, 含图存储</td>
 没有边或只有一个顶点时应按初始化开销理解.
 并查集使用路径压缩与按规模合并后, 单次操作具有极小的摊还开销. 本章扫描
 Prim 的代码与手算一致, 未使用二叉堆.</p>
-<h3 id="不连通时得到多少条森林边">不连通时得到多少条森林边</h3>
+<h3 id="不连通时得到多少条森林边">22.9.2 不连通时得到多少条森林边</h3>
 <p>若图共有 <span class="math inline">\(c\)</span> 个连通分量, 第 <span
 class="math inline">\(i\)</span> 个分量有 <span
 class="math inline">\(n_i\)</span> 个顶点, 其生成树有 <span
@@ -1018,7 +1030,7 @@ class="math inline">\(n_i-1\)</span> 条边. 合起来为</p>
 \]</span></p>
 <p>孤立顶点本身是一个分量, 贡献 0 条边. 程序必须保留这些顶点,
 否则会错误地低估分量数或假称已经连接全部对象.</p>
-<h3 id="工程约束超出模型时">工程约束超出模型时</h3>
+<h3 id="工程约束超出模型时">22.9.3 工程约束超出模型时</h3>
 <p>一棵树中的每条边都是桥, 删除任何一条都会使树断开.
 若通信网络要求线路故障后仍能保持连通, 就必须加入冗余建设要求,
 最小生成树只能作为基础参考方案.</p>
@@ -1028,7 +1040,7 @@ class="math inline">\(n_i-1\)</span> 条边. 合起来为</p>
 <p>生成树要求全部给定顶点都被覆盖. 如果只连接指定终端,
 允许另外选取中转节点, 可能进入 Steiner 树问题,
 目标与可行集合都发生变化.</p>
-<h3 id="常见错误与修正">常见错误与修正</h3>
+<h3 id="常见错误与修正">22.9.4 常见错误与修正</h3>
 <table>
 <colgroup>
 <col style="width: 50%" />
@@ -1106,7 +1118,7 @@ style="text-align: center;">区分树的目标与允许绕圈的最短游走目�
 </tr>
 </tbody>
 </table>
-<h2 id="练习">10. 练习</h2>
+<h2 id="练习">22.10 练习</h2>
 <ol type="1">
 <li>在六城市图中, 为什么 Kruskal 选中五条边后停止? 若继续加入 2—5,
 会发生什么?</li>

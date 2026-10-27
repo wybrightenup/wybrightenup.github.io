@@ -19,18 +19,18 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="动态规划: 从凑硬币到装备选择 用尽量少的硬币恰好付清一本书的价格, 与在运输箱中挑选效益最高的装备, 看似不同, 却可以使用同一种思路: 把已经求过的子问题记下来, 再根据依赖关系找到整体最优方案. 关键不在于记住几行循环, 而在于说明每个状态代表什么, 当前选择从哪里来, 以及怎样从最优值恢复行动方案. 本章先完成两道例题, 再比较记忆化搜索, 空间压缩与不同装载要求. 1 先试">
+    <meta name="description" content="第28章 动态规划: 从凑硬币到装备选择 用尽量少的硬币恰好付清一本书的价格, 与在运输箱中挑选效益最高的装备, 看似不同, 却可以使用同一种思路: 把已经求过的子问题记下来, 再根据依赖关系找到整体最优方案. 关键不在于记住几行循环, 而在于说明每个状态代表什么, 当前选择从哪里来, 以及怎样从最优值恢复行动方案. 本章先完成两道例题, 再比较记忆化搜索, 空间压缩与不同装载要求.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Hexo">
 <meta property="og:url" content="http://example.com/MathematicalModelingMethods/DynamicProgramming.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="动态规划: 从凑硬币到装备选择 用尽量少的硬币恰好付清一本书的价格, 与在运输箱中挑选效益最高的装备, 看似不同, 却可以使用同一种思路: 把已经求过的子问题记下来, 再根据依赖关系找到整体最优方案. 关键不在于记住几行循环, 而在于说明每个状态代表什么, 当前选择从哪里来, 以及怎样从最优值恢复行动方案. 本章先完成两道例题, 再比较记忆化搜索, 空间压缩与不同装载要求. 1 先试">
+<meta property="og:description" content="第28章 动态规划: 从凑硬币到装备选择 用尽量少的硬币恰好付清一本书的价格, 与在运输箱中挑选效益最高的装备, 看似不同, 却可以使用同一种思路: 把已经求过的子问题记下来, 再根据依赖关系找到整体最优方案. 关键不在于记住几行循环, 而在于说明每个状态代表什么, 当前选择从哪里来, 以及怎样从最优值恢复行动方案. 本章先完成两道例题, 再比较记忆化搜索, 空间压缩与不同装载要求.">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/images/DynamicProgramming/DP-1.png">
 <meta property="og:image" content="http://example.com/images/DynamicProgramming/DP-2.png">
 <meta property="og:image" content="http://example.com/images/DynamicProgramming/DP-3.png">
-<meta property="article:published_time" content="2026-10-26T06:42:25.115Z">
-<meta property="article:modified_time" content="2026-10-26T06:24:46.000Z">
+<meta property="article:published_time" content="2026-10-27T00:21:35.732Z">
+<meta property="article:modified_time" content="2026-10-27T00:18:14.000Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/DynamicProgramming/DP-1.png">
@@ -131,21 +131,23 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92-%E4%BB%8E%E5%87%91%E7%A1%AC%E5%B8%81%E5%88%B0%E8%A3%85%E5%A4%87%E9%80%89%E6%8B%A9"><span class="nav-number">1.</span> <span class="nav-text">动态规划: 从凑硬币到装备选择</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E8%AF%95%E4%B8%80%E8%AF%95-%E6%80%8E%E6%A0%B7%E7%94%A8%E6%9C%80%E5%B0%91%E7%9A%84%E7%A1%AC%E5%B8%81%E5%87%91%E5%87%BA-27"><span class="nav-number">1.1.</span> <span class="nav-text">1 先试一试:
-怎样用最少的硬币凑出 27</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%99%E5%AD%A6%E9%97%AE%E9%A2%98-%E7%94%A8%E6%9C%80%E5%B0%91%E7%9A%84%E7%A1%AC%E5%B8%81%E5%87%91%E5%87%BA-27"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 教学问题: 用最少的硬币凑出
-27</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-5-%E6%9E%9A%E5%B7%B2%E7%BB%8F%E6%9C%80%E5%B0%91"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 为什么 5 枚已经最少</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E6%9C%80%E5%90%8E%E4%B8%80%E6%9E%9A%E7%A1%AC%E5%B8%81%E5%BB%BA%E7%AB%8B%E9%80%92%E6%8E%A8"><span class="nav-number">1.2.</span> <span class="nav-text">2 从最后一枚硬币建立递推</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5-%E7%9B%AE%E6%A0%87%E4%B8%8E%E6%95%B4%E6%95%B0%E8%A7%84%E5%88%92%E8%A1%A8%E8%BE%BE"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 输入, 目标与整数规划表达</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E5%AE%9A%E4%B9%89"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 状态定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E6%9C%80%E5%90%8E%E4%B8%80%E6%9E%9A%E7%A1%AC%E5%B8%81%E5%BB%BA%E7%AB%8B%E8%BD%AC%E7%A7%BB"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 从最后一枚硬币建立转移</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E6%9D%A1%E4%BB%B6%E4%B8%8E%E4%B8%8D%E5%8F%AF%E8%BE%BE%E7%8A%B6%E6%80%81"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 初始条件与不可达状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E9%A1%BA%E5%BA%8F%E4%B8%8E%E6%AD%A3%E7%A1%AE%E6%80%A7"><span class="nav-number">1.2.5.</span> <span class="nav-text">2.5 计算顺序与正确性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E4%BE%8B%E5%AE%8C%E6%95%B4%E7%8A%B6%E6%80%81%E8%A1%A8"><span class="nav-number">1.2.6.</span> <span class="nav-text">2.6 本例完整状态表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E4%B8%8E%E7%A9%BA%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="nav-number">1.2.7.</span> <span class="nav-text">2.7 时间与空间复杂度</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E7%A1%AC%E5%B8%81%E9%80%92%E6%8E%A8%E5%86%99%E6%88%90%E7%A8%8B%E5%BA%8F-%E5%86%8D%E6%81%A2%E5%A4%8D%E6%96%B9%E6%A1%88"><span class="nav-number">1.3.</span> <span class="nav-text">3 把硬币递推写成程序,
-再恢复方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E6%9C%80%E4%BC%98%E5%80%BC%E5%92%8C%E6%9C%80%E5%90%8E%E9%80%89%E6%8B%A9%E4%B8%80%E8%B5%B7%E8%AE%B0%E5%BD%95"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 Python:
-最优值和最后选择一起记录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab-%E6%95%B0%E5%AD%A6%E9%87%91%E9%A2%9D-0-%E5%AF%B9%E5%BA%94%E6%95%B0%E7%BB%84%E4%B8%8B%E6%A0%87-1"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 MATLAB: 数学金额 0
-对应数组下标 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%B9%E7%95%8C%E5%BF%85%E9%A1%BB%E6%9C%8D%E4%BB%8E%E7%8A%B6%E6%80%81%E5%90%AB%E4%B9%89"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 边界必须服从状态含义</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%BA%9B%E5%AD%90%E9%97%AE%E9%A2%98%E5%8F%AF%E4%BB%A5%E5%A4%8D%E7%94%A8"><span class="nav-number">1.4.</span> <span class="nav-text">4 为什么这些子问题可以复用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81-%E9%80%92%E6%8E%A8%E4%B8%8E%E7%BB%93%E6%9E%9C%E5%A4%8D%E7%94%A8"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 状态, 递推与结果复用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E4%B8%AA%E9%9C%80%E8%A6%81%E5%9B%9E%E7%AD%94%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 四个需要回答的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E4%BC%98%E5%AD%90%E7%BB%93%E6%9E%84-%E6%9B%BF%E6%8D%A2%E4%B8%80%E4%B8%AA%E8%BE%83%E5%B7%AE%E7%9A%84%E9%83%A8%E5%88%86"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 最优子结构:
-替换一个较差的部分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E8%A6%81%E4%BF%9D%E5%AD%98%E8%B6%B3%E5%A4%9F%E7%9A%84%E4%BF%A1%E6%81%AF"><span class="nav-number">1.4.4.</span> <span class="nav-text">4.4 状态要保存足够的信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E5%8F%A0%E5%AD%90%E9%97%AE%E9%A2%98%E4%B8%8E%E8%AE%A1%E7%AE%97%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.4.5.</span> <span class="nav-text">4.5 重叠子问题与计算顺序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A7%91%E6%99%AE%E8%A3%85%E5%A4%87%E9%80%89%E6%8B%A9-%E6%AF%8F%E4%BB%B6%E7%89%A9%E5%93%81%E5%8F%AA%E8%83%BD%E5%8F%96%E4%B8%80%E6%AC%A1"><span class="nav-number">1.5.</span> <span class="nav-text">5 科普装备选择:
-每件物品只能取一次</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E4%B8%8E%E6%95%99%E5%AD%A6%E6%95%B0%E6%8D%AE"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 题目与教学数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B4%E6%95%B0%E8%A7%84%E5%88%92%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 0-1 整数规划模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E5%BF%85%E9%A1%BB%E5%8C%85%E5%90%AB%E7%89%A9%E5%93%81%E9%98%B6%E6%AE%B5%E4%B8%8E%E5%AE%B9%E9%87%8F"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 状态必须包含物品阶段与容量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%89%E4%B8%8E%E4%B8%8D%E9%80%89%E6%98%AF%E4%B8%A4%E4%B8%AA%E5%80%99%E9%80%89%E5%88%86%E6%94%AF"><span class="nav-number">1.5.4.</span> <span class="nav-text">5.4 选与不选是两个候选分支</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E6%9D%A1%E4%BB%B6%E4%B8%8E%E5%A1%AB%E8%A1%A8%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.5.5.</span> <span class="nav-text">5.5 初始条件与填表顺序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E7%8A%B6%E6%80%81%E8%A1%A8%E4%B8%8E%E6%9C%80%E4%BC%98%E6%96%B9%E6%A1%88"><span class="nav-number">1.5.6.</span> <span class="nav-text">5.6 完整状态表与最优方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%8C%89%E8%AF%84%E5%88%86%E9%87%8D%E9%87%8F%E6%AF%94%E8%B4%AA%E5%BF%83%E4%B9%9F%E5%8F%AF%E8%83%BD%E5%A4%B1%E8%B4%A5"><span class="nav-number">1.5.7.</span> <span class="nav-text">5.7
-为什么按评分重量比贪心也可能失败</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E8%83%8C%E5%8C%85%E7%8A%B6%E6%80%81%E8%A1%A8%E5%86%99%E6%88%90%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.6.</span> <span class="nav-text">6 把背包状态表写成程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E5%85%88%E5%A1%AB%E8%A1%A8-%E5%86%8D%E6%8C%89%E7%89%A9%E5%93%81%E9%98%B6%E6%AE%B5%E5%9B%9E%E6%BA%AF"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 Python: 先填表,
-再按物品阶段回溯</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab-%E5%90%8C%E6%97%B6%E5%81%8F%E7%A7%BB%E9%98%B6%E6%AE%B5%E4%B8%8E%E5%AE%B9%E9%87%8F%E4%B8%8B%E6%A0%87"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 MATLAB:
-同时偏移阶段与容量下标</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%B9%E5%8F%98%E8%AE%A1%E7%AE%97%E6%96%B9%E5%BC%8F%E4%B9%8B%E5%89%8D-%E5%85%88%E7%A1%AE%E8%AE%A4%E7%8A%B6%E6%80%81%E5%90%AB%E4%B9%89"><span class="nav-number">1.7.</span> <span class="nav-text">7 改变计算方式之前,
-先确认状态含义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%B0%E5%BF%86%E5%8C%96%E6%90%9C%E7%B4%A2-%E9%80%92%E5%BD%92%E4%B9%9F%E8%83%BD%E4%BF%9D%E5%AD%98%E7%8A%B6%E6%80%81"><span class="nav-number">1.7.1.</span> <span class="nav-text">7.1 记忆化搜索:
-递归也能保存状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E7%BB%B4%E5%8E%8B%E7%BC%A9-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AE%B9%E9%87%8F%E5%BF%85%E9%A1%BB%E5%80%92%E5%BA%8F"><span class="nav-number">1.7.2.</span> <span class="nav-text">7.2 一维压缩:
-为什么容量必须倒序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%81%B0%E5%A5%BD%E8%A3%85%E6%BB%A1-%E4%B8%8D%E5%8F%AF%E8%BE%BE%E7%8A%B6%E6%80%81%E5%BA%94%E6%94%B9%E6%88%90%E8%B4%9F%E6%97%A0%E7%A9%B7"><span class="nav-number">1.7.3.</span> <span class="nav-text">7.3 恰好装满:
-不可达状态应改成负无穷</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E8%A1%A8%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%86%B3%E5%AE%9A%E8%83%BD%E5%90%A6%E8%AE%A1%E7%AE%97"><span class="nav-number">1.7.4.</span> <span class="nav-text">7.4 状态表的大小决定能否计算</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E4%B8%A4%E9%81%93%E4%BE%8B%E9%A2%98%E8%BF%81%E7%A7%BB%E5%88%B0%E5%85%B6%E4%BB%96%E9%97%AE%E9%A2%98"><span class="nav-number">1.8.</span> <span class="nav-text">8 从两道例题迁移到其他问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E7%82%B9%E4%B8%8E%E9%80%82%E7%94%A8%E8%8C%83%E5%9B%B4"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 优点与适用范围</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92-%E8%B4%AA%E5%BF%83%E4%B8%8E%E7%9B%B4%E6%8E%A5%E6%9E%9A%E4%B8%BE"><span class="nav-number">1.8.2.</span> <span class="nav-text">8.2 动态规划, 贪心与直接枚举</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%9A%84%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.8.3.</span> <span class="nav-text">8.3 建立动态规划的步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A7%91%E6%99%AE%E8%A3%85%E5%A4%87%E4%BE%8B%E9%A2%98%E7%9A%84%E5%86%B3%E7%AD%96%E8%A7%A3%E9%87%8A"><span class="nav-number">1.8.4.</span> <span class="nav-text">8.4 科普装备例题的决策解释</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%94%99%E8%AF%AF%E4%B8%8E%E6%A3%80%E6%9F%A5%E6%96%B9%E6%B3%95"><span class="nav-number">1.9.</span> <span class="nav-text">9 常见错误与检查方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.10.</span> <span class="nav-text">10 练习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.11.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC28%E7%AB%A0-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92-%E4%BB%8E%E5%87%91%E7%A1%AC%E5%B8%81%E5%88%B0%E8%A3%85%E5%A4%87%E9%80%89%E6%8B%A9"><span class="nav-number">1.</span> <span class="nav-text">第28章 动态规划:
+从凑硬币到装备选择</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E8%AF%95%E4%B8%80%E8%AF%95-%E6%80%8E%E6%A0%B7%E7%94%A8%E6%9C%80%E5%B0%91%E7%9A%84%E7%A1%AC%E5%B8%81%E5%87%91%E5%87%BA-27"><span class="nav-number">1.1.</span> <span class="nav-text">28.1 先试一试:
+怎样用最少的硬币凑出 27</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%99%E5%AD%A6%E9%97%AE%E9%A2%98-%E7%94%A8%E6%9C%80%E5%B0%91%E7%9A%84%E7%A1%AC%E5%B8%81%E5%87%91%E5%87%BA-27"><span class="nav-number">1.1.1.</span> <span class="nav-text">28.1.1 教学问题: 用最少的硬币凑出
+27</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-5-%E6%9E%9A%E5%B7%B2%E7%BB%8F%E6%9C%80%E5%B0%91"><span class="nav-number">1.1.2.</span> <span class="nav-text">28.1.2 为什么 5 枚已经最少</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E6%9C%80%E5%90%8E%E4%B8%80%E6%9E%9A%E7%A1%AC%E5%B8%81%E5%BB%BA%E7%AB%8B%E9%80%92%E6%8E%A8"><span class="nav-number">1.2.</span> <span class="nav-text">28.2 从最后一枚硬币建立递推</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5-%E7%9B%AE%E6%A0%87%E4%B8%8E%E6%95%B4%E6%95%B0%E8%A7%84%E5%88%92%E8%A1%A8%E8%BE%BE"><span class="nav-number">1.2.1.</span> <span class="nav-text">28.2.1 输入, 目标与整数规划表达</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E5%AE%9A%E4%B9%89"><span class="nav-number">1.2.2.</span> <span class="nav-text">28.2.2 状态定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E6%9C%80%E5%90%8E%E4%B8%80%E6%9E%9A%E7%A1%AC%E5%B8%81%E5%BB%BA%E7%AB%8B%E8%BD%AC%E7%A7%BB"><span class="nav-number">1.2.3.</span> <span class="nav-text">28.2.3 从最后一枚硬币建立转移</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E6%9D%A1%E4%BB%B6%E4%B8%8E%E4%B8%8D%E5%8F%AF%E8%BE%BE%E7%8A%B6%E6%80%81"><span class="nav-number">1.2.4.</span> <span class="nav-text">28.2.4 初始条件与不可达状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E9%A1%BA%E5%BA%8F%E4%B8%8E%E6%AD%A3%E7%A1%AE%E6%80%A7"><span class="nav-number">1.2.5.</span> <span class="nav-text">28.2.5 计算顺序与正确性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E4%BE%8B%E5%AE%8C%E6%95%B4%E7%8A%B6%E6%80%81%E8%A1%A8"><span class="nav-number">1.2.6.</span> <span class="nav-text">28.2.6 本例完整状态表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E4%B8%8E%E7%A9%BA%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="nav-number">1.2.7.</span> <span class="nav-text">28.2.7 时间与空间复杂度</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E7%A1%AC%E5%B8%81%E9%80%92%E6%8E%A8%E5%86%99%E6%88%90%E7%A8%8B%E5%BA%8F-%E5%86%8D%E6%81%A2%E5%A4%8D%E6%96%B9%E6%A1%88"><span class="nav-number">1.3.</span> <span class="nav-text">28.3 把硬币递推写成程序,
+再恢复方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E6%9C%80%E4%BC%98%E5%80%BC%E5%92%8C%E6%9C%80%E5%90%8E%E9%80%89%E6%8B%A9%E4%B8%80%E8%B5%B7%E8%AE%B0%E5%BD%95"><span class="nav-number">1.3.1.</span> <span class="nav-text">28.3.1 Python:
+最优值和最后选择一起记录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab-%E6%95%B0%E5%AD%A6%E9%87%91%E9%A2%9D-0-%E5%AF%B9%E5%BA%94%E6%95%B0%E7%BB%84%E4%B8%8B%E6%A0%87-1"><span class="nav-number">1.3.2.</span> <span class="nav-text">28.3.2 MATLAB: 数学金额 0
+对应数组下标 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%B9%E7%95%8C%E5%BF%85%E9%A1%BB%E6%9C%8D%E4%BB%8E%E7%8A%B6%E6%80%81%E5%90%AB%E4%B9%89"><span class="nav-number">1.3.3.</span> <span class="nav-text">28.3.3 边界必须服从状态含义</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%BA%9B%E5%AD%90%E9%97%AE%E9%A2%98%E5%8F%AF%E4%BB%A5%E5%A4%8D%E7%94%A8"><span class="nav-number">1.4.</span> <span class="nav-text">28.4 为什么这些子问题可以复用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81-%E9%80%92%E6%8E%A8%E4%B8%8E%E7%BB%93%E6%9E%9C%E5%A4%8D%E7%94%A8"><span class="nav-number">1.4.1.</span> <span class="nav-text">28.4.1 状态, 递推与结果复用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E4%B8%AA%E9%9C%80%E8%A6%81%E5%9B%9E%E7%AD%94%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.4.2.</span> <span class="nav-text">28.4.2 四个需要回答的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E4%BC%98%E5%AD%90%E7%BB%93%E6%9E%84-%E6%9B%BF%E6%8D%A2%E4%B8%80%E4%B8%AA%E8%BE%83%E5%B7%AE%E7%9A%84%E9%83%A8%E5%88%86"><span class="nav-number">1.4.3.</span> <span class="nav-text">28.4.3 最优子结构:
+替换一个较差的部分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E8%A6%81%E4%BF%9D%E5%AD%98%E8%B6%B3%E5%A4%9F%E7%9A%84%E4%BF%A1%E6%81%AF"><span class="nav-number">1.4.4.</span> <span class="nav-text">28.4.4 状态要保存足够的信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E5%8F%A0%E5%AD%90%E9%97%AE%E9%A2%98%E4%B8%8E%E8%AE%A1%E7%AE%97%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.4.5.</span> <span class="nav-text">28.4.5 重叠子问题与计算顺序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A7%91%E6%99%AE%E8%A3%85%E5%A4%87%E9%80%89%E6%8B%A9-%E6%AF%8F%E4%BB%B6%E7%89%A9%E5%93%81%E5%8F%AA%E8%83%BD%E5%8F%96%E4%B8%80%E6%AC%A1"><span class="nav-number">1.5.</span> <span class="nav-text">28.5 科普装备选择:
+每件物品只能取一次</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E4%B8%8E%E6%95%99%E5%AD%A6%E6%95%B0%E6%8D%AE"><span class="nav-number">1.5.1.</span> <span class="nav-text">28.5.1 题目与教学数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B4%E6%95%B0%E8%A7%84%E5%88%92%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.5.2.</span> <span class="nav-text">28.5.2 0-1 整数规划模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E5%BF%85%E9%A1%BB%E5%8C%85%E5%90%AB%E7%89%A9%E5%93%81%E9%98%B6%E6%AE%B5%E4%B8%8E%E5%AE%B9%E9%87%8F"><span class="nav-number">1.5.3.</span> <span class="nav-text">28.5.3
+状态必须包含物品阶段与容量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%89%E4%B8%8E%E4%B8%8D%E9%80%89%E6%98%AF%E4%B8%A4%E4%B8%AA%E5%80%99%E9%80%89%E5%88%86%E6%94%AF"><span class="nav-number">1.5.4.</span> <span class="nav-text">28.5.4 选与不选是两个候选分支</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E6%9D%A1%E4%BB%B6%E4%B8%8E%E5%A1%AB%E8%A1%A8%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.5.5.</span> <span class="nav-text">28.5.5 初始条件与填表顺序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E7%8A%B6%E6%80%81%E8%A1%A8%E4%B8%8E%E6%9C%80%E4%BC%98%E6%96%B9%E6%A1%88"><span class="nav-number">1.5.6.</span> <span class="nav-text">28.5.6 完整状态表与最优方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%8C%89%E8%AF%84%E5%88%86%E9%87%8D%E9%87%8F%E6%AF%94%E8%B4%AA%E5%BF%83%E4%B9%9F%E5%8F%AF%E8%83%BD%E5%A4%B1%E8%B4%A5"><span class="nav-number">1.5.7.</span> <span class="nav-text">28.5.7
+为什么按评分重量比贪心也可能失败</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E8%83%8C%E5%8C%85%E7%8A%B6%E6%80%81%E8%A1%A8%E5%86%99%E6%88%90%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.6.</span> <span class="nav-text">28.6 把背包状态表写成程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E5%85%88%E5%A1%AB%E8%A1%A8-%E5%86%8D%E6%8C%89%E7%89%A9%E5%93%81%E9%98%B6%E6%AE%B5%E5%9B%9E%E6%BA%AF"><span class="nav-number">1.6.1.</span> <span class="nav-text">28.6.1 Python: 先填表,
+再按物品阶段回溯</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab-%E5%90%8C%E6%97%B6%E5%81%8F%E7%A7%BB%E9%98%B6%E6%AE%B5%E4%B8%8E%E5%AE%B9%E9%87%8F%E4%B8%8B%E6%A0%87"><span class="nav-number">1.6.2.</span> <span class="nav-text">28.6.2 MATLAB:
+同时偏移阶段与容量下标</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%B9%E5%8F%98%E8%AE%A1%E7%AE%97%E6%96%B9%E5%BC%8F%E4%B9%8B%E5%89%8D-%E5%85%88%E7%A1%AE%E8%AE%A4%E7%8A%B6%E6%80%81%E5%90%AB%E4%B9%89"><span class="nav-number">1.7.</span> <span class="nav-text">28.7 改变计算方式之前,
+先确认状态含义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%B0%E5%BF%86%E5%8C%96%E6%90%9C%E7%B4%A2-%E9%80%92%E5%BD%92%E4%B9%9F%E8%83%BD%E4%BF%9D%E5%AD%98%E7%8A%B6%E6%80%81"><span class="nav-number">1.7.1.</span> <span class="nav-text">28.7.1 记忆化搜索:
+递归也能保存状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E7%BB%B4%E5%8E%8B%E7%BC%A9-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AE%B9%E9%87%8F%E5%BF%85%E9%A1%BB%E5%80%92%E5%BA%8F"><span class="nav-number">1.7.2.</span> <span class="nav-text">28.7.2 一维压缩:
+为什么容量必须倒序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%81%B0%E5%A5%BD%E8%A3%85%E6%BB%A1-%E4%B8%8D%E5%8F%AF%E8%BE%BE%E7%8A%B6%E6%80%81%E5%BA%94%E6%94%B9%E6%88%90%E8%B4%9F%E6%97%A0%E7%A9%B7"><span class="nav-number">1.7.3.</span> <span class="nav-text">28.7.3 恰好装满:
+不可达状态应改成负无穷</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E8%A1%A8%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%86%B3%E5%AE%9A%E8%83%BD%E5%90%A6%E8%AE%A1%E7%AE%97"><span class="nav-number">1.7.4.</span> <span class="nav-text">28.7.4 状态表的大小决定能否计算</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E4%B8%A4%E9%81%93%E4%BE%8B%E9%A2%98%E8%BF%81%E7%A7%BB%E5%88%B0%E5%85%B6%E4%BB%96%E9%97%AE%E9%A2%98"><span class="nav-number">1.8.</span> <span class="nav-text">28.8 从两道例题迁移到其他问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E7%82%B9%E4%B8%8E%E9%80%82%E7%94%A8%E8%8C%83%E5%9B%B4"><span class="nav-number">1.8.1.</span> <span class="nav-text">28.8.1 优点与适用范围</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92-%E8%B4%AA%E5%BF%83%E4%B8%8E%E7%9B%B4%E6%8E%A5%E6%9E%9A%E4%B8%BE"><span class="nav-number">1.8.2.</span> <span class="nav-text">28.8.2 动态规划, 贪心与直接枚举</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%9A%84%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.8.3.</span> <span class="nav-text">28.8.3 建立动态规划的步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A7%91%E6%99%AE%E8%A3%85%E5%A4%87%E4%BE%8B%E9%A2%98%E7%9A%84%E5%86%B3%E7%AD%96%E8%A7%A3%E9%87%8A"><span class="nav-number">1.8.4.</span> <span class="nav-text">28.8.4 科普装备例题的决策解释</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%94%99%E8%AF%AF%E4%B8%8E%E6%A3%80%E6%9F%A5%E6%96%B9%E6%B3%95"><span class="nav-number">1.9.</span> <span class="nav-text">28.9 常见错误与检查方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.10.</span> <span class="nav-text">28.10 练习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.11.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -195,16 +197,17 @@
       
       
       <div class="post-body">
-          <h1 id="动态规划-从凑硬币到装备选择">动态规划: 从凑硬币到装备选择</h1>
+          <h1 id="第28章-动态规划-从凑硬币到装备选择">第28章 动态规划:
+从凑硬币到装备选择</h1>
 <p>用尽量少的硬币恰好付清一本书的价格, 与在运输箱中挑选效益最高的装备,
 看似不同, 却可以使用同一种思路: 把已经求过的子问题记下来,
 再根据依赖关系找到整体最优方案.</p>
 <p>关键不在于记住几行循环, 而在于说明每个状态代表什么, 当前选择从哪里来,
 以及怎样从最优值恢复行动方案. 本章先完成两道例题, 再比较记忆化搜索,
 空间压缩与不同装载要求.</p>
-<h2 id="先试一试-怎样用最少的硬币凑出-27">1 先试一试:
+<h2 id="先试一试-怎样用最少的硬币凑出-27">28.1 先试一试:
 怎样用最少的硬币凑出 27</h2>
-<h3 id="教学问题-用最少的硬币凑出-27">1.1 教学问题: 用最少的硬币凑出
+<h3 id="教学问题-用最少的硬币凑出-27">28.1.1 教学问题: 用最少的硬币凑出
 27</h3>
 <p>设有面值为 2, 5, 7 的三种教学硬币, 每种数量不限. 购买一本标价为 27
 的书, 希望恰好付清, 并使硬币枚数最少. 面值与金额按同一单位计,
@@ -251,7 +254,7 @@ class="math inline">\(7+5+5+5+5=27\)</span></td>
 <p>这个例子说明, 最大面值优先并非对所有面值集合都能保证最优.
 要得到最优解, 需要比较不同选择产生的子问题,
 而不是只保留当下看来最好的那一步.</p>
-<h3 id="为什么-5-枚已经最少">1.2 为什么 5 枚已经最少</h3>
+<h3 id="为什么-5-枚已经最少">28.1.2 为什么 5 枚已经最少</h3>
 <p>每枚硬币最大为 7, 所以 3 枚及以下最多只能凑出 21. 若使用 4 枚,
 最大总额为 <span class="math inline">\(4\times7=28\)</span>; 把其中的 7
 换成 5 会减少 2, 换成 2 会减少 5. 无论怎样更换, 都不能恰好减少 1 而得到
@@ -260,8 +263,8 @@ class="math inline">\(7+5+5+5+5=27\)</span></td>
 class="math inline">\(7+5+5+5+5=27\)</span>, 最少枚数就是 5.
 这是一个独立的最优性核对方法. 后面的动态规划不仅能处理 27,
 还能统一处理其他目标金额与不可达情况.</p>
-<h2 id="从最后一枚硬币建立递推">2 从最后一枚硬币建立递推</h2>
-<h3 id="输入-目标与整数规划表达">2.1 输入, 目标与整数规划表达</h3>
+<h2 id="从最后一枚硬币建立递推">28.2 从最后一枚硬币建立递推</h2>
+<h3 id="输入-目标与整数规划表达">28.2.1 输入, 目标与整数规划表达</h3>
 <p>设面值集合为 <span
 class="math inline">\(C=\{c_1,\ldots,c_m\}\)</span>, 各面值都是正整数,
 每种硬币数量不限, 目标金额 <span class="math inline">\(N\)</span>
@@ -278,7 +281,7 @@ z_j\in\mathbb{Z}_{\geqslant0},\quad j=1,\ldots,m.
 \]</span></p>
 <p>这是一个整数优化模型. 动态规划是它的一种求解方式,
 并不改变"必须恰好凑出目标金额"的要求.</p>
-<h3 id="状态定义">2.2 状态定义</h3>
+<h3 id="状态定义">28.2.2 状态定义</h3>
 <p>定义</p>
 <p><span class="math display">\[
 f[x]=\text{使用给定面值恰好凑出金额 }x\text{ 的最少硬币枚数}.
@@ -287,7 +290,7 @@ f[x]=\text{使用给定面值恰好凑出金额 }x\text{ 的最少硬币枚数}.
 class="math inline">\(f[x]=+\infty\)</span>. 原问题的答案为 <span
 class="math inline">\(f[N]\)</span>, 不是"尽量接近 <span
 class="math inline">\(N\)</span>"的某个金额.</p>
-<h3 id="从最后一枚硬币建立转移">2.3 从最后一枚硬币建立转移</h3>
+<h3 id="从最后一枚硬币建立转移">28.2.3 从最后一枚硬币建立转移</h3>
 <p>如果最后一枚硬币面值为 <span class="math inline">\(c\)</span>,
 一个候选方案的枚数为 <span class="math inline">\(f[x-c]+1\)</span>.
 对所有允许的最后面值取最小值, 得到</p>
@@ -317,9 +320,9 @@ class="math inline">\(f[20]\)</span>, 产生重复计算.</p>
 <p>下面是部分依赖关系. 图中同一子问题只画一个节点, 多个箭头汇入它,
 表示结果可以复用; 未画出所有分支.</p>
 <p><img src="/images/DynamicProgramming/DP-1.png" alt="" style="width: 100%;"></p>
-<p>图 1 最少硬币问题的部分依赖关系. 箭头由待求状态指向其依赖的子状态,
+<p>图 28-1 最少硬币问题的部分依赖关系. 箭头由待求状态指向其依赖的子状态,
 箭头旁的数值表示减去的硬币面值.</p>
-<h3 id="初始条件与不可达状态">2.4 初始条件与不可达状态</h3>
+<h3 id="初始条件与不可达状态">28.2.4 初始条件与不可达状态</h3>
 <p><span class="math display">\[
 f[0]=0,
 \]</span></p>
@@ -335,7 +338,7 @@ class="math inline">\(+\infty\)</span>, 再由合法转移更新.</p>
 可以直接表达它, 并满足 <span
 class="math inline">\(+\infty+1=+\infty\)</span>. 如果用大整数代替无穷,
 需要保证它不会与可行结果混淆, 并注意所用语言的溢出问题.</p>
-<h3 id="计算顺序与正确性">2.5 计算顺序与正确性</h3>
+<h3 id="计算顺序与正确性">28.2.5 计算顺序与正确性</h3>
 <p>按照</p>
 <p><span class="math display">\[
 f[0],f[1],\ldots,f[N]
@@ -351,7 +354,7 @@ class="math inline">\(f[x-c]+1\)</span>. 另一方面,
 每个有限的候选值都能由一个子问题最优方案加上一枚 <span
 class="math inline">\(c\)</span> 实现. 因此, 所有候选值的最小值恰为
 <span class="math inline">\(f[x]\)</span>.</p>
-<h3 id="本例完整状态表">2.6 本例完整状态表</h3>
+<h3 id="本例完整状态表">28.2.6 本例完整状态表</h3>
 <table>
 <thead>
 <tr>
@@ -466,9 +469,9 @@ f[27]&amp;=\min\{f[25]+1,\ f[22]+1,\ f[20]+1\}\\
 改变排列次序就能得到不同的最后一枚.
 一般问题中也可能存在不同的最优数量组合.</p>
 <p><img src="/images/DynamicProgramming/DP-2.png" alt="" style="width: 100%;"></p>
-<p>图 2 金额 0 至 27 的最少硬币枚数. 金额 1, 3 不可达;
+<p>图 28-2 金额 0 至 27 的最少硬币枚数. 金额 1, 3 不可达;
 橙色标记表示沿代码记录的选择回溯所经过的金额.</p>
-<h3 id="时间与空间复杂度">2.7 时间与空间复杂度</h3>
+<h3 id="时间与空间复杂度">28.2.7 时间与空间复杂度</h3>
 <p>当 <span class="math inline">\(N,m\)</span> 均为正,
 并将一次数值运算计为常数时间时, 对每个金额检查至多 <span
 class="math inline">\(m\)</span> 种面值, 因此时间复杂度为</p>
@@ -488,9 +491,9 @@ class="math inline">\(O(k)\)</span> 时间.</p>
 \]</span></p>
 <p>次. 这仍未包括初始化, 加法, 比较等全部操作. 不能把 81
 写成程序精确执行的操作次数, 也不能把一个具体数值直接当作渐近复杂度.</p>
-<h2 id="把硬币递推写成程序-再恢复方案">3 把硬币递推写成程序,
+<h2 id="把硬币递推写成程序-再恢复方案">28.3 把硬币递推写成程序,
 再恢复方案</h2>
-<h3 id="python-最优值和最后选择一起记录">3.1 Python:
+<h3 id="python-最优值和最后选择一起记录">28.3.1 Python:
 最优值和最后选择一起记录</h3>
 <p><code>dp[amount]</code> 对应数学状态 <span
 class="math inline">\(f[\mathrm{amount}]\)</span>,
@@ -505,7 +508,7 @@ class="math inline">\(f[\mathrm{amount}]\)</span>,
 <p>严格小于的更新规则在并列最优时保留先遇到的分支.
 它只影响返回哪一个最优排列, 不改变最少枚数. 本例回溯得到四个 5 和一个 7;
 排序后显示为 <code>[7, 5, 5, 5, 5]</code>, 排序不参与求解.</p>
-<h3 id="matlab-数学金额-0-对应数组下标-1">3.2 MATLAB: 数学金额 0
+<h3 id="matlab-数学金额-0-对应数组下标-1">28.3.2 MATLAB: 数学金额 0
 对应数组下标 1</h3>
 <p>MATLAB 中 <span class="math inline">\(f[x]\)</span> 保存在
 <code>dp(x+1)</code> 中, 所以来源状态 <span
@@ -518,15 +521,15 @@ class="math inline">\(f[x-c]\)</span> 应读取 <code>dp(x-c+1)</code>.
 完整的双语言案例输出均包含目标为 0 和不可达金额的检查.</p>
 <p>MATLAB 示例使用双精度数值; 很大的整数输入或评分不应默认仍能像 Python
 整数一样精确表示. 本章教学数据不存在这一数值范围问题.</p>
-<h3 id="边界必须服从状态含义">3.3 边界必须服从状态含义</h3>
+<h3 id="边界必须服从状态含义">28.3.3 边界必须服从状态含义</h3>
 <p>数学上可约定负金额状态为正无穷, 但不能直接用 Python
 的负下标代替这一约定. 负下标会访问列表尾部, 读取另一个金额的结果.
 代码只在面值不超过当前金额时转移.</p>
 <p>零面值使状态可能依赖自身, 回溯也无法前进;
 负面值则破坏按金额递增的依赖顺序. 如果金额带有小数,
 应先确定精确的离散单位, 再换算为整数建表. 任意四舍五入会改变原问题.</p>
-<h2 id="为什么这些子问题可以复用">4 为什么这些子问题可以复用</h2>
-<h3 id="状态-递推与结果复用">4.1 状态, 递推与结果复用</h3>
+<h2 id="为什么这些子问题可以复用">28.4 为什么这些子问题可以复用</h2>
+<h3 id="状态-递推与结果复用">28.4.1 状态, 递推与结果复用</h3>
 <p>动态规划英文为 dynamic programming, 简称 DP.
 它是求解多阶段决策和相关优化问题的重要方法, 也可以用于计数,
 可达性判定等任务. 本章重点讨论最优化问题.</p>
@@ -537,7 +540,7 @@ class="math inline">\(f[x-c]\)</span> 应读取 <code>dp(x-c+1)</code>.
 <p>"阶段"不一定是真实时间, 也可以是已经处理的物品数量,
 金额大小或区间长度. 状态表也不一定是数组; 当状态稀疏或形状复杂时,
 可以使用字典等数据结构.</p>
-<h3 id="四个需要回答的问题">4.2 四个需要回答的问题</h3>
+<h3 id="四个需要回答的问题">28.4.2 四个需要回答的问题</h3>
 <table>
 <colgroup>
 <col style="width: 33%" />
@@ -581,7 +584,7 @@ class="math inline">\(+\infty\)</span></td>
 <p>这四项决定"怎样算". 如果还需要回答"怎样做",
 就要另行记录选择并回溯最优方案.
 最优值与最优方案是两个相关但不同的输出.</p>
-<h3 id="最优子结构-替换一个较差的部分">4.3 最优子结构:
+<h3 id="最优子结构-替换一个较差的部分">28.4.3 最优子结构:
 替换一个较差的部分</h3>
 <p>假设最优的硬币方案最后使用面值 <span
 class="math inline">\(c\)</span>. 前面的部分恰好凑出 <span
@@ -593,7 +596,7 @@ class="math inline">\(c\)</span>, 使整体枚数变少. 这与整体最优矛�
 这种"可以替换而不破坏其他条件"的性质称为最优子结构.
 它需要结合具体约束证明; 并不是随意拆开一个问题,
 所得子问题的最优解就都能直接拼成整体最优解.</p>
-<h3 id="状态要保存足够的信息">4.4 状态要保存足够的信息</h3>
+<h3 id="状态要保存足够的信息">28.4.4 状态要保存足够的信息</h3>
 <p>同一个状态下, 后续可选行动和后续收益应由该状态决定,
 而不再需要追问已被省略的历史. 这常被称为状态的无后效性.</p>
 <p>在无限硬币例题中, 已经使用过哪些硬币不会减少以后可用的数量,
@@ -602,14 +605,14 @@ class="math inline">\(c\)</span>, 使整体枚数变少. 这与整体最优矛�
 <p>背包问题也不能只记录"已经考虑了前几件物品", 还需要记录容量上限.
 两个同样考虑前 3 件物品的子问题, 容量上限不同,
 允许的物品组合和最优评分就可能不同.</p>
-<h3 id="重叠子问题与计算顺序">4.5 重叠子问题与计算顺序</h3>
+<h3 id="重叠子问题与计算顺序">28.4.5 重叠子问题与计算顺序</h3>
 <p>重叠子问题使结果复用能够显著减少重复计算.
 并非每个多阶段最优化问题都会出现重叠子问题. 关键是递推正确, 状态充分,
 以及能以合适的顺序求值. 本章两个问题的依赖都是无环的,
 能够直接按顺序计算.</p>
-<h2 id="科普装备选择-每件物品只能取一次">5 科普装备选择:
+<h2 id="科普装备选择-每件物品只能取一次">28.5 科普装备选择:
 每件物品只能取一次</h2>
-<h3 id="题目与教学数据">5.1 题目与教学数据</h3>
+<h3 id="题目与教学数据">28.5.1 题目与教学数据</h3>
 <p>某高校学生团队开展社区科普活动, 需要把装备装入一个最多承载 8
 千克的运输箱. 每类装备只有一件, 可以选择带或不带,
 希望在重量限制下使总活动效益评分最大.</p>
@@ -656,7 +659,7 @@ class="math inline">\(v_i\)</span></th>
 <p>假设重量, 评分分别相加, 各装备没有必须搭配, 互斥或额外耗电约束.
 若实际任务有这类关系, 应扩充状态或采用其他模型,
 不能直接套用本例转移.</p>
-<h3 id="整数规划模型">5.2 0-1 整数规划模型</h3>
+<h3 id="整数规划模型">28.5.2 0-1 整数规划模型</h3>
 <p>设 <span class="math inline">\(y_i=1\)</span> 表示携带第 <span
 class="math inline">\(i\)</span> 件装备, <span
 class="math inline">\(y_i=0\)</span> 表示不携带. 一般模型为</p>
@@ -674,7 +677,8 @@ y_i\in\{0,1\},\quad i=1,\ldots,n.
 class="math inline">\(w_i\)</span> 为正整数, <span
 class="math inline">\(v_i\geqslant0\)</span>. 允许不选任何物品,
 不要求恰好装满.</p>
-<h3 id="状态必须包含物品阶段与容量">5.3 状态必须包含物品阶段与容量</h3>
+<h3 id="状态必须包含物品阶段与容量">28.5.3
+状态必须包含物品阶段与容量</h3>
 <p>定义</p>
 <p><span class="math display">\[
 D[i,j]=\text{仅从前 }i\text{ 件物品中选择、总重量不超过 }j\text{
@@ -686,7 +690,7 @@ D[i,j]=\text{仅从前 }i\text{ 件物品中选择、总重量不超过 }j\text{
 <p>原问题答案为 <span class="math inline">\(D[n,W]\)</span>. 对装备例题,
 <span class="math inline">\(n=4,W=8\)</span>, 需要求 <span
 class="math inline">\(D[4,8]\)</span>.</p>
-<h3 id="选与不选是两个候选分支">5.4 选与不选是两个候选分支</h3>
+<h3 id="选与不选是两个候选分支">28.5.4 选与不选是两个候选分支</h3>
 <p>考虑第 <span class="math inline">\(i\)</span> 件物品:</p>
 <p>如果不选, 候选值为 <span class="math inline">\(D[i-1,j]\)</span>.
 如果选, 要求 <span class="math inline">\(j\geqslant w_i\)</span>,
@@ -704,7 +708,7 @@ D[i-1,j],&amp;0\leqslant j&lt;w_i,\\
 若误把"选"的来源写成同一阶段 <span
 class="math inline">\(D[i,j-w_i]\)</span>, 就允许继续选择当前物品,
 模型已经变成可重复使用的背包形式.</p>
-<h3 id="初始条件与填表顺序">5.5 初始条件与填表顺序</h3>
+<h3 id="初始条件与填表顺序">28.5.5 初始条件与填表顺序</h3>
 <p><span class="math display">\[
 D[0,j]=0,\qquad j=0,\ldots,W,
 \]</span></p>
@@ -725,7 +729,7 @@ class="math inline">\(i\)</span> 件时, 前 <span
 class="math inline">\(i-1\)</span> 件的部分必须在容量 <span
 class="math inline">\(j-w_i\)</span> 下最优,
 否则替换后整体评分可以继续提高.</p>
-<h3 id="完整状态表与最优方案">5.6 完整状态表与最优方案</h3>
+<h3 id="完整状态表与最优方案">28.5.6 完整状态表与最优方案</h3>
 <p>为便于阅读, 将容量写在行上, 处理的物品数量写在列上:</p>
 <table>
 <thead>
@@ -836,10 +840,10 @@ D[4,8]
 <span class="math inline">\(4+8=12\)</span>. 本例最优方案唯一;
 一般背包问题可能有多个最优集合.</p>
 <p><img src="/images/DynamicProgramming/DP-3.png" alt="" style="width: 100%;"></p>
-<p>图 3 0-1 背包状态表与最优方案回溯. 图中每格为 <span
+<p>图 28-3 0-1 背包状态表与最优方案回溯. 图中每格为 <span
 class="math inline">\(D[i,j]\)</span>, 橙色箭头由当前状态指向回溯来源;
 斜向箭头表示选择一件物品, 竖直箭头表示不选当前物品.</p>
-<h3 id="为什么按评分重量比贪心也可能失败">5.7
+<h3 id="为什么按评分重量比贪心也可能失败">28.5.7
 为什么按评分重量比贪心也可能失败</h3>
 <p>本例评分重量比分别为 <span
 class="math inline">\(1.5,4/3,1.25,1.6\)</span>. 按比例从高到低尝试,
@@ -848,8 +852,8 @@ class="math inline">\(1.5,4/3,1.25,1.6\)</span>. 按比例从高到低尝试,
 <p>该结果低于最优评分 12. 这说明"单位重量效益高的优先"对 0-1
 物品选择不保证最优. 允许物品任意分割的分数背包有不同的结构,
 不能把它的贪心结论直接用于 0-1 背包.</p>
-<h2 id="把背包状态表写成程序">6 把背包状态表写成程序</h2>
-<h3 id="python-先填表-再按物品阶段回溯">6.1 Python: 先填表,
+<h2 id="把背包状态表写成程序">28.6 把背包状态表写成程序</h2>
+<h3 id="python-先填表-再按物品阶段回溯">28.6.1 Python: 先填表,
 再按物品阶段回溯</h3>
 <p>程序中的 <code>dp[i][j]</code> 正好对应数学状态 <span
 class="math inline">\(D[i,j]\)</span>. 每次处理第 <span
@@ -869,7 +873,7 @@ class="math inline">\((i,j)=(4,8),(3,3),(2,3),(1,0),(0,0)\)</span>. 第 4
 <p>每一行状态应独立创建. Python 的 <code>[[0]*(W+1)]*(n+1)</code>
 会让多行引用同一个列表, 破坏“上一阶段保持独立”的前提;
 示例采用逐行创建.</p>
-<h3 id="matlab-同时偏移阶段与容量下标">6.2 MATLAB:
+<h3 id="matlab-同时偏移阶段与容量下标">28.6.2 MATLAB:
 同时偏移阶段与容量下标</h3>
 <p>数学状态 <span class="math inline">\(D[i,j]\)</span> 保存在
 <code>dp(i+1,j+1)</code> 中. 因而不选分支的上一阶段为
@@ -881,9 +885,9 @@ class="math inline">\((i,j)=(4,8),(3,3),(2,3),(1,0),(0,0)\)</span>. 第 4
 可得最大评分 12, 编号 <code>[2,4]</code>. 还应回代原重量与评分,
 检查总重量为 8, 总评分为 12, 并确认编号没有重复.
 <code>dynamic_examples.m</code> 汇总了硬币与背包两组 MATLAB 计算.</p>
-<h2 id="改变计算方式之前-先确认状态含义">7 改变计算方式之前,
+<h2 id="改变计算方式之前-先确认状态含义">28.7 改变计算方式之前,
 先确认状态含义</h2>
-<h3 id="记忆化搜索-递归也能保存状态">7.1 记忆化搜索:
+<h3 id="记忆化搜索-递归也能保存状态">28.7.1 记忆化搜索:
 递归也能保存状态</h3>
 <p>递归与动态规划并不互斥. 朴素递归会重复计算相同金额;
 记忆化搜索在第一次计算后缓存结果, 后续直接使用. 在固定面值
@@ -916,7 +920,7 @@ class="math inline">\((i,j)=(4,8),(3,3),(2,3),(1,0),(0,0)\)</span>. 第 4
 <p>双语言完整对照见 <code>DynamicProgrammingVariants.md</code>. Python
 使用 <code>functools.cache</code>, MATLAB 用显式数组缓存,
 两者采用相同的递推与计数规则.</p>
-<h3 id="一维压缩-为什么容量必须倒序">7.2 一维压缩:
+<h3 id="一维压缩-为什么容量必须倒序">28.7.2 一维压缩:
 为什么容量必须倒序</h3>
 <p>二维背包表只依赖上一行. 如果仅求最优值, 可以用一个数组反复更新,
 将空间从 <span class="math inline">\(O(nW)\)</span> 降到 <span
@@ -937,7 +941,7 @@ d[j]\leftarrow\max\{d[j],d[j-w_i]+v_i\},
 <p>这个一维版本只返回最优值. 若要恢复装备集合,
 可保留二维表或阶段选择记录. 不能默认可变的一维父指针仍记录正确历史,
 因为后续更新可能改变父状态所属阶段.</p>
-<h3 id="恰好装满-不可达状态应改成负无穷">7.3 恰好装满:
+<h3 id="恰好装满-不可达状态应改成负无穷">28.7.3 恰好装满:
 不可达状态应改成负无穷</h3>
 <p>如果要求总重量恰好等于容量, 状态改为</p>
 <p><span class="math display">\[
@@ -975,7 +979,7 @@ E[0,0]=0,\qquad E[0,j]=-\infty\quad(j&gt;0).
 <code>knapsackExact.m</code> 见配套阅读材料. Python 无解返回
 <code>None</code>, MATLAB 无解返回 <code>-Inf</code>;
 二者都应解释为恰好装满不可达, 不是评分为零.</p>
-<h3 id="状态表的大小决定能否计算">7.4 状态表的大小决定能否计算</h3>
+<h3 id="状态表的大小决定能否计算">28.7.4 状态表的大小决定能否计算</h3>
 <p>二维表有 <span class="math inline">\((n+1)(W+1)\)</span> 个状态,
 每个状态比较至多两个分支, 时间复杂度为 <span
 class="math inline">\(O(nW)\)</span>, 表格空间为 <span
@@ -1002,7 +1006,7 @@ class="math inline">\(O(nW)\)</span> 是<strong>伪多项式时间</strong>,
 或有多项资源限制, 动态规划可能不可承受. 应根据数据规模考虑整数规划,
 稀疏状态, 按评分维度建表或其他方法,
 不能仅因为循环结构简单就判断它一定高效.</p>
-<h2 id="从两道例题迁移到其他问题">8 从两道例题迁移到其他问题</h2>
+<h2 id="从两道例题迁移到其他问题">28.8 从两道例题迁移到其他问题</h2>
 <p>动态规划的状态必须保存足以决定后续合法行动和收益的信息.
 如果装备还受体积限制, 仅有物品阶段和重量容量就可能不够;
 如果两件装备同时携带才有额外效益, 简单的逐件可加评分也需要调整.</p>
@@ -1010,7 +1014,7 @@ class="math inline">\(O(nW)\)</span> 是<strong>伪多项式时间</strong>,
 再在合法行动中取最小值, 得到 Bellman 递推. 完整模型,
 终端条件和两道例题的对应关系见 <code>MultistageModels.md</code>.
 不应只凭“能拆成小问题”, 就认定拆分后的最优解可以任意拼接.</p>
-<h3 id="优点与适用范围">8.1 优点与适用范围</h3>
+<h3 id="优点与适用范围">28.8.1 优点与适用范围</h3>
 <p>动态规划把"考虑所有可能选择"组织成可复用的状态计算. 在本章假设下,
 递推遍历全部合法分支, 得到全局最优值, 而不是一个凭直觉选择的近似结果.
 状态表还便于解释, 检查和恢复方案.</p>
@@ -1019,7 +1023,7 @@ class="math inline">\(O(nW)\)</span> 是<strong>伪多项式时间</strong>,
 错误更新顺序都会让程序稳定地算出另一个问题的答案.</p>
 <p>对于规模可控的离散资源分配和组合选择问题, 它往往很实用; 对于高维状态,
 很大的数值上限或难以形成合理递推的问题, 则要评估其他求解方式.</p>
-<h3 id="动态规划-贪心与直接枚举">8.2 动态规划, 贪心与直接枚举</h3>
+<h3 id="动态规划-贪心与直接枚举">28.8.2 动态规划, 贪心与直接枚举</h3>
 <table>
 <colgroup>
 <col style="width: 33%" />
@@ -1066,7 +1070,7 @@ class="math inline">\(O(nW)\)</span> 是<strong>伪多项式时间</strong>,
 递归的效率取决于子问题是否被重复计算. 本章数据表明,
 两种特定的贪心规则会失败;
 加缓存的递归则可以与表格递推具有相同数量级的状态计算.</p>
-<h3 id="建立动态规划的步骤">8.3 建立动态规划的步骤</h3>
+<h3 id="建立动态规划的步骤">28.8.3 建立动态规划的步骤</h3>
 <ol type="1">
 <li>说明输入, 单位, 目标与全部约束.</li>
 <li>判断需要哪些信息才能决定后续选择, 定义状态.</li>
@@ -1077,14 +1081,14 @@ class="math inline">\(O(nW)\)</span> 是<strong>伪多项式时间</strong>,
 <li>回溯方案, 并用原问题的约束与目标核验.</li>
 <li>分析状态数, 每状态工作量和内存需求.</li>
 </ol>
-<h3 id="科普装备例题的决策解释">8.4 科普装备例题的决策解释</h3>
+<h3 id="科普装备例题的决策解释">28.8.4 科普装备例题的决策解释</h3>
 <p>将每件装备视为至多使用一次的独立物品, 假设活动效益评分可逐件相加,
 以运输箱重量不超过 8 千克为约束. 建立以"已处理物品数量,
 容量上限"为状态的 0-1 背包动态规划, 求得最大评分为 12.
 回溯结果选择互动答题设备与便携展台, 总重量为 8 千克, 满足承载限制.
 该结论依赖例题给定的重量, 评分及可加性假设; 若增加必须搭配或体积限制,
 需重新建模.</p>
-<h2 id="常见错误与检查方法">9 常见错误与检查方法</h2>
+<h2 id="常见错误与检查方法">28.9 常见错误与检查方法</h2>
 <table>
 <colgroup>
 <col style="width: 33%" />
@@ -1166,7 +1170,7 @@ class="math inline">\(O(Nm)\)</span> 并说明计数对象</td>
 </tr>
 </tbody>
 </table>
-<h2 id="练习">10 练习</h2>
+<h2 id="练习">28.10 练习</h2>
 <ol type="1">
 <li>仍用 2, 5, 7, 分别凑出 1, 3, 6, 14, 20,
 求最少枚数并给出可行时的一种最优组合.</li>

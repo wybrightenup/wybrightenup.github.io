@@ -19,20 +19,20 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="多目标规划: 费用更低, 还是污染更少 某工厂需要制定两种产品的月生产计划. 如果只追求费用最低, 方案容易确定; 如果还希望污染尽量少, 原来的最优方案就未必符合新的期待. 多目标规划要做的, 是先识别哪些方案值得选择, 再把决策偏好转化为可以计算的模型. 本章围绕同一个生产案例, 依次比较权重, 阈值, 理想点和严格优先级四种偏好表达方式. 计算始终回到两个问题: 方案的实际指">
+    <meta name="description" content="第26章 多目标规划: 费用更低, 还是污染更少 某工厂需要制定两种产品的月生产计划. 如果只追求费用最低, 方案容易确定; 如果还希望污染尽量少, 原来的最优方案就未必符合新的期待. 多目标规划要做的, 是先识别哪些方案值得选择, 再把决策偏好转化为可以计算的模型. 本章围绕同一个生产案例, 依次比较权重, 阈值, 理想点和严格优先级四种偏好表达方式. 计算始终回到两个问题: 方">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Hexo">
 <meta property="og:url" content="http://example.com/MathematicalModelingMethods/MultiObjectiveProgramming.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="多目标规划: 费用更低, 还是污染更少 某工厂需要制定两种产品的月生产计划. 如果只追求费用最低, 方案容易确定; 如果还希望污染尽量少, 原来的最优方案就未必符合新的期待. 多目标规划要做的, 是先识别哪些方案值得选择, 再把决策偏好转化为可以计算的模型. 本章围绕同一个生产案例, 依次比较权重, 阈值, 理想点和严格优先级四种偏好表达方式. 计算始终回到两个问题: 方案的实际指">
+<meta property="og:description" content="第26章 多目标规划: 费用更低, 还是污染更少 某工厂需要制定两种产品的月生产计划. 如果只追求费用最低, 方案容易确定; 如果还希望污染尽量少, 原来的最优方案就未必符合新的期待. 多目标规划要做的, 是先识别哪些方案值得选择, 再把决策偏好转化为可以计算的模型. 本章围绕同一个生产案例, 依次比较权重, 阈值, 理想点和严格优先级四种偏好表达方式. 计算始终回到两个问题: 方">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/images/MultiObjectiveProgramming/MOP-1.png">
 <meta property="og:image" content="http://example.com/images/MultiObjectiveProgramming/MOP-2.png">
 <meta property="og:image" content="http://example.com/images/MultiObjectiveProgramming/MOP-3.png">
 <meta property="og:image" content="http://example.com/images/MultiObjectiveProgramming/MOP-4.png">
 <meta property="og:image" content="http://example.com/images/MultiObjectiveProgramming/MOP-5.png">
-<meta property="article:published_time" content="2026-10-26T06:39:25.736Z">
-<meta property="article:modified_time" content="2026-10-26T06:05:34.000Z">
+<meta property="article:published_time" content="2026-10-27T00:21:35.743Z">
+<meta property="article:modified_time" content="2026-10-27T00:18:14.000Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/MultiObjectiveProgramming/MOP-1.png">
@@ -133,18 +133,21 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A%E7%9B%AE%E6%A0%87%E8%A7%84%E5%88%92-%E8%B4%B9%E7%94%A8%E6%9B%B4%E4%BD%8E-%E8%BF%98%E6%98%AF%E6%B1%A1%E6%9F%93%E6%9B%B4%E5%B0%91"><span class="nav-number">1.</span> <span class="nav-text">多目标规划: 费用更低,
-还是污染更少</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E4%B8%80%E4%BB%BD%E7%94%9F%E4%BA%A7%E8%AE%A1%E5%88%92%E5%BC%80%E5%A7%8B"><span class="nav-number">1.1.</span> <span class="nav-text">1 从一份生产计划开始</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%B9%E7%94%A8%E4%B8%8E%E6%B1%A1%E6%9F%93%E5%A6%82%E4%BD%95%E8%BF%9B%E5%85%A5%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1 费用与污染如何进入模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E5%AE%B9%E6%98%93%E8%A7%A3%E9%87%8A%E7%9A%84%E6%96%B9%E6%A1%88"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2 两个容易解释的方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E7%BA%BF%E6%80%A7%E5%8A%A0%E6%9D%83%E6%B3%95%E7%AE%97%E5%87%BA%E4%B8%80%E4%B8%AA%E6%8A%98%E4%B8%AD%E6%96%B9%E6%A1%88"><span class="nav-number">1.2.</span> <span class="nav-text">2
-用线性加权法算出一个折中方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E8%AF%B4%E6%98%8E%E5%B0%BA%E5%BA%A6-%E5%86%8D%E8%AE%BE%E7%BD%AE%E6%9D%83%E9%87%8D"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 先说明尺度, 再设置权重</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E7%85%A7%E6%B1%82%E8%A7%A3%E5%99%A8%E7%9A%84%E6%A0%87%E5%87%86%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 对照求解器的标准模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E6%AF%8F%E7%BB%84%E6%9D%83%E9%87%8D%E9%83%BD%E9%87%8D%E6%96%B0%E6%B1%82%E8%A7%A3"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3 Python: 每组权重都重新求解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab-%E7%9B%B8%E5%90%8C%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%8F%A6%E4%B8%80%E7%A7%8D%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4 MATLAB:
-相同模型的另一种实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%93%AA%E4%BA%9B%E6%96%B9%E6%A1%88%E5%80%BC%E5%BE%97%E8%BF%9B%E5%85%A5%E6%9C%80%E5%90%8E%E9%80%89%E6%8B%A9"><span class="nav-number">1.3.</span> <span class="nav-text">3 哪些方案值得进入最后选择</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%94%AF%E9%85%8D%E5%85%B3%E7%B3%BB%E6%8E%92%E9%99%A4%E5%85%A8%E9%9D%A2%E8%BE%83%E5%B7%AE%E7%9A%84%E6%96%B9%E6%A1%88"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1
-用支配关系排除全面较差的方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E4%BE%8B%E7%9A%84%E5%85%A8%E9%83%A8-pareto-%E8%A7%A3%E5%8F%AF%E4%BB%A5%E7%9B%B4%E6%8E%A5%E6%8E%A8%E5%AF%BC"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 本例的全部 Pareto
-解可以直接推导</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%89%E6%95%88-%E4%B8%8D%E7%AD%89%E4%BA%8E%E5%94%AF%E4%B8%80%E6%BB%A1%E6%84%8F"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 有效, 不等于唯一满意</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A3%E6%9D%83%E9%87%8D%E4%B8%BA%E4%BB%80%E4%B9%88%E8%83%BD%E4%BF%9D%E8%AF%81%E6%9C%89%E6%95%88%E6%80%A7"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.4 正权重为什么能保证有效性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%9D%83%E9%87%8D%E7%A8%8D%E5%8F%98-%E6%96%B9%E6%A1%88%E5%B0%B1%E8%B7%B3%E5%88%B0%E5%8F%A6%E4%B8%80%E4%B8%AA%E7%AB%AF%E7%82%B9"><span class="nav-number">1.4.</span> <span class="nav-text">4 为什么权重稍变,
-方案就跳到另一个端点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%B4%E7%95%8C%E6%9D%83%E9%87%8D%E7%94%B1%E5%85%AC%E5%BC%8F%E5%86%B3%E5%AE%9A"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 临界权重由公式决定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%B3%E7%AD%96%E8%B7%B3%E5%8F%98-%E6%9C%80%E4%BC%98%E7%BB%BC%E5%90%88%E5%80%BC%E4%BB%8D%E7%84%B6%E8%BF%9E%E7%BB%AD"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 决策跳变,
-最优综合值仍然连续</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%BA%E5%BA%A6%E6%94%B9%E5%8F%98-%E4%B8%B4%E7%95%8C%E6%9D%83%E9%87%8D%E4%B9%9F%E4%BC%9A%E6%94%B9%E5%8F%98"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 尺度改变, 临界权重也会改变</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E5%85%B6%E4%BB%96%E6%96%B9%E5%BC%8F%E8%A1%A8%E8%BE%BE%E5%81%8F%E5%A5%BD"><span class="nav-number">1.5.</span> <span class="nav-text">5 用其他方式表达偏好</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%CE%B5-%E7%BA%A6%E6%9D%9F%E6%B3%95-%E7%BB%99%E6%B1%A1%E6%9F%93%E4%B8%80%E4%B8%AA%E5%8F%AF%E8%A7%A3%E9%87%8A%E7%9A%84%E4%B8%8A%E9%99%90"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 ε 约束法:
-给污染一个可解释的上限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%90%86%E6%83%B3%E7%82%B9%E6%B3%95-%E8%AE%A9%E6%96%B9%E6%A1%88%E9%9D%A0%E8%BF%91%E4%B8%A4%E4%B8%AA%E7%90%86%E6%83%B3%E6%8C%87%E6%A0%87"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 理想点法:
-让方案靠近两个理想指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%85%88%E7%BA%A7%E6%B3%95-%E9%AB%98%E4%BC%98%E5%85%88%E7%BA%A7%E7%9B%AE%E6%A0%87%E4%B8%8D%E8%83%BD%E9%80%80%E8%AE%A9"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 优先级法:
-高优先级目标不能退让</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E7%A7%8D%E6%96%B9%E6%B3%95%E7%9A%84%E7%BB%93%E6%9E%9C%E6%94%BE%E5%9C%A8%E4%B8%80%E8%B5%B7%E7%9C%8B"><span class="nav-number">1.5.4.</span> <span class="nav-text">5.4 四种方法的结果放在一起看</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E6%9D%83%E6%B3%95%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%AF%E8%83%BD%E9%81%97%E6%BC%8F%E6%9C%89%E6%95%88%E6%96%B9%E6%A1%88"><span class="nav-number">1.6.</span> <span class="nav-text">6
-加权法为什么可能遗漏有效方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E5%8F%AA%E6%9C%89%E4%B8%89%E4%B8%AA%E6%96%B9%E6%A1%88%E7%9A%84%E5%8F%8D%E4%BE%8B"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 一个只有三个方案的反例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E7%AB%A0%E7%94%9F%E4%BA%A7%E4%BE%8B%E9%A2%98%E7%9A%84%E6%83%85%E5%86%B5%E6%9C%89%E6%89%80%E4%B8%8D%E5%90%8C"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 本章生产例题的情况有所不同</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E6%96%B9%E6%B3%95%E8%BF%81%E7%A7%BB%E5%88%B0%E5%85%B6%E4%BB%96%E9%97%AE%E9%A2%98"><span class="nav-number">1.7.</span> <span class="nav-text">7 把方法迁移到其他问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%8E%E6%A0%B7%E9%80%89%E6%8B%A9%E6%96%B9%E6%B3%95%E5%B9%B6%E6%8A%A5%E5%91%8A%E7%BB%93%E6%9E%9C"><span class="nav-number">1.8.</span> <span class="nav-text">8 怎样选择方法并报告结果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.9.</span> <span class="nav-text">9 练习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">1.10.</span> <span class="nav-text">参考文献</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC26%E7%AB%A0-%E5%A4%9A%E7%9B%AE%E6%A0%87%E8%A7%84%E5%88%92-%E8%B4%B9%E7%94%A8%E6%9B%B4%E4%BD%8E-%E8%BF%98%E6%98%AF%E6%B1%A1%E6%9F%93%E6%9B%B4%E5%B0%91"><span class="nav-number">1.</span> <span class="nav-text">第26章 多目标规划:
+费用更低, 还是污染更少</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E4%B8%80%E4%BB%BD%E7%94%9F%E4%BA%A7%E8%AE%A1%E5%88%92%E5%BC%80%E5%A7%8B"><span class="nav-number">1.1.</span> <span class="nav-text">26.1 从一份生产计划开始</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%B9%E7%94%A8%E4%B8%8E%E6%B1%A1%E6%9F%93%E5%A6%82%E4%BD%95%E8%BF%9B%E5%85%A5%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.1.</span> <span class="nav-text">26.1.1 费用与污染如何进入模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E5%AE%B9%E6%98%93%E8%A7%A3%E9%87%8A%E7%9A%84%E6%96%B9%E6%A1%88"><span class="nav-number">1.1.2.</span> <span class="nav-text">26.1.2 两个容易解释的方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E7%BA%BF%E6%80%A7%E5%8A%A0%E6%9D%83%E6%B3%95%E7%AE%97%E5%87%BA%E4%B8%80%E4%B8%AA%E6%8A%98%E4%B8%AD%E6%96%B9%E6%A1%88"><span class="nav-number">1.2.</span> <span class="nav-text">26.2
+用线性加权法算出一个折中方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E8%AF%B4%E6%98%8E%E5%B0%BA%E5%BA%A6-%E5%86%8D%E8%AE%BE%E7%BD%AE%E6%9D%83%E9%87%8D"><span class="nav-number">1.2.1.</span> <span class="nav-text">26.2.1 先说明尺度, 再设置权重</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E7%85%A7%E6%B1%82%E8%A7%A3%E5%99%A8%E7%9A%84%E6%A0%87%E5%87%86%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.2.</span> <span class="nav-text">26.2.2 对照求解器的标准模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python-%E6%AF%8F%E7%BB%84%E6%9D%83%E9%87%8D%E9%83%BD%E9%87%8D%E6%96%B0%E6%B1%82%E8%A7%A3"><span class="nav-number">1.2.3.</span> <span class="nav-text">26.2.3 Python:
+每组权重都重新求解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matlab-%E7%9B%B8%E5%90%8C%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%8F%A6%E4%B8%80%E7%A7%8D%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.2.4.</span> <span class="nav-text">26.2.4 MATLAB:
+相同模型的另一种实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%93%AA%E4%BA%9B%E6%96%B9%E6%A1%88%E5%80%BC%E5%BE%97%E8%BF%9B%E5%85%A5%E6%9C%80%E5%90%8E%E9%80%89%E6%8B%A9"><span class="nav-number">1.3.</span> <span class="nav-text">26.3 哪些方案值得进入最后选择</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%94%AF%E9%85%8D%E5%85%B3%E7%B3%BB%E6%8E%92%E9%99%A4%E5%85%A8%E9%9D%A2%E8%BE%83%E5%B7%AE%E7%9A%84%E6%96%B9%E6%A1%88"><span class="nav-number">1.3.1.</span> <span class="nav-text">26.3.1
+用支配关系排除全面较差的方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E4%BE%8B%E7%9A%84%E5%85%A8%E9%83%A8-pareto-%E8%A7%A3%E5%8F%AF%E4%BB%A5%E7%9B%B4%E6%8E%A5%E6%8E%A8%E5%AF%BC"><span class="nav-number">1.3.2.</span> <span class="nav-text">26.3.2 本例的全部 Pareto
+解可以直接推导</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%89%E6%95%88-%E4%B8%8D%E7%AD%89%E4%BA%8E%E5%94%AF%E4%B8%80%E6%BB%A1%E6%84%8F"><span class="nav-number">1.3.3.</span> <span class="nav-text">26.3.3 有效, 不等于唯一满意</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A3%E6%9D%83%E9%87%8D%E4%B8%BA%E4%BB%80%E4%B9%88%E8%83%BD%E4%BF%9D%E8%AF%81%E6%9C%89%E6%95%88%E6%80%A7"><span class="nav-number">1.3.4.</span> <span class="nav-text">26.3.4 正权重为什么能保证有效性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%9D%83%E9%87%8D%E7%A8%8D%E5%8F%98-%E6%96%B9%E6%A1%88%E5%B0%B1%E8%B7%B3%E5%88%B0%E5%8F%A6%E4%B8%80%E4%B8%AA%E7%AB%AF%E7%82%B9"><span class="nav-number">1.4.</span> <span class="nav-text">26.4 为什么权重稍变,
+方案就跳到另一个端点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%B4%E7%95%8C%E6%9D%83%E9%87%8D%E7%94%B1%E5%85%AC%E5%BC%8F%E5%86%B3%E5%AE%9A"><span class="nav-number">1.4.1.</span> <span class="nav-text">26.4.1 临界权重由公式决定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%B3%E7%AD%96%E8%B7%B3%E5%8F%98-%E6%9C%80%E4%BC%98%E7%BB%BC%E5%90%88%E5%80%BC%E4%BB%8D%E7%84%B6%E8%BF%9E%E7%BB%AD"><span class="nav-number">1.4.2.</span> <span class="nav-text">26.4.2 决策跳变,
+最优综合值仍然连续</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%BA%E5%BA%A6%E6%94%B9%E5%8F%98-%E4%B8%B4%E7%95%8C%E6%9D%83%E9%87%8D%E4%B9%9F%E4%BC%9A%E6%94%B9%E5%8F%98"><span class="nav-number">1.4.3.</span> <span class="nav-text">26.4.3 尺度改变,
+临界权重也会改变</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E5%85%B6%E4%BB%96%E6%96%B9%E5%BC%8F%E8%A1%A8%E8%BE%BE%E5%81%8F%E5%A5%BD"><span class="nav-number">1.5.</span> <span class="nav-text">26.5 用其他方式表达偏好</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%CE%B5-%E7%BA%A6%E6%9D%9F%E6%B3%95-%E7%BB%99%E6%B1%A1%E6%9F%93%E4%B8%80%E4%B8%AA%E5%8F%AF%E8%A7%A3%E9%87%8A%E7%9A%84%E4%B8%8A%E9%99%90"><span class="nav-number">1.5.1.</span> <span class="nav-text">26.5.1 ε 约束法:
+给污染一个可解释的上限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%90%86%E6%83%B3%E7%82%B9%E6%B3%95-%E8%AE%A9%E6%96%B9%E6%A1%88%E9%9D%A0%E8%BF%91%E4%B8%A4%E4%B8%AA%E7%90%86%E6%83%B3%E6%8C%87%E6%A0%87"><span class="nav-number">1.5.2.</span> <span class="nav-text">26.5.2 理想点法:
+让方案靠近两个理想指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%85%88%E7%BA%A7%E6%B3%95-%E9%AB%98%E4%BC%98%E5%85%88%E7%BA%A7%E7%9B%AE%E6%A0%87%E4%B8%8D%E8%83%BD%E9%80%80%E8%AE%A9"><span class="nav-number">1.5.3.</span> <span class="nav-text">26.5.3 优先级法:
+高优先级目标不能退让</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E7%A7%8D%E6%96%B9%E6%B3%95%E7%9A%84%E7%BB%93%E6%9E%9C%E6%94%BE%E5%9C%A8%E4%B8%80%E8%B5%B7%E7%9C%8B"><span class="nav-number">1.5.4.</span> <span class="nav-text">26.5.4 四种方法的结果放在一起看</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E6%9D%83%E6%B3%95%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%AF%E8%83%BD%E9%81%97%E6%BC%8F%E6%9C%89%E6%95%88%E6%96%B9%E6%A1%88"><span class="nav-number">1.6.</span> <span class="nav-text">26.6
+加权法为什么可能遗漏有效方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E5%8F%AA%E6%9C%89%E4%B8%89%E4%B8%AA%E6%96%B9%E6%A1%88%E7%9A%84%E5%8F%8D%E4%BE%8B"><span class="nav-number">1.6.1.</span> <span class="nav-text">26.6.1 一个只有三个方案的反例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E7%AB%A0%E7%94%9F%E4%BA%A7%E4%BE%8B%E9%A2%98%E7%9A%84%E6%83%85%E5%86%B5%E6%9C%89%E6%89%80%E4%B8%8D%E5%90%8C"><span class="nav-number">1.6.2.</span> <span class="nav-text">26.6.2
+本章生产例题的情况有所不同</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E6%96%B9%E6%B3%95%E8%BF%81%E7%A7%BB%E5%88%B0%E5%85%B6%E4%BB%96%E9%97%AE%E9%A2%98"><span class="nav-number">1.7.</span> <span class="nav-text">26.7 把方法迁移到其他问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%8E%E6%A0%B7%E9%80%89%E6%8B%A9%E6%96%B9%E6%B3%95%E5%B9%B6%E6%8A%A5%E5%91%8A%E7%BB%93%E6%9E%9C"><span class="nav-number">1.8.</span> <span class="nav-text">26.8 怎样选择方法并报告结果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.9.</span> <span class="nav-text">26.9 练习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">1.10.</span> <span class="nav-text">参考文献</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -194,8 +197,8 @@
       
       
       <div class="post-body">
-          <h1 id="多目标规划-费用更低-还是污染更少">多目标规划: 费用更低,
-还是污染更少</h1>
+          <h1 id="第26章-多目标规划-费用更低-还是污染更少">第26章 多目标规划:
+费用更低, 还是污染更少</h1>
 <p>某工厂需要制定两种产品的月生产计划. 如果只追求费用最低, 方案容易确定;
 如果还希望污染尽量少, 原来的最优方案就未必符合新的期待.
 多目标规划要做的, 是先识别哪些方案值得选择,
@@ -203,8 +206,8 @@
 <p>本章围绕同一个生产案例, 依次比较权重, 阈值,
 理想点和严格优先级四种偏好表达方式. 计算始终回到两个问题:
 方案的实际指标是什么, 选择它依赖怎样的偏好?</p>
-<h2 id="从一份生产计划开始">1 从一份生产计划开始</h2>
-<h3 id="费用与污染如何进入模型">1.1 费用与污染如何进入模型</h3>
+<h2 id="从一份生产计划开始">26.1 从一份生产计划开始</h2>
+<h3 id="费用与污染如何进入模型">26.1.1 费用与污染如何进入模型</h3>
 <p>工厂生产 A, B 两种产品, 数据如下.</p>
 <table>
 <colgroup>
@@ -259,7 +262,7 @@ x_1+x_2\geqslant7,\\
 class="math inline">\(f_2\)</span> 分别为月生产费用和月污染产生量,
 单位为万元/月, 吨污染/月. <span class="math inline">\(\min F(x)\)</span>
 是多目标模型的简记, 不表示向量天然具有一个总的大小顺序.</p>
-<h3 id="两个容易解释的方案">1.2 两个容易解释的方案</h3>
+<h3 id="两个容易解释的方案">26.1.2 两个容易解释的方案</h3>
 <p>如果只求费用最低, 由于 A 更便宜, 应尽量生产 A, 得到 <span
 class="math inline">\((5,2)^{\mathsf T}\)</span>; 如果只求污染最低, B
 的单位污染更少, 应尽量生产 B, 得到 <span
@@ -293,9 +296,9 @@ class="math inline">\((1,6)^{\mathsf T}\)</span>.</p>
 </table>
 <p>两个方案各有优势. 从第二个方案转向第一个方案, 每月节省 12 万元,
 却多产生 0.4 吨污染. 单靠"两个目标都重要", 还不能唯一确定应选哪一个.</p>
-<h2 id="用线性加权法算出一个折中方案">2
+<h2 id="用线性加权法算出一个折中方案">26.2
 用线性加权法算出一个折中方案</h2>
-<h3 id="先说明尺度-再设置权重">2.1 先说明尺度, 再设置权重</h3>
+<h3 id="先说明尺度-再设置权重">26.2.1 先说明尺度, 再设置权重</h3>
 <p>费用和污染具有不同单位, 不能不作解释就把数值相加.
 假设采用月度参考尺度 30 万元, 2 吨, 费用权重取 0.4, 污染权重取 0.6.
 标量评价函数为</p>
@@ -332,7 +335,7 @@ f_1=20,\qquad f_2=2.6,\qquad J=\frac{157}{150}\approx1.046667.
 加权评价仍然允许费用和污染之间相互补偿.</p>
 <p>本例的参考污染量 2 吨并非排放标准. 实际可达到的最小污染量是 2.2 吨;
 若另外要求污染不超过 2 吨, 模型将不可行.</p>
-<h3 id="对照求解器的标准模型">2.2 对照求解器的标准模型</h3>
+<h3 id="对照求解器的标准模型">26.2.2 对照求解器的标准模型</h3>
 <p>Python 的 <code>scipy.optimize.linprog</code> 和 MATLAB 的
 <code>linprog</code> 都求解线性目标函数最小化问题.
 本章使用的接口形式为</p>
@@ -400,7 +403,8 @@ class="math inline">\(u=(5,6)^{\mathsf T}\)</span></td>
 <code>[]</code>. Python <code>linprog</code> 默认变量非负, MATLAB
 不自动补上非负条件; 示例都明确给出边界. Python 的一维数组保存向量分量,
 MATLAB 用 <code>.'</code> 将行向量转成实数列向量.</p>
-<h3 id="python-每组权重都重新求解">2.3 Python: 每组权重都重新求解</h3>
+<h3 id="python-每组权重都重新求解">26.2.3 Python:
+每组权重都重新求解</h3>
 <p>程序按"数据 → 综合系数 → 求解 → 回代"的顺序组织.
 先保留几组权重作对照, 下一节再解释其差异.</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linprog</span><br><span class="line"></span><br><span class="line">cost = np.array([<span class="number">2.0</span>, <span class="number">5.0</span>])</span><br><span class="line">pollution = np.array([<span class="number">0.4</span>, <span class="number">0.3</span>])</span><br><span class="line">A_ub = np.array([[-<span class="number">1.0</span>, -<span class="number">1.0</span>]])</span><br><span class="line">b_ub = np.array([-<span class="number">7.0</span>])</span><br><span class="line">bounds = [(<span class="number">0.0</span>, <span class="number">5.0</span>), (<span class="number">0.0</span>, <span class="number">6.0</span>)]</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;w_cost  w_pollution   x_A   x_B    cost  pollution     score&quot;</span>)</span><br><span class="line"><span class="keyword">for</span> w <span class="keyword">in</span> [<span class="number">0.3</span>, <span class="number">1.0</span> / <span class="number">3.0</span>, <span class="number">0.4</span>, <span class="number">0.5</span>]:</span><br><span class="line">    c = w * cost / <span class="number">30.0</span> + (<span class="number">1.0</span> - w) * pollution / <span class="number">2.0</span></span><br><span class="line">    res = linprog(c, A_ub=A_ub, b_ub=b_ub,</span><br><span class="line">                  bounds=bounds, method=<span class="string">&quot;highs&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> res.success:</span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(res.message)</span><br><span class="line"></span><br><span class="line">    x = res.x</span><br><span class="line">    f1, f2 = cost @ x, pollution @ x</span><br><span class="line">    score = w * f1 / <span class="number">30.0</span> + (<span class="number">1.0</span> - w) * f2 / <span class="number">2.0</span></span><br><span class="line">    <span class="keyword">assert</span> np.<span class="built_in">all</span>(A_ub @ x &lt;= b_ub + <span class="number">1e-8</span>)</span><br><span class="line">    <span class="keyword">assert</span> np.<span class="built_in">all</span>(x &gt;= -<span class="number">1e-8</span>)</span><br><span class="line">    <span class="keyword">assert</span> np.<span class="built_in">all</span>(x &lt;= np.array([<span class="number">5.0</span>, <span class="number">6.0</span>]) + <span class="number">1e-8</span>)</span><br><span class="line">    <span class="keyword">assert</span> np.isclose(res.fun, score, atol=<span class="number">1e-8</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> np.isclose(w, <span class="number">1.0</span> / <span class="number">3.0</span>, rtol=<span class="number">0.0</span>, atol=<span class="number">1e-12</span>):</span><br><span class="line">        <span class="keyword">assert</span> np.isclose(x.<span class="built_in">sum</span>(), <span class="number">7.0</span>, atol=<span class="number">1e-8</span>)</span><br><span class="line">        <span class="keyword">assert</span> np.isclose(score, <span class="number">49.0</span> / <span class="number">45.0</span>, atol=<span class="number">1e-8</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        expected = [<span class="number">1.0</span>, <span class="number">6.0</span>] <span class="keyword">if</span> w &lt; <span class="number">1.0</span> / <span class="number">3.0</span> <span class="keyword">else</span> [<span class="number">5.0</span>, <span class="number">2.0</span>]</span><br><span class="line">        <span class="keyword">assert</span> np.allclose(x, expected, atol=<span class="number">1e-8</span>)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;w:<span class="number">6.4</span>f&#125;</span>  <span class="subst">&#123;<span class="number">1</span>-w:<span class="number">11.4</span>f&#125;</span>  <span class="subst">&#123;x[<span class="number">0</span>]:<span class="number">4.1</span>f&#125;</span>  <span class="subst">&#123;x[<span class="number">1</span>]:<span class="number">4.1</span>f&#125;</span>&quot;</span></span><br><span class="line">          <span class="string">f&quot;  <span class="subst">&#123;f1:<span class="number">6.2</span>f&#125;</span>  <span class="subst">&#123;f2:<span class="number">9.4</span>f&#125;</span>  <span class="subst">&#123;score:<span class="number">9.6</span>f&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;临界权重存在整条线段的最优解, 不能据单次返回值判断唯一性. &quot;</span>)</span><br></pre></td></tr></table></figure>
@@ -410,15 +414,15 @@ MATLAB 用 <code>.'</code> 将行向量转成实数列向量.</p>
 <code>pollution @ x</code> 分别计算.</p>
 <p>临界权重处的检查只要求方案可行, 总量为 7 且综合值正确,
 不指定某个端点. 这样可以兼容求解器返回不同的并列最优方案.</p>
-<h3 id="matlab-相同模型的另一种实现">2.4 MATLAB:
+<h3 id="matlab-相同模型的另一种实现">26.2.4 MATLAB:
 相同模型的另一种实现</h3>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">%% 多目标规划: 分别求解四组权重</span></span><br><span class="line">clear; clc;</span><br><span class="line">cost = [<span class="number">2</span>,<span class="number">5</span>].&#x27;;</span><br><span class="line">pollution = [<span class="number">0.4</span>,<span class="number">0.3</span>].&#x27;;</span><br><span class="line">A = [<span class="number">-1</span>, <span class="number">-1</span>];</span><br><span class="line">b = <span class="number">-7</span>;</span><br><span class="line">lb = [<span class="number">0</span>,<span class="number">0</span>].&#x27;;</span><br><span class="line">ub = [<span class="number">5</span>,<span class="number">6</span>].&#x27;;</span><br><span class="line">weights = [<span class="number">0.3</span>,<span class="number">1</span>/<span class="number">3</span>,<span class="number">0.4</span>,<span class="number">0.5</span>].&#x27;;</span><br><span class="line">options = optimoptions(<span class="string">&#x27;linprog&#x27;</span>, <span class="string">&#x27;Display&#x27;</span>, <span class="string">&#x27;none&#x27;</span>);</span><br><span class="line">results = <span class="built_in">zeros</span>(<span class="built_in">numel</span>(weights), <span class="number">7</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">numel</span>(weights)</span><br><span class="line">    w1 = weights(k);</span><br><span class="line">    w2 = <span class="number">1</span> - w1;</span><br><span class="line">    c = w1 * cost / <span class="number">30</span> + w2 * pollution / <span class="number">2</span>;</span><br><span class="line">    [x, fval, exitflag, output] = ...</span><br><span class="line">        linprog(c, A, b, [], [], lb, ub, options);</span><br><span class="line">    <span class="keyword">if</span> exitflag ~= <span class="number">1</span></span><br><span class="line">        error(<span class="string">&#x27;求解未达到最优状态: %s&#x27;</span>, output.message);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">if</span> any(A*x &gt; b + <span class="number">1e-7</span>) || any(x &lt; lb - <span class="number">1e-7</span>) || ...</span><br><span class="line">            any(x &gt; ub + <span class="number">1e-7</span>)</span><br><span class="line">        error(<span class="string">&#x27;返回方案不满足约束. &#x27;</span>);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    f1 = cost.&#x27; * x;</span><br><span class="line">    f2 = pollution.&#x27; * x;</span><br><span class="line">    assert(<span class="built_in">abs</span>(fval - (w1*f1/<span class="number">30</span> + w2*f2/<span class="number">2</span>)) &lt; <span class="number">1e-7</span>);</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">abs</span>(w1 - <span class="number">1</span>/<span class="number">3</span>) &lt; <span class="number">1e-12</span></span><br><span class="line">        assert(<span class="built_in">abs</span>(sum(x) - <span class="number">7</span>) &lt; <span class="number">1e-7</span>);</span><br><span class="line">        assert(<span class="built_in">abs</span>(fval - <span class="number">49</span>/<span class="number">45</span>) &lt; <span class="number">1e-7</span>);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    results(k,:) = [w1, w2, x.&#x27;, f1, f2, fval];</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;费用权重  污染权重  A产量  B产量  费用  污染  综合指标&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>(results);</span><br><span class="line">fprintf(<span class="string">&#x27;w_cost = 1/3 时, 表中只显示求解器返回的一个最优方案. \n&#x27;</span>);</span><br></pre></td></tr></table></figure>
 <p><code>linprog</code> 的输入顺序直接对应标准模型.
 程序先检查最优终止状态, 再检查不等式和变量边界, 最后计算原始指标.
 <code>results</code> 的每行保存一组权重下的结果,
 避免反复覆盖变量后只保留最后一次计算.</p>
-<h2 id="哪些方案值得进入最后选择">3 哪些方案值得进入最后选择</h2>
-<h3 id="用支配关系排除全面较差的方案">3.1
+<h2 id="哪些方案值得进入最后选择">26.3 哪些方案值得进入最后选择</h2>
+<h3 id="用支配关系排除全面较差的方案">26.3.1
 用支配关系排除全面较差的方案</h3>
 <p>对全部最小化的目标, 如果方案 <span class="math inline">\(x\)</span>
 在每项指标上都不差于方案 <span class="math inline">\(y\)</span>,
@@ -433,7 +437,7 @@ f_i(x)\leqslant f_i(y),\quad i=1,\ldots,m,
 <p>因此, 决策空间回答"怎样生产",
 目标空间回答"生产后费用与污染分别是多少".
 不同决策可能具有相同的目标向量, 两种空间不宜混用.</p>
-<h3 id="本例的全部-pareto-解可以直接推导">3.2 本例的全部 Pareto
+<h3 id="本例的全部-pareto-解可以直接推导">26.3.2 本例的全部 Pareto
 解可以直接推导</h3>
 <p>若某方案总产量超过 7, 将它按比例缩小为</p>
 <p><span class="math display">\[
@@ -463,9 +467,9 @@ f_1+30f_2=98,\qquad20\leqslant f_1\leqslant32.
 <p>关系式采用本例的数值单位. 系数 30 对应每减少 1 吨污染需要增加 30
 万元费用的前沿折中比例.</p>
 <p><img src="/images/MultiObjectiveProgramming/MOP-1.png" alt="" style="width: 100%;"></p>
-<p>图 1 生产可行域与目标像集. 蓝色边界对应全部有效方案; 费用理想值 20
+<p>图 26-1 生产可行域与目标像集. 蓝色边界对应全部有效方案; 费用理想值 20
 与污染理想值 2.2 无法同时达到.</p>
-<h3 id="有效-不等于唯一满意">3.3 有效, 不等于唯一满意</h3>
+<h3 id="有效-不等于唯一满意">26.3.3 有效, 不等于唯一满意</h3>
 <p>Pareto 最优只排除了全面较差的方案, 并不替决策者确定唯一选择.
 沿前沿降低一种指标, 必须牺牲另一种指标, 最终选择取决于偏好.</p>
 <p>如果一个可行方案能同时达到每项目标各自的最优值, 可称为同时最优解.
@@ -474,7 +478,7 @@ f_1+30f_2=98,\qquad20\leqslant f_1\leqslant32.
 满意解仍可能被支配. 例如 <span class="math inline">\((3.2,3.9)^{\mathsf
 T}\)</span> 的费用为 25.9, 污染为 2.45, 满足"费用不超过 26, 污染不超过
 2.5", 但总产量超过 7, 可按前述缩放同时改进.</p>
-<h3 id="正权重为什么能保证有效性">3.4 正权重为什么能保证有效性</h3>
+<h3 id="正权重为什么能保证有效性">26.3.4 正权重为什么能保证有效性</h3>
 <p>设目标都按正尺度处理, 且权重严格为正. 若 <span
 class="math inline">\(x^*\)</span> 是加权问题的全局最优解, 则它必为
 Pareto 最优解. 否则, 某个方案 <span class="math inline">\(y\)</span>
@@ -484,9 +488,9 @@ class="math inline">\(J(y)&lt;J(x^*)\)</span>, 与全局最优矛盾.</p>
 不自动获得上述保证. 若允许零权重, 被忽略的目标还可能继续改进;
 此时加权最优解可能只是弱有效解. 相应定义与反例见配套阅读材料
 <code>ParetoOptimality.md</code>.</p>
-<h2 id="为什么权重稍变-方案就跳到另一个端点">4 为什么权重稍变,
+<h2 id="为什么权重稍变-方案就跳到另一个端点">26.4 为什么权重稍变,
 方案就跳到另一个端点</h2>
-<h3 id="临界权重由公式决定">4.1 临界权重由公式决定</h3>
+<h3 id="临界权重由公式决定">26.4.1 临界权重由公式决定</h3>
 <p>以 <span class="math inline">\(w\)</span> 表示费用权重, 污染权重为
 <span class="math inline">\(1-w\)</span>, <span
 class="math inline">\(0\leqslant w\leqslant1\)</span>.
@@ -567,10 +571,10 @@ class="math inline">\(49/45\)</span></td>
 不同权重使用不同评价函数,
 不能因综合值下降就认为后一方案对所有偏好都更好.</p>
 <p><img src="/images/MultiObjectiveProgramming/MOP-2.png" alt="" style="width: 100%;"></p>
-<p>图 2 最优费用与污染对权重的响应. 两种单位分图展示;
+<p>图 26-2 最优费用与污染对权重的响应. 两种单位分图展示;
 临界权重处的竖线表示全部最优取值范围,
 两项指标仍由同一个生产方案关联.</p>
-<h3 id="决策跳变-最优综合值仍然连续">4.2 决策跳变,
+<h3 id="决策跳变-最优综合值仍然连续">26.4.2 决策跳变,
 最优综合值仍然连续</h3>
 <p>两个端点的综合值分别为</p>
 <p><span class="math display">\[
@@ -583,9 +587,10 @@ J_{(5,2)}(w)=\frac{13}{10}-\frac{19w}{30}.
 处连续, 但斜率改变. 产量与原始指标可以在此跳变,
 不意味着最优综合值也不连续.</p>
 <p><img src="/images/MultiObjectiveProgramming/MOP-3.png" alt="" style="width: 100%;"></p>
-<p>图 3 最优产量与最优综合值. 临界权重下 A, B 产量必须满足总量为 7,
+<p>图 26-3 最优产量与最优综合值. 临界权重下 A, B 产量必须满足总量为 7,
 两个产量区间不能独立选取.</p>
-<h3 id="尺度改变-临界权重也会改变">4.3 尺度改变, 临界权重也会改变</h3>
+<h3 id="尺度改变-临界权重也会改变">26.4.3 尺度改变,
+临界权重也会改变</h3>
 <p>若参考尺度改为 <span class="math inline">\(s_1,s_2&gt;0\)</span>,
 前沿上 <span class="math inline">\(a\)</span> 的系数为</p>
 <p><span class="math display">\[
@@ -606,8 +611,8 @@ class="math inline">\(10^4\)</span>, 比值及决策才保持不变.
 减去固定理想值不改变线性加权的最优决策, 改变尺度则可能改变决策.</p>
 <p>以上是偏好敏感性分析. 费用系数, 污染系数, 需求或产能发生变化时,
 应另设数据情景重新求解, 不能沿用原来的临界值.</p>
-<h2 id="用其他方式表达偏好">5 用其他方式表达偏好</h2>
-<h3 id="ε-约束法-给污染一个可解释的上限">5.1 ε 约束法:
+<h2 id="用其他方式表达偏好">26.5 用其他方式表达偏好</h2>
+<h3 id="ε-约束法-给污染一个可解释的上限">26.5.1 ε 约束法:
 给污染一个可解释的上限</h3>
 <p>如果决策要求是"污染不超过某个值时, 费用尽量低", 可直接建立</p>
 <p><span class="math display">\[
@@ -646,7 +651,7 @@ T},&amp;2.2\leqslant\varepsilon\leqslant2.6,\\
 其中某个解的主要指标相同, 其他指标却更差, 仍可能被求解器返回.
 为保证有效性, 可保持主要目标最优值, 再用严格正权重优化其余目标,
 或依次优化全部剩余目标.</p>
-<h3 id="理想点法-让方案靠近两个理想指标">5.2 理想点法:
+<h3 id="理想点法-让方案靠近两个理想指标">26.5.2 理想点法:
 让方案靠近两个理想指标</h3>
 <p>分别单独优化两个目标, 得到理想向量</p>
 <p><span class="math display">\[
@@ -711,13 +716,13 @@ T}Sz^{\mathrm{ideal}}\)</span> 不影响最优产量, 但解释目标值时应�
 <span class="math inline">\(d\)</span>.</p>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">C = [<span class="number">2</span>,<span class="number">5</span>;<span class="number">0.4</span>,<span class="number">0.3</span>];</span><br><span class="line">scales = [<span class="number">30</span>,<span class="number">2</span>].&#x27;;</span><br><span class="line">A = [<span class="number">-1</span>,<span class="number">-1</span>]; b = <span class="number">-7</span>;</span><br><span class="line">lb = [<span class="number">0</span>,<span class="number">0</span>].&#x27;; ub = [<span class="number">5</span>,<span class="number">6</span>].&#x27;;</span><br><span class="line">ideal = <span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">2</span>).&#x27;;</span><br><span class="line">optionsLP = optimoptions(<span class="string">&#x27;linprog&#x27;</span>,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;none&#x27;</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">    [~,value,flag,out] = linprog(C(<span class="built_in">i</span>,:).&#x27;,A,b,[],[],lb,ub,optionsLP);</span><br><span class="line">    <span class="keyword">if</span> flag ~= <span class="number">1</span></span><br><span class="line">        error(<span class="string">&#x27;理想值求解失败: %s&#x27;</span>,out.message);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    ideal(<span class="built_in">i</span>) = value;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">D = <span class="built_in">diag</span>(<span class="number">1.</span>/scales.^<span class="number">2</span>);</span><br><span class="line">H = <span class="number">2</span>*C.&#x27;*D*C;</span><br><span class="line">f = <span class="number">-2</span>*C.&#x27;*D*ideal;</span><br><span class="line">optionsQP = optimoptions(<span class="string">&#x27;quadprog&#x27;</span>,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;none&#x27;</span>);</span><br><span class="line">[x,~,flag,out] = quadprog(H,f,A,b,[],[],lb,ub,[],optionsQP);</span><br><span class="line"><span class="keyword">if</span> flag ~= <span class="number">1</span></span><br><span class="line">    error(<span class="string">&#x27;平方距离求解失败: %s&#x27;</span>,out.message);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">objectives = C*x;</span><br><span class="line">difference = (objectives-ideal)./scales;</span><br><span class="line">distance_squared = sum(difference.^<span class="number">2</span>);</span><br><span class="line">assert(all(A*x &lt;= b+<span class="number">1e-7</span>) &amp;&amp; all(x &gt;= lb<span class="number">-1e-7</span>) &amp;&amp; all(x &lt;= ub+<span class="number">1e-7</span>));</span><br><span class="line">assert(<span class="built_in">max</span>(<span class="built_in">abs</span>(ideal-[<span class="number">20</span>,<span class="number">2.2</span>].&#x27;)) &lt; <span class="number">1e-7</span>);</span><br><span class="line">assert(<span class="built_in">max</span>(<span class="built_in">abs</span>(x-[<span class="number">4.2</span>,<span class="number">2.8</span>].&#x27;)) &lt; <span class="number">1e-5</span>);</span><br><span class="line">assert(<span class="built_in">abs</span>(distance_squared<span class="number">-0.032</span>) &lt; <span class="number">1e-8</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;理想向量: &#x27;</span>); <span class="built_in">disp</span>(ideal.&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;最优产量: &#x27;</span>); <span class="built_in">disp</span>(x.&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;费用与污染: &#x27;</span>); <span class="built_in">disp</span>(objectives.&#x27;);</span><br><span class="line">fprintf(<span class="string">&#x27;原平方距离: %.6f\n&#x27;</span>,distance_squared);</span><br></pre></td></tr></table></figure>
 <p><img src="/images/MultiObjectiveProgramming/MOP-4.png" alt="" style="width: 100%;"></p>
-<p>图 4 标准化平方距离与不同偏好下的有效方案. 虚线为同一距离值的等值线;
-图中坐标仍采用原始费用与污染单位.</p>
+<p>图 26-4 标准化平方距离与不同偏好下的有效方案.
+虚线为同一距离值的等值线; 图中坐标仍采用原始费用与污染单位.</p>
 <p>相等权重不保证两项原始差距相等. 若改用变化范围 12, 0.4 为尺度,
 相等权重平方距离的最优方案会变成 <span
 class="math inline">\((3,4)^{\mathsf T}\)</span>.
 理想点法同样依赖尺度选择.</p>
-<h3 id="优先级法-高优先级目标不能退让">5.3 优先级法:
+<h3 id="优先级法-高优先级目标不能退让">26.5.3 优先级法:
 高优先级目标不能退让</h3>
 <p>如果要求污染严格优先, 应先求最小污染, 再在污染最优的方案中求最小费用.
 假设第一阶段最优值为 <span class="math inline">\(v_2\)</span>,
@@ -748,7 +753,7 @@ class="math inline">\(\delta&gt;0\)</span>, 就允许高优先级目标退让,
 <p>若全部目标均按次序优化, 每一阶段都取得全局最优, 最终方案必为 Pareto
 最优: 一个支配方案会在最早出现差异的目标上更好, 且更早目标相同,
 与该阶段最优性矛盾.</p>
-<h3 id="四种方法的结果放在一起看">5.4 四种方法的结果放在一起看</h3>
+<h3 id="四种方法的结果放在一起看">26.5.4 四种方法的结果放在一起看</h3>
 <table>
 <thead>
 <tr>
@@ -807,9 +812,9 @@ class="math inline">\(\delta&gt;0\)</span>, 就允许高优先级目标退让,
 <p>这些方案都有效, 但对应不同偏好. 中间方案不天然比端点更合理,
 端点方案也不意味着没有兼顾另一指标.
 应根据决策者能够说明的权衡方式选择模型.</p>
-<h2 id="加权法为什么可能遗漏有效方案">6
+<h2 id="加权法为什么可能遗漏有效方案">26.6
 加权法为什么可能遗漏有效方案</h2>
-<h3 id="一个只有三个方案的反例">6.1 一个只有三个方案的反例</h3>
+<h3 id="一个只有三个方案的反例">26.6.1 一个只有三个方案的反例</h3>
 <p>设项目只有 A, B, C 三个可行方案, 两项目标都已无量纲化,
 且越小越好:</p>
 <p><span class="math display">\[
@@ -834,14 +839,15 @@ J_B\leqslant J_C\Longrightarrow w\geqslant\frac35.
 class="math inline">\(f_2\leqslant1.5\)</span>, 再最小化 <span
 class="math inline">\(f_1\)</span>, 则会选到 B.</p>
 <p><img src="/images/MultiObjectiveProgramming/MOP-5.png" alt="" style="width: 100%;"></p>
-<p>图 5 非凸目标集中的有效方案 B. A, C 间虚线仅作几何参照,
+<p>图 26-5 非凸目标集中的有效方案 B. A, C 间虚线仅作几何参照,
 线段内部并不是本例的可行方案.</p>
 <p>Python 用逐项比较判断支配关系, 再演示权重扫描与阈值选择.
 扫描用于展示现象, "所有权重都不能选到 B"的结论来自上面的不等式证明.</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">names = np.array([<span class="string">&quot;A&quot;</span>, <span class="string">&quot;B&quot;</span>, <span class="string">&quot;C&quot;</span>])</span><br><span class="line">F = np.array([[<span class="number">0.0</span>, <span class="number">2.0</span>], [<span class="number">1.0</span>, <span class="number">1.5</span>], [<span class="number">2.0</span>, <span class="number">0.0</span>]])</span><br><span class="line">pareto = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(F)):</span><br><span class="line">    dominates_i = np.<span class="built_in">all</span>(F &lt;= F[i], axis=<span class="number">1</span>) &amp; np.<span class="built_in">any</span>(F &lt; F[i], axis=<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> dominates_i.<span class="built_in">any</span>():</span><br><span class="line">        pareto.append(<span class="built_in">str</span>(names[i]))</span><br><span class="line"><span class="keyword">assert</span> pareto == [<span class="string">&quot;A&quot;</span>, <span class="string">&quot;B&quot;</span>, <span class="string">&quot;C&quot;</span>]</span><br><span class="line"></span><br><span class="line">selected = <span class="built_in">set</span>()</span><br><span class="line"><span class="keyword">for</span> w <span class="keyword">in</span> np.linspace(<span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">101</span>):</span><br><span class="line">    scores = w * F[:, <span class="number">0</span>] + (<span class="number">1.0</span> - w) * F[:, <span class="number">1</span>]</span><br><span class="line">    minimizers = np.isclose(scores, scores.<span class="built_in">min</span>(), rtol=<span class="number">0.0</span>, atol=<span class="number">1e-10</span>)</span><br><span class="line">    selected.update(names[minimizers].tolist())</span><br><span class="line"><span class="keyword">assert</span> selected == &#123;<span class="string">&quot;A&quot;</span>, <span class="string">&quot;C&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line">feasible = np.flatnonzero(F[:, <span class="number">1</span>] &lt;= <span class="number">1.5</span>)</span><br><span class="line">chosen = feasible[np.argmin(F[feasible, <span class="number">0</span>])]</span><br><span class="line"><span class="keyword">assert</span> names[chosen] == <span class="string">&quot;B&quot;</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Pareto 方案: &quot;</span>, pareto)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;权重扫描选到: &quot;</span>, <span class="built_in">sorted</span>(selected))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;epsilon 约束选到: &quot;</span>, names[chosen])</span><br></pre></td></tr></table></figure>
 <p>MATLAB 实现相同的判断.</p>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">names = &#123;<span class="string">&#x27;A&#x27;</span>,<span class="string">&#x27;B&#x27;</span>,<span class="string">&#x27;C&#x27;</span>&#125;;</span><br><span class="line">F = [<span class="number">0</span>,<span class="number">2</span>;<span class="number">1</span>,<span class="number">1.5</span>;<span class="number">2</span>,<span class="number">0</span>];</span><br><span class="line">pareto = <span class="built_in">true</span>(<span class="number">1</span>,<span class="number">3</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    dominates = all(F &lt;= F(<span class="built_in">i</span>,:),<span class="number">2</span>) &amp; any(F &lt; F(<span class="built_in">i</span>,:),<span class="number">2</span>);</span><br><span class="line">    pareto(<span class="built_in">i</span>) = ~any(dominates);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">assert(all(pareto));</span><br><span class="line">selected = <span class="built_in">false</span>(<span class="number">1</span>,<span class="number">3</span>);</span><br><span class="line"><span class="keyword">for</span> w = <span class="built_in">linspace</span>(<span class="number">0</span>,<span class="number">1</span>,<span class="number">101</span>)</span><br><span class="line">    scores = w*F(:,<span class="number">1</span>)+(<span class="number">1</span>-w)*F(:,<span class="number">2</span>);</span><br><span class="line">    selected = selected | (<span class="built_in">abs</span>(scores-<span class="built_in">min</span>(scores)) &lt; <span class="number">1e-10</span>).&#x27;;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">assert(<span class="built_in">isequal</span>(selected,[<span class="built_in">true</span>,<span class="built_in">false</span>,<span class="built_in">true</span>]));</span><br><span class="line">feasible = <span class="built_in">find</span>(F(:,<span class="number">2</span>) &lt;= <span class="number">1.5</span>);</span><br><span class="line">[~,k] = <span class="built_in">min</span>(F(feasible,<span class="number">1</span>));</span><br><span class="line">chosen = feasible(k);</span><br><span class="line">assert(chosen == <span class="number">2</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Pareto方案: &#x27;</span>); <span class="built_in">disp</span>(names(pareto));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;加权扫描选到: &#x27;</span>); <span class="built_in">disp</span>(names(selected));</span><br><span class="line">fprintf(<span class="string">&#x27;epsilon约束选到: %s\n&#x27;</span>,names&#123;chosen&#125;);</span><br></pre></td></tr></table></figure>
-<h3 id="本章生产例题的情况有所不同">6.2 本章生产例题的情况有所不同</h3>
+<h3 id="本章生产例题的情况有所不同">26.6.2
+本章生产例题的情况有所不同</h3>
 <p>生产例题前沿上的中间点并没有在数学上被加权法遗漏. 在 <span
 class="math inline">\(w=1/3\)</span> 时, 整条线段都属于加权最优解集.
 只是求解器每次返回其中一个代表点, 有限次扫描可能没有记录其他点.</p>
@@ -849,7 +855,7 @@ class="math inline">\(w=1/3\)</span> 时, 整条线段都属于加权最优解�
 某种方法能够表达的最优集合, 软件本次实际返回的一个解. 绘制前沿时,
 不宜把几次加权求解的返回值直接当作完整前沿; 可结合解析推导, ε
 约束扫描和并列解分析.</p>
-<h2 id="把方法迁移到其他问题">7 把方法迁移到其他问题</h2>
+<h2 id="把方法迁移到其他问题">26.7 把方法迁移到其他问题</h2>
 <p>多目标规划的一般形式为</p>
 <p><span class="math display">\[
 \begin{aligned}
@@ -883,7 +889,7 @@ class="math inline">\(Q\)</span> 只描述最大单项风险暴露,
 <p>目标规划也是处理多目标决策的一类方法, 通常先给定期望水平,
 再优化与这些水平的偏差. 它与本章讨论的多目标规划有关,
 但不是两个概念的完全同义替换.</p>
-<h2 id="怎样选择方法并报告结果">8 怎样选择方法并报告结果</h2>
+<h2 id="怎样选择方法并报告结果">26.8 怎样选择方法并报告结果</h2>
 <table>
 <thead>
 <tr>
@@ -925,7 +931,7 @@ class="math inline">\(Q\)</span> 只描述最大单项风险暴露,
 A 1 吨, B 6 吨的方案.</p>
 <p>这个结论同时交代了假设, 偏好和原始指标. 它不把参考尺度解释成排放标准,
 也不把某一组权重的结果当成对所有决策者都最好的方案.</p>
-<h2 id="练习">9 练习</h2>
+<h2 id="练习">26.9 练习</h2>
 <ol type="1">
 <li>在生产例题中, 分别取费用权重 0.2, 0.45, 求解并回代两项原始指标.</li>
 <li>分别取污染阈值 2.3, 2.5, 用 ε 约束法求解.

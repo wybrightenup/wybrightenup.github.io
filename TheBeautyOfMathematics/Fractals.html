@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="第 3 章 简单规则为何能创造复杂世界? — 分形的秘密 一条线段只有两个端点. 如果把它的一部分换成一个小折角, 再对每一条新线段重复同样的替换, 图形会怎样变化? 看起来复杂的轮廓, 能否由一条始终不变的规则产生? 上一章用平移, 反射与旋转生成图案. 本章再加入缩放, 并让相同的构造反复作用于新得到的局部. 我们将亲手生成科赫曲线与谢尔宾斯基三角形, 比较它们的线段数量, 长">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/TheBeautyOfMathematics/Fractals.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="第 3 章 简单规则为何能创造复杂世界? — 分形的秘密 一条线段只有两个端点. 如果把它的一部分换成一个小折角, 再对每一条新线段重复同样的替换, 图形会怎样变化? 看起来复杂的轮廓, 能否由一条始终不变的规则产生? 上一章用平移, 反射与旋转生成图案. 本章再加入缩放, 并让相同的构造反复作用于新得到的局部. 我们将亲手生成科赫曲线与谢尔宾斯基三角形, 比较它们的线段数量, 长">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/FractalsAndIteration/Fractal-KochStages.png">
+<meta property="og:image" content="http://example.com/images/FractalsAndIteration/Fractal-SierpinskiStages.png">
+<meta property="article:published_time" content="2026-10-27T01:25:58.092Z">
+<meta property="article:modified_time" content="2026-10-27T01:24:14.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/FractalsAndIteration/Fractal-KochStages.png">
+
+
+<link rel="canonical" href="http://example.com/TheBeautyOfMathematics/Fractals">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/TheBeautyOfMathematics/Fractals.html","path":"TheBeautyOfMathematics/Fractals.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-3-%E7%AB%A0-%E7%AE%80%E5%8D%95%E8%A7%84%E5%88%99%E4%B8%BA%E4%BD%95%E8%83%BD%E5%88%9B%E9%80%A0%E5%A4%8D%E6%9D%82%E4%B8%96%E7%95%8C-%E5%88%86%E5%BD%A2%E7%9A%84%E7%A7%98%E5%AF%86"><span class="nav-number">1.</span> <span class="nav-text">第 3 章
+简单规则为何能创造复杂世界? — 分形的秘密</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E4%B8%80%E6%9D%A1%E7%BA%BF%E6%AE%B5%E6%8D%A2%E6%88%90%E5%9B%9B%E6%9D%A1%E7%BA%BF%E6%AE%B5"><span class="nav-number">1.1.</span> <span class="nav-text">3.1 把一条线段换成四条线段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E6%9B%BF%E6%8D%A2%E8%A7%84%E5%88%99%E7%AE%97%E5%87%BA%E9%95%BF%E5%BA%A6"><span class="nav-number">1.2.</span> <span class="nav-text">3.2 从替换规则算出长度</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E9%87%8F%E5%A2%9E%E9%95%BF%E4%B8%8E%E9%95%BF%E5%BA%A6%E5%A2%9E%E9%95%BF"><span class="nav-number">1.2.1.</span> <span class="nav-text">3.2.1 数量增长与长度增长</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%8E%E6%A0%B7%E8%AE%A1%E7%AE%97%E4%B8%80%E4%B8%AA%E6%96%B0%E6%8A%98%E8%A7%92"><span class="nav-number">1.2.2.</span> <span class="nav-text">3.2.2 怎样计算一个新折角</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E4%B8%80%E4%B8%AA%E4%B8%89%E8%A7%92%E5%BD%A2%E4%B8%AD%E9%87%8D%E5%A4%8D%E5%8E%BB%E6%8E%89%E4%B8%AD%E9%97%B4%E9%83%A8%E5%88%86"><span class="nav-number">1.3.</span> <span class="nav-text">3.3
+从一个三角形中重复去掉中间部分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E7%9B%B8%E4%BC%BC%E4%B8%8E%E5%B0%BA%E5%BA%A6%E8%A7%84%E5%BE%8B"><span class="nav-number">1.4.</span> <span class="nav-text">3.4 自相似与尺度规律</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%80%E9%83%A8%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E5%83%8F%E6%95%B4%E4%BD%93"><span class="nav-number">1.4.1.</span> <span class="nav-text">3.4.1 局部为什么会像整体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E5%87%BA%E7%8E%B0%E9%9D%9E%E6%95%B4%E6%95%B0%E7%BB%B4%E6%95%B0-%E9%80%89%E8%AF%BB"><span class="nav-number">1.4.2.</span> <span class="nav-text">3.4.2 为什么会出现非整数维数
+(选读)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A9%E7%A8%8B%E5%BA%8F%E9%87%8D%E5%A4%8D%E5%90%8C%E4%B8%80%E6%9D%A1%E8%A7%84%E5%88%99"><span class="nav-number">1.5.</span> <span class="nav-text">3.5 让程序重复同一条规则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A8%E6%89%8B%E6%94%B9%E5%8F%98%E6%9D%A1%E4%BB%B6"><span class="nav-number">1.6.</span> <span class="nav-text">3.6 动手改变条件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.7.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="第-3-章-简单规则为何能创造复杂世界-分形的秘密">第 3 章
+简单规则为何能创造复杂世界? — 分形的秘密</h1>
+<p>一条线段只有两个端点. 如果把它的一部分换成一个小折角,
+再对每一条新线段重复同样的替换, 图形会怎样变化? 看起来复杂的轮廓,
+能否由一条始终不变的规则产生?</p>
+<p>上一章用平移, 反射与旋转生成图案. 本章再加入缩放,
+并让相同的构造反复作用于新得到的局部.
+我们将亲手生成科赫曲线与谢尔宾斯基三角形, 比较它们的线段数量,
+长度与面积怎样变化.</p>
+<h2 id="把一条线段换成四条线段">3.1 把一条线段换成四条线段</h2>
+<p>从长度为 1 的水平线段开始, 将它三等分, 去掉中间一段,
+再用两条同样长度的线段搭起一个等边三角形的两条边.
+原来的一条线段被四条较短线段替换, 每条新线段长度都是原来的 <span
+class="math inline">\(1/3\)</span>.</p>
+<p>把这一规则作用于每一条新线段, 再重复下去,
+就得到科赫曲线的逐级折线近似. 记初始线段为第 0 级, 完成一次替换后为第 1
+级.</p>
+<p><img src="/images/FractalsAndIteration/Fractal-KochStages.png" alt="" style="width: 100%;"></p>
+<p><strong>图 3-1 科赫曲线的前六级近似.</strong> 从左到右,
+从上到下分别为第 0 至第 5 级. 各图使用相同坐标尺度. <span
+class="math inline">\(n\)</span> 表示替换次数,
+图中长度由程序对全部线段实际求和得到.</p>
+<p>这里每一轮的输入都是上一轮得到的折线. 规则没有随着图形变复杂而改变,
+变化的是需要处理的线段数量.</p>
+<h2 id="从替换规则算出长度">3.2 从替换规则算出长度</h2>
+<h3 id="数量增长与长度增长">3.2.1 数量增长与长度增长</h3>
+<p>记第 <span class="math inline">\(n\)</span> 级的线段数量为 <span
+class="math inline">\(N_n\)</span>, 每条线段的长度为 <span
+class="math inline">\(s_n\)</span>, 总长度为 <span
+class="math inline">\(L_n\)</span>. 根据构造规则,</p>
+<p><span class="math display">\[
+N_0=1,\qquad N_{n+1}=4N_n,
+\]</span></p>
+<p><span class="math display">\[
+s_0=1,\qquad s_{n+1}=\frac{s_n}{3}.
+\]</span></p>
+<p>因此</p>
+<p><span class="math display">\[
+N_n=4^n,\qquad s_n=3^{-n},\qquad
+L_n=N_ns_n=\left(\frac43\right)^n.
+\]</span></p>
+<p>每条线段虽然越来越短, 线段数量却增长得更快, 所以总长度增加. 第 5
+级已有 1024 条线段, 总长度约为 4.213992.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">级数 <span
+class="math inline">\(n\)</span></th>
+<th style="text-align: center;">线段数量 <span
+class="math inline">\(N_n\)</span></th>
+<th style="text-align: center;">总长度 <span
+class="math inline">\(L_n\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1.000000</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">1.333333</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">16</td>
+<td style="text-align: center;">1.777778</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">64</td>
+<td style="text-align: center;">2.370370</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">256</td>
+<td style="text-align: center;">3.160494</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">1024</td>
+<td style="text-align: center;">4.213992</td>
+</tr>
+</tbody>
+</table>
+<p>由公式可知, 当 <span class="math inline">\(n\)</span> 不断增大时,
+<span class="math inline">\(L_n\)</span> 没有有限上界.
+但计算机画出的任意一级都只是有限条线段, 它的长度仍然有限.
+屏幕上显示的轮廓不能代替对无限构造的数学分析.</p>
+<h3 id="怎样计算一个新折角">3.2.2 怎样计算一个新折角</h3>
+<p>设一条有方向的线段从点 <span class="math inline">\(\boldsymbol
+a\)</span> 指向点 <span class="math inline">\(\boldsymbol b\)</span>,
+记</p>
+<p><span class="math display">\[
+\boldsymbol v=\frac{\boldsymbol b-\boldsymbol a}{3}.
+\]</span></p>
+<p>沿着线段依次取三等分点, 并把 <span class="math inline">\(\boldsymbol
+v\)</span> 逆时针旋转 <span class="math inline">\(60^\circ\)</span>,
+就得到中间折角的顶点. 替换后的五个顶点依次为</p>
+<p><span class="math display">\[
+\boldsymbol a,\quad
+\boldsymbol a+\boldsymbol v,\quad
+\boldsymbol a+\boldsymbol v+R_{\pi/3}\boldsymbol v,\quad
+\boldsymbol a+2\boldsymbol v,\quad
+\boldsymbol b.
+\]</span></p>
+<p>这里 <span class="math inline">\(R_{\pi/3}\)</span>
+就是上一章的旋转矩阵. 旋转保持长度, 因而新增的两段也与 <span
+class="math inline">\(\boldsymbol v\)</span> 一样长. 这样,
+"搭起一个折角"的几何描述就变成了可以实施的坐标计算.</p>
+<h2 id="从一个三角形中重复去掉中间部分">3.3
+从一个三角形中重复去掉中间部分</h2>
+<p>取一个边长为 1 的正三角形, 连接各边中点, 它被分成四个全等的小三角形.
+去掉中间一个, 保留三个角上的小三角形.
+对每个保留的小三角形重复同样的操作, 得到谢尔宾斯基三角形的逐级近似.</p>
+<p><img src="/images/FractalsAndIteration/Fractal-SierpinskiStages.png" alt="" style="width: 100%;"></p>
+<p><strong>图 3-2 谢尔宾斯基三角形的第 0, 2, 5 级近似.</strong> 图中
+<span class="math inline">\(A_0\)</span> 为初始三角形面积.
+绿色表示保留区域, 白色表示去掉的区域.</p>
+<p>第 <span class="math inline">\(n\)</span> 级有 <span
+class="math inline">\(3^n\)</span> 个小三角形, 每个小三角形的边长为
+<span class="math inline">\(2^{-n}\)</span>. 面积按边长的平方缩放,
+因而每个小三角形的面积为初始面积的 <span
+class="math inline">\(4^{-n}\)</span> 倍. 保留区域的总面积为</p>
+<p><span class="math display">\[
+A_n=A_0\left(\frac34\right)^n,\qquad A_0=\frac{\sqrt3}{4}.
+\]</span></p>
+<p>从第 <span class="math inline">\(n\)</span> 级到第 <span
+class="math inline">\(n+1\)</span> 级, 总面积乘以 <span
+class="math inline">\(3/4\)</span>, 可见面积逐渐减小. 当 <span
+class="math inline">\(n\to\infty\)</span> 时, <span
+class="math inline">\(A_n\to0\)</span>. 这不表示极限图形没有点:
+初始三角形的三个顶点始终保留, 还有许多其他点也会保留.
+面积为零与集合为空是两种不同的性质.</p>
+<p>科赫构造让长度增加, 谢尔宾斯基构造让面积减小. 所以,
+不能只说"迭代使图形越来越大"或"越来越小", 必须说明比较的是什么量.</p>
+<h2 id="自相似与尺度规律">3.4 自相似与尺度规律</h2>
+<h3 id="局部为什么会像整体">3.4.1 局部为什么会像整体</h3>
+<p>对一个理想图形, 如果它可以由若干个经过缩小和适当移动,
+旋转的自身副本组成, 就具有相应的自相似结构.
+本章的两种极限图形都是标准例子. 科赫曲线由 4 个长度尺度缩为 <span
+class="math inline">\(1/3\)</span> 的副本组成; 谢尔宾斯基三角形由 3
+个尺度缩为 <span class="math inline">\(1/2\)</span> 的副本组成.</p>
+<p>自然轮廓也可能在一段尺度范围内显示相似特征, 但叶片,
+云团与海岸线都存在实际的观察尺度.
+不能把它们直接当作在无限小尺度上完全重复的数学对象.</p>
+<h3 id="为什么会出现非整数维数-选读">3.4.2 为什么会出现非整数维数
+(选读)</h3>
+<p>先看熟悉的图形. 将线段分成 2 个长度为原来 <span
+class="math inline">\(1/2\)</span> 的副本, 数量关系为 <span
+class="math inline">\(2=2^1\)</span>. 将正方形分成 4 个边长为原来 <span
+class="math inline">\(1/2\)</span> 的小正方形, 数量关系为 <span
+class="math inline">\(4=2^2\)</span>.</p>
+<p>对本章这样的标准自相似构造, 设整体由 <span
+class="math inline">\(m\)</span> 个尺度缩为 <span
+class="math inline">\(1/q\)</span> 的副本组成, 用</p>
+<p><span class="math display">\[
+m=q^D,\qquad D=\frac{\log m}{\log q}
+\]</span></p>
+<p>刻画数量与尺度的关系, 所得 <span class="math inline">\(D\)</span>
+称为相似维数. 对科赫曲线,</p>
+<p><span class="math display">\[
+D_K=\frac{\log4}{\log3}\approx1.261860;
+\]</span></p>
+<p>对谢尔宾斯基三角形,</p>
+<p><span class="math display">\[
+D_S=\frac{\log3}{\log2}\approx1.584963.
+\]</span></p>
+<p>这些数值描述的是特定的尺度结构, 并非允许我们把平面坐标写成"1.26
+个数". 对任意图案, 仅凭视觉相似就套用这个公式并不可靠; 副本的比例,
+数量以及重叠方式都需要检查. 分形有不同的严格维数概念,
+本章只用这两个标准构造理解相似维数的计算[1].</p>
+<h2 id="让程序重复同一条规则">3.5 让程序重复同一条规则</h2>
+<p>程序把第 <span class="math inline">\(n\)</span>
+级图形作为一组点或一组三角形保存. <code>koch_step</code>
+接收整条折线的顶点, 对相邻顶点形成的每条线段实施替换.
+每段先写出前四个顶点, 全部处理完后, 只在末尾补入最后一个端点.
+这样既连接完整折线, 又避免在相邻线段的接头处重复加入同一个顶点.</p>
+<p><code>sierpinski_step</code> 则逐个读取三角形. 若顶点为 <span
+class="math inline">\(\boldsymbol a,\boldsymbol b,\boldsymbol
+c\)</span>, 三个中点为</p>
+<p><span class="math display">\[
+\boldsymbol u=\frac{\boldsymbol a+\boldsymbol b}{2},\qquad
+\boldsymbol v=\frac{\boldsymbol b+\boldsymbol c}{2},\qquad
+\boldsymbol w=\frac{\boldsymbol c+\boldsymbol a}{2}.
+\]</span></p>
+<p>函数返回 <span class="math inline">\((\boldsymbol a,\boldsymbol
+u,\boldsymbol w)\)</span>, <span class="math inline">\((\boldsymbol
+u,\boldsymbol b,\boldsymbol v)\)</span> 与 <span
+class="math inline">\((\boldsymbol w,\boldsymbol v,\boldsymbol
+c)\)</span> 三个角上的三角形. 中间那个没有写入新列表,
+就对应几何上的"去掉".</p>
+<p><code>main</code> 只需把每个函数的返回结果作为下一轮输入.
+重复次数与顶点数据分开处理, 构造规则始终保持一致.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pathlib <span class="keyword">import</span> Path</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> matplotlib.collections <span class="keyword">import</span> PolyCollection</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">koch_step</span>(<span class="params">points</span>):</span><br><span class="line">    R = np.array([[<span class="number">0.5</span>, -np.sqrt(<span class="number">3</span>)/<span class="number">2</span>], [np.sqrt(<span class="number">3</span>)/<span class="number">2</span>, <span class="number">0.5</span>]])</span><br><span class="line">    result = []</span><br><span class="line">    <span class="keyword">for</span> a, b <span class="keyword">in</span> <span class="built_in">zip</span>(points[:-<span class="number">1</span>], points[<span class="number">1</span>:]):</span><br><span class="line">        v = (b - a) / <span class="number">3</span></span><br><span class="line">        result.extend([a, a + v, a + v + R @ v, a + <span class="number">2</span>*v])</span><br><span class="line">    result.append(points[-<span class="number">1</span>])</span><br><span class="line">    <span class="keyword">return</span> np.array(result)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">sierpinski_step</span>(<span class="params">triangles</span>):</span><br><span class="line">    result = []</span><br><span class="line">    <span class="keyword">for</span> a, b, c <span class="keyword">in</span> triangles:</span><br><span class="line">        ab, bc, ca = (a+b)/<span class="number">2</span>, (b+c)/<span class="number">2</span>, (c+a)/<span class="number">2</span></span><br><span class="line">        result.extend([[a, ab, ca], [ab, b, bc], [ca, bc, c]])</span><br><span class="line">    <span class="keyword">return</span> np.array(result)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    folder = Path(__file__).resolve().parent / <span class="string">&#x27;images&#x27;</span> / <span class="string">&#x27;FractalsAndIteration&#x27;</span></span><br><span class="line">    folder.mkdir(parents=<span class="literal">True</span>, exist_ok=<span class="literal">True</span>)</span><br><span class="line">    plt.rcParams[<span class="string">&#x27;svg.fonttype&#x27;</span>] = <span class="string">&#x27;path&#x27;</span></span><br><span class="line">    points = np.array([[<span class="number">0.</span>, <span class="number">0.</span>], [<span class="number">1.</span>, <span class="number">0.</span>]])</span><br><span class="line">    fig, axes = plt.subplots(<span class="number">2</span>, <span class="number">3</span>, figsize=(<span class="number">7.4</span>, <span class="number">4.7</span>), constrained_layout=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">for</span> n, ax <span class="keyword">in</span> <span class="built_in">enumerate</span>(axes.flat):</span><br><span class="line">        length = np.linalg.norm(np.diff(points, axis=<span class="number">0</span>), axis=<span class="number">1</span>).<span class="built_in">sum</span>()</span><br><span class="line">        ax.plot(points[:, <span class="number">0</span>], points[:, <span class="number">1</span>], color=<span class="string">&#x27;#1d4ed8&#x27;</span>, linewidth=<span class="number">1</span>)</span><br><span class="line">        ax.set_title(<span class="string">f&#x27;n = <span class="subst">&#123;n&#125;</span>, length = <span class="subst">&#123;length:<span class="number">.4</span>f&#125;</span>&#x27;</span>)</span><br><span class="line">        ax.<span class="built_in">set</span>(xlim=(-<span class="number">0.03</span>, <span class="number">1.03</span>), ylim=(-<span class="number">0.04</span>, <span class="number">0.36</span>))</span><br><span class="line">        ax.set_aspect(<span class="string">&#x27;equal&#x27;</span>)</span><br><span class="line">        ax.set_axis_off()</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&#x27;科赫曲线 n=<span class="subst">&#123;n&#125;</span>: 线段数 <span class="subst">&#123;<span class="built_in">len</span>(points)-<span class="number">1</span>&#125;</span>, 长度 <span class="subst">&#123;length:<span class="number">.6</span>f&#125;</span>&#x27;</span>)</span><br><span class="line">        points = koch_step(points)</span><br><span class="line">    <span class="keyword">for</span> extension <span class="keyword">in</span> [<span class="string">&#x27;png&#x27;</span>, <span class="string">&#x27;svg&#x27;</span>]:</span><br><span class="line">        fig.savefig(folder / <span class="string">f&#x27;Fractal-KochStages.<span class="subst">&#123;extension&#125;</span>&#x27;</span>, dpi=<span class="number">300</span>)</span><br><span class="line">    plt.close(fig)</span><br><span class="line"></span><br><span class="line">    triangles = np.array([[[<span class="number">0.</span>, <span class="number">0.</span>], [<span class="number">1.</span>, <span class="number">0.</span>], [<span class="number">0.5</span>, np.sqrt(<span class="number">3</span>)/<span class="number">2</span>]]])</span><br><span class="line">    fig, axes = plt.subplots(<span class="number">1</span>, <span class="number">3</span>, figsize=(<span class="number">7.4</span>, <span class="number">3.1</span>), constrained_layout=<span class="literal">True</span>)</span><br><span class="line">    panel = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> n <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">6</span>):</span><br><span class="line">        <span class="keyword">if</span> n <span class="keyword">in</span> [<span class="number">0</span>, <span class="number">2</span>, <span class="number">5</span>]:</span><br><span class="line">            ax = axes[panel]</span><br><span class="line">            ax.add_collection(PolyCollection(triangles, facecolor=<span class="string">&#x27;#0f766e&#x27;</span>, edgecolor=<span class="string">&#x27;none&#x27;</span>))</span><br><span class="line">            ax.set_title(<span class="string">f&#x27;n = <span class="subst">&#123;n&#125;</span>\nArea / A0 = <span class="subst">&#123;(<span class="number">3</span>/<span class="number">4</span>)**n:<span class="number">.4</span>f&#125;</span>&#x27;</span>)</span><br><span class="line">            ax.<span class="built_in">set</span>(xlim=(-<span class="number">0.03</span>, <span class="number">1.03</span>), ylim=(-<span class="number">0.03</span>, <span class="number">0.90</span>))</span><br><span class="line">            ax.set_aspect(<span class="string">&#x27;equal&#x27;</span>)</span><br><span class="line">            ax.set_axis_off()</span><br><span class="line">            panel += <span class="number">1</span></span><br><span class="line">        triangles = sierpinski_step(triangles)</span><br><span class="line">    <span class="keyword">for</span> extension <span class="keyword">in</span> [<span class="string">&#x27;png&#x27;</span>, <span class="string">&#x27;svg&#x27;</span>]:</span><br><span class="line">        fig.savefig(folder / <span class="string">f&#x27;Fractal-SierpinskiStages.<span class="subst">&#123;extension&#125;</span>&#x27;</span>, dpi=<span class="number">300</span>)</span><br><span class="line">    plt.close(fig)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;科赫曲线相似维数:&#x27;</span>, np.log(<span class="number">4</span>)/np.log(<span class="number">3</span>))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;谢尔宾斯基三角形相似维数:&#x27;</span>, np.log(<span class="number">3</span>)/np.log(<span class="number">2</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<p>程序计算科赫折线长度时, <code>np.diff(points, axis=0)</code>
+先求相邻顶点的坐标差, <code>np.linalg.norm(..., axis=1)</code>
+再求每条线段的长度, 最后求和. 这与直接使用 <span
+class="math inline">\((4/3)^n\)</span> 是两条不同的计算路线. 两者相符,
+才能更有把握地确认实现与构造一致.</p>
+<p>有限次绘图不能显示无限细节. 当线段数量增加到远超图像分辨率时,
+提高级数主要增加计算与存储开销, 肉眼未必还能看到明显变化. 合理选择级数,
+也是实验的一部分.</p>
+<h2 id="动手改变条件">3.6 动手改变条件</h2>
+<ol type="1">
+<li>对初始长度为 2 的线段进行科赫替换. 写出第 <span
+class="math inline">\(n\)</span> 级长度, 再用程序检查.</li>
+<li>将科赫构造中的旋转方向改为顺时针 <span
+class="math inline">\(60^\circ\)</span>. 与原图比较,
+说明两者的几何关系以及长度是否变化.</li>
+<li>对谢尔宾斯基构造, 求首次使保留面积小于初始面积十分之一的级数.
+用对数或逐次计算完成判断.</li>
+<li>将科赫构造中的旋转角改为 <span
+class="math inline">\(45^\circ\)</span>.
+此时新增线段是否仍全部长为原线段的 <span
+class="math inline">\(1/3\)</span>? 原来的长度公式是否还能直接使用?
+先检查单次替换.</li>
+</ol>
+<p>用局部规则反复生成整体, 使复杂图形有了简洁的描述.
+但规则不必总是确定性的. 下一章将允许每一步的结果发生随机变化,
+看看整体是否仍然呈现可描述的规律.</p>
+<h2 id="参考资料">参考资料</h2>
+<p>[1] Carberry E, Dunn A. Fractals and Dimension. Lecture 11, 18.091
+Mathematical Exposition, MIT OpenCourseWare, 2005. <a
+target="_blank" rel="noopener" href="https://ocw.mit.edu/courses/18-091-mathematical-exposition-spring-2005/4d85f9c231d9b27e7216676cb61210df_lecture11part1.pdf">https://ocw.mit.edu/courses/18-091-mathematical-exposition-spring-2005/4d85f9c231d9b27e7216676cb61210df_lecture11part1.pdf</a>.</p>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

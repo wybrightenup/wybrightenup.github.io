@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="第 4 章 随机之中有规律吗? — 概率与模拟 一枚理想的公平硬币, 下一次会出现哪一面? 单次结果无法预先确定. 如果连续抛掷很多次, 正面所占比例会怎样变化? 如果让许多人分别做一百次试验, 他们得到的正面总数又会怎样分布? 本章做两个实验. 第一个实验跟踪一次长序列的频率变化, 第二个实验反复统计固定次数中的正面总数. 它们分别帮助我们理解: 试验次数增加时什么趋于稳定, 以及">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/TheBeautyOfMathematics/ProbabilityAndSimulation.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="第 4 章 随机之中有规律吗? — 概率与模拟 一枚理想的公平硬币, 下一次会出现哪一面? 单次结果无法预先确定. 如果连续抛掷很多次, 正面所占比例会怎样变化? 如果让许多人分别做一百次试验, 他们得到的正面总数又会怎样分布? 本章做两个实验. 第一个实验跟踪一次长序列的频率变化, 第二个实验反复统计固定次数中的正面总数. 它们分别帮助我们理解: 试验次数增加时什么趋于稳定, 以及">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/ProbabilityAndSimulation/Probability-Frequencies.png">
+<meta property="og:image" content="http://example.com/images/ProbabilityAndSimulation/Probability-Counts.png">
+<meta property="article:published_time" content="2026-10-27T01:25:58.093Z">
+<meta property="article:modified_time" content="2026-10-27T01:24:14.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/ProbabilityAndSimulation/Probability-Frequencies.png">
+
+
+<link rel="canonical" href="http://example.com/TheBeautyOfMathematics/ProbabilityAndSimulation">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/TheBeautyOfMathematics/ProbabilityAndSimulation.html","path":"TheBeautyOfMathematics/ProbabilityAndSimulation.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-4-%E7%AB%A0-%E9%9A%8F%E6%9C%BA%E4%B9%8B%E4%B8%AD%E6%9C%89%E8%A7%84%E5%BE%8B%E5%90%97-%E6%A6%82%E7%8E%87%E4%B8%8E%E6%A8%A1%E6%8B%9F"><span class="nav-number">1.</span> <span class="nav-text">第 4 章 随机之中有规律吗? —
+概率与模拟</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E8%A7%82%E5%AF%9F%E4%B8%89%E6%9D%A1%E9%A2%91%E7%8E%87%E6%9B%B2%E7%BA%BF"><span class="nav-number">1.1.</span> <span class="nav-text">4.1 先观察三条频率曲线</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E8%AF%95%E9%AA%8C%E7%BB%93%E6%9E%9C%E5%86%99%E6%88%90-0-%E4%B8%8E-1"><span class="nav-number">1.2.</span> <span class="nav-text">4.2 把试验结果写成 0 与 1</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A3%E9%9D%A2%E6%AC%A1%E6%95%B0%E4%B8%8E%E7%9B%B8%E5%AF%B9%E9%A2%91%E7%8E%87"><span class="nav-number">1.2.1.</span> <span class="nav-text">4.2.1 正面次数与相对频率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E4%B8%80%E4%B8%AA%E5%9D%87%E5%8C%80%E6%95%B0%E6%A8%A1%E6%8B%9F%E4%B8%80%E6%AC%A1%E8%AF%95%E9%AA%8C"><span class="nav-number">1.2.2.</span> <span class="nav-text">4.2.2 用一个均匀数模拟一次试验</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%95%E9%AA%8C%E6%9B%B4%E5%A4%9A-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%AF%AF%E5%B7%AE%E4%BB%8D%E5%8F%AF%E8%83%BD%E6%9A%82%E6%97%B6%E5%A2%9E%E5%8A%A0"><span class="nav-number">1.3.</span> <span class="nav-text">4.3 试验更多,
+为什么误差仍可能暂时增加</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%90%8C%E6%AC%A1%E6%95%B0%E7%9A%84%E5%AE%9E%E9%AA%8C-%E7%BB%93%E6%9E%9C%E4%B8%BA%E4%BD%95%E4%B9%9F%E4%B8%8D%E5%90%8C"><span class="nav-number">1.4.</span> <span class="nav-text">4.4 相同次数的实验,
+结果为何也不同</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E7%A8%8B%E5%BA%8F-%E4%B8%80%E6%9D%A1%E9%95%BF%E5%BA%8F%E5%88%97%E4%B8%8E%E8%AE%B8%E5%A4%9A%E7%BB%84%E7%9F%AD%E5%AE%9E%E9%AA%8C"><span class="nav-number">1.5.</span> <span class="nav-text">4.5 完整程序:
+一条长序列与许多组短实验</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%AF%E5%B7%AE%E9%80%9A%E5%B8%B8%E6%8C%89%E4%BB%80%E4%B9%88%E5%B0%BA%E5%BA%A6%E5%8F%98%E5%8C%96-%E9%80%89%E8%AF%BB"><span class="nav-number">1.6.</span> <span class="nav-text">4.6 误差通常按什么尺度变化
+(选读)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A8%E6%89%8B%E6%94%B9%E5%8F%98%E6%9D%A1%E4%BB%B6"><span class="nav-number">1.7.</span> <span class="nav-text">4.7 动手改变条件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.8.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="第-4-章-随机之中有规律吗-概率与模拟">第 4 章 随机之中有规律吗? —
+概率与模拟</h1>
+<p>一枚理想的公平硬币, 下一次会出现哪一面? 单次结果无法预先确定.
+如果连续抛掷很多次, 正面所占比例会怎样变化?
+如果让许多人分别做一百次试验, 他们得到的正面总数又会怎样分布?</p>
+<p>本章做两个实验. 第一个实验跟踪一次长序列的频率变化,
+第二个实验反复统计固定次数中的正面总数. 它们分别帮助我们理解:
+试验次数增加时什么趋于稳定, 以及相同条件下重复实验仍会有多大波动.</p>
+<h2 id="先观察三条频率曲线">4.1 先观察三条频率曲线</h2>
+<p>设每次试验只有正面与反面两种结果, 正面概率为 <span
+class="math inline">\(p=0.5\)</span>, 各次结果相互独立.
+这个设定构成一个理想的公平硬币模型.</p>
+<p>图 4-1 展示三组模拟试验. 每组连续生成 10000 次结果,
+每完成一次就重新计算截至当时的正面比例.</p>
+<p><img src="/images/ProbabilityAndSimulation/Probability-Frequencies.png" alt="" style="width: 100%;"></p>
+<p><strong>图 4-1 试验次数增加时的正面频率.</strong> 黑色虚线为模型中的
+<span class="math inline">\(p=0.5\)</span>. 横轴采用对数刻度,
+便于同时观察早期与后期的变化. 三条曲线来自不同种子下的伪随机序列,
+并非真实抛掷记录.</p>
+<p>开始时, 一次正反结果就能明显改变比例. 随着试验增多,
+单次结果对累计比例的影响逐渐变小, 图中的曲线也较为稳定.
+但它们没有从此变成一条水平直线, 更没有保证每走一步都更接近 0.5.</p>
+<h2 id="把试验结果写成-0-与-1">4.2 把试验结果写成 0 与 1</h2>
+<h3 id="正面次数与相对频率">4.2.1 正面次数与相对频率</h3>
+<p>把第 <span class="math inline">\(i\)</span> 次试验结果记为</p>
+<p><span class="math display">\[
+Y_i=\begin{cases}
+1,&amp;\text{第 }i\text{ 次出现正面},\\
+0,&amp;\text{第 }i\text{ 次出现反面}.
+\end{cases}
+\]</span></p>
+<p>则前 <span class="math inline">\(n\)</span> 次的正面总数为</p>
+<p><span class="math display">\[
+S_n=\sum\limits_{i=1}^{n}Y_i,
+\]</span></p>
+<p>正面的相对频率为</p>
+<p><span class="math display">\[
+\widehat p_n=\frac{S_n}{n}=\frac1n\sum\limits_{i=1}^{n}Y_i.
+\]</span></p>
+<p>所以, 统计某事件的频率, 可以转化为求一组 0 与 1 的平均值.
+这种写法很方便: 无论事件是"正面朝上""抽到某类对象",
+还是"模拟结果落入某个区域", 都可以用 1 表示发生, 用 0 表示未发生.</p>
+<p>概率 <span class="math inline">\(p\)</span>
+是模型对单次试验规律的描述. 频率 <span class="math inline">\(\widehat
+p_n\)</span> 则来自一组具体试验, 换一组结果, 数值就可能不同. 两者有关联,
+但不能把某次频率直接当作已经确定的真实概率.</p>
+<h3 id="用一个均匀数模拟一次试验">4.2.2 用一个均匀数模拟一次试验</h3>
+<p>先生成一个在 <span class="math inline">\([0,1)\)</span>
+上均匀分布的数 <span class="math inline">\(U\)</span>, 再规定</p>
+<p><span class="math display">\[
+Y=\begin{cases}
+1,&amp;U&lt;p,\\
+0,&amp;U\geqslant p.
+\end{cases}
+\]</span></p>
+<p>因为区间 <span class="math inline">\([0,p)\)</span> 的长度为 <span
+class="math inline">\(p\)</span>, 就得到 <span
+class="math inline">\(P(Y=1)=p\)</span>. 在程序中,
+<code>rng.random(count)</code> 生成一组伪随机数, 与
+<code>probability</code> 比较后, 得到一组真假值. NumPy 累计求和时,
+真假值分别按 1 与 0 计算, 因而直接得到累计正面数.</p>
+<p>计算机的伪随机序列由算法产生. 给定生成器和初始化状态后, 结果可以重复.
+这种可重复性便于检查程序, 并不意味着每次都应换一个模型概率.
+种子控制生成过程的初始化, <span class="math inline">\(p\)</span>
+控制我们模拟的试验规律.</p>
+<h2 id="试验更多-为什么误差仍可能暂时增加">4.3 试验更多,
+为什么误差仍可能暂时增加</h2>
+<p>程序中第一组模拟的部分结果如下:</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">试验次数 <span
+class="math inline">\(n\)</span></th>
+<th style="text-align: center;">正面总数 <span
+class="math inline">\(S_n\)</span></th>
+<th style="text-align: center;">正面频率 <span
+class="math inline">\(\widehat p_n\)</span></th>
+<th style="text-align: center;">与 0.5 的绝对差</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0.6000</td>
+<td style="text-align: center;">0.1000</td>
+</tr>
+<tr>
+<td style="text-align: center;">100</td>
+<td style="text-align: center;">49</td>
+<td style="text-align: center;">0.4900</td>
+<td style="text-align: center;">0.0100</td>
+</tr>
+<tr>
+<td style="text-align: center;">1000</td>
+<td style="text-align: center;">464</td>
+<td style="text-align: center;">0.4640</td>
+<td style="text-align: center;">0.0360</td>
+</tr>
+<tr>
+<td style="text-align: center;">10000</td>
+<td style="text-align: center;">4935</td>
+<td style="text-align: center;">0.4935</td>
+<td style="text-align: center;">0.0065</td>
+</tr>
+</tbody>
+</table>
+<p>从 100 次增加到 1000 次时, 频率离 0.5 反而更远.
+这不是程序必然出错的证据, 也不违背大数定律.
+大数定律讨论的是大量重复试验下的收敛性质, 不要求沿某一次试验序列,
+误差始终单调减小.</p>
+<p>在本章独立, 同分布的 0-1 试验模型下, 一个常用表述是: 对任意固定 <span
+class="math inline">\(\varepsilon&gt;0\)</span>,</p>
+<p><span class="math display">\[
+P\bigl(|\widehat p_n-p|\geqslant\varepsilon\bigr)\longrightarrow0,
+\qquad n\longrightarrow\infty.
+\]</span></p>
+<p>也就是说, 给定一个正的误差阈值, 当次数充分大时,
+超过这个阈值的概率会趋于零. 它没有说在某个固定次数之后,
+所有可能的试验结果都必定满足这个阈值.</p>
+<p>连续出现五次正面, 下一次是否更应该出现反面? 在独立试验模型中,
+下一次正面概率仍然是 <span class="math inline">\(p\)</span>,
+过去的结果不会自动要求未来进行"补偿". 如果实际过程具有依赖性,
+就需要建立新的模型, 不能沿用独立试验的结论.</p>
+<h2 id="相同次数的实验-结果为何也不同">4.4 相同次数的实验,
+结果为何也不同</h2>
+<p>将 100 次投掷作为一组实验, 一共重复 2000 组. 记一组中的正面数为 <span
+class="math inline">\(X\)</span>. 即使各组都采用同一个 <span
+class="math inline">\(p=0.5\)</span>, 正面数也不必恰好等于 50.</p>
+<p><img src="/images/ProbabilityAndSimulation/Probability-Counts.png" alt="" style="width: 100%;"></p>
+<p><strong>图 4-2 重复 2000 组实验所得的正面数分布.</strong> 每组含 100
+次独立投掷. 柱高为相应正面数出现的组数除以 2000,
+红线为二项分布的理论概率. 柱宽为 1, 所以各柱高度之和为 1.</p>
+<p>为什么中间常见, 两端少见? 以 4 次投掷为例, 全部正面只有一种顺序,
+恰好两个正面则有六种顺序. 各次独立且 <span
+class="math inline">\(p=0.5\)</span> 时, 每一种具体顺序概率相同,
+因而"恰好两个正面"比"全部正面"更常见.</p>
+<p>一般地, 在 <span class="math inline">\(n\)</span> 次独立,
+正面概率同为 <span class="math inline">\(p\)</span> 的试验中, 恰好出现
+<span class="math inline">\(k\)</span> 个正面的概率为</p>
+<p><span class="math display">\[
+P(X=k)=\binom nk p^k(1-p)^{n-k},\qquad k=0,1,\ldots,n.
+\]</span></p>
+<p>其中 <span class="math inline">\(\binom nk\)</span> 表示从 <span
+class="math inline">\(n\)</span> 个位置中选出 <span
+class="math inline">\(k\)</span> 个正面位置的方法数.
+每种指定顺序的概率都是 <span
+class="math inline">\(p^k(1-p)^{n-k}\)</span>,
+将这些互不相同的顺序加起来, 就得到上式. 这样的 <span
+class="math inline">\(X\)</span> 服从二项分布, 记为 <span
+class="math inline">\(X\sim\operatorname{Bin}(n,p)\)</span>[1].</p>
+<p>公式先依据模型给出概率, 模拟再用有限组实验产生频率. 两者不必逐项相等.
+本例模拟得到的平均正面数为 49.9015, 理论平均值则为 <span
+class="math inline">\(np=50\)</span>. 这两者接近,
+但一次模拟吻合并不能证明实际硬币一定公平, 因为模拟时的 <span
+class="math inline">\(p\)</span> 本来就是我们指定的.</p>
+<h2 id="完整程序-一条长序列与许多组短实验">4.5 完整程序:
+一条长序列与许多组短实验</h2>
+<p><code>coin_path</code> 完成第一种任务. <code>heads</code>
+保存单次结果, <code>np.cumsum(heads)</code> 生成累计正面总数, 再除以
+<code>1,2,\ldots,count</code>, 就得到每一步的频率. 三次调用只改变种子,
+不改变试验次数与概率.</p>
+<p>第二种任务把结果存成一个 <code>repetitions</code> 行,
+<code>block_size</code> 列的数组. 每一行是一组实验.
+<code>outcomes.sum(axis=1)</code> 沿每一行求和, 得到每组正面总数. 因而,
+数组的两个方向分别有明确含义: 行对应实验组, 列对应一组中的投掷位置.</p>
+<p><code>theory</code> 使用二项概率公式计算每一种正面总数的概率.
+直方图给每一组实验相同的权重 <span
+class="math inline">\(1/2000\)</span>, 因而柱高直接表示组间相对频率.
+它没有把一组内的投掷次数与实验组数混在一起.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pathlib <span class="keyword">import</span> Path</span><br><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> comb</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">coin_path</span>(<span class="params">count, probability, seed</span>):</span><br><span class="line">    rng = np.random.default_rng(seed)</span><br><span class="line">    heads = rng.random(count) &lt; probability</span><br><span class="line">    frequency = np.cumsum(heads) / np.arange(<span class="number">1</span>, count+<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> heads, frequency</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    folder = Path(__file__).resolve().parent / <span class="string">&#x27;images&#x27;</span> / <span class="string">&#x27;ProbabilityAndSimulation&#x27;</span></span><br><span class="line">    folder.mkdir(parents=<span class="literal">True</span>, exist_ok=<span class="literal">True</span>)</span><br><span class="line">    plt.rcParams[<span class="string">&#x27;svg.fonttype&#x27;</span>] = <span class="string">&#x27;path&#x27;</span></span><br><span class="line">    p, count = <span class="number">0.5</span>, <span class="number">10000</span></span><br><span class="line">    fig, ax = plt.subplots(figsize=(<span class="number">7.4</span>, <span class="number">4</span>), constrained_layout=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">for</span> seed <span class="keyword">in</span> [<span class="number">2026</span>, <span class="number">2027</span>, <span class="number">2028</span>]:</span><br><span class="line">        heads, frequency = coin_path(count, p, seed)</span><br><span class="line">        ax.plot(np.arange(<span class="number">1</span>, count+<span class="number">1</span>), frequency, linewidth=<span class="number">1</span>, label=<span class="string">f&#x27;Seed <span class="subst">&#123;seed&#125;</span>&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> seed == <span class="number">2026</span>:</span><br><span class="line">            <span class="keyword">for</span> n <span class="keyword">in</span> [<span class="number">10</span>, <span class="number">100</span>, <span class="number">1000</span>, <span class="number">10000</span>]:</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">f&#x27;n=<span class="subst">&#123;n&#125;</span>: 正面数 <span class="subst">&#123;heads[:n].<span class="built_in">sum</span>()&#125;</span>, 频率 <span class="subst">&#123;frequency[n-<span class="number">1</span>]:<span class="number">.6</span>f&#125;</span>&#x27;</span>)</span><br><span class="line">    ax.axhline(p, color=<span class="string">&#x27;black&#x27;</span>, linestyle=<span class="string">&#x27;--&#x27;</span>, label=<span class="string">f&#x27;Model probability p = <span class="subst">&#123;p:g&#125;</span>&#x27;</span>)</span><br><span class="line">    ax.<span class="built_in">set</span>(xscale=<span class="string">&#x27;log&#x27;</span>, xlabel=<span class="string">&#x27;Number of trials n&#x27;</span>, ylabel=<span class="string">&#x27;Relative frequency&#x27;</span>, ylim=(-<span class="number">0.02</span>, <span class="number">1.02</span>))</span><br><span class="line">    ax.legend(fontsize=<span class="number">9</span>)</span><br><span class="line">    ax.grid(alpha=<span class="number">0.2</span>)</span><br><span class="line">    <span class="keyword">for</span> extension <span class="keyword">in</span> [<span class="string">&#x27;png&#x27;</span>, <span class="string">&#x27;svg&#x27;</span>]:</span><br><span class="line">        fig.savefig(folder / <span class="string">f&#x27;Probability-Frequencies.<span class="subst">&#123;extension&#125;</span>&#x27;</span>, dpi=<span class="number">300</span>)</span><br><span class="line">    plt.close(fig)</span><br><span class="line"></span><br><span class="line">    block_size, repetitions = <span class="number">100</span>, <span class="number">2000</span></span><br><span class="line">    rng = np.random.default_rng(<span class="number">2030</span>)</span><br><span class="line">    <span class="comment"># 每一行代表一次含 100 次投掷的实验, 再按行统计正面总数.</span></span><br><span class="line">    outcomes = rng.random((repetitions, block_size)) &lt; p</span><br><span class="line">    totals = outcomes.<span class="built_in">sum</span>(axis=<span class="number">1</span>)</span><br><span class="line">    k = np.arange(block_size + <span class="number">1</span>)</span><br><span class="line">    theory = np.array([comb(block_size, <span class="built_in">int</span>(j))*p**j*(<span class="number">1</span>-p)**(block_size-j) <span class="keyword">for</span> j <span class="keyword">in</span> k])</span><br><span class="line">    fig, ax = plt.subplots(figsize=(<span class="number">7.4</span>, <span class="number">4</span>), constrained_layout=<span class="literal">True</span>)</span><br><span class="line">    bins = np.arange(-<span class="number">0.5</span>, block_size+<span class="number">1.5</span>)</span><br><span class="line">    ax.hist(totals, bins=bins, weights=np.ones(repetitions)/repetitions,</span><br><span class="line">            color=<span class="string">&#x27;#93c5fd&#x27;</span>, label=<span class="string">f&#x27;<span class="subst">&#123;repetitions&#125;</span> simulated experiments&#x27;</span>)</span><br><span class="line">    ax.plot(k, theory, color=<span class="string">&#x27;#b91c1c&#x27;</span>, linewidth=<span class="number">1.6</span>, label=<span class="string">&#x27;Binomial probabilities&#x27;</span>)</span><br><span class="line">    ax.<span class="built_in">set</span>(xlabel=<span class="string">f&#x27;Number of heads in <span class="subst">&#123;block_size&#125;</span> trials&#x27;</span>, ylabel=<span class="string">&#x27;Relative frequency / probability&#x27;</span>, xlim=(<span class="number">0</span>, <span class="number">100</span>))</span><br><span class="line">    ax.legend(fontsize=<span class="number">9</span>)</span><br><span class="line">    <span class="keyword">for</span> extension <span class="keyword">in</span> [<span class="string">&#x27;png&#x27;</span>, <span class="string">&#x27;svg&#x27;</span>]:</span><br><span class="line">        fig.savefig(folder / <span class="string">f&#x27;Probability-Counts.<span class="subst">&#123;extension&#125;</span>&#x27;</span>, dpi=<span class="number">300</span>)</span><br><span class="line">    plt.close(fig)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;<span class="subst">&#123;block_size&#125;</span> 次投掷中正面数的模拟均值: <span class="subst">&#123;totals.mean():<span class="number">.4</span>f&#125;</span>; 理论均值: <span class="subst">&#123;block_size*p:<span class="number">.4</span>f&#125;</span>&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;<span class="subst">&#123;count&#125;</span> 次投掷的频率标准差: <span class="subst">&#123;np.sqrt(p*(<span class="number">1</span>-p)/count):<span class="number">.6</span>f&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<p>固定种子便于在相同生成器和程序设置下重复实验,
+但不应据此要求不同软件或不同生成算法产生完全相同的序列. 更重要的检查是:
+计数有没有算错, 分母是否对应统计对象,
+模拟规律是否与所声明的模型一致.</p>
+<h2 id="误差通常按什么尺度变化-选读">4.6 误差通常按什么尺度变化
+(选读)</h2>
+<p>在本章模型下, 单次 0-1 结果的平均值为 <span
+class="math inline">\(p\)</span>, 方差为 <span
+class="math inline">\(p(1-p)\)</span>. 方差用于衡量围绕平均值的平方波动,
+标准差是方差的平方根. 各次独立时, 平均值的方差为</p>
+<p><span class="math display">\[
+\operatorname{Var}(\widehat p_n)=\frac{p(1-p)}{n},\qquad
+\operatorname{SD}(\widehat p_n)=\sqrt{\frac{p(1-p)}{n}}.
+\]</span></p>
+<p><span class="math inline">\(p=0.5\)</span> 时, <span
+class="math inline">\(n=100\)</span> 对应频率标准差 0.05, <span
+class="math inline">\(n=10000\)</span> 对应 0.005. 为了让标准差减半,
+试验次数需要增加到四倍. 这说明单纯增加模拟次数可能需要相当多的计算,
+提高精度也要考虑代价.</p>
+<p>标准差描述重复实验中的波动尺度, 并不是每一次误差的上限.
+若进一步使用切比雪夫不等式, 可得到</p>
+<p><span class="math display">\[
+P\bigl(|\widehat p_n-p|\geqslant\varepsilon\bigr)
+\leqslant\frac{p(1-p)}{n\varepsilon^2}.
+\]</span></p>
+<p>对 <span
+class="math inline">\(p=0.5,n=10000,\varepsilon=0.05\)</span>, 右侧为
+0.01. 这是模型假设下超过指定误差阈值的一个概率上界,
+不是对每次结果的绝对保证. 这个上界未必紧,
+但它也直接说明了前述概率为什么随着 <span
+class="math inline">\(n\)</span> 增大趋于零.</p>
+<p>概率模型提供计算依据, 模拟使我们观察模型可能产生的结果. 两者相互配合,
+才能既看见规律, 又不忽略波动.</p>
+<h2 id="动手改变条件">4.7 动手改变条件</h2>
+<ol type="1">
+<li>将 <span class="math inline">\(p\)</span> 改为 0.7,
+观察图中的理论参考线. 频率曲线与正面数分布分别怎样改变? 一组 100
+次试验的理论平均正面数是多少?</li>
+<li>设某次恰好得到 500 次正面和 500 次反面.
+能否仅凭这一结果断言硬币公平, 或断言结果之间独立? 说明理由.</li>
+<li>将每组次数设为 10, 再重复 2000 组.
+比较"正面总数"的波动与"组内正面频率"的波动,
+注意二者的单位和尺度不同.</li>
+<li>保持 <span class="math inline">\(p=0.5\)</span>,
+若希望频率标准差不超过 0.01, 至少需要多少次独立试验?
+这个条件是否保证每次频率都落在 <span
+class="math inline">\([0.49,0.51]\)</span> 中?</li>
+</ol>
+<p>本章把事件是否发生写成 0 与 1, 再用平均值进行统计.
+下一章的蒙特卡罗法将沿用"重复抽样并求平均"的结构, 将试验结果与面积,
+积分或其他待估量联系起来.
+后面的回归与机器学习也需要区分一次实验的表现与对新数据的预测能力,
+本章对随机波动的认识将在那里继续发挥作用.</p>
+<h2 id="参考资料">参考资料</h2>
+<p>[1] NIST/SEMATECH. e-Handbook of Statistical Methods: Binomial
+Distribution. <a
+target="_blank" rel="noopener" href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda366i.htm">https://www.itl.nist.gov/div898/handbook/eda/section3/eda366i.htm</a>.</p>
+<p>[2] NumPy Developers. Random Generator. <a
+target="_blank" rel="noopener" href="https://numpy.org/doc/stable/reference/random/generator.html">https://numpy.org/doc/stable/reference/random/generator.html</a>.</p>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

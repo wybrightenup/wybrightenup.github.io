@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="第 10 章 主成分分析: 提取数据的主要变化 上一章用几个变量拟合一个结果. 这一章换一个任务: 如果数据表中的许多变量一起变化, 能不能用少数几个新坐标概括它们? 例如, 身高与臂长往往一起变化, 多项投入费用也可能同时升高. 变量多, 不一定意味着彼此不同的变化也同样多. 主成分分析(Principal Component Analysis, PCA)寻找变化较大的方向, 把原变">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/MathBeautyAndModeling/10_PrincipalComponentAnalysis.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="第 10 章 主成分分析: 提取数据的主要变化 上一章用几个变量拟合一个结果. 这一章换一个任务: 如果数据表中的许多变量一起变化, 能不能用少数几个新坐标概括它们? 例如, 身高与臂长往往一起变化, 多项投入费用也可能同时升高. 变量多, 不一定意味着彼此不同的变化也同样多. 主成分分析(Principal Component Analysis, PCA)寻找变化较大的方向, 把原变">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/PrincipalComponentAnalysis/DirectionTrials.png">
+<meta property="og:image" content="http://example.com/images/PrincipalComponentAnalysis/PrincipalComponentAnalysis-1.png">
+<meta property="og:image" content="http://example.com/images/PrincipalComponentAnalysis/PrincipalComponentAnalysis-3.png">
+<meta property="og:image" content="http://example.com/images/PrincipalComponentAnalysis/PrincipalComponentAnalysis-5.png">
+<meta property="og:image" content="http://example.com/images/PrincipalComponentAnalysis/PrincipalComponentAnalysis-2.png">
+<meta property="article:published_time" content="2026-11-02T02:53:08.259Z">
+<meta property="article:modified_time" content="2026-10-31T09:20:34.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/PrincipalComponentAnalysis/DirectionTrials.png">
+
+
+<link rel="canonical" href="http://example.com/MathBeautyAndModeling/10_PrincipalComponentAnalysis">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/MathBeautyAndModeling/10_PrincipalComponentAnalysis.html","path":"MathBeautyAndModeling/10_PrincipalComponentAnalysis.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-10-%E7%AB%A0-%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90-%E6%8F%90%E5%8F%96%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%BB%E8%A6%81%E5%8F%98%E5%8C%96"><span class="nav-number">1.</span> <span class="nav-text">第 10 章 主成分分析:
+提取数据的主要变化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E7%AE%97%E4%B8%80%E4%B8%AA%E7%82%B9-%E4%B8%A4%E4%B8%AA%E5%9D%90%E6%A0%87%E6%80%8E%E6%A0%B7%E5%8F%98%E6%88%90%E4%B8%80%E4%B8%AA%E6%95%B0"><span class="nav-number">1.1.</span> <span class="nav-text">10.1 先算一个点:
+两个坐标怎样变成一个数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E7%A7%BB%E5%88%B0%E5%B9%B3%E5%9D%87%E4%BD%8D%E7%BD%AE-%E5%86%8D%E8%AE%A1%E7%AE%97%E6%8A%95%E5%BD%B1"><span class="nav-number">1.1.1.</span> <span class="nav-text">10.1.1 先移到平均位置,
+再计算投影</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E4%B8%80%E4%B8%AA%E6%95%B0%E8%BF%98%E5%8E%9F%E6%88%90%E4%B8%A4%E4%B8%AA%E5%9D%90%E6%A0%87"><span class="nav-number">1.1.2.</span> <span class="nav-text">10.1.2 从一个数还原成两个坐标</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8D%A2%E4%B8%89%E4%B8%AA%E6%96%B9%E5%90%91%E8%AF%95%E4%B8%80%E8%AF%95-%E5%93%AA%E4%B8%AA%E6%96%B9%E5%90%91%E5%8E%8B%E7%BC%A9%E5%BE%97%E5%A5%BD"><span class="nav-number">1.2.</span> <span class="nav-text">10.2 换三个方向试一试:
+哪个方向压缩得好</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E7%9F%A9%E9%98%B5%E8%87%AA%E5%8A%A8%E6%89%BE%E5%88%B0%E4%B8%BB%E8%A6%81%E6%96%B9%E5%90%91"><span class="nav-number">1.3.</span> <span class="nav-text">10.3 用矩阵自动找到主要方向</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E5%88%9A%E6%89%8D%E7%9A%84%E8%AE%A1%E7%AE%97%E5%90%88%E5%9C%A8%E4%B8%80%E8%B5%B7"><span class="nav-number">1.3.1.</span> <span class="nav-text">10.3.1 把刚才的计算合在一起</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E4%B8%80%E4%B8%AA%E6%96%B9%E5%90%91%E6%8E%A8%E5%B9%BF%E5%88%B0%E5%A4%9A%E4%B8%AA%E6%96%B9%E5%90%91"><span class="nav-number">1.3.2.</span> <span class="nav-text">10.3.2 从一个方向推广到多个方向</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E5%85%A5%E5%AE%9E%E9%99%85%E6%95%B0%E6%8D%AE%E8%A1%A8-%E5%85%88%E6%95%B4%E7%90%86%E4%BA%94%E9%A1%B9%E6%8A%95%E5%85%A5"><span class="nav-number">1.4.</span> <span class="nav-text">10.4 进入实际数据表:
+先整理五项投入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%93%AA%E4%BA%9B%E5%88%97%E5%8F%82%E5%8A%A0%E9%99%8D%E7%BB%B4"><span class="nav-number">1.4.1.</span> <span class="nav-text">10.4.1 哪些列参加降维</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E7%AE%97%E4%B8%80%E6%A0%BC%E6%A0%87%E5%87%86%E5%8C%96%E5%80%BC"><span class="nav-number">1.4.2.</span> <span class="nav-text">10.4.2 先算一格标准化值</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E4%B8%BB%E6%88%90%E5%88%86-%E5%85%88%E8%AF%BB%E8%A7%A3%E9%87%8A%E7%8E%87-%E5%86%8D%E8%AF%BB%E5%9D%90%E6%A0%87"><span class="nav-number">1.5.</span> <span class="nav-text">10.5 计算主成分: 先读解释率,
+再读坐标</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%9D%E7%95%99%E5%87%A0%E4%B8%AA%E6%96%B9%E5%90%91"><span class="nav-number">1.5.1.</span> <span class="nav-text">10.5.1 保留几个方向</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E8%AF%BB%E7%BB%84%E5%90%88%E7%B3%BB%E6%95%B0-%E5%86%8D%E7%AE%97%E4%B8%80%E4%B8%AA%E5%B9%B4%E4%BB%BD%E7%9A%84%E5%BE%97%E5%88%86"><span class="nav-number">1.5.2.</span> <span class="nav-text">10.5.2 先读组合系数,
+再算一个年份的得分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E7%A7%8D%E8%BE%93%E5%87%BA%E4%B8%8D%E8%A6%81%E6%B7%B7%E7%94%A8"><span class="nav-number">1.5.3.</span> <span class="nav-text">10.5.3 三种输出不要混用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%8B%E7%BC%A9%E4%BB%A5%E5%90%8E%E4%B8%A2%E4%BA%86%E4%BB%80%E4%B9%88-%E7%94%A8%E9%87%8D%E5%BB%BA%E6%A3%80%E6%9F%A5"><span class="nav-number">1.6.</span> <span class="nav-text">10.6 压缩以后丢了什么:
+用重建检查</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E6%9E%9C%E5%8F%AA%E6%9C%89%E7%9B%B8%E5%85%B3%E7%9F%A9%E9%98%B5-%E8%BF%98%E8%83%BD%E5%81%9A%E4%BB%80%E4%B9%88"><span class="nav-number">1.7.</span> <span class="nav-text">10.7 如果只有相关矩阵,
+还能做什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E4%B8%8D%E5%90%8C-%E8%83%BD%E5%BE%97%E5%88%B0%E7%9A%84%E7%BB%93%E6%9E%9C%E4%B9%9F%E4%B8%8D%E5%90%8C"><span class="nav-number">1.7.1.</span> <span class="nav-text">10.7.1 输入不同,
+能得到的结果也不同</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E8%AE%A1%E7%AE%97-%E5%86%8D%E5%86%B3%E5%AE%9A%E4%BA%8C%E7%BB%B4%E6%98%AF%E5%90%A6%E5%A4%9F%E7%94%A8"><span class="nav-number">1.7.2.</span> <span class="nav-text">10.7.2 先计算,
+再决定二维是否够用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%BB%93%E6%9E%9C%E6%97%B6-%E5%86%8D%E6%A3%80%E6%9F%A5%E4%B8%89%E4%BB%B6%E4%BA%8B"><span class="nav-number">1.8.</span> <span class="nav-text">10.8 使用结果时, 再检查三件事</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%99%E5%87%BA%E4%B8%80%E6%AE%B5%E5%AE%8C%E6%95%B4%E7%BB%93%E8%AE%BA-%E5%86%8D%E5%81%9A%E7%BB%83%E4%B9%A0"><span class="nav-number">1.9.</span> <span class="nav-text">10.9 写出一段完整结论, 再做练习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.10.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="第-10-章-主成分分析-提取数据的主要变化">第 10 章 主成分分析:
+提取数据的主要变化</h1>
+<p>上一章用几个变量拟合一个结果. 这一章换一个任务:
+如果数据表中的许多变量一起变化, 能不能用少数几个新坐标概括它们?</p>
+<p>例如, 身高与臂长往往一起变化, 多项投入费用也可能同时升高. 变量多,
+不一定意味着彼此不同的变化也同样多. 主成分分析(Principal Component
+Analysis, PCA)寻找变化较大的方向, 把原变量重新组合成少数几个坐标.</p>
+<p>我们先不用特征值. 先把一个点压缩成一个数, 再把这个数还原成一个点.
+看清这件事之后, 再讨论怎样自动选择方向, 怎样读懂降维结果.</p>
+<h2 id="先算一个点-两个坐标怎样变成一个数">10.1 先算一个点:
+两个坐标怎样变成一个数</h2>
+<p>考虑五个点:</p>
+<p><span class="math display">\[
+(1,2),\ (2,4),\ (3,6),\ (4,8),\ (5,10).
+\]</span></p>
+<p>它们都在直线 <span class="math inline">\(y=2x\)</span> 上.
+如果只存储第一个坐标, 也能借助这条直线恢复第二个坐标.
+PCA采用的是另一种办法: 沿着直线建立一根新的坐标轴,
+每个点只记录它在这根轴上的位置.</p>
+<h3 id="先移到平均位置-再计算投影">10.1.1 先移到平均位置,
+再计算投影</h3>
+<p>五个点的平均位置是 <span class="math inline">\((3,6)\)</span>.
+把这个位置移到原点, 第一个点就从 <span
+class="math inline">\((1,2)\)</span> 变成 <span
+class="math inline">\((-2,-4)\)</span>.
+这一步叫作<strong>中心化</strong>, 只改变坐标原点,
+不改变点与点之间的距离.</p>
+<p>沿着直线的方向是 <span class="math inline">\((1,2)^{\mathsf
+T}\)</span>. 它的长度为 <span class="math inline">\(\sqrt5\)</span>,
+除以这个长度, 得到单位方向</p>
+<p><span class="math display">\[
+a=\frac1{\sqrt5}(1,2)^{\mathsf T}.
+\]</span></p>
+<p>现在计算第一个点的新坐标. 将中心化后的两个坐标分别乘以方向的两个分量,
+再相加:</p>
+<p><span class="math display">\[
+f=(-2)\frac1{\sqrt5}+(-4)\frac2{\sqrt5}
+=-2\sqrt5\approx-4.472136.
+\]</span></p>
+<p>这个数叫作该点在这个方向上的<strong>得分</strong>,
+表示它相对于平均位置, 沿新轴走了多远. 负号表示位于新轴的负方向.</p>
+<h3 id="从一个数还原成两个坐标">10.1.2 从一个数还原成两个坐标</h3>
+<p>把得分乘回方向, 就得到直线上的投影点. 最后加回平均位置:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\widehat x&amp;=3+(-2\sqrt5)\frac1{\sqrt5}=1,\\
+\widehat y&amp;=6+(-2\sqrt5)\frac2{\sqrt5}=2.
+\end{aligned}
+\]</span></p>
+<p>这一次还原恰好得到原来的点. 因为点就在所选的直线上,
+没有舍去垂直方向上的变化. 如果点偏离这条直线, 还原得到的就是近似值.</p>
+<p>下面的程序只把刚才的乘法和加法写出来.</p>
+<p><strong>one_projection. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> sqrt</span><br><span class="line"></span><br><span class="line">x, y = <span class="number">1.0</span>, <span class="number">2.0</span></span><br><span class="line">mean_x, mean_y = <span class="number">3.0</span>, <span class="number">6.0</span></span><br><span class="line">dx, dy = x - mean_x, y - mean_y</span><br><span class="line">a, b = <span class="number">1</span> / sqrt(<span class="number">5</span>), <span class="number">2</span> / sqrt(<span class="number">5</span>)</span><br><span class="line">score = dx * a + dy * b</span><br><span class="line">xhat = mean_x + score * a</span><br><span class="line">yhat = mean_y + score * b</span><br><span class="line">squared_error = (x - xhat)**<span class="number">2</span> + (y - yhat)**<span class="number">2</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Centered point:&quot;</span>, dx, dy)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;New coordinate:&quot;</span>, score)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Reconstructed point:&quot;</span>, xhat, yhat)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Squared error:&quot;</span>, squared_error)</span><br></pre></td></tr></table></figure>
+<p><strong>one_projection. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">x = <span class="number">1</span>; y = <span class="number">2</span>;</span><br><span class="line">mean_x = <span class="number">3</span>; mean_y = <span class="number">6</span>;</span><br><span class="line">dx = x-mean_x; dy = y-mean_y;</span><br><span class="line">a = <span class="number">1</span>/<span class="built_in">sqrt</span>(<span class="number">5</span>); b = <span class="number">2</span>/<span class="built_in">sqrt</span>(<span class="number">5</span>);</span><br><span class="line">score = dx*a+dy*b;</span><br><span class="line">xhat = mean_x+score*a;</span><br><span class="line">yhat = mean_y+score*b;</span><br><span class="line">squared_error = (x-xhat)^<span class="number">2</span>+(y-yhat)^<span class="number">2</span>;</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Centered point:&#x27;</span>); <span class="built_in">disp</span>([dx,dy]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;New coordinate:&#x27;</span>); <span class="built_in">disp</span>(score);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Reconstructed point:&#x27;</span>); <span class="built_in">disp</span>([xhat,yhat]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Squared error:&#x27;</span>); <span class="built_in">disp</span>(squared_error);</span><br></pre></td></tr></table></figure>
+<p>程序输出的新坐标约为 <span class="math inline">\(-4.472136\)</span>,
+还原点为 <span class="math inline">\((1,2)\)</span>, 平方误差为0.
+沿同一方向对五个点计算, 得到:</p>
+<p>表 10-1 共线点的中心化与投影.</p>
+<div class="line-block">原坐标 | 中心化坐标 | 新坐标 |<br />
+: ---: | : ---: | : ---: |<br />
+<span class="math inline">\((1,2)\)</span> | <span
+class="math inline">\((-2,-4)\)</span> | <span
+class="math inline">\(-2\sqrt5\)</span> |<br />
+<span class="math inline">\((2,4)\)</span> | <span
+class="math inline">\((-1,-2)\)</span> | <span
+class="math inline">\(-\sqrt5\)</span> |<br />
+<span class="math inline">\((3,6)\)</span> | <span
+class="math inline">\((0,0)\)</span> | <span
+class="math inline">\(0\)</span> |<br />
+<span class="math inline">\((4,8)\)</span> | <span
+class="math inline">\((1,2)\)</span> | <span
+class="math inline">\(\sqrt5\)</span> |<br />
+<span class="math inline">\((5,10)\)</span> | <span
+class="math inline">\((2,4)\)</span> | <span
+class="math inline">\(2\sqrt5\)</span> |</div>
+<p>只保留这一个坐标, 再保留平均位置和方向, 就能还原这五个点.
+实际压缩时还要存储这些变换参数; 本例主要用来理解降维的计算过程.</p>
+<h2 id="换三个方向试一试-哪个方向压缩得好">10.2 换三个方向试一试:
+哪个方向压缩得好</h2>
+<p>如果沿水平方向投影, 新坐标只记录中心化后的横坐标. 第一个点的得分为
+<span class="math inline">\(-2\)</span>, 还原点为 <span
+class="math inline">\((1,6)\)</span>, 平方误差是</p>
+<p><span class="math display">\[
+(1-1)^2+(2-6)^2=16.
+\]</span></p>
+<p>对所有点都这样处理, 就可以比较不同方向的总损失.
+本次比较三个单位方向:</p>
+<p><span class="math display">\[
+a^{(1)}=(1,0)^{\mathsf T},\qquad
+a^{(2)}=\frac1{\sqrt2}(1,1)^{\mathsf T},\qquad
+a^{(3)}=\frac1{\sqrt5}(1,2)^{\mathsf T}.
+\]</span></p>
+<p>程序先选一个方向, 再逐点计算得分与还原误差. 因为数据已经中心化,
+每组得分的平均数为0, 所以其样本方差可以用得分平方和除以 <span
+class="math inline">\(5-1\)</span> 计算.</p>
+<p><strong>direction_trials. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> sqrt</span><br><span class="line"></span><br><span class="line">points = [(<span class="number">1</span>, <span class="number">2</span>), (<span class="number">2</span>, <span class="number">4</span>), (<span class="number">3</span>, <span class="number">6</span>), (<span class="number">4</span>, <span class="number">8</span>), (<span class="number">5</span>, <span class="number">10</span>)]</span><br><span class="line">directions = [(<span class="number">1.0</span>, <span class="number">0.0</span>), (<span class="number">1</span> / sqrt(<span class="number">2</span>), <span class="number">1</span> / sqrt(<span class="number">2</span>)),</span><br><span class="line">              (<span class="number">1</span> / sqrt(<span class="number">5</span>), <span class="number">2</span> / sqrt(<span class="number">5</span>))]</span><br><span class="line">variances, errors = [], []</span><br><span class="line"><span class="keyword">for</span> a, b <span class="keyword">in</span> directions:</span><br><span class="line">    score_sum_of_squares = <span class="number">0.0</span></span><br><span class="line">    squared_error = <span class="number">0.0</span></span><br><span class="line">    <span class="keyword">for</span> x, y <span class="keyword">in</span> points:</span><br><span class="line">        dx, dy = x - <span class="number">3</span>, y - <span class="number">6</span></span><br><span class="line">        score = dx * a + dy * b</span><br><span class="line">        xhat, yhat = <span class="number">3</span> + score * a, <span class="number">6</span> + score * b</span><br><span class="line">        score_sum_of_squares += score**<span class="number">2</span></span><br><span class="line">        squared_error += (x - xhat)**<span class="number">2</span> + (y - yhat)**<span class="number">2</span></span><br><span class="line">    variance = score_sum_of_squares / (<span class="built_in">len</span>(points) - <span class="number">1</span>)</span><br><span class="line">    variances.append(variance)</span><br><span class="line">    errors.append(squared_error)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Direction, variance, squared error:&quot;</span>, (a, b), variance, squared_error)</span><br></pre></td></tr></table></figure>
+<p><strong>direction_trials. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">points = [<span class="number">1</span>,<span class="number">2</span>;<span class="number">2</span>,<span class="number">4</span>;<span class="number">3</span>,<span class="number">6</span>;<span class="number">4</span>,<span class="number">8</span>;<span class="number">5</span>,<span class="number">10</span>];</span><br><span class="line">directions = [<span class="number">1</span>,<span class="number">0</span>;<span class="number">1</span>/<span class="built_in">sqrt</span>(<span class="number">2</span>),<span class="number">1</span>/<span class="built_in">sqrt</span>(<span class="number">2</span>);<span class="number">1</span>/<span class="built_in">sqrt</span>(<span class="number">5</span>),<span class="number">2</span>/<span class="built_in">sqrt</span>(<span class="number">5</span>)];</span><br><span class="line">variances = <span class="built_in">zeros</span>(<span class="number">3</span>,<span class="number">1</span>); errors = <span class="built_in">zeros</span>(<span class="number">3</span>,<span class="number">1</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    a = directions(<span class="built_in">j</span>,<span class="number">1</span>); b = directions(<span class="built_in">j</span>,<span class="number">2</span>);</span><br><span class="line">    score_sum_of_squares = <span class="number">0</span>; squared_error = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="built_in">size</span>(points,<span class="number">1</span>)</span><br><span class="line">        x = points(<span class="built_in">i</span>,<span class="number">1</span>); y = points(<span class="built_in">i</span>,<span class="number">2</span>);</span><br><span class="line">        dx = x<span class="number">-3</span>; dy = y<span class="number">-6</span>;</span><br><span class="line">        score = dx*a+dy*b;</span><br><span class="line">        xhat = <span class="number">3</span>+score*a; yhat = <span class="number">6</span>+score*b;</span><br><span class="line">        score_sum_of_squares = score_sum_of_squares+score^<span class="number">2</span>;</span><br><span class="line">        squared_error = squared_error+(x-xhat)^<span class="number">2</span>+(y-yhat)^<span class="number">2</span>;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    variances(<span class="built_in">j</span>) = score_sum_of_squares/(<span class="built_in">size</span>(points,<span class="number">1</span>)<span class="number">-1</span>);</span><br><span class="line">    errors(<span class="built_in">j</span>) = squared_error;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;a, b, variance, squared error:&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>([directions,variances,errors]);</span><br></pre></td></tr></table></figure>
+<p>表 10-2 三个单位方向的方差与重建误差.</p>
+<div class="line-block">方向 | 得分的样本方差 | 五个点的平方重建误差
+|<br />
+: ---: | : ---: | : ---: |<br />
+水平方向 | 2.50 | 40 |<br />
+斜率为1的方向 | 11.25 | 5 |<br />
+斜率为2的方向 | 12.50 | 0 |</div>
+<p><img src="/images/PrincipalComponentAnalysis/DirectionTrials.png" style="width:100%"></p>
+<p>图 10-1 三个单位方向的投影比较</p>
+<p>左图中的五个点仍是原算例中心化后的点. 右图比较相应的平方重建误差;
+横轴下方同时列出得分的样本方差.</p>
+<p>这组三个方向中, 得分方差越大, 重建误差越小. 投影后点的位置差异越明显,
+保留的变化就越多. 五个点中心化后的总平方离差是50,
+在任意单位方向上的投影都满足</p>
+<p><span class="math display">\[
+\text{平方重建误差}=50-4\times\text{得分样本方差}.
+\]</span></p>
+<p>方向必须取单位长度. 如果把方向任意放大, 得分及其方差也会被放大,
+这样的方差无法公平比较. 此时直接用得分乘回这个非单位方向,
+也不再是刚才的正交投影公式.</p>
+<p>三个试算方向不能代替对所有方向的搜索.
+下一步用一个小矩阵自动完成这个任务.</p>
+<h2 id="用矩阵自动找到主要方向">10.3 用矩阵自动找到主要方向</h2>
+<h3 id="把刚才的计算合在一起">10.3.1 把刚才的计算合在一起</h3>
+<p>用矩阵 <span class="math inline">\(X\)</span> 存放五个点,
+每行是一个点, 每列是一个原坐标. 中心化后得到 <span
+class="math inline">\(Z\)</span>. 比较方向所需的信息,
+可以集中到样本协方差矩阵:</p>
+<p><span class="math display">\[
+C=\frac1{4}Z^{\mathsf T}Z
+=\begin{pmatrix}2.5&amp;5\\5&amp;10\end{pmatrix}.
+\]</span></p>
+<p>例如左上角的2.5就是第一列中心化数据的平方和除以4, 即 <span
+class="math inline">\((4+1+0+1+4)/4\)</span>.
+非对角元素5记录两列共同变化的程度.</p>
+<p>线性代数给出一个方便的结论: <strong>得分方差最大的单位方向,
+是最大特征值对应的单位特征向量.</strong> 本例最大特征值为12.5,
+对应的方向正是 <span class="math inline">\((1,2)^{\mathsf
+T}/\sqrt5\)</span>; 另一个特征值为0, 表示垂直方向上没有变化.</p>
+<p>下面的程序没有改变前两节的投影和还原方法. 它用 <code>eigh</code> 或
+<code>eig</code> 找到方向, 再把逐点计算改写为矩阵运算.</p>
+<p><strong>five_points_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">X = np.array([[<span class="number">1</span>, <span class="number">2</span>], [<span class="number">2</span>, <span class="number">4</span>], [<span class="number">3</span>, <span class="number">6</span>], [<span class="number">4</span>, <span class="number">8</span>], [<span class="number">5</span>, <span class="number">10</span>]], dtype=<span class="built_in">float</span>)</span><br><span class="line">mean = X.mean(axis=<span class="number">0</span>)</span><br><span class="line">Z = X - mean</span><br><span class="line">C = Z.T @ Z / (<span class="built_in">len</span>(X) - <span class="number">1</span>)</span><br><span class="line">values, vectors = np.linalg.eigh(C)</span><br><span class="line">a = vectors[:, np.argmax(values)]</span><br><span class="line"><span class="keyword">if</span> a[<span class="number">0</span>] &lt; <span class="number">0</span>:</span><br><span class="line">    a = -a</span><br><span class="line">score = Z @ a</span><br><span class="line">Xhat = np.outer(score, a) + mean</span><br><span class="line">np.set_printoptions(precision=<span class="number">6</span>, suppress=<span class="literal">True</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Covariance matrix:\n&quot;</span>, C)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Eigenvalues (ascending):&quot;</span>, values)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;First direction:&quot;</span>, a)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;New coordinates:&quot;</span>, score)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Reconstruction:\n&quot;</span>, Xhat)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Squared error:&quot;</span>, np.<span class="built_in">sum</span>((X-Xhat)**<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<p><strong>five_points_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">X = [<span class="number">1</span>,<span class="number">2</span>;<span class="number">2</span>,<span class="number">4</span>;<span class="number">3</span>,<span class="number">6</span>;<span class="number">4</span>,<span class="number">8</span>;<span class="number">5</span>,<span class="number">10</span>];</span><br><span class="line">mu = <span class="built_in">mean</span>(X,<span class="number">1</span>);</span><br><span class="line">Z = X-mu;</span><br><span class="line">C = Z&#x27;*Z/(<span class="built_in">size</span>(X,<span class="number">1</span>)<span class="number">-1</span>);</span><br><span class="line">[V,L] = eig(C);</span><br><span class="line">[~,<span class="built_in">j</span>] = <span class="built_in">max</span>(<span class="built_in">diag</span>(L));</span><br><span class="line">a = V(:,<span class="built_in">j</span>);</span><br><span class="line"><span class="keyword">if</span> a(<span class="number">1</span>) &lt; <span class="number">0</span>, a = -a; <span class="keyword">end</span></span><br><span class="line">score = Z*a;</span><br><span class="line">Xhat = score*a&#x27;+mu;</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Covariance matrix:&#x27;</span>); <span class="built_in">disp</span>(C);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Eigenvalues:&#x27;</span>); <span class="built_in">disp</span>(<span class="built_in">diag</span>(L)&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;First direction:&#x27;</span>); <span class="built_in">disp</span>(a&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;New coordinates:&#x27;</span>); <span class="built_in">disp</span>(score&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Reconstruction:&#x27;</span>); <span class="built_in">disp</span>(Xhat);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Squared error:&#x27;</span>); <span class="built_in">disp</span>(sum(sum((X-Xhat).^<span class="number">2</span>)));</span><br></pre></td></tr></table></figure>
+<p><code>Z @ a</code> 或 <code>Z*a</code> 计算所有点的新坐标. Python 的
+<code>np.outer(score,a)</code> 与 MATLAB 的 <code>score*a'</code>
+将这些新坐标乘回方向. 加回平均位置后, 得到原来的五个点.</p>
+<p>Python 的 <code>np.linalg.eigh</code> 用于实对称矩阵,
+特征值按升序返回, 对应的特征向量放在列中. 本例显式选择最大特征值的位置.
+MATLAB 的 <code>eig</code> 也应显式选择或排序, 不依赖输出顺序.</p>
+<h3 id="从一个方向推广到多个方向">10.3.2 从一个方向推广到多个方向</h3>
+<p>只有一个主要方向时, 保留一个得分. 如果要保留两个得分,
+第二个方向必须与第一个方向垂直, 再在剩余方向中保留尽可能多的变化.
+依次得到的这些新变量, 就叫作<strong>主成分</strong>.</p>
+<p>对有 <span class="math inline">\(p\)</span> 个变量的数据,
+记协方差矩阵的特征值为 <span
+class="math inline">\(\lambda_1\geqslant\cdots\geqslant\lambda_p\geqslant0\)</span>,
+相应单位特征向量为 <span class="math inline">\(a_1,\ldots,a_p\)</span>.
+第一方向的数学模型是</p>
+<p><span class="math display">\[
+\begin{aligned}
+\max_a\quad &amp;a^{\mathsf T}Ca,\\
+\text{s.t.}\quad &amp;\left\{\begin{aligned}
+a^{\mathsf T}a&amp;=1.
+\end{aligned}\right.
+\end{aligned}
+\]</span></p>
+<p>目标函数表示得分的样本方差, 约束表示方向长度为1.
+后续方向还需满足与已选方向正交. 完整推导放在进一步阅读中;
+使用程序时先记住两件事: 特征值表示该方向保留的方差,
+特征向量给出原变量的组合方法.</p>
+<p>五点算例恰好共线, 是一个没有损失的特殊例子. 图
+10-2用另一组略有扰动的点展示一般情形, 数据为 <span
+class="math inline">\((1,2.3),(2,3.7),(3,6.2),(4,7.7),(5,10.1)\)</span>.
+它们与前面的五点算例不是同一组数据.</p>
+<p><img src="/images/PrincipalComponentAnalysis/PrincipalComponentAnalysis-1.png" style="width:100%"></p>
+<p>图 10-2 点偏离主要方向时, 压缩会产生误差</p>
+<p>左图的灰线段连接中心化后的数据点与相应投影点, 表示压缩产生的误差.
+右图使用两个主成分作为坐标. 只保留横坐标, 就舍去纵坐标所描述的变化.
+两图采用等比例坐标轴.</p>
+<h2 id="进入实际数据表-先整理五项投入">10.4 进入实际数据表:
+先整理五项投入</h2>
+<h3 id="哪些列参加降维">10.4.1 哪些列参加降维</h3>
+<p>下面是一组标注为1990至2007年的棉花投入教学数据.
+我们想用少数坐标概括五类投入的共同变化, 供后续分析参考.</p>
+<p>表 10-3 棉花单产与投入教学数据.</p>
+<div class="line-block">年份 | 单产 | 种子费 | 化肥费 | 农药费 | 机械费
+| 灌溉费 |</div>
+<p>|: ---: |: ---: |: ---: |: ---: |: ---: |: ---: |: ---: | | 1990 |
+1017 | 106.05 | 495.15 | 305.1 | 45.9 | 56.1 | | 1991 | 1036.5 | 113.55
+| 561.45 | 343.8 | 68.55 | 93.3 | | 1992 | 792 | 104.55 | 584.85 | 414 |
+73.2 | 104.55 | | 1993 | 861 | 132.75 | 658.35 | 453.75 | 82.95 | 107.55
+| | 1994 | 901.5 | 174.3 | 904.05 | 625.05 | 114 | 152.1 | | 1995 |
+922.5 | 230.4 | 1248.75 | 834.45 | 143.85 | 176.4 | | 1996 | 916.5 |
+238.2 | 1361.55 | 720.75 | 165.15 | 194.25 | | 1997 | 976.5 | 260.1 |
+1337.4 | 727.65 | 201.9 | 291.75 | | 1998 | 1024.5 | 270.6 | 1195.8 |
+775.5 | 220.5 | 271.35 | | 1999 | 1003.5 | 286.2 | 1171.8 | 610.95 | 195
+| 284.55 | | 2000 | 1069.5 | 282.9 | 1151.55 | 599.85 | 190.65 | 277.35
+| | 2001 | 1168.5 | 317.85 | 1105.8 | 553.8 | 211.05 | 290.1 | | 2002 |
+1228.5 | 319.65 | 1213.05 | 513.75 | 231.6 | 324.15 | | 2003 | 1023 |
+368.4 | 1274.1 | 567.45 | 239.85 | 331.8 | | 2004 | 1144.5 | 466.2 |
+1527.9 | 487.35 | 408 | 336.15 | | 2005 | 1122 | 449.85 | 1703.25 |
+555.15 | 402.3 | 358.8 | | 2006 | 1276.5 | 537 | 1888.5 | 637.2 | 480.75
+| 428.4 | | 2007 | 1233 | 565.5 | 2009.85 | 715.65 | 562.05 | 456.9
+|</p>
+<p><strong>本次PCA只使用种子费, 化肥费, 农药费,
+机械费和灌溉费五列.</strong> 年份用于标注,
+单产保留为后续可能研究的结果变量. 它们都不参加本次降维.</p>
+<p>资料未提供可追溯的地区出处及计量单位, 这里按教学数据使用,
+不据此判断真实地区的历史变化. 实际研究还应统一面积口径和价格基准.
+PCA描述费用的变化结构, 本身不能说明增加哪项投入就会提高单产.</p>
+<h3 id="先算一格标准化值">10.4.2 先算一格标准化值</h3>
+<p>五列数值的波动量级不同. 本例希望每项投入都以单位方差参与比较,
+因此先减去各列平均数, 再除以各列的样本标准差:</p>
+<p><span class="math display">\[
+z_{ij}=\frac{x_{ij}-\bar x_j}{s_j}.
+\]</span></p>
+<p>例如种子费的平均数为290.225, 样本标准差约为142.737251.
+第一年的种子费106.05换算成</p>
+<p><span class="math display">\[
+z_{11}=\frac{106.05-290.225}{142.737251}
+\approx-1.290308.
+\]</span></p>
+<p>它表示这一年种子费比18年平均水平低约1.29个样本标准差.
+标准化后的负数表示低于平均水平, 并不表示原费用为负.</p>
+<p>程序只完成数据准备和检查, 暂时不计算主成分.</p>
+<p><strong>standardize_cotton_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">X = np.array([</span><br><span class="line">    [<span class="number">106.05</span>, <span class="number">495.15</span>, <span class="number">305.1</span>, <span class="number">45.9</span>, <span class="number">56.1</span>],</span><br><span class="line">    [<span class="number">113.55</span>, <span class="number">561.45</span>, <span class="number">343.8</span>, <span class="number">68.55</span>, <span class="number">93.3</span>],</span><br><span class="line">    [<span class="number">104.55</span>, <span class="number">584.85</span>, <span class="number">414</span>, <span class="number">73.2</span>, <span class="number">104.55</span>],</span><br><span class="line">    [<span class="number">132.75</span>, <span class="number">658.35</span>, <span class="number">453.75</span>, <span class="number">82.95</span>, <span class="number">107.55</span>],</span><br><span class="line">    [<span class="number">174.3</span>, <span class="number">904.05</span>, <span class="number">625.05</span>, <span class="number">114</span>, <span class="number">152.1</span>],</span><br><span class="line">    [<span class="number">230.4</span>, <span class="number">1248.75</span>, <span class="number">834.45</span>, <span class="number">143.85</span>, <span class="number">176.4</span>],</span><br><span class="line">    [<span class="number">238.2</span>, <span class="number">1361.55</span>, <span class="number">720.75</span>, <span class="number">165.15</span>, <span class="number">194.25</span>],</span><br><span class="line">    [<span class="number">260.1</span>, <span class="number">1337.4</span>, <span class="number">727.65</span>, <span class="number">201.9</span>, <span class="number">291.75</span>],</span><br><span class="line">    [<span class="number">270.6</span>, <span class="number">1195.8</span>, <span class="number">775.5</span>, <span class="number">220.5</span>, <span class="number">271.35</span>],</span><br><span class="line">    [<span class="number">286.2</span>, <span class="number">1171.8</span>, <span class="number">610.95</span>, <span class="number">195</span>, <span class="number">284.55</span>],</span><br><span class="line">    [<span class="number">282.9</span>, <span class="number">1151.55</span>, <span class="number">599.85</span>, <span class="number">190.65</span>, <span class="number">277.35</span>],</span><br><span class="line">    [<span class="number">317.85</span>, <span class="number">1105.8</span>, <span class="number">553.8</span>, <span class="number">211.05</span>, <span class="number">290.1</span>],</span><br><span class="line">    [<span class="number">319.65</span>, <span class="number">1213.05</span>, <span class="number">513.75</span>, <span class="number">231.6</span>, <span class="number">324.15</span>],</span><br><span class="line">    [<span class="number">368.4</span>, <span class="number">1274.1</span>, <span class="number">567.45</span>, <span class="number">239.85</span>, <span class="number">331.8</span>],</span><br><span class="line">    [<span class="number">466.2</span>, <span class="number">1527.9</span>, <span class="number">487.35</span>, <span class="number">408</span>, <span class="number">336.15</span>],</span><br><span class="line">    [<span class="number">449.85</span>, <span class="number">1703.25</span>, <span class="number">555.15</span>, <span class="number">402.3</span>, <span class="number">358.8</span>],</span><br><span class="line">    [<span class="number">537</span>, <span class="number">1888.5</span>, <span class="number">637.2</span>, <span class="number">480.75</span>, <span class="number">428.4</span>],</span><br><span class="line">    [<span class="number">565.5</span>, <span class="number">2009.85</span>, <span class="number">715.65</span>, <span class="number">562.05</span>, <span class="number">456.9</span>],</span><br><span class="line">], dtype=<span class="built_in">float</span>)</span><br><span class="line"></span><br><span class="line">mean = X.mean(axis=<span class="number">0</span>)</span><br><span class="line">scale = X.std(axis=<span class="number">0</span>, ddof=<span class="number">1</span>)</span><br><span class="line">Z = (X - mean) / scale</span><br><span class="line">R = Z.T @ Z / (<span class="built_in">len</span>(X) - <span class="number">1</span>)</span><br><span class="line">np.set_printoptions(precision=<span class="number">6</span>, suppress=<span class="literal">True</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Column means:&quot;</span>, mean)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Sample standard deviations:&quot;</span>, scale)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;First standardized row:&quot;</span>, Z[<span class="number">0</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Column means after standardization:&quot;</span>, Z.mean(axis=<span class="number">0</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Column sample variances after standardization:&quot;</span>, Z.var(axis=<span class="number">0</span>, ddof=<span class="number">1</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Correlation matrix:\n&quot;</span>, R)</span><br></pre></td></tr></table></figure>
+<p><strong>standardize_cotton_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">X = [</span><br><span class="line">    <span class="number">106.05</span>,<span class="number">495.15</span>,<span class="number">305.1</span>,<span class="number">45.9</span>,<span class="number">56.1</span>;</span><br><span class="line">    <span class="number">113.55</span>,<span class="number">561.45</span>,<span class="number">343.8</span>,<span class="number">68.55</span>,<span class="number">93.3</span>;</span><br><span class="line">    <span class="number">104.55</span>,<span class="number">584.85</span>,<span class="number">414</span>,<span class="number">73.2</span>,<span class="number">104.55</span>;</span><br><span class="line">    <span class="number">132.75</span>,<span class="number">658.35</span>,<span class="number">453.75</span>,<span class="number">82.95</span>,<span class="number">107.55</span>;</span><br><span class="line">    <span class="number">174.3</span>,<span class="number">904.05</span>,<span class="number">625.05</span>,<span class="number">114</span>,<span class="number">152.1</span>;</span><br><span class="line">    <span class="number">230.4</span>,<span class="number">1248.75</span>,<span class="number">834.45</span>,<span class="number">143.85</span>,<span class="number">176.4</span>;</span><br><span class="line">    <span class="number">238.2</span>,<span class="number">1361.55</span>,<span class="number">720.75</span>,<span class="number">165.15</span>,<span class="number">194.25</span>;</span><br><span class="line">    <span class="number">260.1</span>,<span class="number">1337.4</span>,<span class="number">727.65</span>,<span class="number">201.9</span>,<span class="number">291.75</span>;</span><br><span class="line">    <span class="number">270.6</span>,<span class="number">1195.8</span>,<span class="number">775.5</span>,<span class="number">220.5</span>,<span class="number">271.35</span>;</span><br><span class="line">    <span class="number">286.2</span>,<span class="number">1171.8</span>,<span class="number">610.95</span>,<span class="number">195</span>,<span class="number">284.55</span>;</span><br><span class="line">    <span class="number">282.9</span>,<span class="number">1151.55</span>,<span class="number">599.85</span>,<span class="number">190.65</span>,<span class="number">277.35</span>;</span><br><span class="line">    <span class="number">317.85</span>,<span class="number">1105.8</span>,<span class="number">553.8</span>,<span class="number">211.05</span>,<span class="number">290.1</span>;</span><br><span class="line">    <span class="number">319.65</span>,<span class="number">1213.05</span>,<span class="number">513.75</span>,<span class="number">231.6</span>,<span class="number">324.15</span>;</span><br><span class="line">    <span class="number">368.4</span>,<span class="number">1274.1</span>,<span class="number">567.45</span>,<span class="number">239.85</span>,<span class="number">331.8</span>;</span><br><span class="line">    <span class="number">466.2</span>,<span class="number">1527.9</span>,<span class="number">487.35</span>,<span class="number">408</span>,<span class="number">336.15</span>;</span><br><span class="line">    <span class="number">449.85</span>,<span class="number">1703.25</span>,<span class="number">555.15</span>,<span class="number">402.3</span>,<span class="number">358.8</span>;</span><br><span class="line">    <span class="number">537</span>,<span class="number">1888.5</span>,<span class="number">637.2</span>,<span class="number">480.75</span>,<span class="number">428.4</span>;</span><br><span class="line">    <span class="number">565.5</span>,<span class="number">2009.85</span>,<span class="number">715.65</span>,<span class="number">562.05</span>,<span class="number">456.9</span>];</span><br><span class="line"></span><br><span class="line">mu = <span class="built_in">mean</span>(X,<span class="number">1</span>);</span><br><span class="line">scale = std(X,<span class="number">0</span>,<span class="number">1</span>);</span><br><span class="line">Z = (X-mu)./scale;</span><br><span class="line">R = Z&#x27;*Z/(<span class="built_in">size</span>(X,<span class="number">1</span>)<span class="number">-1</span>);</span><br><span class="line">format long g;</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Column means:&#x27;</span>); <span class="built_in">disp</span>(mu);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Sample standard deviations:&#x27;</span>); <span class="built_in">disp</span>(scale);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;First standardized row:&#x27;</span>); <span class="built_in">disp</span>(Z(<span class="number">1</span>,:));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Column means after standardization:&#x27;</span>); <span class="built_in">disp</span>(<span class="built_in">mean</span>(Z,<span class="number">1</span>));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Column sample variances after standardization:&#x27;</span>); <span class="built_in">disp</span>(var(Z,<span class="number">0</span>,<span class="number">1</span>));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Correlation matrix:&#x27;</span>); <span class="built_in">disp</span>(R);</span><br></pre></td></tr></table></figure>
+<p>五列标准化后, 均值都约为0, 样本方差都约为1. 第一行约为</p>
+<p><span class="math display">\[
+(-1.290308,-1.593814,-1.892368,-1.210376,-1.671427).
+\]</span></p>
+<p>此时 <span class="math inline">\(R=Z^{\mathsf T}Z/17\)</span>
+就是五项原投入的样本相关系数矩阵, 对角元素为1.
+例如种子费与机械费的相关系数约为0.980168,
+说明这组数据中两项费用有很强的同向线性变化.</p>
+<p>这里的样本标准差分母为 <span class="math inline">\(18-1\)</span>.
+Python 的 <code>std(ddof=1)</code> 与 MATLAB 的 <code>std(X,0,1)</code>
+对应. 如果列中有缺失值, 无穷值或常数, 应先处理;
+以下例子针对给出的完整非常数数据.</p>
+<p>标准化是本例的尺度选择, 并非每次PCA都必须做.
+如果原单位下的方差差异本来就有意义, 可以只中心化.
+两种做法回答的是不同尺度下的压缩问题.</p>
+<h2 id="计算主成分-先读解释率-再读坐标">10.5 计算主成分: 先读解释率,
+再读坐标</h2>
+<h3 id="保留几个方向">10.5.1 保留几个方向</h3>
+<p>五项标准化变量的总样本方差为5. 某方向的特征值除以5,
+就是它保留的方差比例, 称为<strong>方差解释率</strong>.
+按从大到小的顺序相加, 得到累计解释率.</p>
+<p>本例演示一个明确的选择规则: 取累计解释率达到95%的最少主成分数.
+95%表示本次标准化尺度下保留的样本方差比例,
+不表示置信水平或预测准确率.</p>
+<p>完整程序先重复上一节的数据准备, 再排序, 选维数, 计算得分和重建.
+两种语言中的数据与步骤相互对应.</p>
+<p><strong>fit_cotton_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">X = np.array([</span><br><span class="line">    [<span class="number">106.05</span>, <span class="number">495.15</span>, <span class="number">305.1</span>, <span class="number">45.9</span>, <span class="number">56.1</span>],</span><br><span class="line">    [<span class="number">113.55</span>, <span class="number">561.45</span>, <span class="number">343.8</span>, <span class="number">68.55</span>, <span class="number">93.3</span>],</span><br><span class="line">    [<span class="number">104.55</span>, <span class="number">584.85</span>, <span class="number">414</span>, <span class="number">73.2</span>, <span class="number">104.55</span>],</span><br><span class="line">    [<span class="number">132.75</span>, <span class="number">658.35</span>, <span class="number">453.75</span>, <span class="number">82.95</span>, <span class="number">107.55</span>],</span><br><span class="line">    [<span class="number">174.3</span>, <span class="number">904.05</span>, <span class="number">625.05</span>, <span class="number">114</span>, <span class="number">152.1</span>],</span><br><span class="line">    [<span class="number">230.4</span>, <span class="number">1248.75</span>, <span class="number">834.45</span>, <span class="number">143.85</span>, <span class="number">176.4</span>],</span><br><span class="line">    [<span class="number">238.2</span>, <span class="number">1361.55</span>, <span class="number">720.75</span>, <span class="number">165.15</span>, <span class="number">194.25</span>],</span><br><span class="line">    [<span class="number">260.1</span>, <span class="number">1337.4</span>, <span class="number">727.65</span>, <span class="number">201.9</span>, <span class="number">291.75</span>],</span><br><span class="line">    [<span class="number">270.6</span>, <span class="number">1195.8</span>, <span class="number">775.5</span>, <span class="number">220.5</span>, <span class="number">271.35</span>],</span><br><span class="line">    [<span class="number">286.2</span>, <span class="number">1171.8</span>, <span class="number">610.95</span>, <span class="number">195</span>, <span class="number">284.55</span>],</span><br><span class="line">    [<span class="number">282.9</span>, <span class="number">1151.55</span>, <span class="number">599.85</span>, <span class="number">190.65</span>, <span class="number">277.35</span>],</span><br><span class="line">    [<span class="number">317.85</span>, <span class="number">1105.8</span>, <span class="number">553.8</span>, <span class="number">211.05</span>, <span class="number">290.1</span>],</span><br><span class="line">    [<span class="number">319.65</span>, <span class="number">1213.05</span>, <span class="number">513.75</span>, <span class="number">231.6</span>, <span class="number">324.15</span>],</span><br><span class="line">    [<span class="number">368.4</span>, <span class="number">1274.1</span>, <span class="number">567.45</span>, <span class="number">239.85</span>, <span class="number">331.8</span>],</span><br><span class="line">    [<span class="number">466.2</span>, <span class="number">1527.9</span>, <span class="number">487.35</span>, <span class="number">408</span>, <span class="number">336.15</span>],</span><br><span class="line">    [<span class="number">449.85</span>, <span class="number">1703.25</span>, <span class="number">555.15</span>, <span class="number">402.3</span>, <span class="number">358.8</span>],</span><br><span class="line">    [<span class="number">537</span>, <span class="number">1888.5</span>, <span class="number">637.2</span>, <span class="number">480.75</span>, <span class="number">428.4</span>],</span><br><span class="line">    [<span class="number">565.5</span>, <span class="number">2009.85</span>, <span class="number">715.65</span>, <span class="number">562.05</span>, <span class="number">456.9</span>],</span><br><span class="line">], dtype=<span class="built_in">float</span>)</span><br><span class="line"></span><br><span class="line">mean = X.mean(axis=<span class="number">0</span>)</span><br><span class="line">scale = X.std(axis=<span class="number">0</span>, ddof=<span class="number">1</span>)</span><br><span class="line">Z = (X - mean) / scale</span><br><span class="line">R = Z.T @ Z / (<span class="built_in">len</span>(X) - <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">values, vectors = np.linalg.eigh(R)</span><br><span class="line">order = np.argsort(values)[::-<span class="number">1</span>]</span><br><span class="line">values, vectors = values[order], vectors[:, order]</span><br><span class="line"><span class="comment"># Choose a consistent sign for display; the projection is unchanged.</span></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(vectors.shape[<span class="number">1</span>]):</span><br><span class="line">    row = np.argmax(np.<span class="built_in">abs</span>(vectors[:, j]))</span><br><span class="line">    <span class="keyword">if</span> vectors[row, j] &lt; <span class="number">0</span>:</span><br><span class="line">        vectors[:, j] *= -<span class="number">1</span></span><br><span class="line">ratio = values / values.<span class="built_in">sum</span>()</span><br><span class="line">cumulative = np.cumsum(ratio)</span><br><span class="line">cumulative[-<span class="number">1</span>] = <span class="number">1.0</span></span><br><span class="line"></span><br><span class="line">threshold = <span class="number">0.95</span></span><br><span class="line">k = <span class="built_in">int</span>(np.searchsorted(cumulative, threshold) + <span class="number">1</span>)</span><br><span class="line">W = vectors[:, :k]</span><br><span class="line">score = Z @ W</span><br><span class="line">loadings = W * np.sqrt(values[:k])</span><br><span class="line">Zhat = score @ W.T</span><br><span class="line">Xhat = Zhat * scale + mean</span><br><span class="line">squared_error = np.<span class="built_in">sum</span>((Z-Zhat)**<span class="number">2</span>)</span><br><span class="line">rmse = np.sqrt(np.mean((X-Xhat)**<span class="number">2</span>, axis=<span class="number">0</span>))</span><br><span class="line">np.set_printoptions(precision=<span class="number">6</span>, suppress=<span class="literal">True</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Eigenvalue, variance ratio, cumulative ratio:\n&quot;</span>,</span><br><span class="line">      np.column_stack((values, ratio, cumulative)))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Number retained:&quot;</span>, k)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Coefficient columns:\n&quot;</span>, W)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Correlation loadings:\n&quot;</span>, loadings)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Year and scores:\n&quot;</span>, np.column_stack((np.arange(<span class="number">1990</span>, <span class="number">2008</span>), score)))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;First reconstructed row:&quot;</span>, Xhat[<span class="number">0</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Squared standardized error:&quot;</span>, squared_error)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Reconstruction RMSE in original units:&quot;</span>, rmse)</span><br></pre></td></tr></table></figure>
+<p><strong>fit_cotton_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">X = [</span><br><span class="line">    <span class="number">106.05</span>,<span class="number">495.15</span>,<span class="number">305.1</span>,<span class="number">45.9</span>,<span class="number">56.1</span>;</span><br><span class="line">    <span class="number">113.55</span>,<span class="number">561.45</span>,<span class="number">343.8</span>,<span class="number">68.55</span>,<span class="number">93.3</span>;</span><br><span class="line">    <span class="number">104.55</span>,<span class="number">584.85</span>,<span class="number">414</span>,<span class="number">73.2</span>,<span class="number">104.55</span>;</span><br><span class="line">    <span class="number">132.75</span>,<span class="number">658.35</span>,<span class="number">453.75</span>,<span class="number">82.95</span>,<span class="number">107.55</span>;</span><br><span class="line">    <span class="number">174.3</span>,<span class="number">904.05</span>,<span class="number">625.05</span>,<span class="number">114</span>,<span class="number">152.1</span>;</span><br><span class="line">    <span class="number">230.4</span>,<span class="number">1248.75</span>,<span class="number">834.45</span>,<span class="number">143.85</span>,<span class="number">176.4</span>;</span><br><span class="line">    <span class="number">238.2</span>,<span class="number">1361.55</span>,<span class="number">720.75</span>,<span class="number">165.15</span>,<span class="number">194.25</span>;</span><br><span class="line">    <span class="number">260.1</span>,<span class="number">1337.4</span>,<span class="number">727.65</span>,<span class="number">201.9</span>,<span class="number">291.75</span>;</span><br><span class="line">    <span class="number">270.6</span>,<span class="number">1195.8</span>,<span class="number">775.5</span>,<span class="number">220.5</span>,<span class="number">271.35</span>;</span><br><span class="line">    <span class="number">286.2</span>,<span class="number">1171.8</span>,<span class="number">610.95</span>,<span class="number">195</span>,<span class="number">284.55</span>;</span><br><span class="line">    <span class="number">282.9</span>,<span class="number">1151.55</span>,<span class="number">599.85</span>,<span class="number">190.65</span>,<span class="number">277.35</span>;</span><br><span class="line">    <span class="number">317.85</span>,<span class="number">1105.8</span>,<span class="number">553.8</span>,<span class="number">211.05</span>,<span class="number">290.1</span>;</span><br><span class="line">    <span class="number">319.65</span>,<span class="number">1213.05</span>,<span class="number">513.75</span>,<span class="number">231.6</span>,<span class="number">324.15</span>;</span><br><span class="line">    <span class="number">368.4</span>,<span class="number">1274.1</span>,<span class="number">567.45</span>,<span class="number">239.85</span>,<span class="number">331.8</span>;</span><br><span class="line">    <span class="number">466.2</span>,<span class="number">1527.9</span>,<span class="number">487.35</span>,<span class="number">408</span>,<span class="number">336.15</span>;</span><br><span class="line">    <span class="number">449.85</span>,<span class="number">1703.25</span>,<span class="number">555.15</span>,<span class="number">402.3</span>,<span class="number">358.8</span>;</span><br><span class="line">    <span class="number">537</span>,<span class="number">1888.5</span>,<span class="number">637.2</span>,<span class="number">480.75</span>,<span class="number">428.4</span>;</span><br><span class="line">    <span class="number">565.5</span>,<span class="number">2009.85</span>,<span class="number">715.65</span>,<span class="number">562.05</span>,<span class="number">456.9</span>];</span><br><span class="line"></span><br><span class="line">mu = <span class="built_in">mean</span>(X,<span class="number">1</span>);</span><br><span class="line">scale = std(X,<span class="number">0</span>,<span class="number">1</span>);</span><br><span class="line">Z = (X-mu)./scale;</span><br><span class="line">R = Z&#x27;*Z/(<span class="built_in">size</span>(X,<span class="number">1</span>)<span class="number">-1</span>);</span><br><span class="line"></span><br><span class="line">[V,L] = eig(R);</span><br><span class="line">[values,order] = <span class="built_in">sort</span>(<span class="built_in">diag</span>(L),<span class="string">&#x27;descend&#x27;</span>);</span><br><span class="line">V = V(:,order);</span><br><span class="line"><span class="comment">% Choose a consistent sign for display.</span></span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="built_in">size</span>(V,<span class="number">2</span>)</span><br><span class="line">    [~,row] = <span class="built_in">max</span>(<span class="built_in">abs</span>(V(:,<span class="built_in">j</span>)));</span><br><span class="line">    <span class="keyword">if</span> V(row,<span class="built_in">j</span>) &lt; <span class="number">0</span>, V(:,<span class="built_in">j</span>) = -V(:,<span class="built_in">j</span>); <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">ratio = values/sum(values);</span><br><span class="line">cumulative = cumsum(ratio);</span><br><span class="line">cumulative(<span class="keyword">end</span>) = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">threshold = <span class="number">0.95</span>;</span><br><span class="line">k = <span class="built_in">find</span>(cumulative &gt;= threshold,<span class="number">1</span>,<span class="string">&#x27;first&#x27;</span>);</span><br><span class="line">W = V(:,<span class="number">1</span>:k);</span><br><span class="line">score = Z*W;</span><br><span class="line">loadings = W.*<span class="built_in">sqrt</span>(values(<span class="number">1</span>:k)&#x27;);</span><br><span class="line">Zhat = score*W&#x27;;</span><br><span class="line">Xhat = Zhat.*scale+mu;</span><br><span class="line">squared_error = sum(sum((Z-Zhat).^<span class="number">2</span>));</span><br><span class="line">rmse = <span class="built_in">sqrt</span>(<span class="built_in">mean</span>((X-Xhat).^<span class="number">2</span>,<span class="number">1</span>));</span><br><span class="line">format long g;</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Eigenvalue, variance ratio, cumulative ratio:&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>([values,ratio,cumulative]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Number retained:&#x27;</span>); <span class="built_in">disp</span>(k);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Coefficient columns:&#x27;</span>); <span class="built_in">disp</span>(W);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Correlation loadings:&#x27;</span>); <span class="built_in">disp</span>(loadings);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Year and scores:&#x27;</span>); <span class="built_in">disp</span>([(<span class="number">1990</span>:<span class="number">2007</span>)&#x27;,score]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;First reconstructed row:&#x27;</span>); <span class="built_in">disp</span>(Xhat(<span class="number">1</span>,:));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Squared standardized error:&#x27;</span>); <span class="built_in">disp</span>(squared_error);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Reconstruction RMSE in original units:&#x27;</span>); <span class="built_in">disp</span>(rmse);</span><br></pre></td></tr></table></figure>
+<p>表 10-4 棉花投入主成分的解释率.</p>
+<div class="line-block">主成分 | 特征值 | 解释率 | 累计解释率 |<br />
+: ---: | : ---: | : ---: | : ---: |<br />
+PC1 | 4.094536 | 81.8907% | 81.8907% |<br />
+PC2 | 0.792665 | 15.8533% | 97.7440% |<br />
+PC3 | 0.081653 | 1.6331% | 99.3771% |<br />
+PC4 | 0.020700 | 0.4140% | 99.7911% |<br />
+PC5 | 0.010447 | 0.2089% | 100.0000% |</div>
+<p>一个主成分尚未达到95%, 两个就达到了, 所以本例保留两个.
+实际计算使用未舍入的特征值与累计解释率,
+不用表中的六位小数重新决定临界维数.</p>
+<p><img src="/images/PrincipalComponentAnalysis/PrincipalComponentAnalysis-3.png" style="width:100%"></p>
+<p>图 10-3 棉花投入的解释率与二维得分</p>
+<p>上方两图分别显示特征值与累计解释率. 下图每个点对应一个年份,
+轴旁给出各成分的方差解释率. 得分图采用等比例坐标轴,
+点之间的距离表示保留子空间中的距离. 年份只作标注.</p>
+<h3 id="先读组合系数-再算一个年份的得分">10.5.2 先读组合系数,
+再算一个年份的得分</h3>
+<p>记五项标准化投入为 <span
+class="math inline">\(Z_1,\ldots,Z_5\)</span>,
+前两个主成分的组合系数为:</p>
+<p>表 10-5 前两个主方向的组合系数.</p>
+<div class="line-block">变量 | 第一个方向 <span
+class="math inline">\(a_1\)</span> | 第二个方向 <span
+class="math inline">\(a_2\)</span> |<br />
+: ---: | : ---: | : ---: |<br />
+种子费 | 0.481047 | -0.238374 |<br />
+化肥费 | 0.487533 | 0.079209 |<br />
+农药费 | 0.281389 | 0.922424 |<br />
+机械费 | 0.473152 | -0.268340 |<br />
+灌溉费 | 0.477340 | -0.118453 |</div>
+<p>例如第一主成分为</p>
+<p><span class="math display">\[
+\begin{aligned}
+F_1={}&amp;0.481047Z_1+0.487533Z_2+0.281389Z_3\\
+&amp;+0.473152Z_4+0.477340Z_5.
+\end{aligned}
+\]</span></p>
+<p>把1990年的五个标准化值代入, 就得到 <span
+class="math inline">\(F_1\approx-3.300757\)</span>. 第二个方向同样计算,
+得到 <span class="math inline">\(F_2\approx-1.041457\)</span>.
+这与第一节计算一个点的投影完全一样,
+只是从两项乘积相加变成了五项乘积相加.</p>
+<p>第一方向的五个系数都为正, 可理解为费用总体共同变化的方向.
+第二方向主要体现农药费与种子费, 机械费, 灌溉费的相对对比;
+化肥费的系数较小且为正. 这些系数不能直接解释为投入的收益,
+占比或因果作用.</p>
+<p>得分为负只表示处在新轴的负方向. 将一个方向整列反号, 相应得分也反号,
+压缩与重建结果不变. 因此, 没有另行规定评价目标,
+就不能把得分自动当作优劣排名.</p>
+<h3 id="三种输出不要混用">10.5.3 三种输出不要混用</h3>
+<p>表 10-6 主方向与得分的形状和含义.</p>
+<div class="line-block">名称 | 本例形状 | 含义 |<br />
+: ---: | : ---: | : --- |<br />
+组合系数 <code>W</code> | <span class="math inline">\(5\times2\)</span>
+| 怎样把五项标准化变量组合成两个坐标 |<br />
+得分 <code>score</code> | <span class="math inline">\(18\times2\)</span>
+| 每个年份在两个方向上的位置 |<br />
+相关载荷 <code>loadings</code> | <span
+class="math inline">\(5\times2\)</span> |
+每项原变量与每个主成分的样本相关系数 |</div>
+<p>把单位方向排成列, 得到 <span
+class="math inline">\(W=(a_1,a_2)\)</span>. 所有年份的得分合在一起为
+<span class="math inline">\(F=ZW\)</span>.
+对于已经标准化的变量和正方差主成分, 相关载荷满足</p>
+<p><span class="math display">\[
+\ell_{jr}=\sqrt{\lambda_r}\,a_{jr}.
+\]</span></p>
+<p>农药费在第二方向的组合系数约为0.922424, 相关载荷约为0.821250.
+前者用于计算得分, 后者描述相关性. 有些软件也把组合系数称为载荷,
+因此应先核对定义. 零方差主成分与原变量的相关系数无定义,
+不能机械套用相关解释.</p>
+<h2 id="压缩以后丢了什么-用重建检查">10.6 压缩以后丢了什么:
+用重建检查</h2>
+<p>前面保留了两个坐标. 把它们分别乘回相应方向, 再相加,
+就得到五项标准化投入的近似值:</p>
+<p><span class="math display">\[
+\widehat Z=FW^{\mathsf T}=ZWW^{\mathsf T}.
+\]</span></p>
+<p>这和第一节将一个得分乘回一个方向是同一种计算. 最后逐列乘回标准差,
+加回平均数:</p>
+<p><span class="math display">\[
+\widehat x_{ij}=\bar x_j+s_j\widehat z_{ij}.
+\]</span></p>
+<p>例如1990年的五项原始值与重建值约为:</p>
+<p>表 10-7 首条记录的两成分重建.</p>
+<div class="line-block">变量 | 原始值 | 保留两个成分后的重建值 |<br />
+: ---: | : ---: | : ---: |<br />
+种子费 | 106.05 | 99.019500 |<br />
+化肥费 | 495.15 | 452.557597 |<br />
+农药费 | 305.10 | 305.522375 |<br />
+机械费 | 45.90 | 35.300403 |<br />
+灌溉费 | 56.10 | 81.789012 |</div>
+<p>重建值没有全部等于原始值. 97.7440%的方差解释率,
+不表示每一项数值都保留了97.7440%, 也不保证每个年份的误差相同.</p>
+<p>所有标准化值的平方重建误差约为1.917586. 标准化后的总平方离差为 <span
+class="math inline">\((18-1)\times5=85\)</span>, 所以损失比例约为</p>
+<p><span class="math display">\[
+\frac{1.917586}{85}\approx2.2560\%
+=100\%-97.7440\%.
+\]</span></p>
+<p>对有 <span class="math inline">\(n\)</span> 个样本, <span
+class="math inline">\(p\)</span> 个变量的数据, 在给定尺度下保留前 <span
+class="math inline">\(k\)</span> 个主方向的平方误差为</p>
+<p><span class="math display">\[
+\|Z-\widehat Z\|_{\mathrm F}^2
+=(n-1)\sum\limits_{j=k+1}^{p}\lambda_j.
+\]</span></p>
+<p>这里 <span class="math inline">\(\|A\|_{\mathrm F}^2\)</span>
+表示矩阵中所有元素平方的总和. 在同样维数的正交线性投影中,
+PCA使这个整体误差最小. 它优化的是平方重建损失,
+不保证后续预测或分类的效果最好.</p>
+<p><img src="/images/PrincipalComponentAnalysis/PrincipalComponentAnalysis-5.png" style="width:100%"></p>
+<p>图 10-4 逐变量查看重建损失</p>
+<p>左图比较保留一个和两个成分时各变量的标准化重建均方根误差.
+右图将标准化原值与标准化重建值比较, 对角线表示二者相等.</p>
+<p>如果关心原数值下的偏差, 应分别看五项投入的重建均方根误差:</p>
+<p>表 10-8 各投入变量的原尺度重建误差.</p>
+<div class="line-block">变量 | 原数值尺度的重建均方根误差 |<br />
+: ---: | : ---: |<br />
+种子费 | 11.979955 |<br />
+化肥费 | 62.424943 |<br />
+农药费 | 5.177220 |<br />
+机械费 | 23.215030 |<br />
+灌溉费 | 26.932773 |</div>
+<p>这些数值沿用各列原来的尺度. 不能把标准化平方误差1.917586当作费用误差,
+也不能只看整体解释率而忽略某一项变量的偏差.</p>
+<h2 id="如果只有相关矩阵-还能做什么">10.7 如果只有相关矩阵,
+还能做什么</h2>
+<h3 id="输入不同-能得到的结果也不同">10.7.1 输入不同,
+能得到的结果也不同</h3>
+<p>在工装尺寸适配的教学案例中, 给定六项人体尺寸的相关系数矩阵.
+指标依次为身高 <span class="math inline">\(x_1\)</span>, 坐高 <span
+class="math inline">\(x_2\)</span>, 胸围 <span
+class="math inline">\(x_3\)</span>, 手臂长 <span
+class="math inline">\(x_4\)</span>, 肋围 <span
+class="math inline">\(x_5\)</span>, 腰围 <span
+class="math inline">\(x_6\)</span>.</p>
+<p>表 10-9 六项人体尺寸的相关系数矩阵.</p>
+<div class="line-block">指标 | <span class="math inline">\(x_1\)</span>
+| <span class="math inline">\(x_2\)</span> | <span
+class="math inline">\(x_3\)</span> | <span
+class="math inline">\(x_4\)</span> | <span
+class="math inline">\(x_5\)</span> | <span
+class="math inline">\(x_6\)</span> |</div>
+<p>|: ---: |: ---: |: ---: |: ---: |: ---: |: ---: |: ---: | | <span
+class="math inline">\(x_1\)</span> | 1.00 | 0.79 | 0.36 | 0.76 | 0.25 |
+0.51 | | <span class="math inline">\(x_2\)</span> | 0.79 | 1.00 | 0.31 |
+0.55 | 0.17 | 0.35 | | <span class="math inline">\(x_3\)</span> | 0.36 |
+0.31 | 1.00 | 0.35 | 0.64 | 0.58 | | <span
+class="math inline">\(x_4\)</span> | 0.76 | 0.55 | 0.35 | 1.00 | 0.16 |
+0.38 | | <span class="math inline">\(x_5\)</span> | 0.25 | 0.17 | 0.64 |
+0.16 | 1.00 | 0.63 | | <span class="math inline">\(x_6\)</span> | 0.51 |
+0.35 | 0.58 | 0.38 | 0.63 | 1.00 |</p>
+<p>矩阵已经汇总了变量之间的相关结构. 可以直接分解它, 计算方向与解释率.
+不要把六行当作六个人的测量记录, 再对这六行执行原始数据PCA.</p>
+<p>本题没有给出逐人的尺寸记录及其均值和标准差, 因此不能计算每个人的得分,
+还原个人尺寸或确定服装号型.
+实际工装设计还需要目标人群测量数据及适配验证.</p>
+<h3 id="先计算-再决定二维是否够用">10.7.2 先计算,
+再决定二维是否够用</h3>
+<p><strong>body_matrix_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">R = np.array([</span><br><span class="line">    [<span class="number">1</span>, <span class="number">0.79</span>, <span class="number">0.36</span>, <span class="number">0.76</span>, <span class="number">0.25</span>, <span class="number">0.51</span>],</span><br><span class="line">    [<span class="number">0.79</span>, <span class="number">1</span>, <span class="number">0.31</span>, <span class="number">0.55</span>, <span class="number">0.17</span>, <span class="number">0.35</span>],</span><br><span class="line">    [<span class="number">0.36</span>, <span class="number">0.31</span>, <span class="number">1</span>, <span class="number">0.35</span>, <span class="number">0.64</span>, <span class="number">0.58</span>],</span><br><span class="line">    [<span class="number">0.76</span>, <span class="number">0.55</span>, <span class="number">0.35</span>, <span class="number">1</span>, <span class="number">0.16</span>, <span class="number">0.38</span>],</span><br><span class="line">    [<span class="number">0.25</span>, <span class="number">0.17</span>, <span class="number">0.64</span>, <span class="number">0.16</span>, <span class="number">1</span>, <span class="number">0.63</span>],</span><br><span class="line">    [<span class="number">0.51</span>, <span class="number">0.35</span>, <span class="number">0.58</span>, <span class="number">0.38</span>, <span class="number">0.63</span>, <span class="number">1</span>],</span><br><span class="line">], dtype=<span class="built_in">float</span>)</span><br><span class="line">values, vectors = np.linalg.eigh(R)</span><br><span class="line">order = np.argsort(values)[::-<span class="number">1</span>]</span><br><span class="line">values, vectors = values[order], vectors[:, order]</span><br><span class="line"><span class="comment"># Choose a consistent sign for display; the projection is unchanged.</span></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(vectors.shape[<span class="number">1</span>]):</span><br><span class="line">    row = np.argmax(np.<span class="built_in">abs</span>(vectors[:, j]))</span><br><span class="line">    <span class="keyword">if</span> vectors[row, j] &lt; <span class="number">0</span>:</span><br><span class="line">        vectors[:, j] *= -<span class="number">1</span></span><br><span class="line">ratio = values / values.<span class="built_in">sum</span>()</span><br><span class="line">cumulative = np.cumsum(ratio)</span><br><span class="line">cumulative[-<span class="number">1</span>] = <span class="number">1.0</span></span><br><span class="line">k = <span class="built_in">int</span>(np.searchsorted(cumulative, <span class="number">0.80</span>) + <span class="number">1</span>)</span><br><span class="line">np.set_printoptions(precision=<span class="number">6</span>, suppress=<span class="literal">True</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Eigenvalue, variance ratio, cumulative ratio:\n&quot;</span>,</span><br><span class="line">      np.column_stack((values, ratio, cumulative)))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Number needed for 80%:&quot;</span>, k)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;First three coefficient columns:\n&quot;</span>, vectors[:, :<span class="number">3</span>])</span><br></pre></td></tr></table></figure>
+<p><strong>body_matrix_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">R = [</span><br><span class="line">    <span class="number">1</span>,<span class="number">0.79</span>,<span class="number">0.36</span>,<span class="number">0.76</span>,<span class="number">0.25</span>,<span class="number">0.51</span>;</span><br><span class="line">    <span class="number">0.79</span>,<span class="number">1</span>,<span class="number">0.31</span>,<span class="number">0.55</span>,<span class="number">0.17</span>,<span class="number">0.35</span>;</span><br><span class="line">    <span class="number">0.36</span>,<span class="number">0.31</span>,<span class="number">1</span>,<span class="number">0.35</span>,<span class="number">0.64</span>,<span class="number">0.58</span>;</span><br><span class="line">    <span class="number">0.76</span>,<span class="number">0.55</span>,<span class="number">0.35</span>,<span class="number">1</span>,<span class="number">0.16</span>,<span class="number">0.38</span>;</span><br><span class="line">    <span class="number">0.25</span>,<span class="number">0.17</span>,<span class="number">0.64</span>,<span class="number">0.16</span>,<span class="number">1</span>,<span class="number">0.63</span>;</span><br><span class="line">    <span class="number">0.51</span>,<span class="number">0.35</span>,<span class="number">0.58</span>,<span class="number">0.38</span>,<span class="number">0.63</span>,<span class="number">1</span>];</span><br><span class="line">[V,L] = eig(R);</span><br><span class="line">[values,order] = <span class="built_in">sort</span>(<span class="built_in">diag</span>(L),<span class="string">&#x27;descend&#x27;</span>);</span><br><span class="line">V = V(:,order);</span><br><span class="line"><span class="comment">% Choose a consistent sign for display.</span></span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="built_in">size</span>(V,<span class="number">2</span>)</span><br><span class="line">    [~,row] = <span class="built_in">max</span>(<span class="built_in">abs</span>(V(:,<span class="built_in">j</span>)));</span><br><span class="line">    <span class="keyword">if</span> V(row,<span class="built_in">j</span>) &lt; <span class="number">0</span>, V(:,<span class="built_in">j</span>) = -V(:,<span class="built_in">j</span>); <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">ratio = values/sum(values);</span><br><span class="line">cumulative = cumsum(ratio);</span><br><span class="line">cumulative(<span class="keyword">end</span>) = <span class="number">1</span>;</span><br><span class="line">k = <span class="built_in">find</span>(cumulative &gt;= <span class="number">0.80</span>,<span class="number">1</span>,<span class="string">&#x27;first&#x27;</span>);</span><br><span class="line">format long g;</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Eigenvalue, variance ratio, cumulative ratio:&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>([values,ratio,cumulative]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Number needed for 80%:&#x27;</span>); <span class="built_in">disp</span>(k);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;First three coefficient columns:&#x27;</span>); <span class="built_in">disp</span>(V(:,<span class="number">1</span>:<span class="number">3</span>));</span><br></pre></td></tr></table></figure>
+<p>表 10-10 人体尺寸主成分的累计解释率.</p>
+<div class="line-block">主成分 | 特征值 | 累计解释率 |<br />
+: ---: | : ---: | : ---: |<br />
+PC1 | 3.287201 | 54.7867% |<br />
+PC2 | 1.406240 | 78.2240% |<br />
+PC3 | 0.459095 | 85.8756% |<br />
+PC4 | 0.426342 | 92.9813% |<br />
+PC5 | 0.294800 | 97.8946% |<br />
+PC6 | 0.126322 | 100.0000% |</div>
+<p>表 10-11 人体尺寸前三个主方向.</p>
+<div class="line-block">标准化变量 | <span
+class="math inline">\(a_1\)</span> | <span
+class="math inline">\(a_2\)</span> | <span
+class="math inline">\(a_3\)</span> |<br />
+: ---: | : ---: | : ---: | : ---: |<br />
+身高 | 0.468906 | -0.364756 | -0.092208 |<br />
+坐高 | 0.403726 | -0.396606 | -0.613011 |<br />
+胸围 | 0.393570 | 0.396800 | 0.278870 |<br />
+手臂长 | 0.407640 | -0.364842 | 0.704801 |<br />
+肋围 | 0.337472 | 0.569214 | -0.164251 |<br />
+腰围 | 0.426822 | 0.308369 | -0.119265 |</div>
+<p>第一方向体现六项尺寸的共同变化. 第二方向主要体现胸围, 肋围,
+腰围与身高, 坐高, 臂长的相对对比. 第三方向主要体现臂长与坐高的对比,
+不能简化为单独的臂长.</p>
+<p>两个方向累计保留78.2240%的方差, 所以要达到80%应保留三个.
+如果目的是画二维图, 可以保留两个, 同时说明舍去了约21.7760%的方差.
+为展示选二维, 与按解释率阈值选维数, 是两个不同决定.</p>
+<p><img src="/images/PrincipalComponentAnalysis/PrincipalComponentAnalysis-2.png" style="width:100%"></p>
+<p>图 10-5 人体尺寸的组合系数与选维数</p>
+<p>热图显示组合系数, 不是相关载荷. 下图说明80%,
+90%与95%阈值分别需要三个, 四个与五个主成分.
+贡献较小的方向是否对工装适配重要, 仍需结合实际任务判断.</p>
+<h2 id="使用结果时-再检查三件事">10.8 使用结果时, 再检查三件事</h2>
+<p>第一, <strong>新记录是否沿用原来的坐标变换?</strong>
+对新样本使用已有模型的均值, 标准差和方向:</p>
+<p><span class="math display">\[
+f_{\mathrm{new}}=
+\left(\frac{x_{\mathrm{new},1}-\bar x_1}{s_1},\ldots,
+\frac{x_{\mathrm{new},p}-\bar x_p}{s_p}\right)W.
+\]</span></p>
+<p>这里按一行记录书写. 如果后面要预测单产, 应先划分训练与验证数据,
+再只用训练数据估计这套变换. 对连续年份还要注意时间先后.
+配套选读程序用前12年估计变换, 再变换后6年; 这一步演示如何使用已有坐标,
+尚未建立单产预测模型.</p>
+<p>第二, <strong>保留的变化是否就是任务需要的变化?</strong>
+大方差可能来自共同趋势或测量误差, 小方差也可能包含重要预测信号.
+高解释率不等于高预测准确率, 也不说明费用越高或得分越大就越好.
+异常值与数据尺度都可能明显影响结果.</p>
+<p>第三, <strong>方向是否值得作过于具体的解释?</strong>
+不同主成分在用于计算的样本中不相关, 但不相关不等于独立. 例如对称分布的
+<span class="math inline">\(U\)</span> 与 <span
+class="math inline">\(U^2\)</span> 可以不相关, 却有确定关系.
+特征值相同或很接近时, 方向还可能不唯一或对扰动敏感.
+这些问题的图示与计算放在进一步阅读中.</p>
+<p>只有相关或协方差矩阵时, 可以讨论方差结构, 不会凭空得到个体得分.
+对真正的样本数据, 应同时报告尺度, 维数, 解释率与重建误差.
+常数列不能直接标准化; 全部样本没有变化时, 总方差为0, 解释率无定义.</p>
+<p>本章小矩阵采用特征分解, 便于看清步骤.
+常用库也可通过奇异值分解求主成分. 使用 Python 的 <code>PCA</code> 或
+MATLAB 的 <code>pca</code> 时仍要自行决定是否标准化,
+不能因为调用了库函数就省略尺度选择.</p>
+<h2 id="写出一段完整结论-再做练习">10.9 写出一段完整结论, 再做练习</h2>
+<p>棉花案例可以这样概括: 以五项投入为输入, 先用各列样本标准差进行标准化.
+按95%的累计解释率阈值保留两个主成分, 累计保留97.7440%的标准化样本方差.
+第一方向主要概括费用的共同变化,
+第二方向主要反映农药费与若干其他费用的相对对比.
+标准化平方重建误差为1.917586, 各变量的原尺度误差还需分别查看.
+这些结果描述的是给定教学数据的变化结构,
+尚不能证明投入对单产的因果作用或单产预测能力.</p>
+<ol type="1">
+<li>对五点算例中的 <span class="math inline">\((2,4)\)</span>, 手算沿
+<span class="math inline">\((1,2)^{\mathsf T}/\sqrt5\)</span>
+的得分和重建点. 再改用水平方向, 比较平方重建误差.</li>
+<li>核对三个试算方向的单位长度及表中方差和误差. 将第三个方向放大2倍,
+得分方差会变成多少? 为什么不能用它与单位方向直接比较?</li>
+<li>将棉花案例的阈值依次设为80%, 90%, 95%与99%,
+记录保留维数和标准化平方重建误差. 运行尺度比较程序,
+说明原尺度与标准化尺度的误差为何不能直接比大小.</li>
+<li>用样本相关系数核对农药费与第二主成分的相关载荷.
+再把第一方向及其得分都反号, 检查重建. 组合系数,
+相关载荷与得分各表示什么?</li>
+<li>人体尺寸案例达到80%, 90%与95%分别需要几个成分? 如果坚持二维展示,
+应说明什么? 能否从该矩阵恢复六个人的尺寸记录?</li>
+<li>用前12年的棉花投入估计变换, 再计算后6年的得分.
+后6年的得分均值必须为0吗? 为什么这个操作还不能证明单产预测有效?</li>
+<li>运行不相关与方向敏感性的选读程序. 解释 <span
+class="math inline">\(U\)</span> 与 <span
+class="math inline">\(U^2\)</span> 的零协方差, 圆周点的相同特征值,
+以及很小的协方差扰动为何仍可能使第一方向明显转动.</li>
+</ol>
+<p>进一步阅读保留完整理论推导, 原有三个完整算例和复用接口说明.
+下一章进入机器学习, 继续区分训练中的良好表现与新样本上的实际效果.</p>
+<p>配套阅读与实验: <a
+href="../reading/10/Index.md">本章资料索引</a>.</p>
+<h2 id="参考资料">参考资料</h2>
+<p>[1] JOLLIFFE I T, CADIMA J. Principal component analysis: a review
+and recent developments[J]. Philosophical Transactions of the Royal
+Society A, 2016, 374(2065): 20150202. DOI: 10.1098/rsta.2015.0202.</p>
+<p>[2] NumPy developers. <a
+target="_blank" rel="noopener" href="https://numpy.org/doc/stable/reference/generated/numpy.linalg.eigh.html">numpy.
+linalg. eigh</a>.</p>
+<p>[3] scikit-learn developers. <a
+target="_blank" rel="noopener" href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html">PCA</a>.</p>
+<p>[4] MathWorks. <a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/stats/pca.html">pca: Principal
+component analysis of raw data</a>.</p>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

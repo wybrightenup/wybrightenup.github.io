@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="第 19 章 灰色关联分析: 比较序列与参考模式的接近程度 选择阅读工作台时, 有的方案易用, 有的方案便于维护. 如果先把每项指标处理到可比较的尺度上, 能否逐项量出它们与理想表现的差距, 再汇总成一个得分? 灰色关联分析(Grey Relational Analysis, GRA)从逐点差异出发, 用关联系数描述当前尺度下的接近程度. 本章先算一列的尺度, 再算一个位置的系数,">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/MathBeautyAndModeling/19_GreyRelationalAnalysis.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="第 19 章 灰色关联分析: 比较序列与参考模式的接近程度 选择阅读工作台时, 有的方案易用, 有的方案便于维护. 如果先把每项指标处理到可比较的尺度上, 能否逐项量出它们与理想表现的差距, 再汇总成一个得分? 灰色关联分析(Grey Relational Analysis, GRA)从逐点差异出发, 用关联系数描述当前尺度下的接近程度. 本章先算一列的尺度, 再算一个位置的系数,">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/GreyRelationalAnalysis/GreyRelationalAnalysis-Steps.png">
+<meta property="og:image" content="http://example.com/images/GreyRelationalAnalysis/GreyRelationalAnalysis-1.png">
+<meta property="og:image" content="http://example.com/images/GreyRelationalAnalysis/GreyRelationalAnalysis-2.png">
+<meta property="og:image" content="http://example.com/images/GreyRelationalAnalysis/GreyRelationalAnalysis-3.png">
+<meta property="og:image" content="http://example.com/images/GreyRelationalAnalysis/GreyRelationalAnalysis-4.png">
+<meta property="article:published_time" content="2026-11-02T02:53:08.753Z">
+<meta property="article:modified_time" content="2026-10-31T09:20:34.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/GreyRelationalAnalysis/GreyRelationalAnalysis-Steps.png">
+
+
+<link rel="canonical" href="http://example.com/MathBeautyAndModeling/19_GreyRelationalAnalysis">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/MathBeautyAndModeling/19_GreyRelationalAnalysis.html","path":"MathBeautyAndModeling/19_GreyRelationalAnalysis.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-19-%E7%AB%A0-%E7%81%B0%E8%89%B2%E5%85%B3%E8%81%94%E5%88%86%E6%9E%90-%E6%AF%94%E8%BE%83%E5%BA%8F%E5%88%97%E4%B8%8E%E5%8F%82%E8%80%83%E6%A8%A1%E5%BC%8F%E7%9A%84%E6%8E%A5%E8%BF%91%E7%A8%8B%E5%BA%A6"><span class="nav-number">1.</span> <span class="nav-text">第 19 章
+灰色关联分析: 比较序列与参考模式的接近程度</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E5%A4%84%E7%90%86%E4%B8%80%E5%88%97-%E6%9C%9D%E5%93%AA%E4%B8%AA%E6%96%B9%E5%90%91%E5%A5%BD-%E7%94%A8%E4%BB%80%E4%B9%88%E5%B0%BA%E5%BA%A6%E6%AF%94"><span class="nav-number">1.1.</span> <span class="nav-text">19.1 先处理一列:
+朝哪个方向好, 用什么尺度比</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E7%A7%8D%E5%B7%A5%E4%BD%9C%E5%8F%B0%E4%B8%8E%E5%9B%9B%E9%A1%B9%E6%8C%87%E6%A0%87"><span class="nav-number">1.1.1.</span> <span class="nav-text">19.1.1 三种工作台与四项指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E5%8F%AA%E6%8A%8A%E6%98%93%E7%94%A8%E6%80%A7%E9%99%A4%E4%BB%A5%E5%88%97%E6%9C%80%E5%A4%A7%E5%80%BC"><span class="nav-number">1.1.2.</span> <span class="nav-text">19.1.2 先只把易用性除以列最大值</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%8D%E7%AE%97%E4%B8%80%E4%B8%AA%E4%BD%8D%E7%BD%AE-b%E7%9A%84%E7%BB%B4%E6%8A%A4%E7%B3%BB%E6%95%B0%E6%80%8E%E6%A0%B7%E5%BE%97%E5%88%B0"><span class="nav-number">1.2.</span> <span class="nav-text">19.2 再算一个位置:
+B的维护系数怎样得到</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E6%89%BE%E5%85%B1%E5%90%8C%E5%8F%82%E8%80%83-%E5%86%8D%E6%B1%82%E5%85%A8%E9%83%A8%E5%B7%AE%E5%80%BC"><span class="nav-number">1.2.1.</span> <span class="nav-text">19.2.1 先找共同参考,
+再求全部差值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%AE%E5%80%BC%E9%80%9A%E8%BF%87%E4%BB%80%E4%B9%88%E5%85%AC%E5%BC%8F%E5%8F%98%E6%88%90%E6%8E%A5%E8%BF%91%E7%A8%8B%E5%BA%A6"><span class="nav-number">1.2.2.</span> <span class="nav-text">19.2.2
+差值通过什么公式变成接近程度</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E7%AE%97b%E7%9A%84%E4%B8%80%E8%A1%8C-%E5%86%8D%E5%AF%B9%E4%B8%89%E4%B8%AA%E6%96%B9%E6%A1%88%E9%87%8D%E5%A4%8D"><span class="nav-number">1.3.</span> <span class="nav-text">19.3 先算B的一行,
+再对三个方案重复</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E5%9B%9B%E4%B8%AA%E7%B3%BB%E6%95%B0%E6%94%BE%E5%88%B0%E5%90%8C%E4%B8%80%E8%A1%8C"><span class="nav-number">1.3.1.</span> <span class="nav-text">19.3.1 把四个系数放到同一行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%96%E5%B1%82%E9%80%90%E6%96%B9%E6%A1%88-%E5%86%85%E5%B1%82%E9%80%90%E6%8C%87%E6%A0%87"><span class="nav-number">1.3.2.</span> <span class="nav-text">19.3.2 外层逐方案, 内层逐指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%8D%E8%AF%BB%E5%8E%9F%E6%95%B0%E7%BB%84%E4%B8%8E%E5%87%BD%E6%95%B0%E7%89%88%E6%9C%AC"><span class="nav-number">1.3.3.</span> <span class="nav-text">19.3.3 再读原数组与函数版本</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E4%B8%80%E8%88%AC%E5%85%AC%E5%BC%8F%E6%95%B4%E7%90%86%E5%B7%B2%E7%BB%8F%E7%AE%97%E8%BF%87%E7%9A%84%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.4.</span> <span class="nav-text">19.4
+用一般公式整理已经算过的步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%90%86%E6%83%B3%E6%96%B9%E6%A1%88%E8%AF%84%E4%BB%B7%E6%8C%89%E8%A1%8C%E6%B1%87%E6%80%BB"><span class="nav-number">1.4.1.</span> <span class="nav-text">19.4.1 理想方案评价按行汇总</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E6%95%B01%E4%B8%8E%E4%B8%8B%E7%95%8C%E5%88%86%E5%88%AB%E8%AF%B4%E6%98%8E%E4%BB%80%E4%B9%88"><span class="nav-number">1.4.2.</span> <span class="nav-text">19.4.2 系数1与下界分别说明什么</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8D%A2%E6%88%90%E5%9B%A0%E7%B4%A0%E5%BA%8F%E5%88%97%E6%97%B6-%E6%B2%BF%E6%97%B6%E7%82%B9%E5%AF%B9%E6%AF%8F%E4%B8%80%E5%88%97%E5%B9%B3%E5%9D%87"><span class="nav-number">1.5.</span> <span class="nav-text">19.5 换成因素序列时,
+沿时点对每一列平均</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%8C%E5%88%97%E5%92%8C%E5%8F%82%E8%80%83%E5%AF%B9%E8%B1%A1%E9%83%BD%E8%A6%81%E9%87%8D%E6%96%B0%E8%AF%B4%E6%98%8E"><span class="nav-number">1.5.1.</span> <span class="nav-text">19.5.1
+行列和参考对象都要重新说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E6%8C%89%E6%AF%8F%E5%88%97%E8%87%AA%E5%B7%B1%E7%9A%84%E5%9D%87%E5%80%BC%E7%BC%A9%E6%94%BE"><span class="nav-number">1.5.2.</span> <span class="nav-text">19.5.2 先按每列自己的均值缩放</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BA%E5%AE%9A%E5%9B%A0%E7%B4%A0%E5%88%97-%E4%BE%9D%E6%AC%A1%E7%B4%AF%E5%8A%A0%E5%9B%9B%E4%B8%AA%E5%B9%B4%E4%BB%BD"><span class="nav-number">1.5.3.</span> <span class="nav-text">19.5.3 固定因素列,
+依次累加四个年份</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%B9%E5%8F%98%E9%A2%84%E5%A4%84%E7%90%86-%E5%B0%B1%E6%94%B9%E5%8F%98%E4%BA%86%E6%8E%A5%E8%BF%91%E7%9A%84%E5%90%AB%E4%B9%89"><span class="nav-number">1.6.</span> <span class="nav-text">19.6 改变预处理,
+就改变了接近的含义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9D%87%E5%80%BC%E5%8C%96%E4%B8%8E%E5%88%9D%E5%80%BC%E5%8C%96%E5%90%84%E4%BF%9D%E7%95%99%E4%BB%80%E4%B9%88"><span class="nav-number">1.6.1.</span> <span class="nav-text">19.6.1 均值化与初值化各保留什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E4%BD%8D%E6%8D%A2%E7%AE%97%E4%B8%8E%E4%BB%BB%E6%84%8F%E5%B9%B3%E7%A7%BB%E4%B8%8D%E5%90%8C"><span class="nav-number">1.6.2.</span> <span class="nav-text">19.6.2 单位换算与任意平移不同</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BA%E5%AE%9A%E5%B7%AE%E5%80%BC%E7%9F%A9%E9%98%B5-%E5%86%8D%E6%94%B9%E5%8F%98%E5%88%86%E8%BE%A8%E7%B3%BB%E6%95%B0"><span class="nav-number">1.7.</span> <span class="nav-text">19.7 固定差值矩阵,
+再改变分辨系数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#rho%E4%B8%8D%E6%98%AF%E6%8C%87%E6%A0%87%E9%87%8D%E8%A6%81%E6%80%A7%E6%9D%83%E9%87%8D"><span class="nav-number">1.7.1.</span> <span class="nav-text">19.7.1 rho不是指标重要性权重</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E7%B3%BB%E6%95%B0%E4%B8%8A%E5%8D%87-%E6%8E%92%E5%BA%8F%E4%BB%8D%E5%8F%AF%E8%83%BD%E6%94%B9%E5%8F%98"><span class="nav-number">1.7.2.</span> <span class="nav-text">19.7.2 为什么系数上升,
+排序仍可能改变</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E8%81%94%E8%B5%8B%E6%9D%83%E6%89%A9%E5%B1%95-%E5%85%88%E6%8C%89%E5%88%97%E5%BD%A2%E6%88%90%E6%9D%83%E9%87%8D-%E5%86%8D%E6%8C%89%E8%A1%8C%E8%AF%84%E5%88%86"><span class="nav-number">1.8.</span> <span class="nav-text">19.8 关联赋权扩展:
+先按列形成权重, 再按行评分</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%99%E6%AC%A1%E5%8F%82%E8%80%83%E5%90%91%E9%87%8F%E6%B2%BF%E6%96%B9%E6%A1%88%E5%B1%95%E5%BC%80"><span class="nav-number">1.8.1.</span> <span class="nav-text">19.8.1 这次参考向量沿方案展开</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E%E8%99%9A%E6%8B%9F%E5%8F%82%E8%80%83%E6%8E%A5%E8%BF%91-%E4%B8%8D%E7%AD%89%E4%BA%8E%E4%B8%9A%E5%8A%A1%E4%B8%8A%E6%9B%B4%E9%87%8D%E8%A6%81"><span class="nav-number">1.8.2.</span> <span class="nav-text">19.8.2 与虚拟参考接近,
+不等于业务上更重要</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E6%95%B0%E5%88%97%E4%B8%8E%E6%8C%87%E6%A0%87%E6%9D%83%E9%87%8D-%E5%BA%94%E5%88%86%E5%88%AB%E6%A3%80%E6%9F%A5"><span class="nav-number">1.9.</span> <span class="nav-text">19.9 常数列与指标权重,
+应分别检查</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E6%95%B0%E5%88%97%E5%8F%AF%E8%83%BD%E5%A2%9E%E5%8A%A0%E5%85%B1%E5%90%8C%E5%9F%BA%E5%87%86%E5%88%86"><span class="nav-number">1.9.1.</span> <span class="nav-text">19.9.1 常数列可能增加共同基准分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BA%E5%AE%9A%E7%B3%BB%E6%95%B0%E7%9F%A9%E9%98%B5-%E5%8D%95%E7%8B%AC%E6%94%B9%E5%8F%98%E9%95%BF%E5%BA%A6%E6%9D%83%E9%87%8D"><span class="nav-number">1.9.2.</span> <span class="nav-text">19.9.2 固定系数矩阵,
+单独改变长度权重</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E6%9D%A1%E4%BB%B6%E5%92%8C%E5%B7%AE%E5%80%BC%E8%A7%A3%E9%87%8A%E7%BB%93%E8%AE%BA"><span class="nav-number">1.10.</span> <span class="nav-text">19.10 用条件和差值解释结论</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%8E%E6%A0%B7%E8%A1%94%E6%8E%A5%E5%89%8D%E9%9D%A2%E7%9A%84%E8%AF%84%E4%BB%B7%E6%96%B9%E6%B3%95"><span class="nav-number">1.10.1.</span> <span class="nav-text">19.10.1 怎样衔接前面的评价方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.10.2.</span> <span class="nav-text">19.10.2 练习</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%A7%E7%BB%AD%E9%98%85%E8%AF%BB"><span class="nav-number">1.10.3.</span> <span class="nav-text">19.10.3 继续阅读</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.11.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="第-19-章-灰色关联分析-比较序列与参考模式的接近程度">第 19 章
+灰色关联分析: 比较序列与参考模式的接近程度</h1>
+<p>选择阅读工作台时, 有的方案易用, 有的方案便于维护.
+如果先把每项指标处理到可比较的尺度上, 能否逐项量出它们与理想表现的差距,
+再汇总成一个得分?</p>
+<p>灰色关联分析(Grey Relational Analysis, GRA)从逐点差异出发,
+用关联系数描述当前尺度下的接近程度. 本章先算一列的尺度,
+再算一个位置的系数, 接着对一个方案的四项系数求平均, 最后才进入完整程序.
+相关理论与其他灰色关联模型可进一步参考文献[1].</p>
+<p>后半章把相同的系数用于经济序列, 再介绍关联赋权扩展.
+三种流程共用一个系数公式, 参考对象和最终汇总方向却不同.
+每次计算前都要先说明当前的行, 列与参考值代表什么.</p>
+<h2 id="先处理一列-朝哪个方向好-用什么尺度比">19.1 先处理一列:
+朝哪个方向好, 用什么尺度比</h2>
+<h3 id="三种工作台与四项指标">19.1.1 三种工作台与四项指标</h3>
+<p>某公共阅读空间比较三个模块化阅读工作台方案. 假定它们均已满足安全,
+可达性等必要条件. 以下为教学模拟, 评分尺度,
+维护观察周期和送风测试条件假定一致.</p>
+<p>表 19-1 阅读工作台的四项原始指标.</p>
+<div class="line-block">方案 | 易用性评分(分) | 同期维护次数(次) |
+模块长度(厘米) | 单元送风量(立方米/小时) |<br />
+: ---: | ---: | ---: | ---: | ---: |<br />
+A | 9 | 10 | 175 | 120 |<br />
+B | 8 | 7 | 164 | 80 |<br />
+C | 6 | 3 | 157 | 90 |</div>
+<p>易用性越大越好, 维护次数越少越好. 长度目标165厘米, 送风最佳区间 <span
+class="math inline">\([90,100]\)</span> 立方米/小时均是本题设计参数,
+不是通用工程标准. 这些指标的意义应由阅读空间的真实需求支持.</p>
+<p>先将四列转成非负且越大越好的数. 维护列用最大次数10减原值, 得到0, 3,
+7. 长度先求到165的距离10, 1, 8, 再用 <span
+class="math inline">\(1-\text{距离}/10\)</span>, 得到0, 0.9, 0.2.
+送风量到理想区间的距离为20, 10, 0, 用 <span
+class="math inline">\(1-\text{距离}/20\)</span>, 得到0, 0.5, 1.</p>
+<p>于是正向化矩阵为</p>
+<p><span class="math display">\[
+P=\begin{pmatrix}9&amp;0&amp;0&amp;0\\8&amp;3&amp;0.9&amp;0.5\\6&amp;7&amp;0.2&amp;1\end{pmatrix}.
+\]</span></p>
+<p>这里0表示当前样本与变换规则下相对较差, 不表示方案没有使用价值.
+全部达到目标或落在区间内时, 对应列按约定取1.
+完整四类变换与输入检查保存在<a
+href="../reading/19/GreyRelationalAnalysisFurtherReading.md">补充阅读F.2与F.11</a>.</p>
+<h3 id="先只把易用性除以列最大值">19.1.2 先只把易用性除以列最大值</h3>
+<p>本章理想方案评价采用最大值归一化. 对第一列9, 8, 6, 最大值是9,
+得到</p>
+<p><span class="math display">\[
+\boldsymbol t_1=(1,8/9,2/3)^{\mathsf T}.
+\]</span></p>
+<p>该列最大值为1, 仍保持原大小顺序. 这与前面TOPSIS使用的列向量长度不同.
+换用另一种分母, 会改变不同指标间的差距尺度.</p>
+<p>下面同时打印这一列除以最大值9和除以均值 <span
+class="math inline">\(23/3\)</span> 的结果. 当前方案评价使用前一种,
+后一种留给因素序列和赋权扩展, 不在计算中途交换.</p>
+<p><strong>code/scale_one_column. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">x = [<span class="number">9.0</span>, <span class="number">8.0</span>, <span class="number">6.0</span>]</span><br><span class="line">maximum = <span class="built_in">max</span>(x)</span><br><span class="line">average = <span class="built_in">sum</span>(x) / <span class="built_in">len</span>(x)</span><br><span class="line">max_scaled = [value / maximum <span class="keyword">for</span> value <span class="keyword">in</span> x]</span><br><span class="line">mean_scaled = [value / average <span class="keyword">for</span> value <span class="keyword">in</span> x]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Column maximum and mean:&#x27;</span>, maximum, average)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Maximum-normalized column:&#x27;</span>, max_scaled)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Mean-scaled column:&#x27;</span>, mean_scaled)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Maximum of the first:&#x27;</span>, <span class="built_in">max</span>(max_scaled))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Mean of the second:&#x27;</span>, <span class="built_in">sum</span>(mean_scaled) / <span class="built_in">len</span>(mean_scaled))</span><br></pre></td></tr></table></figure>
+<p><strong>code/scale_one_column. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">x = [<span class="number">9</span>,<span class="number">8</span>,<span class="number">6</span>]; columnMaximum = <span class="built_in">max</span>(x); average = <span class="built_in">mean</span>(x);</span><br><span class="line">maxScaled = x/columnMaximum; meanScaled = x/average;</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Column maximum and mean:&#x27;</span>); <span class="built_in">disp</span>([columnMaximum,average]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Maximum-normalized column:&#x27;</span>); <span class="built_in">disp</span>(maxScaled);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Mean-scaled column:&#x27;</span>); <span class="built_in">disp</span>(meanScaled);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Maximum of the first:&#x27;</span>); <span class="built_in">disp</span>(<span class="built_in">max</span>(maxScaled));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Mean of the second:&#x27;</span>); <span class="built_in">disp</span>(<span class="built_in">mean</span>(meanScaled));</span><br></pre></td></tr></table></figure>
+<p>最大值归一化后最大值为1; 均值化后均值为1, 数值可以超过1.
+它们都保留列内顺序, 却不是同一种尺度.</p>
+<p>四列最大值为9, 7, 0.9, 1. 各列按同样办法处理后:</p>
+<p>表 19-2 最大值归一化后的方案表现.</p>
+<div class="line-block">方案 | 易用性 | 维护便利性 | 长度适配 | 送风适配
+|<br />
+: ---: | ---: | ---: | ---: | ---: |<br />
+A | 1.000000 | 0.000000 | 0.000000 | 0.000000 |<br />
+B | 0.888889 | 0.428571 | 1.000000 | 0.500000 |<br />
+C | 0.666667 | 1.000000 | 0.222222 | 1.000000 |</div>
+<p>记这个矩阵为T. 对非负且列最大值为正的P, 一般公式是</p>
+<p><span class="math display">\[
+t_{ij}=\frac{p_{ij}}{\max\limits_kp_{kj}}.
+\]</span></p>
+<p>全零列不能直接相除, 需要另行处理. 本章通用函数会明确拒绝全零列,
+不给分母加任意小数.</p>
+<h2 id="再算一个位置-b的维护系数怎样得到">19.2 再算一个位置:
+B的维护系数怎样得到</h2>
+<h3 id="先找共同参考-再求全部差值">19.2.1 先找共同参考,
+再求全部差值</h3>
+<p>每列最好值都是1, 因而本次理想向量为 <span
+class="math inline">\(\boldsymbol t_0=(1,1,1,1)^{\mathsf T}\)</span>.
+它由各项较好表现拼成, 不一定有实际方案同时达到.
+对每个方案与每项指标计算</p>
+<p><span class="math display">\[
+\Delta_{ij}=|t_{0j}-t_{ij}|.
+\]</span></p>
+<p>例如B的维护便利性为 <span class="math inline">\(3/7\)</span>,
+与理想值1的差为 <span class="math inline">\(4/7\)</span>.
+全部差值如下:</p>
+<p>表 19-3 各方案到理想参考的差值.</p>
+<div class="line-block">方案 | 易用性差 | 维护差 | 长度差 | 送风差
+|<br />
+: ---: | ---: | ---: | ---: | ---: |<br />
+A | 0 | 1 | 1 | 1 |<br />
+B | 1/9 | 4/7 | 0 | 1/2 |<br />
+C | 1/3 | 0 | 7/9 | 0 |</div>
+<p>从整张表的12个差值共同取最小值和最大值:</p>
+<p><span class="math display">\[
+a=\min\limits_{i,j}\Delta_{ij}=0,\qquad
+b=\max\limits_{i,j}\Delta_{ij}=1.
+\]</span></p>
+<p>同一次比较的所有位置共用这两个数. 不能计算B时只取B的一行,
+也不能逐列各取一套极值后仍称为本章同一种模型.</p>
+<h3 id="差值通过什么公式变成接近程度">19.2.2
+差值通过什么公式变成接近程度</h3>
+<p>给定分辨系数 <span
+class="math inline">\(0&lt;\rho\leqslant1\)</span>, 本章基准取0.5. 当
+<span class="math inline">\(b&gt;0\)</span> 时,</p>
+<p><span class="math display">\[
+\xi_{ij}=\frac{a+\rho b}{\Delta_{ij}+\rho b}.
+\]</span></p>
+<p>把B的维护差 <span class="math inline">\(4/7\)</span> 代入, 得</p>
+<p><span class="math display">\[
+\xi_{B,\mathrm{maintenance}}
+=\frac{0+\frac12\times1}{\frac47+\frac12\times1}
+=\frac7{15}\approx0.466667.
+\]</span></p>
+<p>分母随差值增加而增加, 因此在固定a, b和rho时,
+差值较小的位置得到较大的系数. 这个系数不是满意率或事件概率.</p>
+<p><strong>code/one_coefficient_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># All twelve differences in this comparison share the same extrema.</span></span><br><span class="line">D = [[<span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>],</span><br><span class="line">     [<span class="number">1</span> / <span class="number">9</span>, <span class="number">4</span> / <span class="number">7</span>, <span class="number">0.0</span>, <span class="number">0.5</span>],</span><br><span class="line">     [<span class="number">1</span> / <span class="number">3</span>, <span class="number">0.0</span>, <span class="number">7</span> / <span class="number">9</span>, <span class="number">0.0</span>]]</span><br><span class="line">all_differences = [value <span class="keyword">for</span> row <span class="keyword">in</span> D <span class="keyword">for</span> value <span class="keyword">in</span> row]</span><br><span class="line">low, high = <span class="built_in">min</span>(all_differences), <span class="built_in">max</span>(all_differences)</span><br><span class="line">rho = <span class="number">0.5</span></span><br><span class="line">d_B_maintenance = D[<span class="number">1</span>][<span class="number">1</span>]</span><br><span class="line">coefficient = (low + rho * high) / (d_B_maintenance + rho * high)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Global minimum and maximum:&#x27;</span>, low, high)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;B maintenance difference:&#x27;</span>, d_B_maintenance)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;B maintenance coefficient:&#x27;</span>, coefficient)</span><br></pre></td></tr></table></figure>
+<p><strong>code/one_coefficient_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">D = [<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>;<span class="number">1</span>/<span class="number">9</span>,<span class="number">4</span>/<span class="number">7</span>,<span class="number">0</span>,<span class="number">0.5</span>;<span class="number">1</span>/<span class="number">3</span>,<span class="number">0</span>,<span class="number">7</span>/<span class="number">9</span>,<span class="number">0</span>];</span><br><span class="line">low = <span class="built_in">min</span>(D(:)); high = <span class="built_in">max</span>(D(:)); rho = <span class="number">0.5</span>;</span><br><span class="line">dBMaintenance = D(<span class="number">2</span>,<span class="number">2</span>);</span><br><span class="line">coefficient = (low+rho*high)/(dBMaintenance+rho*high);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Global minimum and maximum:&#x27;</span>); <span class="built_in">disp</span>([low,high]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;B maintenance difference:&#x27;</span>); <span class="built_in">disp</span>(dBMaintenance);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;B maintenance coefficient:&#x27;</span>); <span class="built_in">disp</span>(coefficient);</span><br></pre></td></tr></table></figure>
+<p>程序先把整张差值表展开以取全局极值, 再只计算B的一个位置. Python的
+<code>D[1][1]</code>与MATLAB的 <code>D(2,2)</code>对应同一格;
+两种语言的起始下标不同.</p>
+<h2 id="先算b的一行-再对三个方案重复">19.3 先算B的一行,
+再对三个方案重复</h2>
+<h3 id="把四个系数放到同一行">19.3.1 把四个系数放到同一行</h3>
+<p>对其余位置重复刚才的系数计算, 得到</p>
+<p>表 19-4 共同极值下的关联系数.</p>
+<div class="line-block">方案 | 易用性系数 | 维护系数 | 长度系数 |
+送风系数 |<br />
+: ---: | ---: | ---: | ---: | ---: |<br />
+A | 1 | 1/3 | 1/3 | 1/3 |<br />
+B | 9/11 | 7/15 | 1 | 1/2 |<br />
+C | 3/5 | 1 | 9/23 | 1 |</div>
+<p>暂取四项等权. B的得分就是四项系数的平均:</p>
+<p><span class="math display">\[
+G_B=\frac14\left(\frac9{11}+\frac7{15}+1+\frac12\right)
+=\frac{919}{1320}\approx0.696212.
+\]</span></p>
+<p>注意此时平均的是关联系数, 不是原始分值, 不是正向化值,
+也不是最大值归一化后的T. 三个方案共用同一套预处理, 参考值和a, b.</p>
+<p><img src="/images/GreyRelationalAnalysis/GreyRelationalAnalysis-Steps.png" style="width:100%"></p>
+<p>图 19-1 B的一行从归一化表现到系数和得分</p>
+<p>图中保留同一指标顺序, 逐项展示T, 差值与关联系数.
+最后才对四个系数取等权平均, 不把其中一格的系数当成方案得分.</p>
+<h3 id="外层逐方案-内层逐指标">19.3.2 外层逐方案, 内层逐指标</h3>
+<p>下面的短程序从已经正向化的P开始. 先按列求最大值,
+再得到全部差值与共同极值, 最后让内层循环算一行的四项贡献,
+外层循环换下一个方案.</p>
+<p><strong>code/ideal_rows_loop. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">P = [[<span class="number">9.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>], [<span class="number">8.0</span>, <span class="number">3.0</span>, <span class="number">0.9</span>, <span class="number">0.5</span>],</span><br><span class="line">     [<span class="number">6.0</span>, <span class="number">7.0</span>, <span class="number">0.2</span>, <span class="number">1.0</span>]]</span><br><span class="line">maxima = [<span class="built_in">max</span>(row[j] <span class="keyword">for</span> row <span class="keyword">in</span> P) <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>)]</span><br><span class="line">T, D = [], []</span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> P:</span><br><span class="line">    normalized = [row[j] / maxima[j] <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>)]</span><br><span class="line">    T.append(normalized)</span><br><span class="line">    D.append([<span class="built_in">abs</span>(<span class="number">1.0</span> - value) <span class="keyword">for</span> value <span class="keyword">in</span> normalized])</span><br><span class="line">all_differences = [value <span class="keyword">for</span> row <span class="keyword">in</span> D <span class="keyword">for</span> value <span class="keyword">in</span> row]</span><br><span class="line">low, high = <span class="built_in">min</span>(all_differences), <span class="built_in">max</span>(all_differences)</span><br><span class="line">rho = <span class="number">0.5</span></span><br><span class="line">weights = [<span class="number">0.25</span>] * <span class="number">4</span></span><br><span class="line">gamma, scores = [], []</span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> D:</span><br><span class="line">    coefficients = []</span><br><span class="line">    score = <span class="number">0.0</span></span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>):</span><br><span class="line">        value = (low + rho * high) / (row[j] + rho * high)</span><br><span class="line">        coefficients.append(value)</span><br><span class="line">        score += weights[j] * value</span><br><span class="line">    gamma.append(coefficients)</span><br><span class="line">    scores.append(score)</span><br><span class="line">order = <span class="built_in">sorted</span>(<span class="built_in">range</span>(<span class="number">3</span>), key=<span class="keyword">lambda</span> i: -scores[i])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Normalized T:&#x27;</span>, T)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Coefficients:&#x27;</span>, gamma)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Scores A, B, C:&#x27;</span>, scores)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Ranking:&#x27;</span>, [[<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;C&#x27;</span>][i] <span class="keyword">for</span> i <span class="keyword">in</span> order])</span><br></pre></td></tr></table></figure>
+<p><strong>code/ideal_rows_loop. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">P = [<span class="number">9</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>;<span class="number">8</span>,<span class="number">3</span>,<span class="number">0.9</span>,<span class="number">0.5</span>;<span class="number">6</span>,<span class="number">7</span>,<span class="number">0.2</span>,<span class="number">1</span>];</span><br><span class="line">maxima = <span class="built_in">max</span>(P,[],<span class="number">1</span>); T = <span class="built_in">zeros</span>(<span class="number">3</span>,<span class="number">4</span>); D = <span class="built_in">zeros</span>(<span class="number">3</span>,<span class="number">4</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="number">4</span></span><br><span class="line">        T(<span class="built_in">i</span>,<span class="built_in">j</span>) = P(<span class="built_in">i</span>,<span class="built_in">j</span>)/maxima(<span class="built_in">j</span>);</span><br><span class="line">        D(<span class="built_in">i</span>,<span class="built_in">j</span>) = <span class="built_in">abs</span>(<span class="number">1</span>-T(<span class="built_in">i</span>,<span class="built_in">j</span>));</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">low = <span class="built_in">min</span>(D(:)); high = <span class="built_in">max</span>(D(:)); rho = <span class="number">0.5</span>;</span><br><span class="line">weights = <span class="built_in">ones</span>(<span class="number">1</span>,<span class="number">4</span>)/<span class="number">4</span>; <span class="built_in">gamma</span> = <span class="built_in">zeros</span>(<span class="number">3</span>,<span class="number">4</span>); scores = <span class="built_in">zeros</span>(<span class="number">3</span>,<span class="number">1</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="number">4</span></span><br><span class="line">        <span class="built_in">gamma</span>(<span class="built_in">i</span>,<span class="built_in">j</span>) = (low+rho*high)/(D(<span class="built_in">i</span>,<span class="built_in">j</span>)+rho*high);</span><br><span class="line">        scores(<span class="built_in">i</span>) = scores(<span class="built_in">i</span>)+weights(<span class="built_in">j</span>)*<span class="built_in">gamma</span>(<span class="built_in">i</span>,<span class="built_in">j</span>);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">[~,order] = <span class="built_in">sort</span>(scores,<span class="string">&#x27;descend&#x27;</span>); names = &#123;<span class="string">&#x27;A&#x27;</span>,<span class="string">&#x27;B&#x27;</span>,<span class="string">&#x27;C&#x27;</span>&#125;;</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Normalized T:&#x27;</span>); <span class="built_in">disp</span>(T); <span class="built_in">disp</span>(<span class="string">&#x27;Coefficients:&#x27;</span>); <span class="built_in">disp</span>(<span class="built_in">gamma</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Scores A, B, C:&#x27;</span>); <span class="built_in">disp</span>(scores.&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Ranking:&#x27;</span>); <span class="built_in">disp</span>(names(order));</span><br></pre></td></tr></table></figure>
+<p>短程序针对这组固定有效数据, 没有承担通用输入校验. 得分为</p>
+<p>表 19-5 等权方案关联得分.</p>
+<div class="line-block">方案 | <span class="math inline">\(G_i\)</span>
+| 排序位置 |<br />
+: ---: | ---: | ---: |<br />
+A | 0.500000 | 3 |<br />
+B | 0.696212 | 2 |<br />
+C | 0.747826 | 1 |</div>
+<p>在本次规则下 <span class="math inline">\(C&gt;B&gt;A\)</span>.
+C的维护便利性和送风适配较好, B的长度适配和易用性更有优势.
+当前排序不表示C在每项指标上都最好.</p>
+<h3 id="再读原数组与函数版本">19.3.3 再读原数组与函数版本</h3>
+<p>把原 <code>gra.py</code>与下面的Python脚本放在同一目录.
+MATLAB把对应函数放在当前路径内, 从同一组原始数据开始复算.</p>
+<p><strong>gra_quick. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> gra <span class="keyword">import</span> positivize, ideal_evaluation</span><br><span class="line">raw = [[<span class="number">9</span>, <span class="number">10</span>, <span class="number">175</span>, <span class="number">120</span>], [<span class="number">8</span>, <span class="number">7</span>, <span class="number">164</span>, <span class="number">80</span>], [<span class="number">6</span>, <span class="number">3</span>, <span class="number">157</span>, <span class="number">90</span>]]</span><br><span class="line">p = positivize(raw, [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], &#123;<span class="number">2</span>: <span class="number">165</span>, <span class="number">3</span>: (<span class="number">90</span>, <span class="number">100</span>)&#125;)</span><br><span class="line">out = ideal_evaluation(p)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;关联系数:\n&quot;</span>, out[<span class="string">&quot;gamma&quot;</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;得分:&quot;</span>, out[<span class="string">&quot;score&quot;</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;排序:&quot;</span>, np.array([<span class="string">&quot;A&quot;</span>, <span class="string">&quot;B&quot;</span>, <span class="string">&quot;C&quot;</span>])[out[<span class="string">&quot;order&quot;</span>]])</span><br></pre></td></tr></table></figure>
+<p><strong>gra_quick. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">A = [<span class="number">9</span>,<span class="number">10</span>,<span class="number">175</span>,<span class="number">120</span>; <span class="number">8</span>,<span class="number">7</span>,<span class="number">164</span>,<span class="number">80</span>; <span class="number">6</span>,<span class="number">3</span>,<span class="number">157</span>,<span class="number">90</span>];</span><br><span class="line">P = Positivization(A,[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>],&#123;[],[],<span class="number">165</span>,[<span class="number">90</span>,<span class="number">100</span>]&#125;);</span><br><span class="line">out = IdealEvaluation(P,<span class="built_in">ones</span>(<span class="number">1</span>,<span class="number">4</span>)/<span class="number">4</span>,<span class="number">0.5</span>);</span><br><span class="line"><span class="built_in">disp</span>(out.<span class="built_in">gamma</span>); <span class="built_in">disp</span>(out.score); <span class="built_in">disp</span>(out.order);</span><br></pre></td></tr></table></figure>
+<p><code>ideal_evaluation</code>接收已经正向化的P. 类型和目标参数先由
+<code>positivize</code>处理, Python目标字典按0起始列号填写;
+MATLAB参数元胞按1起始列号排列. 两种写法的参数位置不要混用.</p>
+<p><img src="/images/GreyRelationalAnalysis/GreyRelationalAnalysis-1.png" style="width:100%"></p>
+<p>图 19-2 三个方案的归一化表现与关联系数</p>
+<p>折线只连接离散指标位置, 不表示时间变化或连续函数.
+上图与下图是不同计算阶段, 下图的系数经权重汇总才成为方案得分.</p>
+<h2 id="用一般公式整理已经算过的步骤">19.4
+用一般公式整理已经算过的步骤</h2>
+<h3 id="理想方案评价按行汇总">19.4.1 理想方案评价按行汇总</h3>
+<p>对n个方案和m项指标, 给定非负权重 <span
+class="math inline">\(w_j\)</span>, 且 <span
+class="math inline">\(\sum\limits_{j=1}^{m}w_j=1\)</span>,
+本节得分为</p>
+<p><span class="math display">\[
+G_i=\sum\limits_{j=1}^{m}w_j\xi_{ij}.
+\]</span></p>
+<p>Python中的 <code>gamma @ w</code>或MATLAB中的
+<code>gamma*w.'</code>按方案行合成. 矩阵的每一列仍对应同一项指标,
+权重必须与列顺序一致. 如再除以所有方案的得分总和, 得到</p>
+<p><span class="math display">\[
+\widehat G_i=\frac{G_i}{\sum\limits_{k=1}^{n}G_k}.
+\]</span></p>
+<p>这一步给所有方案除以同一正数, 只改变显示尺度, 不改变名次.
+它不是被选概率或预算份额. 报告中应说明使用原得分还是得分份额.</p>
+<h3 id="系数1与下界分别说明什么">19.4.2 系数1与下界分别说明什么</h3>
+<p>在 <span class="math inline">\(b&gt;0\)</span> 时,</p>
+<p><span class="math display">\[
+0&lt;\frac{a+\rho b}{(1+\rho)b}\leqslant\xi_{ij}\leqslant1.
+\]</span></p>
+<p>最小差a对应系数1. 工作台例a=0, 所以这一格确实与理想坐标重合;
+一般序列比较可能a&gt;0, 此时1只代表本次最小差, 不代表零差.</p>
+<p>当a=0且rho=0.5时, 系数范围为 <span
+class="math inline">\([1/3,1]\)</span>. 最差位置也得到1/3, 不会得到0.
+所以0.747826不能直接读成74.78%的满意率.</p>
+<p>若b=0, 全部差值为0, 原公式出现0/0. 本章按完全重合的含义将系数统一设1,
+并报告并列. 这是明确的特殊情形约定, 不应让程序实际执行0/0.
+如果所有差值都等于同一个正数, 也会全部得到1, 但含义是等距而不是重合.
+第19.9节再用程序对照.</p>
+<h2 id="换成因素序列时-沿时点对每一列平均">19.5 换成因素序列时,
+沿时点对每一列平均</h2>
+<h3 id="行列和参考对象都要重新说明">19.5.1
+行列和参考对象都要重新说明</h3>
+<p>下面为某地区四年的教学经济数据, 金额采用同一单位. 经济总量是参考序列,
+工业和农业是比较序列. 不据此推断真实地区统计结论,
+还应注意三者可能存在统计包含关系.</p>
+<p>表 19-6 经济因素序列的教学数据.</p>
+<div class="line-block">年份 | 经济总量Y | 工业产值 | 农业产值 |<br />
+: ---: | ---: | ---: | ---: |<br />
+2016 | 55 | 24 | 10 |<br />
+2017 | 65 | 38 | 22 |<br />
+2018 | 75 | 40 | 18 |<br />
+2019 | 100 | 50 | 20 |</div>
+<p>现在行是年份, 列是序列. 参考列Y有4个位置, 每个比较列也有4个位置.
+不能把同一年两项因素平均后, 就称为一个因素跨四年的关联度.</p>
+<h3 id="先按每列自己的均值缩放">19.5.2 先按每列自己的均值缩放</h3>
+<p>本例改用均值化, 得到</p>
+<p><span class="math display">\[
+\bar y=73.75,\qquad \bar x_1=38,\qquad \bar x_2=17.5.
+\]</span></p>
+<p>例如2016年, <span
+class="math inline">\(55/73.75\approx0.745763\)</span>, 工业为 <span
+class="math inline">\(24/38\approx0.631579\)</span>.
+均值化保留相对于自身平均水平的变化, 不保留原始总量差距. 各列均值为1,
+数值不必落在0到1之间.</p>
+<p><span class="math display">\[
+\widetilde y_k=\frac{y_k}{\bar y},\qquad
+\widetilde x_{kj}=\frac{x_{kj}}{\bar x_j},\qquad
+\Delta_{kj}=|\widetilde y_k-\widetilde x_{kj}|.
+\]</span></p>
+<p>全部4乘2个差值共用极值 <span
+class="math inline">\(a\approx0.011622276\)</span>, <span
+class="math inline">\(b\approx0.375786925\)</span>. 取rho=0.5,
+2016年工业的系数为</p>
+<p><span class="math display">\[
+\xi_{11}=\frac{a+0.5b}{|55/73.75-24/38|+0.5b}\approx0.660479.
+\]</span></p>
+<p>这里a&gt;0. 2018年的农业虽得到系数1, 差值仍约为0.011622,
+不是绝对重合.</p>
+<h3 id="固定因素列-依次累加四个年份">19.5.3 固定因素列,
+依次累加四个年份</h3>
+<p><strong>code/factor_columns_loop. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># Rows: years. Columns: reference, industry, agriculture.</span></span><br><span class="line">A = np.array([[<span class="number">55</span>, <span class="number">24</span>, <span class="number">10</span>], [<span class="number">65</span>, <span class="number">38</span>, <span class="number">22</span>], [<span class="number">75</span>, <span class="number">40</span>, <span class="number">18</span>], [<span class="number">100</span>, <span class="number">50</span>, <span class="number">20</span>]], <span class="built_in">float</span>)</span><br><span class="line">means = A.mean(axis=<span class="number">0</span>)</span><br><span class="line">Z = A / means</span><br><span class="line">D = np.<span class="built_in">abs</span>(Z[:, <span class="number">1</span>:] - Z[:, [<span class="number">0</span>]])</span><br><span class="line">low, high = D.<span class="built_in">min</span>(), D.<span class="built_in">max</span>()</span><br><span class="line">rho = <span class="number">0.5</span></span><br><span class="line">gamma = (low + rho * high) / (D + rho * high)</span><br><span class="line">grades = []</span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>):</span><br><span class="line">    total = <span class="number">0.0</span></span><br><span class="line">    <span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>):</span><br><span class="line">        total += gamma[k, j]</span><br><span class="line">    grades.append(total / <span class="number">4</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Means:&#x27;</span>, means)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Normalized Z:&#x27;</span>, Z, sep=<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Differences and common extrema:&#x27;</span>, D, low, high)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Coefficients:&#x27;</span>, gamma, sep=<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Industry, agriculture grades:&#x27;</span>, grades)</span><br></pre></td></tr></table></figure>
+<p><strong>code/factor_columns_loop. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">A = [<span class="number">55</span>,<span class="number">24</span>,<span class="number">10</span>;<span class="number">65</span>,<span class="number">38</span>,<span class="number">22</span>;<span class="number">75</span>,<span class="number">40</span>,<span class="number">18</span>;<span class="number">100</span>,<span class="number">50</span>,<span class="number">20</span>];</span><br><span class="line">means = <span class="built_in">mean</span>(A,<span class="number">1</span>); Z = A./means;</span><br><span class="line">D = <span class="built_in">abs</span>(Z(:,<span class="number">2</span>:<span class="number">3</span>)-Z(:,<span class="number">1</span>)); low = <span class="built_in">min</span>(D(:)); high = <span class="built_in">max</span>(D(:)); rho = <span class="number">0.5</span>;</span><br><span class="line"><span class="built_in">gamma</span> = (low+rho*high)./(D+rho*high); grades = <span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">    total = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> k = <span class="number">1</span>:<span class="number">4</span>, total = total+<span class="built_in">gamma</span>(k,<span class="built_in">j</span>); <span class="keyword">end</span></span><br><span class="line">    grades(<span class="built_in">j</span>) = total/<span class="number">4</span>;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Means:&#x27;</span>); <span class="built_in">disp</span>(means); <span class="built_in">disp</span>(<span class="string">&#x27;Normalized Z:&#x27;</span>); <span class="built_in">disp</span>(Z);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Differences and common extrema:&#x27;</span>); <span class="built_in">disp</span>(D); <span class="built_in">disp</span>([low,high]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Coefficients:&#x27;</span>); <span class="built_in">disp</span>(<span class="built_in">gamma</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Industry, agriculture grades:&#x27;</span>); <span class="built_in">disp</span>(grades);</span><br></pre></td></tr></table></figure>
+<p>外层循环固定工业或农业, 内层循环累加四年的系数. 最终按列平均:</p>
+<p><span class="math display">\[
+r_j=\frac1n\sum\limits_{k=1}^{n}\xi_{kj}.
+\]</span></p>
+<p>表 19-7 经济序列的逐年关联系数.</p>
+<div class="line-block">年份 | 工业系数 | 农业系数 |<br />
+: ---: | ---: | ---: |<br />
+2016 | 0.660479 | 0.550802 |<br />
+2017 | 0.650869 | 0.353952 |<br />
+2018 | 0.892385 | 1.000000 |<br />
+2019 | 0.874930 | 0.497585 |<br />
+平均关联度 | 0.769666 | 0.600585 |</div>
+<p>原完整调用示例如下. Python复用 <code>gra.py</code>,
+MATLAB在脚本中直接串接均值化与系数函数. 新补充的可调用
+<code>FactorAnalysis.m</code>也返回同样的Z, D, 系数和关联度,
+全文在补充阅读F.15.</p>
+<p><strong>gra_factor_demo. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> gra <span class="keyword">import</span> factor_analysis</span><br><span class="line">A = [[<span class="number">55</span>,<span class="number">24</span>,<span class="number">10</span>],[<span class="number">65</span>,<span class="number">38</span>,<span class="number">22</span>],[<span class="number">75</span>,<span class="number">40</span>,<span class="number">18</span>],[<span class="number">100</span>,<span class="number">50</span>,<span class="number">20</span>]]</span><br><span class="line">out = factor_analysis(A)</span><br><span class="line"><span class="built_in">print</span>(out[<span class="string">&quot;Z&quot;</span>])</span><br><span class="line"><span class="built_in">print</span>(out[<span class="string">&quot;gamma&quot;</span>])</span><br><span class="line"><span class="built_in">print</span>(out[<span class="string">&quot;grade&quot;</span>])</span><br></pre></td></tr></table></figure>
+<p><strong>gra_factor_demo. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">format long g;</span><br><span class="line">A = [<span class="number">55</span>,<span class="number">24</span>,<span class="number">10</span>; <span class="number">65</span>,<span class="number">38</span>,<span class="number">22</span>; <span class="number">75</span>,<span class="number">40</span>,<span class="number">18</span>; <span class="number">100</span>,<span class="number">50</span>,<span class="number">20</span>];</span><br><span class="line"><span class="comment">% 需要交互输入时，将上一行替换为：</span></span><br><span class="line"><span class="comment">% A = input(&#x27;输入数据矩阵，第一列为参考序列：&#x27;);</span></span><br><span class="line"><span class="keyword">if</span> <span class="built_in">size</span>(A,<span class="number">2</span>) &lt; <span class="number">2</span></span><br><span class="line">    error(<span class="string">&#x27;至少需要一列参考序列和一列比较序列&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">Z = MeanScale(A);</span><br><span class="line">Y = Z(:,<span class="number">1</span>);</span><br><span class="line">X = Z(:,<span class="number">2</span>:<span class="keyword">end</span>);</span><br><span class="line">D = <span class="built_in">abs</span>(<span class="built_in">bsxfun</span>(@minus,X,Y));</span><br><span class="line">[<span class="built_in">gamma</span>,a,b] = GreyCoefficients(D,<span class="number">0.5</span>);</span><br><span class="line">grade = <span class="built_in">mean</span>(<span class="built_in">gamma</span>,<span class="number">1</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;均值化矩阵：&#x27;</span>); <span class="built_in">disp</span>(Z);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;绝对差矩阵：&#x27;</span>); <span class="built_in">disp</span>(D);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;两极最小差与最大差：&#x27;</span>); <span class="built_in">disp</span>([a,b]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;关联系数矩阵：&#x27;</span>); <span class="built_in">disp</span>(<span class="built_in">gamma</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;因素关联度（工业、农业）：&#x27;</span>); <span class="built_in">disp</span>(grade);</span><br></pre></td></tr></table></figure>
+<p>Python的 <code>gamma.mean(axis=0)</code>与MATLAB的
+<code>mean(gamma,1)</code>都是沿年份对每列平均, 得到2个因素结果.
+方案评价的行汇总则得到3个方案结果. 两者都用了系数矩阵,
+平均的方向与对象不同.</p>
+<p><img src="/images/GreyRelationalAnalysis/GreyRelationalAnalysis-2.png" style="width:100%"></p>
+<p>图 19-3 均值化经济序列及逐年关联系数</p>
+<p>当前只能说工业序列在均值化, 等时点权重与rho=0.5下平均更接近参考序列.
+不能解释成工业贡献76.97%, 更不能直接推出独立因果影响或统计显著性.</p>
+<p>普通等权平均还会忽略共同重排后的顺序: 把所有序列按同一顺序重排,
+平均值不变. 所以本模型并没有自动刻画滞后, 时间先后或变化速度.
+若使用非等时点权重, 应另行说明依据.</p>
+<h2 id="改变预处理-就改变了接近的含义">19.6 改变预处理,
+就改变了接近的含义</h2>
+<h3 id="均值化与初值化各保留什么">19.6.1 均值化与初值化各保留什么</h3>
+<p>初值化是每列除以该列第一年的值, 本例初值都非零.
+它比较相对于起点的变化倍数; 均值化比较相对于自身平均水平的变化.
+保持原数据, 参考对象, rho与平均方向不变, 只更换这一环节:</p>
+<p><strong>code/preprocessing_compare_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">A = np.array([[<span class="number">55</span>, <span class="number">24</span>, <span class="number">10</span>], [<span class="number">65</span>, <span class="number">38</span>, <span class="number">22</span>], [<span class="number">75</span>, <span class="number">40</span>, <span class="number">18</span>], [<span class="number">100</span>, <span class="number">50</span>, <span class="number">20</span>]], <span class="built_in">float</span>)</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> name, divisors <span class="keyword">in</span> [(<span class="string">&#x27;Mean&#x27;</span>, A.mean(axis=<span class="number">0</span>)), (<span class="string">&#x27;Initial value&#x27;</span>, A[<span class="number">0</span>])]:</span><br><span class="line">    Z = A / divisors</span><br><span class="line">    D = np.<span class="built_in">abs</span>(Z[:, <span class="number">1</span>:] - Z[:, [<span class="number">0</span>]])</span><br><span class="line">    low, high = D.<span class="built_in">min</span>(), D.<span class="built_in">max</span>()</span><br><span class="line">    gamma = (low + <span class="number">0.5</span> * high) / (D + <span class="number">0.5</span> * high)</span><br><span class="line">    grades = gamma.mean(axis=<span class="number">0</span>)</span><br><span class="line">    records.append(<span class="built_in">dict</span>(name=name, Z=Z, D=D, low=low, high=high,</span><br><span class="line">                        gamma=gamma, grades=grades))</span><br><span class="line">    <span class="built_in">print</span>(name, <span class="string">&#x27;common extrema:&#x27;</span>, low, high, <span class="string">&#x27;grades:&#x27;</span>, grades)</span><br></pre></td></tr></table></figure>
+<p><strong>code/preprocessing_compare_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">A = [<span class="number">55</span>,<span class="number">24</span>,<span class="number">10</span>;<span class="number">65</span>,<span class="number">38</span>,<span class="number">22</span>;<span class="number">75</span>,<span class="number">40</span>,<span class="number">18</span>;<span class="number">100</span>,<span class="number">50</span>,<span class="number">20</span>];</span><br><span class="line">divisors = [<span class="built_in">mean</span>(A,<span class="number">1</span>);A(<span class="number">1</span>,:)]; records = cell(<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">    Z = A./divisors(k,:); D = <span class="built_in">abs</span>(Z(:,<span class="number">2</span>:<span class="number">3</span>)-Z(:,<span class="number">1</span>));</span><br><span class="line">    low = <span class="built_in">min</span>(D(:)); high = <span class="built_in">max</span>(D(:));</span><br><span class="line">    <span class="built_in">gamma</span> = (low+<span class="number">0.5</span>*high)./(D+<span class="number">0.5</span>*high); grades = <span class="built_in">mean</span>(<span class="built_in">gamma</span>,<span class="number">1</span>);</span><br><span class="line">    records&#123;k&#125; = struct(<span class="string">&#x27;Z&#x27;</span>,Z,<span class="string">&#x27;D&#x27;</span>,D,<span class="string">&#x27;low&#x27;</span>,low,<span class="string">&#x27;high&#x27;</span>,high, ...</span><br><span class="line">        <span class="string">&#x27;gamma&#x27;</span>,<span class="built_in">gamma</span>,<span class="string">&#x27;grades&#x27;</span>,grades);</span><br><span class="line">    fprintf(<span class="string">&#x27;Preprocessing %d, common extrema and grades: &#x27;</span>,k);</span><br><span class="line">    <span class="built_in">disp</span>([low,high,grades]);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>表 19-8 均值化与初值化的关联度.</p>
+<div class="line-block">预处理 | 工业关联度 | 农业关联度 |<br />
+: --- | ---: | ---: |<br />
+均值化 | 0.769666 | 0.600585 |<br />
+初值化 | 0.710867 | 0.652159 |</div>
+<p>本例两种尺度排序相同, 数值已经不同. 不能由此保证其他数据也同序.
+初值化第一行都为1, 因而该行差值都为0, 本次a也随预处理而改变.</p>
+<h3 id="单位换算与任意平移不同">19.6.2 单位换算与任意平移不同</h3>
+<p>对一列统一乘以同一正数, 该列均值或最大值也同比例变化,
+所以上述两种缩放结果不变. 涉及目标和区间的原始单位换算时,
+参数也必须同步换单位. 但整列加常数一般会改变结果,
+不能为了使数据非负而无依据平移.</p>
+<p>表 19-9 三类无量纲化方法.</p>
+<div class="line-block">方式 | 分母或依据 | 必须核对的条件 |<br />
+: --- | : --- | : --- |<br />
+均值化 | 自身均值 | 本实现限定非负且均值为正, 全零列拒绝 |<br />
+初值化 | 自身初值 | 初值非零, 起点有可解释性 |<br />
+最大值归一化 | 正向化列最大值 | 非负且最大值为正 |<br />
+极差归一化 | 最大值减最小值 | 极差为正, 常数列单独处理 |<br />
+外部固定尺度 | 目标, 容差或业务阈值 | 参数有依据, 明确超界处理 |</div>
+<p>缺失值不能直接当成0. 应按背景删除对应位置或说明插补规则.
+若数据含正负抵消或均值接近0, 应另选尺度,
+不在分母里加任意小量强行相除.</p>
+<h2 id="固定差值矩阵-再改变分辨系数">19.7 固定差值矩阵,
+再改变分辨系数</h2>
+<h3 id="rho不是指标重要性权重">19.7.1 rho不是指标重要性权重</h3>
+<p>分辨系数rho进入每一个差值到系数的转换,
+权重则在后面汇总不同指标或时点. 两者处于不同环节. 下面固定经济数据的Z,
+D以及a, b, 仅改变rho:</p>
+<p><strong>code/rho_path_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">A = np.array([[<span class="number">55</span>, <span class="number">24</span>, <span class="number">10</span>], [<span class="number">65</span>, <span class="number">38</span>, <span class="number">22</span>], [<span class="number">75</span>, <span class="number">40</span>, <span class="number">18</span>], [<span class="number">100</span>, <span class="number">50</span>, <span class="number">20</span>]], <span class="built_in">float</span>)</span><br><span class="line">Z = A / A.mean(axis=<span class="number">0</span>)</span><br><span class="line">D = np.<span class="built_in">abs</span>(Z[:, <span class="number">1</span>:] - Z[:, [<span class="number">0</span>]])</span><br><span class="line">low, high = D.<span class="built_in">min</span>(), D.<span class="built_in">max</span>()</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> rho <span class="keyword">in</span> [<span class="number">0.10</span>, <span class="number">0.25</span>, <span class="number">0.50</span>, <span class="number">0.75</span>, <span class="number">1.00</span>]:</span><br><span class="line">    gamma = (low + rho * high) / (D + rho * high)</span><br><span class="line">    grades = gamma.mean(axis=<span class="number">0</span>)</span><br><span class="line">    records.append(<span class="built_in">dict</span>(rho=rho, gamma=gamma, grades=grades))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;rho, industry, agriculture:&#x27;</span>, rho, grades)</span><br></pre></td></tr></table></figure>
+<p><strong>code/rho_path_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">A = [<span class="number">55</span>,<span class="number">24</span>,<span class="number">10</span>;<span class="number">65</span>,<span class="number">38</span>,<span class="number">22</span>;<span class="number">75</span>,<span class="number">40</span>,<span class="number">18</span>;<span class="number">100</span>,<span class="number">50</span>,<span class="number">20</span>];</span><br><span class="line">Z = A./<span class="built_in">mean</span>(A,<span class="number">1</span>); D = <span class="built_in">abs</span>(Z(:,<span class="number">2</span>:<span class="number">3</span>)-Z(:,<span class="number">1</span>));</span><br><span class="line">low = <span class="built_in">min</span>(D(:)); high = <span class="built_in">max</span>(D(:)); grid = [<span class="number">0.1</span>,<span class="number">0.25</span>,<span class="number">0.5</span>,<span class="number">0.75</span>,<span class="number">1</span>];</span><br><span class="line">records = cell(<span class="number">1</span>,<span class="built_in">numel</span>(grid));</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">numel</span>(grid)</span><br><span class="line">    rho = grid(k); <span class="built_in">gamma</span> = (low+rho*high)./(D+rho*high);</span><br><span class="line">    grades = <span class="built_in">mean</span>(<span class="built_in">gamma</span>,<span class="number">1</span>);</span><br><span class="line">    records&#123;k&#125; = struct(<span class="string">&#x27;rho&#x27;</span>,rho,<span class="string">&#x27;gamma&#x27;</span>,<span class="built_in">gamma</span>,<span class="string">&#x27;grades&#x27;</span>,grades);</span><br><span class="line">    fprintf(<span class="string">&#x27;rho %.2f, industry and agriculture: &#x27;</span>,rho); <span class="built_in">disp</span>(grades);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>表 19-10 固定差值下的分辨系数比较.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">rho</th>
+<th style="text-align: right;">工业关联度</th>
+<th style="text-align: right;">农业关联度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">0.10</td>
+<td style="text-align: right;">0.485941</td>
+<td style="text-align: right;">0.386873</td>
+</tr>
+<tr>
+<td style="text-align: right;">0.25</td>
+<td style="text-align: right;">0.651376</td>
+<td style="text-align: right;">0.490523</td>
+</tr>
+<tr>
+<td style="text-align: right;">0.50</td>
+<td style="text-align: right;">0.769666</td>
+<td style="text-align: right;">0.600585</td>
+</tr>
+<tr>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.827360</td>
+<td style="text-align: right;">0.670628</td>
+</tr>
+<tr>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">0.861795</td>
+<td style="text-align: right;">0.719396</td>
+</tr>
+</tbody>
+</table>
+<p>五个取值中工业都较高, 这只说明在这些取值与固定尺度下结果稳定,
+不能保证所有rho或其他预处理都如此.</p>
+<h3 id="为什么系数上升-排序仍可能改变">19.7.2 为什么系数上升,
+排序仍可能改变</h3>
+<p>把一个固定差值记为d. 在b&gt;0时,</p>
+<p><span class="math display">\[
+\frac{\partial\xi}{\partial\rho}
+=\frac{b(d-a)}{(d+\rho b)^2}\geqslant0.
+\]</span></p>
+<p>增大rho不会降低固定位置的系数, 但不同位置上升速度不同.
+平均或进一步赋权之后, 两个结果的差不一定保持同一符号.
+0.5是本章的基准设定, 不是已经证明最优的数值.</p>
+<p>下一节的关联赋权扩展就是另一种情况,
+它的B/C排序在rho约为0.780240时交换. 该交点只属于那一套流程,
+不能搬到本节经济序列或理想方案模型.</p>
+<h2 id="关联赋权扩展-先按列形成权重-再按行评分">19.8 关联赋权扩展:
+先按列形成权重, 再按行评分</h2>
+<h3 id="这次参考向量沿方案展开">19.8.1 这次参考向量沿方案展开</h3>
+<p>仍使用工作台P, 先按列均值化得到Z, 再对每个方案取该行最大值,
+形成参考列向量</p>
+<p><span class="math display">\[
+y_i=\max\limits_jz_{ij},\qquad
+\boldsymbol y=(y_1,\ldots,y_n)^{\mathsf T}.
+\]</span></p>
+<p>它有3个位置, 与理想方案评价中4个指标的理想向量不同. 计算差值与系数后,
+按列求指标关联度, 再归一化为权重:</p>
+<p><span class="math display">\[
+\Delta_{ij}=|y_i-z_{ij}|,\qquad
+r_j=\frac1n\sum\limits_{i=1}^{n}\xi_{ij},\qquad
+w_j=\frac{r_j}{\sum\limits_{\ell=1}^{m}r_\ell}.
+\]</span></p>
+<p>最终加权的是均值化数据Z, 得</p>
+<p><span class="math display">\[
+S_i=\sum\limits_{j=1}^{m}z_{ij}w_j.
+\]</span></p>
+<p>不能在这一步改成关联系数加权后, 仍沿用下表结果.
+这是关联赋权与加权和结合的扩展方案,
+不等同于前面直接汇总系数的理想方案评价.</p>
+<p><strong>code/relational_weighting_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">P = np.array([[<span class="number">9</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>], [<span class="number">8</span>, <span class="number">3</span>, <span class="number">0.9</span>, <span class="number">0.5</span>], [<span class="number">6</span>, <span class="number">7</span>, <span class="number">0.2</span>, <span class="number">1</span>]])</span><br><span class="line">Z = P / P.mean(axis=<span class="number">0</span>)</span><br><span class="line">reference = Z.<span class="built_in">max</span>(axis=<span class="number">1</span>)</span><br><span class="line">D = np.<span class="built_in">abs</span>(Z - reference[:, <span class="literal">None</span>])</span><br><span class="line">low, high = D.<span class="built_in">min</span>(), D.<span class="built_in">max</span>()</span><br><span class="line">gamma = (low + <span class="number">0.5</span> * high) / (D + <span class="number">0.5</span> * high)</span><br><span class="line">grades = gamma.mean(axis=<span class="number">0</span>)</span><br><span class="line">w = grades / grades.<span class="built_in">sum</span>()</span><br><span class="line">scores = Z @ w</span><br><span class="line">shares = scores / scores.<span class="built_in">sum</span>()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Mean-scaled Z:&#x27;</span>, Z, sep=<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Row-maximum reference:&#x27;</span>, reference)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Indicator grades and weights:&#x27;</span>, grades, w)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Scores and shares:&#x27;</span>, scores, shares)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Score sum:&#x27;</span>, scores.<span class="built_in">sum</span>())</span><br></pre></td></tr></table></figure>
+<p><strong>code/relational_weighting_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">P = [<span class="number">9</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>;<span class="number">8</span>,<span class="number">3</span>,<span class="number">0.9</span>,<span class="number">0.5</span>;<span class="number">6</span>,<span class="number">7</span>,<span class="number">0.2</span>,<span class="number">1</span>];</span><br><span class="line">Z = P./<span class="built_in">mean</span>(P,<span class="number">1</span>); reference = <span class="built_in">max</span>(Z,[],<span class="number">2</span>); D = <span class="built_in">abs</span>(Z-reference);</span><br><span class="line">low = <span class="built_in">min</span>(D(:)); high = <span class="built_in">max</span>(D(:)); <span class="built_in">gamma</span> = (low+<span class="number">0.5</span>*high)./(D+<span class="number">0.5</span>*high);</span><br><span class="line">grades = <span class="built_in">mean</span>(<span class="built_in">gamma</span>,<span class="number">1</span>); w = grades/sum(grades);</span><br><span class="line">scores = Z*w.&#x27;; shares = scores/sum(scores);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Mean-scaled Z:&#x27;</span>); <span class="built_in">disp</span>(Z);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Row-maximum reference:&#x27;</span>); <span class="built_in">disp</span>(reference.&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Indicator grades and weights:&#x27;</span>); <span class="built_in">disp</span>(grades); <span class="built_in">disp</span>(w);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Scores and shares:&#x27;</span>); <span class="built_in">disp</span>([scores,shares]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Score sum:&#x27;</span>); <span class="built_in">disp</span>(sum(scores));</span><br></pre></td></tr></table></figure>
+<p>得到权重约为 <span
+class="math inline">\((0.253033,0.253829,0.253829,0.239310)^{\mathsf
+T}\)</span>, 各项中间矩阵和完整推导保存在<a
+href="../reading/19/GreyRelationalAnalysisFurtherReading.md">补充阅读F.8</a>.</p>
+<p>表 19-11 关联赋权的原始总分与份额.</p>
+<div class="line-block">方案 | 原始得分S | 得分份额 |<br />
+: ---: | ---: | ---: |<br />
+A | 0.297038 | 0.099013 |<br />
+B | 1.354824 | 0.451608 |<br />
+C | 1.348137 | 0.449379 |</div>
+<p>本扩展排序为 <span class="math inline">\(B&gt;C&gt;A\)</span>.
+B与C的份额仅相差约0.002229,
+应结合需求与数据精度保留相近候选进一步核验.</p>
+<p>每列Z的均值为1, 权重和也为1, 所以</p>
+<p><span class="math display">\[
+\sum\limits_{i=1}^{n}S_i
+=\sum\limits_{j=1}^{m}w_j\sum\limits_{i=1}^{n}z_{ij}=n.
+\]</span></p>
+<p>本例总分为3, 份额为S除以3. 这是该扩展流程的自检性质,
+不是所有GRA评分都满足的结论.</p>
+<h3 id="与虚拟参考接近-不等于业务上更重要">19.8.2 与虚拟参考接近,
+不等于业务上更重要</h3>
+<p>权重取决于同一数据矩阵构造的参考列, 样本分布和全局极值.
+重复或相关指标可能取得接近权重. 它不能不加解释地称为唯一客观重要性.</p>
+<p>对这套扩展保持P和均值化不变, 只改变rho, B/C份额在 <span
+class="math inline">\(\rho\approx0.780239517509\)</span> 处相等.
+原完整参数程序与数值求交保留在补充阅读及配套文件中.</p>
+<p><img src="/images/GreyRelationalAnalysis/GreyRelationalAnalysis-3.png" style="width:100%"></p>
+<p>图 19-4 关联赋权扩展的rho敏感性</p>
+<p>上图为B与C的份额, 下图为B减C, 不同曲线使用的是本节扩展流程.
+rho变化既改变系数, 又改变后续导出的权重,
+不能把该图当作固定权重理想评价的参数图.</p>
+<p>表 19-12 三种灰色关联流程的对象和汇总方向.</p>
+<div class="line-block">流程 | 参考对象 | 系数的汇总方向 | 最终输出
+|<br />
+: --- | : --- | : --- | : --- |<br />
+理想方案评价 | 指标最好值拼成的理想向量 | 每个方案行沿指标加权 |
+方案系数得分G |<br />
+因素序列比较 | 有实际含义的参考时间序列 | 每个因素列沿时点平均 |
+因素关联度r |<br />
+关联赋权扩展 | 每个方案行最大值拼成的参考列 | 先按列求指标关联度 |
+归一化成w后加权Z, 得S |</div>
+<p>本章理想方案评价与扩展还同时改变了预处理, 参考对象,
+权重来源和最后加权的数据. 两种排序不同,
+不能只归因于某一项权重或某一种分母.</p>
+<h2 id="常数列与指标权重-应分别检查">19.9 常数列与指标权重,
+应分别检查</h2>
+<h3 id="常数列可能增加共同基准分">19.9.1 常数列可能增加共同基准分</h3>
+<p>在理想方案评价中加入正向常数列(5, 5, 5), 最大值归一化后为全1,
+差值为全0, 新列系数为全1. 原12个差值的a, b不变. 如果改为五项等权, 则</p>
+<p><span class="math display">\[
+G_i^{\mathrm{new}}=\frac45G_i+\frac15.
+\]</span></p>
+<p>得分变为 <span
+class="math inline">\((0.600000,0.756970,0.798261)^{\mathsf T}\)</span>.
+次序保持不变, 原分数与分差却改变.
+这不同于某些距离模型中常数列不贡献距离的情形.</p>
+<p>下面也对照一般系数函数的全零差与相同正差. 两者都按公式或约定得到全1,
+但前者重合, 后者只是等距.</p>
+<p><strong>code/constant_effect_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">coefficients</span>(<span class="params">D</span>):</span><br><span class="line">    low, high = D.<span class="built_in">min</span>(), D.<span class="built_in">max</span>()</span><br><span class="line">    <span class="keyword">if</span> high == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> np.ones_like(D)</span><br><span class="line">    <span class="keyword">return</span> (low / high + <span class="number">0.5</span>) / (D / high + <span class="number">0.5</span>)</span><br><span class="line"></span><br><span class="line">P = np.array([[<span class="number">9</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>], [<span class="number">8</span>, <span class="number">3</span>, <span class="number">0.9</span>, <span class="number">0.5</span>], [<span class="number">6</span>, <span class="number">7</span>, <span class="number">0.2</span>, <span class="number">1</span>]])</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> values <span class="keyword">in</span> [P, np.column_stack([P, np.full(<span class="number">3</span>, <span class="number">5.0</span>)])]:</span><br><span class="line">    T = values / values.<span class="built_in">max</span>(axis=<span class="number">0</span>)</span><br><span class="line">    D = np.<span class="built_in">abs</span>(T - T.<span class="built_in">max</span>(axis=<span class="number">0</span>))</span><br><span class="line">    gamma = coefficients(D)</span><br><span class="line">    scores = gamma.mean(axis=<span class="number">1</span>)</span><br><span class="line">    records.append(<span class="built_in">dict</span>(T=T, D=D, gamma=gamma, scores=scores))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;Criterion count:&#x27;</span>, values.shape[<span class="number">1</span>], <span class="string">&#x27;scores:&#x27;</span>, scores)</span><br><span class="line">zero_difference = np.zeros((<span class="number">2</span>, <span class="number">2</span>))</span><br><span class="line">constant_difference = np.full((<span class="number">2</span>, <span class="number">2</span>), <span class="number">2.0</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;All-zero differences:&#x27;</span>, coefficients(zero_difference))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;All-two differences:&#x27;</span>, coefficients(constant_difference))</span><br></pre></td></tr></table></figure>
+<p><strong>code/constant_effect_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">P = [<span class="number">9</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>;<span class="number">8</span>,<span class="number">3</span>,<span class="number">0.9</span>,<span class="number">0.5</span>;<span class="number">6</span>,<span class="number">7</span>,<span class="number">0.2</span>,<span class="number">1</span>];</span><br><span class="line">cases = &#123;P,[P,<span class="number">5</span>*<span class="built_in">ones</span>(<span class="number">3</span>,<span class="number">1</span>)]&#125;; records = cell(<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">    values = cases&#123;k&#125;; T = values./<span class="built_in">max</span>(values,[],<span class="number">1</span>);</span><br><span class="line">    D = <span class="built_in">abs</span>(T-<span class="built_in">max</span>(T,[],<span class="number">1</span>)); <span class="built_in">gamma</span> = coefficients(D);</span><br><span class="line">    scores = <span class="built_in">mean</span>(<span class="built_in">gamma</span>,<span class="number">2</span>);</span><br><span class="line">    records&#123;k&#125; = struct(<span class="string">&#x27;T&#x27;</span>,T,<span class="string">&#x27;D&#x27;</span>,D,<span class="string">&#x27;gamma&#x27;</span>,<span class="built_in">gamma</span>,<span class="string">&#x27;scores&#x27;</span>,scores);</span><br><span class="line">    fprintf(<span class="string">&#x27;Criterion count %d, scores: &#x27;</span>,<span class="built_in">size</span>(values,<span class="number">2</span>)); <span class="built_in">disp</span>(scores.&#x27;);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">zeroDifference = <span class="built_in">zeros</span>(<span class="number">2</span>,<span class="number">2</span>); constantDifference = <span class="number">2</span>*<span class="built_in">ones</span>(<span class="number">2</span>,<span class="number">2</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;All-zero differences:&#x27;</span>); <span class="built_in">disp</span>(coefficients(zeroDifference));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;All-two differences:&#x27;</span>); <span class="built_in">disp</span>(coefficients(constantDifference));</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">gamma</span> = <span class="title">coefficients</span><span class="params">(D)</span></span></span><br><span class="line">    low = <span class="built_in">min</span>(D(:)); high = <span class="built_in">max</span>(D(:));</span><br><span class="line">    <span class="keyword">if</span> high == <span class="number">0</span></span><br><span class="line">        <span class="built_in">gamma</span> = <span class="built_in">ones</span>(<span class="built_in">size</span>(D));</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="built_in">gamma</span> = (low/high+<span class="number">0.5</span>)./(D/high+<span class="number">0.5</span>);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>本章成本列原值全部相等时, 正向化函数按约定置1, 以免全0列无法继续缩放.
+这个约定不表示全部达到绝对最佳. 全部有权重的指标都无法区分方案时,
+应报告并列, 不能根据输入顺序强行宣布优劣.</p>
+<p>关联赋权扩展还涉及行最大参考与导出的权重, 常数列可能影响更多环节,
+不能直接套用上面的线性变换结论. 保留或删除常数列都应说明理由并重新计算.
+拓展练习提供两套流程的数值对照.</p>
+<h3 id="固定系数矩阵-单独改变长度权重">19.9.2 固定系数矩阵,
+单独改变长度权重</h3>
+<p>回到理想方案评价, 保持T, a, b, rho与系数矩阵不变.
+只将长度适配权重记为t, 其余三项各为 <span
+class="math inline">\((1-t)/3\)</span>.
+这与上一节改变rho再导出权重是不同实验.</p>
+<p><strong>code/weight_path_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># Same fixed coefficient matrix; only the indicator weights change.</span></span><br><span class="line">gamma = np.array([[<span class="number">1</span>, <span class="number">1</span> / <span class="number">3</span>, <span class="number">1</span> / <span class="number">3</span>, <span class="number">1</span> / <span class="number">3</span>],</span><br><span class="line">                  [<span class="number">9</span> / <span class="number">11</span>, <span class="number">7</span> / <span class="number">15</span>, <span class="number">1</span>, <span class="number">1</span> / <span class="number">2</span>],</span><br><span class="line">                  [<span class="number">3</span> / <span class="number">5</span>, <span class="number">1</span>, <span class="number">9</span> / <span class="number">23</span>, <span class="number">1</span>]])</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> [<span class="number">0.25</span>, <span class="number">0.30</span>, <span class="number">0.31</span>, <span class="number">0.40</span>]:</span><br><span class="line">    w = np.array([(<span class="number">1</span> - t) / <span class="number">3</span>, (<span class="number">1</span> - t) / <span class="number">3</span>, t, (<span class="number">1</span> - t) / <span class="number">3</span>])</span><br><span class="line">    scores = gamma @ w</span><br><span class="line">    records.append(<span class="built_in">dict</span>(t=t, w=w, scores=scores))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;Length weight, scores and B-C:&#x27;</span>, t, scores, scores[<span class="number">1</span>] - scores[<span class="number">2</span>])</span><br><span class="line">critical = <span class="number">6187</span> / <span class="number">20047</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;B-C tie on this path:&#x27;</span>, critical)</span><br></pre></td></tr></table></figure>
+<p><strong>code/weight_path_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line"><span class="built_in">gamma</span> = [<span class="number">1</span>,<span class="number">1</span>/<span class="number">3</span>,<span class="number">1</span>/<span class="number">3</span>,<span class="number">1</span>/<span class="number">3</span>;<span class="number">9</span>/<span class="number">11</span>,<span class="number">7</span>/<span class="number">15</span>,<span class="number">1</span>,<span class="number">1</span>/<span class="number">2</span>;<span class="number">3</span>/<span class="number">5</span>,<span class="number">1</span>,<span class="number">9</span>/<span class="number">23</span>,<span class="number">1</span>];</span><br><span class="line">grid = [<span class="number">0.25</span>,<span class="number">0.30</span>,<span class="number">0.31</span>,<span class="number">0.40</span>]; records = cell(<span class="number">1</span>,<span class="built_in">numel</span>(grid));</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">numel</span>(grid)</span><br><span class="line">    t = grid(k); w = [(<span class="number">1</span>-t)/<span class="number">3</span>,(<span class="number">1</span>-t)/<span class="number">3</span>,t,(<span class="number">1</span>-t)/<span class="number">3</span>]; scores = <span class="built_in">gamma</span>*w.&#x27;;</span><br><span class="line">    records&#123;k&#125; = struct(<span class="string">&#x27;t&#x27;</span>,t,<span class="string">&#x27;w&#x27;</span>,w,<span class="string">&#x27;scores&#x27;</span>,scores);</span><br><span class="line">    fprintf(<span class="string">&#x27;Length weight %.2f, scores and B-C: &#x27;</span>,t);</span><br><span class="line">    <span class="built_in">disp</span>([scores.&#x27;,scores(<span class="number">2</span>)-scores(<span class="number">3</span>)]);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">critical = <span class="number">6187</span>/<span class="number">20047</span>; <span class="built_in">disp</span>(<span class="string">&#x27;B-C tie on this path:&#x27;</span>); <span class="built_in">disp</span>(critical);</span><br></pre></td></tr></table></figure>
+<p>沿此路径,</p>
+<p><span class="math display">\[
+G_B(t)=t+\frac{1-t}{3}\left(\frac9{11}+\frac7{15}+\frac12\right),
+\]</span></p>
+<p><span class="math display">\[
+G_C(t)=\frac9{23}t+\frac{1-t}{3}\left(\frac35+1+1\right).
+\]</span></p>
+<p>解得 <span
+class="math inline">\(t_*=6187/20047\approx0.308624731880\)</span>,
+此时B和C均高于A. 从等权0.25提高长度权重, 在约0.309附近首选由C变为B.</p>
+<p><img src="/images/GreyRelationalAnalysis/GreyRelationalAnalysis-4.png" style="width:100%"></p>
+<p>图 19-5 理想方案评价的长度权重敏感性</p>
+<p>图中改变的是同一系数矩阵后的指标权重, 与图 19-4的rho实验不同.
+权重应反映使用目标, 交点用于理解偏好的影响,
+不代表应当把权重调整到能让某方案胜出的数值.</p>
+<h2 id="用条件和差值解释结论">19.10 用条件和差值解释结论</h2>
+<h3 id="怎样衔接前面的评价方法">19.10.1 怎样衔接前面的评价方法</h3>
+<p>AHP或熵权可以为理想方案GRA提供权重,
+但必须核对同一批指标的含义和列顺序, 并说明权重来源.
+GRA不会自动给出唯一正确的权重. 其他章节的数据即使形状相同,
+对象和指标含义不同, 也不能直接搬其判断权重或应用结论.</p>
+<p>TOPSIS使用与正负理想点的距离, 本章使用逐点差转换的系数;
+模糊综合评价使用有明确概念含义的隶属度, 也不是本章系数.
+回归的关系估计与因果识别有各自假设, 不能由本章关联度代替.
+主成分若用于降维, 则应先解释新成分的含义和评价方向.</p>
+<p>一份可复核报告应说明对象和参考, 行列含义, 正向化与尺度, 共同极值,
+rho与权重, 汇总方向, 原始差值及最终结果. 对工作台可以写为:
+在当前模拟数据, 指定目标与区间, 最大值归一化, rho=0.5及等权下,
+C的系数得分较高; 若长度适配权重沿题定路径提高到约0.309,
+B与C会交换领先位置, 应补充真实试用及维护证据.</p>
+<p>新增或删除方案可能改变样本尺度, 参考与极值.
+跨批次比较宜论证固定基准并统一统计口径. 差距很小时可保留候选集合,
+不把小数位上的名次当成已经证明的实际差异.</p>
+<h3 id="练习">19.10.2 练习</h3>
+<ol type="1">
+<li>手算易用性9, 8, 6按最大值与均值缩放的结果. 两种结果分别满足什么性质?
+与TOPSIS列向量长度归一化是否相同?</li>
+<li>用整个差值表取a, b, 手算B维护关联系数7/15. 如果只使用B的一行取极值,
+会改变什么? 为什么每个方案不能各用一套a, b?</li>
+<li>手算B四项等权得分919/1320, 再核对A和C. 分别写清P, T, 差值,
+系数和方案得分的含义, 说明最终平均的究竟是哪组数.</li>
+<li>推导a=0, rho=0.5时系数下界1/3. 构造所有差值都为2的矩阵,
+解释为什么系数全1却没有绝对重合. 全零差又怎样处理?</li>
+<li>对经济数据手算三列均值, 2016年工业差值与系数,
+再按列平均得到两个因素关联度. 为什么这里不是按行沿因素求平均?</li>
+<li>复算均值化与初值化的两组关联度. 改变单位与给整列加常数是否等价?
+含全零列或缺失值时能否直接加小数或填0处理?</li>
+<li>固定经济数据差值, 比较五个rho.
+从偏导式说明为什么各位置系数不会随rho增大而下降, 但一般排序仍可能改变.
+这与指标权重变化有何不同?</li>
+<li>逐步复算关联赋权扩展, 指出参考列的长度,
+按列形成w的步骤及最后加权Z的位置. 证明总得分为方案数,
+说明为什么不能套用到所有GRA流程.</li>
+<li>给工作台加入常数列并取五项等权, 推导新旧得分的关系.
+再复算长度权重交点, 说明这两个变化为何要分开解释.</li>
+<li>为图书馆设备或校园节水方案设计一套小型评价. 先说明可行条件,
+指标和参考, 再固定完整计算路线. 保存原始差值与完整系数,
+至少做一种有依据的敏感性检查, 避免用关联度解释因果或贡献率.</li>
+</ol>
+<p>下一章转向图论. 如果问题关心地点之间能否连接,
+路线能否通行或全网怎样连通, 需要把连接关系写进图模型;
+综合得分不能替代这些结构条件.</p>
+<h3 id="继续阅读">19.10.3 继续阅读</h3>
+<p>首次学习可先完成19.1至19.5的一列, 一格, 一行与一列因素汇总. <a
+href="../reading/19/GreyRelationalAnalysisFurtherReading.md">补充阅读</a>提供14节拓展内容,
+16个代码片段, 四幅配图和5道练习; F.15另附可直接保存运行的完整
+<code>gra.py</code>与 <code>FactorAnalysis.m</code>.
+完整程序及绘图源见本章资料索引.</p>
+<p>配套阅读与实验: <a
+href="../reading/19/Index.md">本章资料索引</a>.</p>
+<h2 id="参考资料">参考资料</h2>
+<p>[1] LIU S, LIN Y. Grey Systems: Theory and Applications[M]. Berlin,
+Heidelberg: Springer, 2011. DOI: <a
+target="_blank" rel="noopener" href="https://doi.org/10.1007/978-3-642-16158-2">10.1007/978-3-642-16158-2</a>.
+其中Grey Incidence and Evaluations一章介绍灰色关联与评价的相关理论;
+本章教学数据与具体预处理按文中声明的规则复算.</p>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

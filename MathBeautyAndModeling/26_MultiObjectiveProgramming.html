@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="第 26 章 多目标规划: 在相互冲突的目标间寻找折中 工厂要安排下个月的生产. 一种产品便宜一些, 另一种产品产生的污染少一些. 如果厂长说&quot;费用越低越好, 污染也越少越好&quot;, 我们该怎样给出生产计划? 先算几份计划, 看清楚两种要求怎样发生冲突. 随后, 我们在同一个例子中尝试四种办法: 给指标设置权重, 给污染规定上限, 靠近各自的理想值, 按明确的优先次序作选择. 每换一种办法">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/MathBeautyAndModeling/26_MultiObjectiveProgramming.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="第 26 章 多目标规划: 在相互冲突的目标间寻找折中 工厂要安排下个月的生产. 一种产品便宜一些, 另一种产品产生的污染少一些. 如果厂长说&quot;费用越低越好, 污染也越少越好&quot;, 我们该怎样给出生产计划? 先算几份计划, 看清楚两种要求怎样发生冲突. 随后, 我们在同一个例子中尝试四种办法: 给指标设置权重, 给污染规定上限, 靠近各自的理想值, 按明确的优先次序作选择. 每换一种办法">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/MultiObjectiveProgramming/MOP-1.png">
+<meta property="og:image" content="http://example.com/images/MultiObjectiveProgramming/MOP-2.png">
+<meta property="og:image" content="http://example.com/images/MultiObjectiveProgramming/MOP-3.png">
+<meta property="og:image" content="http://example.com/images/MultiObjectiveProgramming/MOP-4.png">
+<meta property="og:image" content="http://example.com/images/MultiObjectiveProgramming/MOP-5.png">
+<meta property="article:published_time" content="2026-11-02T02:53:09.175Z">
+<meta property="article:modified_time" content="2026-10-31T09:20:36.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/MultiObjectiveProgramming/MOP-1.png">
+
+
+<link rel="canonical" href="http://example.com/MathBeautyAndModeling/26_MultiObjectiveProgramming">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/MathBeautyAndModeling/26_MultiObjectiveProgramming.html","path":"MathBeautyAndModeling/26_MultiObjectiveProgramming.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-26-%E7%AB%A0-%E5%A4%9A%E7%9B%AE%E6%A0%87%E8%A7%84%E5%88%92-%E5%9C%A8%E7%9B%B8%E4%BA%92%E5%86%B2%E7%AA%81%E7%9A%84%E7%9B%AE%E6%A0%87%E9%97%B4%E5%AF%BB%E6%89%BE%E6%8A%98%E4%B8%AD"><span class="nav-number">1.</span> <span class="nav-text">第 26 章
+多目标规划: 在相互冲突的目标间寻找折中</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E7%AE%97%E5%87%A0%E4%BB%BD%E7%94%9F%E4%BA%A7%E8%AE%A1%E5%88%92"><span class="nav-number">1.1.</span> <span class="nav-text">26.1 先算几份生产计划</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%BF%E5%AE%9C%E7%9A%84%E4%BA%A7%E5%93%81-%E6%B1%A1%E6%9F%93%E6%9C%AA%E5%BF%85%E6%9B%B4%E5%B0%91"><span class="nav-number">1.1.1.</span> <span class="nav-text">26.1.1 便宜的产品, 污染未必更少</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E7%A8%8B%E5%BA%8F%E9%87%8D%E5%A4%8D%E5%88%9A%E6%89%8D%E7%9A%84%E8%AE%A1%E7%AE%97"><span class="nav-number">1.1.2.</span> <span class="nav-text">26.1.2 用程序重复刚才的计算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E5%85%81%E8%AE%B8%E7%9A%84%E8%AE%A1%E5%88%92%E5%86%99%E6%B8%85%E6%A5%9A"><span class="nav-number">1.1.3.</span> <span class="nav-text">26.1.3 把允许的计划写清楚</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E6%8E%92%E9%99%A4%E4%B8%A4%E6%96%B9%E9%9D%A2%E9%83%BD%E6%9B%B4%E5%B7%AE%E7%9A%84%E6%96%B9%E6%A1%88"><span class="nav-number">1.2.</span> <span class="nav-text">26.2 先排除两方面都更差的方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E5%85%B7%E4%BD%93%E6%AF%94%E8%BE%83%E8%AE%A4%E8%AF%86%E5%B8%95%E7%B4%AF%E6%89%98%E6%9C%80%E4%BC%98"><span class="nav-number">1.2.1.</span> <span class="nav-text">26.2.1 从具体比较认识帕累托最优</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%BE%E5%87%BA%E6%9C%AC%E4%BE%8B%E4%B8%AD%E6%89%80%E6%9C%89%E5%80%BC%E5%BE%97%E4%BF%9D%E7%95%99%E7%9A%84%E8%AE%A1%E5%88%92"><span class="nav-number">1.2.2.</span> <span class="nav-text">26.2.2
+找出本例中所有值得保留的计划</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%99%E8%B4%B9%E7%94%A8%E5%92%8C%E6%B1%A1%E6%9F%93%E8%AE%BE%E7%BD%AE%E6%9D%83%E9%87%8D"><span class="nav-number">1.3.</span> <span class="nav-text">26.3 给费用和污染设置权重</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E7%BB%99%E4%B8%89%E4%BB%BD%E8%AE%A1%E5%88%92%E7%AE%97%E4%B8%80%E4%B8%AA%E7%BB%BC%E5%90%88%E5%88%86%E6%95%B0"><span class="nav-number">1.3.1.</span> <span class="nav-text">26.3.1
+先给三份计划算一个综合分数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E6%AF%94%E8%BE%83%E4%B8%89%E4%BB%BD%E8%AE%A1%E5%88%92-%E5%88%B0%E6%90%9C%E7%B4%A2%E5%85%A8%E9%83%A8%E5%8F%AF%E8%A1%8C%E8%AE%A1%E5%88%92"><span class="nav-number">1.3.2.</span> <span class="nav-text">26.3.2 从比较三份计划,
+到搜索全部可行计划</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%B9%E5%8F%98%E6%9D%83%E9%87%8D-%E7%9C%8B%E6%96%B9%E6%A1%88%E6%80%8E%E6%A0%B7%E5%8F%98%E5%8C%96"><span class="nav-number">1.4.</span> <span class="nav-text">26.4 改变权重, 看方案怎样变化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AF%8F%E6%AC%A1%E5%8F%AA%E6%94%B9%E4%B8%80%E5%A4%84"><span class="nav-number">1.4.1.</span> <span class="nav-text">26.4.1 每次只改一处</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%81%B0%E5%A5%BD%E5%9C%A8%E4%B8%89%E5%88%86%E4%B9%8B%E4%B8%80%E5%A4%84%E5%8F%91%E7%94%9F%E5%8F%98%E5%8C%96"><span class="nav-number">1.4.2.</span> <span class="nav-text">26.4.2
+为什么恰好在三分之一处发生变化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E6%A0%B7%E7%9A%84%E6%9D%83%E9%87%8D-%E9%85%8D%E4%B8%8A%E4%B8%8D%E5%90%8C%E5%B0%BA%E5%BA%A6%E4%BC%9A%E6%80%8E%E6%A0%B7"><span class="nav-number">1.4.3.</span> <span class="nav-text">26.4.3 同样的权重,
+配上不同尺度会怎样</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%99%E6%B1%A1%E6%9F%93%E8%A7%84%E5%AE%9A%E4%B8%80%E4%B8%AA%E4%B8%8A%E9%99%90"><span class="nav-number">1.5.</span> <span class="nav-text">26.5 给污染规定一个上限</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E4%B8%80%E5%8F%A5%E8%A6%81%E6%B1%82%E5%BE%97%E5%88%B0%E4%B8%80%E6%9D%A1%E7%BA%A6%E6%9D%9F"><span class="nav-number">1.5.1.</span> <span class="nav-text">26.5.1 从一句要求得到一条约束</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E5%8E%9F%E7%A8%8B%E5%BA%8F%E4%B8%AD%E5%A2%9E%E5%8A%A0%E4%B8%80%E8%A1%8C%E6%B1%A1%E6%9F%93%E7%BA%A6%E6%9D%9F"><span class="nav-number">1.5.2.</span> <span class="nav-text">26.5.2
+在原程序中增加一行污染约束</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8A%E9%99%90%E5%A4%AA%E4%B8%A5-%E4%BC%9A%E5%8F%91%E7%94%9F%E4%BB%80%E4%B9%88"><span class="nav-number">1.5.3.</span> <span class="nav-text">26.5.3 上限太严, 会发生什么</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E6%9E%9C%E5%B8%8C%E6%9C%9B%E9%9D%A0%E8%BF%91%E4%B8%A4%E4%B8%AA%E7%90%86%E6%83%B3%E5%80%BC"><span class="nav-number">1.6.</span> <span class="nav-text">26.6 如果希望靠近两个理想值</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E6%AF%94%E8%BE%83%E7%A6%BB%E7%90%86%E6%83%B3%E8%BF%98%E6%9C%89%E5%A4%9A%E8%BF%9C"><span class="nav-number">1.6.1.</span> <span class="nav-text">26.6.1 先比较离理想还有多远</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E8%AF%95%E7%AE%97%E6%89%BE%E5%88%B0%E6%9B%B4%E5%A5%BD%E7%9A%84%E5%B0%8F%E6%95%B0%E4%BA%A7%E9%87%8F"><span class="nav-number">1.6.2.</span> <span class="nav-text">26.6.2 从试算找到更好的小数产量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A9%E7%A8%8B%E5%BA%8F%E6%90%9C%E7%B4%A2%E5%90%8C%E4%B8%80%E4%B8%AA%E5%8F%98%E9%87%8F"><span class="nav-number">1.6.3.</span> <span class="nav-text">26.6.3 让程序搜索同一个变量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E6%9E%9C%E4%B8%80%E4%B8%AA%E7%9B%AE%E6%A0%87%E5%BF%85%E9%A1%BB%E6%8E%92%E5%9C%A8%E5%89%8D%E9%9D%A2"><span class="nav-number">1.7.</span> <span class="nav-text">26.7 如果一个目标必须排在前面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8D%A2%E4%B8%80%E4%B8%AA%E5%B0%8F%E4%BE%8B%E5%AD%90-%E7%9C%8B%E6%B8%85%E5%8A%A0%E6%9D%83%E6%B3%95%E7%9A%84%E8%8C%83%E5%9B%B4"><span class="nav-number">1.8.</span> <span class="nav-text">26.8 换一个小例子,
+看清加权法的范围</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9E%E5%88%B0%E5%B7%A5%E5%8E%82-%E6%80%8E%E6%A0%B7%E6%8F%90%E4%BA%A4%E4%B8%80%E4%BB%BD%E6%9C%89%E4%BE%9D%E6%8D%AE%E7%9A%84%E8%AE%A1%E5%88%92"><span class="nav-number">1.9.</span> <span class="nav-text">26.9 回到工厂,
+怎样提交一份有依据的计划</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A8%E6%89%8B%E7%BB%83%E4%B9%A0"><span class="nav-number">1.10.</span> <span class="nav-text">26.10 动手练习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.11.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="第-26-章-多目标规划-在相互冲突的目标间寻找折中">第 26 章
+多目标规划: 在相互冲突的目标间寻找折中</h1>
+<p>工厂要安排下个月的生产. 一种产品便宜一些, 另一种产品产生的污染少一些.
+如果厂长说"费用越低越好, 污染也越少越好", 我们该怎样给出生产计划?</p>
+<p>先算几份计划, 看清楚两种要求怎样发生冲突. 随后,
+我们在同一个例子中尝试四种办法: 给指标设置权重, 给污染规定上限,
+靠近各自的理想值, 按明确的优先次序作选择. 每换一种办法,
+都重新查看实际产量, 费用和污染量.</p>
+<h2 id="先算几份生产计划">26.1 先算几份生产计划</h2>
+<h3 id="便宜的产品-污染未必更少">26.1.1 便宜的产品, 污染未必更少</h3>
+<p>工厂生产 A, B 两种产品. 两种产品都能满足本例的市场需求,
+月产量合计不少于 7 吨即可. 已知数据如下.</p>
+<p>表 26-1 两种产品的费用与污染系数.</p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 26%" />
+<col style="width: 26%" />
+<col style="width: 26%" />
+</colgroup>
+<thead>
+<tr>
+<th>产品</th>
+<th style="text-align: right;">每生产 1 吨的费用(万元)</th>
+<th style="text-align: right;">每生产 1 吨产生的污染(吨)</th>
+<th style="text-align: right;">每月最多生产(吨)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0.4</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr>
+<td>B</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0.3</td>
+<td style="text-align: right;">6</td>
+</tr>
+</tbody>
+</table>
+<p>先只考虑费用. A 每吨比 B 便宜 3 万元, 因此尽量多生产 A: A 生产 5 吨,
+剩下的 2 吨由 B 补足. 这份计划的费用是</p>
+<p><span class="math display">\[
+2\times5+5\times2=20\ \text{万元},
+\]</span></p>
+<p>污染量是</p>
+<p><span class="math display">\[
+0.4\times5+0.3\times2=2.6\ \text{吨}.
+\]</span></p>
+<p>再只考虑污染. B 每吨比 A 少产生 0.1 吨污染, 因此尽量多生产 B: B 生产
+6 吨, A 生产 1 吨. 按同样的方法计算, 费用为 32 万元, 污染量为 2.2
+吨.</p>
+<p>在这两个方案之间, 还可以试一份中间的计划: A 生产 3 吨, B 生产 4
+吨.</p>
+<p>表 26-2 三份生产计划的实际指标.</p>
+<table>
+<thead>
+<tr>
+<th>计划</th>
+<th style="text-align: right;">A 产量(吨)</th>
+<th style="text-align: right;">B 产量(吨)</th>
+<th style="text-align: right;">月费用(万元)</th>
+<th style="text-align: right;">月污染量(吨)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>甲: 费用最低</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">2.6</td>
+</tr>
+<tr>
+<td>乙: 先试一份中间计划</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">2.4</td>
+</tr>
+<tr>
+<td>丙: 污染最少</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">2.2</td>
+</tr>
+</tbody>
+</table>
+<p>从甲改为乙, 每月多花 6 万元, 可以少产生 0.2 吨污染; 从乙改为丙,
+又是同样的变化. 怎样才算值得, 要看工厂愿意为减少污染付出多少费用.</p>
+<p>这就是本章的问题: 已经有了两项评价指标,
+还需要说明怎样在它们之间作选择.</p>
+<h3 id="用程序重复刚才的计算">26.1.2 用程序重复刚才的计算</h3>
+<p>先让程序做我们已经会做的事, 暂时不调用优化工具. 将下面程序保存为
+<code>compare_plans.py</code>.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">plans = [</span><br><span class="line">    (<span class="string">&quot;甲&quot;</span>, <span class="number">5</span>, <span class="number">2</span>),</span><br><span class="line">    (<span class="string">&quot;乙&quot;</span>, <span class="number">3</span>, <span class="number">4</span>),</span><br><span class="line">    (<span class="string">&quot;丙&quot;</span>, <span class="number">1</span>, <span class="number">6</span>),</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> name, x1, x2 <span class="keyword">in</span> plans:</span><br><span class="line">    cost = <span class="number">2</span> * x1 + <span class="number">5</span> * x2</span><br><span class="line">    pollution = <span class="number">0.4</span> * x1 + <span class="number">0.3</span> * x2</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;name&#125;</span>: A=<span class="subst">&#123;x1&#125;</span>, B=<span class="subst">&#123;x2&#125;</span>, &quot;</span></span><br><span class="line">          <span class="string">f&quot;费用=<span class="subst">&#123;cost:<span class="number">.2</span>f&#125;</span>, 污染=<span class="subst">&#123;pollution:<span class="number">.2</span>f&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><code>plans</code> 中每行保存一份计划: 名称, A 的产量, B 的产量.
+循环每次取出一行, 再按上面的算式计算费用和污染. 输出为:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">甲: A=5, B=2, 费用=20.00, 污染=2.60</span><br><span class="line">乙: A=3, B=4, 费用=26.00, 污染=2.40</span><br><span class="line">丙: A=1, B=6, 费用=32.00, 污染=2.20</span><br></pre></td></tr></table></figure>
+<p>其中 <code>:.2f</code> 表示保留两位小数. 如果想试 A 生产 4 吨, B 生产
+3 吨, 在 <code>plans</code> 中增加一行即可. 先亲手改变一份计划,
+再观察两个指标怎样变化.</p>
+<h3 id="把允许的计划写清楚">26.1.3 把允许的计划写清楚</h3>
+<p>前面用 <code>x1</code>, <code>x2</code> 保存两种产量. 在数学式中,
+分别记为 <span class="math inline">\(x_1\)</span>, <span
+class="math inline">\(x_2\)</span>. 每份计划必须满足</p>
+<p><span class="math display">\[
+x_1+x_2\geqslant7,\qquad
+0\leqslant x_1\leqslant5,\qquad
+0\leqslant x_2\leqslant6.
+\]</span></p>
+<p>第一条保证需求, 后两条保证产量非负并且不超过产能.
+满足这些条件的计划称为可行方案.</p>
+<p>费用和污染分别记为</p>
+<p><span class="math display">\[
+f_1(x_1,x_2)=2x_1+5x_2,\qquad
+f_2(x_1,x_2)=0.4x_1+0.3x_2.
+\]</span></p>
+<p>本例希望这两个值都尽量小. 一个方案可能费用低, 另一个方案可能污染少,
+因而需要比单目标规划多说明一件事: 两个目标发生冲突时,
+按什么要求作取舍.</p>
+<p>本例允许产量取小数, 并假设单位费用和单位污染量保持不变.
+这使我们能够集中研究目标之间的关系. 若产量只能取整, 则还要像第 24
+章那样加入整数条件.</p>
+<h2 id="先排除两方面都更差的方案">26.2 先排除两方面都更差的方案</h2>
+<h3 id="从具体比较认识帕累托最优">26.2.1 从具体比较认识帕累托最优</h3>
+<p>考虑另一份计划: A, B 各生产 4 吨. 它满足需求和产能限制, 但费用为 28
+万元, 污染量为 2.8 吨.</p>
+<p>与它相比, 前面的计划乙只需生产 A 3 吨, B 4 吨, 费用为 26 万元,
+污染量为 2.4 吨. 需求仍然得到满足, 两项指标却都更小.</p>
+<p>如果只按本例的费用和污染评价, 就可以先排除"A, B 各生产 4 吨"这份计划.
+我们把这种关系称为<strong>支配</strong>: 一个方案在每项指标上都不差,
+而且至少一项更好, 就支配另一个方案.</p>
+<p>对计划甲, 乙, 丙再做同样的比较, 情况就不同了. 甲费用低, 丙污染少,
+乙处于两者之间. 任取其中两份, 都是一个指标更好, 另一个指标更差.</p>
+<p>如果在全部可行方案中, 都找不到能够支配某份计划的方案,
+这份计划就称为<strong>帕累托最优方案</strong>(Pareto optimal solution),
+也称有效方案或非劣方案. 这样的计划保留了继续讨论的价值,
+最终选哪一份仍要结合偏好.</p>
+<h3 id="找出本例中所有值得保留的计划">26.2.2
+找出本例中所有值得保留的计划</h3>
+<p>为什么前面的三份计划都恰好生产 7 吨?</p>
+<p>因为本例中多生产产品就会多付费用, 多产生污染, 又没有额外销售收益.
+如果合计产量超过 7 吨, 可以减少一些产量, 直到总量为 7 吨. 需求得到满足,
+原有产能限制也仍然满足, 两项指标都会下降.</p>
+<p>所以, 本例的有效方案一定满足</p>
+<p><span class="math display">\[
+x_1+x_2=7.
+\]</span></p>
+<p>设 A 的产量为 <span class="math inline">\(a\)</span>, B 的产量就为
+<span class="math inline">\(7-a\)</span>. A 最多生产 5 吨; B 最多生产 6
+吨, 又要求 A 至少生产 1 吨. 因而</p>
+<p><span class="math display">\[
+x_1=a,\qquad x_2=7-a,\qquad 1\leqslant a\leqslant5.
+\]</span></p>
+<p>这一步把两种产量的选择化成了一个数 <span
+class="math inline">\(a\)</span> 的选择. 取几个值看看:</p>
+<p>表 26-3 恰好满足需求的产量与指标.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">A 产量 <span
+class="math inline">\(a\)</span>(吨)</th>
+<th style="text-align: right;">B 产量 <span
+class="math inline">\(7-a\)</span>(吨)</th>
+<th style="text-align: right;">月费用(万元)</th>
+<th style="text-align: right;">月污染量(吨)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">2.2</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">2.3</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">2.4</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">2.5</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">2.6</td>
+</tr>
+</tbody>
+</table>
+<p>每增加 1 吨 A, 就相应减少 1 吨 B. 费用少 3 万元, 污染多 0.1 吨.
+反过来, 要少产生 0.1 吨污染, 就要多花 3 万元.</p>
+<p>表中相邻的整数之间还可以取小数. 将产量代入两个目标, 得到</p>
+<p><span class="math display">\[
+\begin{aligned}
+f_1&amp;=2a+5(7-a)=35-3a,\\
+f_2&amp;=0.4a+0.3(7-a)=2.1+0.1a.
+\end{aligned}
+\]</span></p>
+<p>只要 <span class="math inline">\(a\)</span> 增大, 费用就下降,
+污染就上升. 因此这整段计划彼此都不支配,
+它们构成本例的全部帕累托最优方案.</p>
+<p>图 26-1 把同一批方案画了两遍. 左图按两种产量画点, 回答"怎样生产";
+右图按费用和污染画点, 回答"生产以后得到什么结果".</p>
+<p><img src="/images/MultiObjectiveProgramming/MOP-1.png" style="width:100%"></p>
+<p>图 26-1 产量方案与对应的费用, 污染. 蓝线上的方案恰好生产 7 吨,
+灰色区域还包含超额生产的方案. 右图的蓝线称为帕累托前沿.</p>
+<p>先在左图找到 A 3 吨, B 4 吨, 再在右图找到费用 26 万元, 污染 2.4 吨.
+两个点表示同一份生产计划. 随后讨论各种选择方法,
+都可以回到这条蓝线上看它选中了哪里.</p>
+<h2 id="给费用和污染设置权重">26.3 给费用和污染设置权重</h2>
+<h3 id="先给三份计划算一个综合分数">26.3.1
+先给三份计划算一个综合分数</h3>
+<p>假设工厂愿意用一个综合分数比较计划, 并约定分数越小越好. 费用以 30
+万元为参考尺度, 污染以 2 吨为参考尺度, 再分别乘以 0.4 和 0.6:</p>
+<p><span class="math display">\[
+J=0.4\frac{\text{费用}}{30}
+  +0.6\frac{\text{污染}}{2}.
+\]</span></p>
+<p>费用与它自己的参考尺度单位相同, 污染也是如此.
+两个除法得到的都是没有单位的比值, 才方便在同一个式子中比较.</p>
+<p>先给计划甲计算:</p>
+<p><span class="math display">\[
+J_{\text{甲}}=0.4\times\frac{20}{30}
+             +0.6\times\frac{2.6}{2}
+             \approx1.046667.
+\]</span></p>
+<p>另外两份按相同方式计算.</p>
+<p>表 26-4 三份计划的加权综合分数.</p>
+<table>
+<thead>
+<tr>
+<th>计划</th>
+<th style="text-align: right;">月费用(万元)</th>
+<th style="text-align: right;">月污染量(吨)</th>
+<th style="text-align: right;">综合分数 <span
+class="math inline">\(J\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>甲: A 5 吨, B 2 吨</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">2.6</td>
+<td style="text-align: right;">1.046667</td>
+</tr>
+<tr>
+<td>乙: A 3 吨, B 4 吨</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">2.4</td>
+<td style="text-align: right;">1.066667</td>
+</tr>
+<tr>
+<td>丙: A 1 吨, B 6 吨</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">2.2</td>
+<td style="text-align: right;">1.086667</td>
+</tr>
+</tbody>
+</table>
+<p>三份中, 计划甲的分数最低. 污染的权重明明是 0.6, 大于费用的 0.4,
+为什么仍选中了费用最低, 污染最多的甲?</p>
+<p>看甲与乙的差别即可. 从甲改为乙, 多花 6 万元, 费用项增加</p>
+<p><span class="math display">\[
+0.4\times\frac6{30}=0.08;
+\]</span></p>
+<p>少产生 0.2 吨污染, 污染项减少</p>
+<p><span class="math display">\[
+0.6\times\frac{0.2}{2}=0.06.
+\]</span></p>
+<p>合起来, 分数反而增加了 <span
+class="math inline">\(0.08-0.06=0.02\)</span>. 在这组权重和尺度下,
+这次减少污染还不足以补偿增加费用带来的分数变化.</p>
+<p>把多个目标按权重合成一个目标, 就是线性加权法.
+权重与参考尺度一起决定取舍方式. 这里的 2 吨只是计算分数的参照: 2.6
+吨除以它得到 1.3, 说明是参考量的 1.3 倍. 如果工厂要规定污染上限,
+应把上限写成约束, 后面会专门尝试.</p>
+<h3 id="从比较三份计划-到搜索全部可行计划">26.3.2 从比较三份计划,
+到搜索全部可行计划</h3>
+<p>刚才只比较了三份计划. 怎样让程序在全部可行计划中寻找最低分数?</p>
+<p>把费用, 污染的表达式代入 <span class="math inline">\(J\)</span>:</p>
+<p><span class="math display">\[
+\begin{aligned}
+J
+&amp;=0.4\frac{2x_1+5x_2}{30}
++0.6\frac{0.4x_1+0.3x_2}{2}\\
+&amp;=\left(0.4\frac2{30}+0.6\frac{0.4}{2}\right)x_1
++\left(0.4\frac5{30}+0.6\frac{0.3}{2}\right)x_2\\
+&amp;\approx0.146667x_1+0.156667x_2.
+\end{aligned}
+\]</span></p>
+<p>现在只需要最小化这个线性式, 同时保留需求和产能条件. 这已经是第 23
+章介绍过的线性规划.</p>
+<p>Python 使用 SciPy 中的 <code>linprog</code> 求解. 将下面程序保存为
+<code>weighted_production.py</code>.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linprog</span><br><span class="line"></span><br><span class="line">w_cost = <span class="number">0.4</span></span><br><span class="line">w_pollution = <span class="number">0.6</span></span><br><span class="line">c = [</span><br><span class="line">    w_cost * <span class="number">2</span> / <span class="number">30</span> + w_pollution * <span class="number">0.4</span> / <span class="number">2</span>,</span><br><span class="line">    w_cost * <span class="number">5</span> / <span class="number">30</span> + w_pollution * <span class="number">0.3</span> / <span class="number">2</span>,</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">result = linprog(</span><br><span class="line">    c,</span><br><span class="line">    A_ub=[[-<span class="number">1</span>, -<span class="number">1</span>]],</span><br><span class="line">    b_ub=[-<span class="number">7</span>],</span><br><span class="line">    bounds=[(<span class="number">0</span>, <span class="number">5</span>), (<span class="number">0</span>, <span class="number">6</span>)],</span><br><span class="line">    method=<span class="string">&quot;highs&quot;</span>,</span><br><span class="line">)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> result.success:</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(result.message)</span><br><span class="line"></span><br><span class="line">x1, x2 = result.x</span><br><span class="line">cost = <span class="number">2</span> * x1 + <span class="number">5</span> * x2</span><br><span class="line">pollution = <span class="number">0.4</span> * x1 + <span class="number">0.3</span> * x2</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;A=<span class="subst">&#123;x1:<span class="number">.2</span>f&#125;</span>, B=<span class="subst">&#123;x2:<span class="number">.2</span>f&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;费用=<span class="subst">&#123;cost:<span class="number">.2</span>f&#125;</span>, 污染=<span class="subst">&#123;pollution:<span class="number">.2</span>f&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;综合分数=<span class="subst">&#123;result.fun:<span class="number">.6</span>f&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>这里最需要对照的是三处:</p>
+<ul>
+<li><code>c</code> 中的两个数, 就是 <span
+class="math inline">\(x_1\)</span>, <span
+class="math inline">\(x_2\)</span> 前面的综合系数.</li>
+<li><code>A_ub</code> 和 <code>b_ub</code> 合起来写出 <span
+class="math inline">\(-x_1-x_2\leqslant-7\)</span>. 它与 <span
+class="math inline">\(x_1+x_2\geqslant7\)</span> 相同,
+改写是为了符合求解器的不等式方向.</li>
+<li><code>bounds</code> 依次写出 A, B 的产量范围.</li>
+</ul>
+<p><code>result.success</code> 表示求解是否成功; 若失败,
+程序给出求解器信息并停止. 成功后, <code>result.x</code>
+保存求得的两种产量; <code>result.fun</code> 保存综合分数.
+费用和污染仍要按原来的两个算式计算. 运行得到</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">A=5.00, B=2.00</span><br><span class="line">费用=20.00, 污染=2.60</span><br><span class="line">综合分数=1.046667</span><br></pre></td></tr></table></figure>
+<p>程序的答案与手算一致. 还可以自己核对: 总产量为 <span
+class="math inline">\(5+2=7\)</span>, 两种产品也都没有超过各自产能.</p>
+<p>MATLAB 对应程序保存为 <code>weighted_production.m</code>. 其中
+<code>linprog</code> 需要 Optimization Toolbox.</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">w_cost = <span class="number">0.4</span>;</span><br><span class="line">w_pollution = <span class="number">0.6</span>;</span><br><span class="line">c = [w_cost*<span class="number">2</span>/<span class="number">30</span> + w_pollution*<span class="number">0.4</span>/<span class="number">2</span>;</span><br><span class="line">     w_cost*<span class="number">5</span>/<span class="number">30</span> + w_pollution*<span class="number">0.3</span>/<span class="number">2</span>];</span><br><span class="line"></span><br><span class="line">A = [<span class="number">-1</span>,<span class="number">-1</span>]; b = <span class="number">-7</span>;</span><br><span class="line">lb = [<span class="number">0</span>;<span class="number">0</span>]; ub = [<span class="number">5</span>;<span class="number">6</span>];</span><br><span class="line">options = optimoptions(<span class="string">&#x27;linprog&#x27;</span>,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;none&#x27;</span>);</span><br><span class="line">[x,score,flag,out] = linprog(c,A,b,[],[],lb,ub,options);</span><br><span class="line"><span class="keyword">if</span> flag ~= <span class="number">1</span></span><br><span class="line">    error(<span class="string">&#x27;求解失败: %s&#x27;</span>,out.message);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">cost = <span class="number">2</span>*x(<span class="number">1</span>) + <span class="number">5</span>*x(<span class="number">2</span>);</span><br><span class="line">pollution = <span class="number">0.4</span>*x(<span class="number">1</span>) + <span class="number">0.3</span>*x(<span class="number">2</span>);</span><br><span class="line">fprintf(<span class="string">&#x27;A=%.2f, B=%.2f\n&#x27;</span>,x(<span class="number">1</span>),x(<span class="number">2</span>));</span><br><span class="line">fprintf(<span class="string">&#x27;费用=%.2f, 污染=%.2f\n&#x27;</span>,cost,pollution);</span><br><span class="line">fprintf(<span class="string">&#x27;综合分数=%.6f\n&#x27;</span>,score);</span><br></pre></td></tr></table></figure>
+<p>MATLAB 用 <code>lb</code>, <code>ub</code> 分别保存下界和上界, 两个
+<code>[]</code> 留给本例没有使用的等式约束. 两种语言解的是同一个模型.
+后面的 MATLAB 线性规划程序沿用这个输入顺序.</p>
+<h2 id="改变权重-看方案怎样变化">26.4 改变权重, 看方案怎样变化</h2>
+<h3 id="每次只改一处">26.4.1 每次只改一处</h3>
+<p>现在把费用权重从 0.4 改为 0.3, 污染权重相应改为 0.7. 求得的方案会变成
+A 1 吨, B 6 吨. 这一次, 分数更偏向污染较少的方案.</p>
+<p>可以沿用前一段程序, 每次修改两个权重再运行一次. 想连续比较几组权重时,
+再把重复的部分放进循环. 将下面程序保存为
+<code>weight_sweep.py</code>.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linprog</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> w_cost <span class="keyword">in</span> [<span class="number">0.3</span>, <span class="number">1</span> / <span class="number">3</span>, <span class="number">0.4</span>, <span class="number">0.5</span>]:</span><br><span class="line">    w_pollution = <span class="number">1</span> - w_cost</span><br><span class="line">    c = [</span><br><span class="line">        w_cost * <span class="number">2</span> / <span class="number">30</span> + w_pollution * <span class="number">0.4</span> / <span class="number">2</span>,</span><br><span class="line">        w_cost * <span class="number">5</span> / <span class="number">30</span> + w_pollution * <span class="number">0.3</span> / <span class="number">2</span>,</span><br><span class="line">    ]</span><br><span class="line">    result = linprog(c, A_ub=[[-<span class="number">1</span>, -<span class="number">1</span>]], b_ub=[-<span class="number">7</span>],</span><br><span class="line">                     bounds=[(<span class="number">0</span>, <span class="number">5</span>), (<span class="number">0</span>, <span class="number">6</span>)], method=<span class="string">&quot;highs&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> result.success:</span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(result.message)</span><br><span class="line"></span><br><span class="line">    x1, x2 = result.x</span><br><span class="line">    cost = <span class="number">2</span> * x1 + <span class="number">5</span> * x2</span><br><span class="line">    pollution = <span class="number">0.4</span> * x1 + <span class="number">0.3</span> * x2</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;费用权重=<span class="subst">&#123;w_cost:<span class="number">.4</span>f&#125;</span>, A=<span class="subst">&#123;x1:<span class="number">.2</span>f&#125;</span>, B=<span class="subst">&#123;x2:<span class="number">.2</span>f&#125;</span>, &quot;</span></span><br><span class="line">          <span class="string">f&quot;费用=<span class="subst">&#123;cost:<span class="number">.2</span>f&#125;</span>, 污染=<span class="subst">&#123;pollution:<span class="number">.2</span>f&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>循环没有改变需求, 产能, 单位费用和单位污染量, 只改变"怎样打分".
+这就是一次偏好敏感性分析. 其中 <span class="math inline">\(1/3\)</span>
+是一个特殊值, 下面用算式解释它.</p>
+<h3 id="为什么恰好在三分之一处发生变化">26.4.2
+为什么恰好在三分之一处发生变化</h3>
+<p>记费用权重为 <span class="math inline">\(w\)</span>, 污染权重就为
+<span class="math inline">\(1-w\)</span>. 仍从"增加 1 吨 A, 减少 1 吨
+B"这个动作出发.</p>
+<p>费用少 3 万元, 对分数的影响是 <span
+class="math inline">\(-3w/30\)</span>; 污染多 0.1 吨, 对分数的影响是
+<span class="math inline">\(0.1(1-w)/2\)</span>. 相加得到</p>
+<p><span class="math display">\[
+\text{分数的变化}
+=-\frac{3w}{30}+\frac{0.1(1-w)}2
+=0.05-0.15w.
+\]</span></p>
+<ul>
+<li>当 <span class="math inline">\(w&gt;1/3\)</span> 时, 这个变化为负.
+多生产 A 会降低分数, 因此一直增加 A, 直到 A 为 5 吨.</li>
+<li>当 <span class="math inline">\(w&lt;1/3\)</span> 时, 这个变化为正.
+多生产 B 更有利, 因此一直增加 B, 直到 B 为 6 吨.</li>
+<li>当 <span class="math inline">\(w=1/3\)</span> 时, 这个变化为零.
+在总产量为 7 吨的前沿上, 怎样调整 A, B 的比例, 分数都相同.</li>
+</ul>
+<p>第三种情况中, 甲, 乙, 丙以及它们之间的全部计划都最优. 综合分数为
+<span class="math inline">\(49/45\approx1.088889\)</span>.
+程序通常只返回其中一份, 不同求解器可能返回不同的代表方案.</p>
+<p>图 26-2 分别画出选中方案的实际费用和污染量. 先找横轴上的 <span
+class="math inline">\(1/3\)</span>, 再观察两侧的水平线.</p>
+<p><img src="/images/MultiObjectiveProgramming/MOP-2.png" style="width:100%"></p>
+<p>图 26-2 权重变化与实际指标. 在费用权重 <span
+class="math inline">\(1/3\)</span> 处,
+竖线表示全部最优方案对应的取值范围. 费用与污染仍成对变化, 例如费用为 26
+时, 污染对应 2.4.</p>
+<p>图 26-3 左图改画产量, 右图画两份端点计划各自的综合分数.
+对每个权重取两条分数线中较低的一条, 就得到绿色线.</p>
+<p><img src="/images/MultiObjectiveProgramming/MOP-3.png" style="width:100%"></p>
+<p>图 26-3 权重变化与产量, 综合分数. 左图的产量可以在临界值两侧跳变,
+右图的最低分数却在交点处连续衔接.</p>
+<p>中间产量并没有从加权法中消失: 它们集中在临界权重下并列最优.
+如果希望明确选出 A 3 吨, B 4 吨这样的方案,
+直接规定污染要求通常更方便.</p>
+<h3 id="同样的权重-配上不同尺度会怎样">26.4.3 同样的权重,
+配上不同尺度会怎样</h3>
+<p>前面一直除以 30 万元和 2 吨. 再试另一组有明确来源的尺度:
+有效方案的费用从 20 变到 32, 变化范围为 12 万元; 污染从 2.2 变到 2.6,
+变化范围为 0.4 吨.</p>
+<p>用 12 和 0.4 作尺度后, 刚才的分数变化变成</p>
+<p><span class="math display">\[
+-\frac{3w}{12}+\frac{0.1(1-w)}{0.4}
+=0.25-0.5w.
+\]</span></p>
+<p>此时临界权重是 <span class="math inline">\(1/2\)</span>. 可以看到,
+权重数值必须和所用尺度一起解释. 实际报告时, 应把"费用权重多少,
+污染权重多少, 各自除以什么"同时交代清楚.</p>
+<p>每次改变权重, 也就改变了评价规则. 比较结果时, 重点看选中了什么计划,
+费用和污染分别是多少.</p>
+<h2 id="给污染规定一个上限">26.5 给污染规定一个上限</h2>
+<h3 id="从一句要求得到一条约束">26.5.1 从一句要求得到一条约束</h3>
+<p>假设工厂的要求更明确了:</p>
+<blockquote>
+<p>月污染量不超过 2.4 吨, 在此条件下, 费用尽量低.</p>
+</blockquote>
+<p>于是保留费用作为目标, 把污染改写为约束:</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\min\quad 2x_1+5x_2,\\
+&amp;\text{满足}\quad
+\begin{cases}
+x_1+x_2\geqslant7,\\
+0.4x_1+0.3x_2\leqslant2.4,\\
+0\leqslant x_1\leqslant5,\\
+0\leqslant x_2\leqslant6.
+\end{cases}
+\end{aligned}
+\]</span></p>
+<p>在 26.2 节的表中, 污染不超过 2.4 的前三行都满足要求. 其中 A 3 吨, B 4
+吨的费用最低, 为 26 万元.</p>
+<p>允许小数产量后, 还会有更便宜的选择吗? 将 <span
+class="math inline">\(x_1=a\)</span>, <span
+class="math inline">\(x_2=7-a\)</span> 代入污染约束:</p>
+<p><span class="math display">\[
+2.1+0.1a\leqslant2.4,
+\]</span></p>
+<p>得到 <span class="math inline">\(a\leqslant3\)</span>. 费用 <span
+class="math inline">\(35-3a\)</span> 随 <span
+class="math inline">\(a\)</span> 增大而下降, 所以应选允许的最大值 <span
+class="math inline">\(a=3\)</span>. 手算也得到同一份计划.</p>
+<p>把一个目标保留下来, 将另一个目标写成上限约束, 称为 <strong>ε
+约束法</strong>. 字母 <span class="math inline">\(\varepsilon\)</span>
+用来表示上限; 本例先给它取了具体值 2.4. 这个值是演示所设的要求,
+实际应用中应说明它来自何处.</p>
+<h3 id="在原程序中增加一行污染约束">26.5.2
+在原程序中增加一行污染约束</h3>
+<p>将下面程序保存为 <code>epsilon_production.py</code>.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linprog</span><br><span class="line"></span><br><span class="line">epsilon = <span class="number">2.4</span></span><br><span class="line">result = linprog(</span><br><span class="line">    [<span class="number">2</span>, <span class="number">5</span>],</span><br><span class="line">    A_ub=[[-<span class="number">1</span>, -<span class="number">1</span>], [<span class="number">0.4</span>, <span class="number">0.3</span>]],</span><br><span class="line">    b_ub=[-<span class="number">7</span>, epsilon],</span><br><span class="line">    bounds=[(<span class="number">0</span>, <span class="number">5</span>), (<span class="number">0</span>, <span class="number">6</span>)],</span><br><span class="line">    method=<span class="string">&quot;highs&quot;</span>,</span><br><span class="line">)</span><br><span class="line"><span class="keyword">if</span> result.status == <span class="number">2</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;这项污染要求下没有可行方案.&quot;</span>)</span><br><span class="line"><span class="keyword">elif</span> <span class="keyword">not</span> result.success:</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(result.message)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    x1, x2 = result.x</span><br><span class="line">    cost = <span class="number">2</span> * x1 + <span class="number">5</span> * x2</span><br><span class="line">    pollution = <span class="number">0.4</span> * x1 + <span class="number">0.3</span> * x2</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;A=<span class="subst">&#123;x1:<span class="number">.2</span>f&#125;</span>, B=<span class="subst">&#123;x2:<span class="number">.2</span>f&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;费用=<span class="subst">&#123;cost:<span class="number">.2</span>f&#125;</span>, 污染=<span class="subst">&#123;pollution:<span class="number">.2</span>f&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>这次 <code>[2, 5]</code> 直接表示费用系数. <code>A_ub</code>
+的第一行仍是需求条件, 新增加的第二行是污染条件; <code>b_ub</code>
+的两个数与这两行一一对应.</p>
+<p>运行得到 A 3 吨, B 4 吨, 费用 26 万元, 污染 2.4 吨. 再把
+<code>epsilon</code> 改为 2.3 或 2.5,
+就可以观察要求收紧或放宽的结果.</p>
+<p>MATLAB 对应程序保存为 <code>epsilon_production.m</code>.</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">epsilon = <span class="number">2.4</span>;</span><br><span class="line">A = [<span class="number">-1</span>,<span class="number">-1</span>; <span class="number">0.4</span>,<span class="number">0.3</span>];</span><br><span class="line">b = [<span class="number">-7</span>;epsilon];</span><br><span class="line">options = optimoptions(<span class="string">&#x27;linprog&#x27;</span>,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;none&#x27;</span>);</span><br><span class="line">[x,~,flag,out] = linprog([<span class="number">2</span>;<span class="number">5</span>],A,b,[],[],[<span class="number">0</span>;<span class="number">0</span>],[<span class="number">5</span>;<span class="number">6</span>],options);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> flag == <span class="number">-2</span></span><br><span class="line">    <span class="built_in">disp</span>(<span class="string">&#x27;这项污染要求下没有可行方案.&#x27;</span>);</span><br><span class="line"><span class="keyword">elseif</span> flag ~= <span class="number">1</span></span><br><span class="line">    error(<span class="string">&#x27;求解失败: %s&#x27;</span>,out.message);</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    cost = <span class="number">2</span>*x(<span class="number">1</span>) + <span class="number">5</span>*x(<span class="number">2</span>);</span><br><span class="line">    pollution = <span class="number">0.4</span>*x(<span class="number">1</span>) + <span class="number">0.3</span>*x(<span class="number">2</span>);</span><br><span class="line">    fprintf(<span class="string">&#x27;A=%.2f, B=%.2f\n&#x27;</span>,x(<span class="number">1</span>),x(<span class="number">2</span>));</span><br><span class="line">    fprintf(<span class="string">&#x27;费用=%.2f, 污染=%.2f\n&#x27;</span>,cost,pollution);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<h3 id="上限太严-会发生什么">26.5.3 上限太严, 会发生什么</h3>
+<p>把几个结果放在一起:</p>
+<p>表 26-5 污染上限变化后的最优计划.</p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: right;">污染上限(吨/月)</th>
+<th style="text-align: right;">A 产量(吨)</th>
+<th style="text-align: right;">B 产量(吨)</th>
+<th style="text-align: right;">月费用(万元)</th>
+<th style="text-align: right;">月污染量(吨)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">2.0</td>
+<td style="text-align: right;">无可行方案</td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">—</td>
+</tr>
+<tr>
+<td style="text-align: right;">2.2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">2.2</td>
+</tr>
+<tr>
+<td style="text-align: right;">2.3</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">2.3</td>
+</tr>
+<tr>
+<td style="text-align: right;">2.4</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">2.4</td>
+</tr>
+<tr>
+<td style="text-align: right;">2.5</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">2.5</td>
+</tr>
+<tr>
+<td style="text-align: right;">2.6</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">2.6</td>
+</tr>
+<tr>
+<td style="text-align: right;">2.8</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">2.6</td>
+</tr>
+</tbody>
+</table>
+<p>上限在 2.2 到 2.6 之间时, 每放宽 0.1 吨, 费用减少 3 万元. 放宽到 2.8
+吨后, 费用仍是 20 万元, 因为费用最低的计划已经能够满足上限.</p>
+<p>若上限改为 2.0 吨, 事情就不同了: 本例在满足需求和产能条件时,
+最少也会产生 2.2 吨污染. 程序报告"无可行方案", 提醒我们需要重新讨论需求,
+工艺或产能. 代码先识别这一状态, 再决定是否读取产量, 原因就在这里.</p>
+<h2 id="如果希望靠近两个理想值">26.6 如果希望靠近两个理想值</h2>
+<h3 id="先比较离理想还有多远">26.6.1 先比较离理想还有多远</h3>
+<p>前面单独优化两项目标, 已经得到:</p>
+<ul>
+<li>最低费用为 20 万元.</li>
+<li>最少污染为 2.2 吨.</li>
+</ul>
+<p>如果一份计划能同时达到它们, 当然很好. 但费用为 20 万元的计划污染是
+2.6 吨; 污染为 2.2 吨的计划费用是 32 万元.
+本例无法同时达到这两个理想值.</p>
+<p>仍然可以把它们作为参照, 看每份计划离它们有多远. 例如计划乙的费用为 26
+万元, 污染为 2.4 吨, 两项差距分别是</p>
+<p><span class="math display">\[
+26-20=6\ \text{万元},\qquad
+2.4-2.2=0.2\ \text{吨}.
+\]</span></p>
+<p>沿用 30 万元, 2 吨的尺度, 两项相对差距为 <span
+class="math inline">\(6/30=0.2\)</span> 和 <span
+class="math inline">\(0.2/2=0.1\)</span>. 再把它们的平方相加:</p>
+<p><span class="math display">\[
+D=0.2^2+0.1^2=0.05.
+\]</span></p>
+<p>对任意计划, 相应的式子为</p>
+<p><span class="math display">\[
+D=\left(\frac{f_1-20}{30}\right)^2
++\left(\frac{f_2-2.2}{2}\right)^2.
+\]</span></p>
+<p>寻找 <span class="math inline">\(D\)</span> 最小的计划,
+就是本节采用的理想点法. 平方使两项差距都以非负数参与计算;
+除以各自的尺度后, 两项才按约定的相对大小比较.
+这里两项平方前的系数相等.</p>
+<h3 id="从试算找到更好的小数产量">26.6.2 从试算找到更好的小数产量</h3>
+<p>先把几个产量代入, 暂时不求导.</p>
+<p>表 26-6 理想点平方差的逐项试算.</p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: right;">A 产量(吨)</th>
+<th style="text-align: right;">B 产量(吨)</th>
+<th style="text-align: right;">月费用(万元)</th>
+<th style="text-align: right;">月污染量(吨)</th>
+<th style="text-align: right;">平方差之和 <span
+class="math inline">\(D\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">2.2</td>
+<td style="text-align: right;">0.1600</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">2.4</td>
+<td style="text-align: right;">0.0500</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">2.5</td>
+<td style="text-align: right;">0.0325</td>
+</tr>
+<tr>
+<td style="text-align: right;">4.2</td>
+<td style="text-align: right;">2.8</td>
+<td style="text-align: right;">22.4</td>
+<td style="text-align: right;">2.52</td>
+<td style="text-align: right;">0.0320</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">2.6</td>
+<td style="text-align: right;">0.0400</td>
+</tr>
+</tbody>
+</table>
+<p>从 A 3 吨调整到 4 吨, <span class="math inline">\(D\)</span>
+还在减小; 到 5 吨又变大了. 因而可以继续在它们之间寻找.</p>
+<p>沿前沿代入 <span class="math inline">\(f_1=35-3a\)</span>, <span
+class="math inline">\(f_2=2.1+0.1a\)</span>, 得到</p>
+<p><span class="math display">\[
+\begin{aligned}
+D(a)
+&amp;=\left(\frac{15-3a}{30}\right)^2
++\left(\frac{0.1a-0.1}{2}\right)^2\\
+&amp;=\frac{(5-a)^2}{100}+\frac{(a-1)^2}{400}\\
+&amp;=\frac{(a-4.2)^2}{80}+0.032.
+\end{aligned}
+\]</span></p>
+<p>最后一行只是展开后配方. 平方项最小为零, 恰在 <span
+class="math inline">\(a=4.2\)</span> 时取得. 因此最优计划为</p>
+<p><span class="math display">\[
+x_1=4.2,\qquad x_2=2.8,
+\]</span></p>
+<p>费用 22.4 万元, 污染 2.52 吨, 对应 <span
+class="math inline">\(D=0.032\)</span>.</p>
+<p>这里沿前沿寻找有一个依据: 超额生产的计划可以同时降低费用和污染,
+从而同时靠近两个理想值, 所以最优计划仍会落在总产量为 7 吨的前沿上.</p>
+<h3 id="让程序搜索同一个变量">26.6.3 让程序搜索同一个变量</h3>
+<p>现在程序只需在 <span class="math inline">\(1\leqslant
+a\leqslant5\)</span> 中寻找 <span class="math inline">\(D(a)\)</span>
+最小的位置. 将下面程序保存为 <code>ideal_production.py</code>.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> minimize_scalar</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">distance_squared</span>(<span class="params">a</span>):</span><br><span class="line">    cost = <span class="number">35</span> - <span class="number">3</span> * a</span><br><span class="line">    pollution = <span class="number">2.1</span> + <span class="number">0.1</span> * a</span><br><span class="line">    cost_gap = (cost - <span class="number">20</span>) / <span class="number">30</span></span><br><span class="line">    pollution_gap = (pollution - <span class="number">2.2</span>) / <span class="number">2</span></span><br><span class="line">    <span class="keyword">return</span> cost_gap**<span class="number">2</span> + pollution_gap**<span class="number">2</span></span><br><span class="line"></span><br><span class="line">result = minimize_scalar(distance_squared, bounds=(<span class="number">1</span>, <span class="number">5</span>),</span><br><span class="line">                         method=<span class="string">&quot;bounded&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> result.success:</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(result.message)</span><br><span class="line"></span><br><span class="line">x1 = result.x</span><br><span class="line">x2 = <span class="number">7</span> - x1</span><br><span class="line">cost = <span class="number">2</span> * x1 + <span class="number">5</span> * x2</span><br><span class="line">pollution = <span class="number">0.4</span> * x1 + <span class="number">0.3</span> * x2</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;A=<span class="subst">&#123;x1:<span class="number">.2</span>f&#125;</span>, B=<span class="subst">&#123;x2:<span class="number">.2</span>f&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;费用=<span class="subst">&#123;cost:<span class="number">.2</span>f&#125;</span>, 污染=<span class="subst">&#123;pollution:<span class="number">.2</span>f&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;平方差之和=<span class="subst">&#123;result.fun:<span class="number">.6</span>f&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><code>distance_squared</code> 把刚才的计算命名为一个函数: 给它一个 A
+产量, 它就返回这份计划的 <span class="math inline">\(D\)</span>.
+<code>minimize_scalar</code> 在给定区间中搜索,
+<code>bounds=(1, 5)</code> 与手算的产量范围对应. 本例的最优点在区间内部,
+并且已经由配方证明是全局最优, 数值结果可与它直接核对.</p>
+<p>MATLAB 可以用 <code>fminbnd</code> 完成同样的搜索, 保存为
+<code>ideal_production.m</code>.</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">distance_squared = @(a) ((<span class="number">35</span><span class="number">-3</span>*a<span class="number">-20</span>)/<span class="number">30</span>).^<span class="number">2</span> ...</span><br><span class="line">                      + ((<span class="number">2.1</span>+<span class="number">0.1</span>*a<span class="number">-2.2</span>)/<span class="number">2</span>).^<span class="number">2</span>;</span><br><span class="line">[a,value,flag,out] = fminbnd(distance_squared,<span class="number">1</span>,<span class="number">5</span>);</span><br><span class="line"><span class="keyword">if</span> flag ~= <span class="number">1</span></span><br><span class="line">    error(<span class="string">&#x27;求解失败: %s&#x27;</span>,out.message);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">x1 = a; x2 = <span class="number">7</span>-a;</span><br><span class="line">cost = <span class="number">2</span>*x1 + <span class="number">5</span>*x2;</span><br><span class="line">pollution = <span class="number">0.4</span>*x1 + <span class="number">0.3</span>*x2;</span><br><span class="line">fprintf(<span class="string">&#x27;A=%.2f, B=%.2f\n&#x27;</span>,x1,x2);</span><br><span class="line">fprintf(<span class="string">&#x27;费用=%.2f, 污染=%.2f\n&#x27;</span>,cost,pollution);</span><br><span class="line">fprintf(<span class="string">&#x27;平方差之和=%.6f\n&#x27;</span>,value);</span><br></pre></td></tr></table></figure>
+<p><code>@(a)</code> 表示建立一个以 <span
+class="math inline">\(a\)</span> 为输入的函数. 本例利用了已知的前沿关系,
+才能把搜索化成一个变量. 一般问题若还没有找到这样的关系,
+应保留原变量和约束求解; 配套选读中给出了原二维模型的 Python 与 MATLAB
+实现.</p>
+<p>图 26-4 将几种方法选出的计划放在同一条前沿上.
+红点表示两个理想值组成的点, 它不在可行区域中; 绿色点对应刚才求得的 A 4.2
+吨, B 2.8 吨.</p>
+<p><img src="/images/MultiObjectiveProgramming/MOP-4.png" style="width:100%"></p>
+<p>图 26-4 不同要求选出的有效方案. 虚线连接平方差之和 <span
+class="math inline">\(D\)</span> 相同的费用, 污染组合.
+坐标轴仍使用万元和吨, 所以这些线在图上呈椭圆形.</p>
+<p>理想点法也要说明尺度. 若改用 12 万元和 0.4 吨作为尺度,
+两项平方差为</p>
+<p><span class="math display">\[
+\left(\frac{5-a}{4}\right)^2+
+\left(\frac{a-1}{4}\right)^2,
+\]</span></p>
+<p>最小值在 <span class="math inline">\(a=3\)</span> 处取得.
+同样写着"相等权重", 换了尺度, 就会选出不同的计划.</p>
+<h2 id="如果一个目标必须排在前面">26.7 如果一个目标必须排在前面</h2>
+<p>假设工厂的要求是:</p>
+<blockquote>
+<p>先把污染降到能达到的最低值. 只有污染同样少时, 才比较费用.</p>
+</blockquote>
+<p>这可以分成两步:</p>
+<ol type="1">
+<li>在原有需求和产能条件下, 只求污染最少.</li>
+<li>固定第一步得到的污染量, 再求费用最低.</li>
+</ol>
+<p>本例第一步得到最小污染量 2.2 吨. 第二步就保留原约束, 再增加</p>
+<p><span class="math display">\[
+0.4x_1+0.3x_2=2.2,
+\]</span></p>
+<p>以费用 <span class="math inline">\(2x_1+5x_2\)</span>
+为目标求最小值.</p>
+<p>这种按次序处理目标的方法称为优先级法, 也称字典序优化.
+就像整理名单先按姓排序, 姓相同才按名排序:
+后面的比较发生在前面的要求已经相同之后.</p>
+<p>下面的 Python 程序把两步直接写出来, 保存为
+<code>lexicographic_production.py</code>.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linprog</span><br><span class="line"></span><br><span class="line">first = linprog([<span class="number">0.4</span>, <span class="number">0.3</span>], A_ub=[[-<span class="number">1</span>, -<span class="number">1</span>]], b_ub=[-<span class="number">7</span>],</span><br><span class="line">                bounds=[(<span class="number">0</span>, <span class="number">5</span>), (<span class="number">0</span>, <span class="number">6</span>)], method=<span class="string">&quot;highs&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> first.success:</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(first.message)</span><br><span class="line">minimum_pollution = first.fun</span><br><span class="line"></span><br><span class="line">second = linprog(</span><br><span class="line">    [<span class="number">2</span>, <span class="number">5</span>],</span><br><span class="line">    A_ub=[[-<span class="number">1</span>, -<span class="number">1</span>]], b_ub=[-<span class="number">7</span>],</span><br><span class="line">    A_eq=[[<span class="number">0.4</span>, <span class="number">0.3</span>]], b_eq=[minimum_pollution],</span><br><span class="line">    bounds=[(<span class="number">0</span>, <span class="number">5</span>), (<span class="number">0</span>, <span class="number">6</span>)], method=<span class="string">&quot;highs&quot;</span>,</span><br><span class="line">)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> second.success:</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(second.message)</span><br><span class="line"></span><br><span class="line">x1, x2 = second.x</span><br><span class="line">cost = <span class="number">2</span> * x1 + <span class="number">5</span> * x2</span><br><span class="line">pollution = <span class="number">0.4</span> * x1 + <span class="number">0.3</span> * x2</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;第一步的最小污染量=<span class="subst">&#123;minimum_pollution:<span class="number">.2</span>f&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;A=<span class="subst">&#123;x1:<span class="number">.2</span>f&#125;</span>, B=<span class="subst">&#123;x2:<span class="number">.2</span>f&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;费用=<span class="subst">&#123;cost:<span class="number">.2</span>f&#125;</span>, 污染=<span class="subst">&#123;pollution:<span class="number">.2</span>f&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>第一步的 <code>first.fun</code> 是污染量, 第二步的
+<code>second.fun</code> 才是费用. 它们所对应的目标不同.
+第二次调用中增加的 <code>A_eq</code>, <code>b_eq</code>,
+就是"污染必须保持在第一步最优值"这条等式.</p>
+<p>MATLAB 对应程序保存为 <code>lexicographic_production.m</code>.</p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">A = [<span class="number">-1</span>,<span class="number">-1</span>]; b = <span class="number">-7</span>;</span><br><span class="line">lb = [<span class="number">0</span>;<span class="number">0</span>]; ub = [<span class="number">5</span>;<span class="number">6</span>];</span><br><span class="line">options = optimoptions(<span class="string">&#x27;linprog&#x27;</span>,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;none&#x27;</span>);</span><br><span class="line">[~,minimum_pollution,flag,out] = ...</span><br><span class="line">    linprog([<span class="number">0.4</span>;<span class="number">0.3</span>],A,b,[],[],lb,ub,options);</span><br><span class="line"><span class="keyword">if</span> flag ~= <span class="number">1</span></span><br><span class="line">    error(<span class="string">&#x27;第一步失败: %s&#x27;</span>,out.message);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">[x,~,flag,out] = linprog([<span class="number">2</span>;<span class="number">5</span>],A,b,[<span class="number">0.4</span>,<span class="number">0.3</span>], ...</span><br><span class="line">                       minimum_pollution,lb,ub,options);</span><br><span class="line"><span class="keyword">if</span> flag ~= <span class="number">1</span></span><br><span class="line">    error(<span class="string">&#x27;第二步失败: %s&#x27;</span>,out.message);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">cost = <span class="number">2</span>*x(<span class="number">1</span>) + <span class="number">5</span>*x(<span class="number">2</span>);</span><br><span class="line">pollution = <span class="number">0.4</span>*x(<span class="number">1</span>) + <span class="number">0.3</span>*x(<span class="number">2</span>);</span><br><span class="line">fprintf(<span class="string">&#x27;A=%.2f, B=%.2f\n&#x27;</span>,x(<span class="number">1</span>),x(<span class="number">2</span>));</span><br><span class="line">fprintf(<span class="string">&#x27;费用=%.2f, 污染=%.2f\n&#x27;</span>,cost,pollution);</span><br></pre></td></tr></table></figure>
+<p>结果为 A 1 吨, B 6 吨, 费用 32 万元, 污染 2.2 吨.
+本例中污染最少的方案已经唯一, 所以第二步仍返回它.
+其他问题若有多份污染同样少的计划, 第二步就能从中挑出费用最低的一份.</p>
+<p>如果把顺序交换, 先费用最低, 再污染最少, 本例会选 A 5 吨, B 2 吨.</p>
+<p>把污染权重设得很大, 表示愿意为减少污染付出更多费用;
+严格优先则要求先保持污染的最低值. 需要哪一种取舍, 应在建模时写清楚.
+若允许污染比最低值多一点, 也可以给出具体允许量,
+再按上一节的阈值方式求解.</p>
+<h2 id="换一个小例子-看清加权法的范围">26.8 换一个小例子,
+看清加权法的范围</h2>
+<p>前面的生产案例中, 调整权重主要选到两个端点, 中间方案则在 <span
+class="math inline">\(w=1/3\)</span> 时并列最优. 是否所有问题都能这样,
+总能找到某个权重让指定的有效方案成为最优?</p>
+<p>考虑只有甲, 乙, 丙三份可行方案的问题. 两项指标已经处理为无量纲数值,
+都越小越好.</p>
+<p>表 26-7 三个离散有效方案的两项指标.</p>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th style="text-align: right;">第一项指标 <span
+class="math inline">\(f_1\)</span></th>
+<th style="text-align: right;">第二项指标 <span
+class="math inline">\(f_2\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>甲</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr>
+<td>乙</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.5</td>
+</tr>
+<tr>
+<td>丙</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p>三者都不被另两者支配. 甲的第一项最好, 丙的第二项最好, 乙则各有取舍,
+所以三者都有效.</p>
+<p>用 <span class="math inline">\(J=wf_1+(1-w)f_2\)</span> 打分,
+三个分数分别为</p>
+<p><span class="math display">\[
+J_{\text{甲}}=2-2w,\qquad
+J_{\text{乙}}=1.5-0.5w,\qquad
+J_{\text{丙}}=2w.
+\]</span></p>
+<p>先问: 怎样才能让乙至少不输给甲?</p>
+<p><span class="math display">\[
+1.5-0.5w\leqslant2-2w
+\quad\Longrightarrow\quad w\leqslant\frac13.
+\]</span></p>
+<p>再问: 怎样才能让乙至少不输给丙?</p>
+<p><span class="math display">\[
+1.5-0.5w\leqslant2w
+\quad\Longrightarrow\quad w\geqslant\frac35.
+\]</span></p>
+<p>一个数无法既不超过 <span class="math inline">\(1/3\)</span>, 又不小于
+<span class="math inline">\(3/5\)</span>. 因而无论怎样选择 <span
+class="math inline">\(0\leqslant w\leqslant1\)</span>,
+乙都不会成为加权最优方案.</p>
+<p>图 26-5 把这个例子画出来. 本例只允许选择三个点,
+甲与丙之间的虚线只是位置参照, 线上的其他点不在可选方案中.</p>
+<p><img src="/images/MultiObjectiveProgramming/MOP-5.png" style="width:100%"></p>
+<p>图 26-5 加权法选不到的有效方案. 图中的 A, B, C 分别对应甲, 乙, 丙.
+若规定第二项指标不超过 1.5, 再最小化第一项指标, 就会选中乙.</p>
+<p>这时, 前面学过的阈值方法仍然有用: 要求 <span
+class="math inline">\(f_2\leqslant1.5\)</span> 后, 甲被排除,
+乙和丙中乙的第一项更小, 因而选中乙.</p>
+<p>这个例子说明, 寻找折中方案时, 可以尝试不同的偏好表达方式.
+生产例中的中间方案是"在一个权重下并列最优";
+三方案例中的乙则是"任何权重都选不到".
+完整的加权扫描和支配判断程序保留在配套材料
+<code>discrete_frontier.py</code>, <code>discrete_frontier.m</code> 中,
+上面的两个不等式给出了不依赖扫描步长的解释.</p>
+<h2 id="回到工厂-怎样提交一份有依据的计划">26.9 回到工厂,
+怎样提交一份有依据的计划</h2>
+<p>将前面几种要求与结果放在一起:</p>
+<p>表 26-8 四种偏好要求对应的生产计划.</p>
+<table>
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 18%" />
+<col style="width: 18%" />
+<col style="width: 18%" />
+<col style="width: 18%" />
+</colgroup>
+<thead>
+<tr>
+<th>工厂的要求</th>
+<th>所用方法</th>
+<th style="text-align: right;">A 产量(吨)</th>
+<th style="text-align: right;">B 产量(吨)</th>
+<th style="text-align: right;">月费用(万元)</th>
+<th style="text-align: right;">月污染量(吨)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>按 0.4, 0.6 加权, 尺度为 30, 2</td>
+<td>线性加权法</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">2.6</td>
+</tr>
+<tr>
+<td>月污染不超过 2.4 吨, 再求费用最低</td>
+<td>ε 约束法</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">2.4</td>
+</tr>
+<tr>
+<td>靠近最低费用与最少污染, 平方差用 30, 2 作尺度</td>
+<td>理想点法</td>
+<td style="text-align: right;">4.2</td>
+<td style="text-align: right;">2.8</td>
+<td style="text-align: right;">22.4</td>
+<td style="text-align: right;">2.52</td>
+</tr>
+<tr>
+<td>污染严格优先, 再比较费用</td>
+<td>优先级法</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">2.2</td>
+</tr>
+</tbody>
+</table>
+<p>每一行都回答了一种具体要求. 同样的数据得到不同计划,
+是因为对取舍方式的规定不同.</p>
+<p>如果采用第二行, 可以把结论写成:</p>
+<blockquote>
+<p>在月需求不少于 7 吨, A 和 B 的月产能分别为 5 吨和 6 吨的条件下,
+将月污染上限设为 2.4 吨, 求得费用最低的计划为 A 生产 3 吨, B 生产 4 吨.
+按固定单位费用和污染系数计算, 月费用为 26 万元, 月污染为 2.4 吨.</p>
+</blockquote>
+<p>这段话交代了要求, 计划和实际指标. 换成加权法时, 还应说明权重与尺度;
+换成优先级法时, 则应说明先优化哪一项.</p>
+<p>与第 17 章对已有方案进行排序相比, 本章的生产数量本身也是需要求出来的.
+但两类问题都需要先弄清指标方向和决策偏好.</p>
+<p>同样的思路还能迁移到工期与费用, 服务水平与资源投入等问题.
+若一个指标希望越大越好, 例如收益, 可以保留"最大化收益"的含义建模;
+使用统一的最小化写法时, 再将它改写为"最小化收益的相反数". 配套的
+<code>RiskExposure.md</code> 给出了收益与最大单项风险暴露的教学案例.</p>
+<p>本章的生产模型之所以能调用线性规划, 是因为相应的目标和约束都是线性的.
+对其他问题设置权重后, 仍要检查具体模型: 非线性项, 整数要求等,
+都需要相应的求解方法.</p>
+<h2 id="动手练习">26.10 动手练习</h2>
+<ol type="1">
+<li>在第一段程序中增加 A 4 吨, B 3 吨的计划, 算出费用和污染, 并与甲, 乙,
+丙比较.</li>
+<li>费用权重分别取 0.2, 0.45, 污染权重取余下部分, 尺度仍用 30, 2.
+先判断更可能选哪个端点, 再运行程序核对.</li>
+<li>分别把污染上限改为 2.3, 2.5 吨, 求出费用最低的计划.
+解释两份计划的费用相差多少, 为什么.</li>
+<li>如果同时要求"月费用不超过 26 万元, 月污染不超过 2.5 吨",
+找出全部满足要求且有效的方案. 再试 A 3.2 吨, B 3.9 吨, 看它是否满足要求,
+能否继续改进.</li>
+<li>理想点法改用 12, 0.4 作尺度, 用手算或程序核对 A 3 吨, B 4 吨的结果.
+再求使用这组尺度时, 加权法的临界费用权重.</li>
+<li>将三方案例中乙的第二项指标从 1.5 改为 0.5. 仿照正文,
+找出乙能成为加权最优的全部第一项指标权重范围,
+并说明两个端点会发生什么.</li>
+<li>将工厂月需求提高到 12 吨. 先根据两种产品的产能判断是否可行,
+再说明应重新讨论哪些生产条件.</li>
+</ol>
+<p>配套阅读与实验: <a
+href="../reading/26/Index.md">本章资料索引</a>.</p>
+<h2 id="参考资料">参考资料</h2>
+<p>[1] Boyd S, Vandenberghe L. Convex Optimization. Cambridge University
+Press, 2004, §4.7. <a
+target="_blank" rel="noopener" href="https://web.stanford.edu/~boyd/cvxbook/">在线版</a>.</p>
+<p>[2] SciPy. <a
+target="_blank" rel="noopener" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.linprog.html">linprog</a>.</p>
+<p>[3] MathWorks. <a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/optim/ug/linprog.html">linprog</a>.</p>
+<p>[4] SciPy. <a
+target="_blank" rel="noopener" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize_scalar.html">minimize_scalar</a>.</p>
+<p>[5] MathWorks. <a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/matlab/ref/fminbnd.html">fminbnd</a>.</p>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

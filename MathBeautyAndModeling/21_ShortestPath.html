@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="第 21 章 最短路径: 寻找总代价最小的路线 第 20 章用顶点和边描述连接关系, 并用BFS求经过边数最少的路线. 当道路代价不同时, 经过的边少, 总代价却未必小. 本章从一次物资配送出发, 学习怎样比较路线, 逐步更新距离, 并恢复一条实际可走的最短路径. 先手算一项比较, 再把选点与更新分别写成小程序, 最后合并为Dijkstra循环. 之后用一个三点例子理解Floyd–Wa">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/MathBeautyAndModeling/21_ShortestPath.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="第 21 章 最短路径: 寻找总代价最小的路线 第 20 章用顶点和边描述连接关系, 并用BFS求经过边数最少的路线. 当道路代价不同时, 经过的边少, 总代价却未必小. 本章从一次物资配送出发, 学习怎样比较路线, 逐步更新距离, 并恢复一条实际可走的最短路径. 先手算一项比较, 再把选点与更新分别写成小程序, 最后合并为Dijkstra循环. 之后用一个三点例子理解Floyd–Wa">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/ShortestPath/shortest_path.png">
+<meta property="og:image" content="http://example.com/images/ShortestPath/relaxation_step.png">
+<meta property="og:image" content="http://example.com/images/ShortestPath/dijkstra_progress.png">
+<meta property="og:image" content="http://example.com/images/ShortestPath/service_radius.png">
+<meta property="article:published_time" content="2026-11-02T02:53:08.883Z">
+<meta property="article:modified_time" content="2026-10-31T09:20:34.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/ShortestPath/shortest_path.png">
+
+
+<link rel="canonical" href="http://example.com/MathBeautyAndModeling/21_ShortestPath">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/MathBeautyAndModeling/21_ShortestPath.html","path":"MathBeautyAndModeling/21_ShortestPath.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-21-%E7%AB%A0-%E6%9C%80%E7%9F%AD%E8%B7%AF%E5%BE%84-%E5%AF%BB%E6%89%BE%E6%80%BB%E4%BB%A3%E4%BB%B7%E6%9C%80%E5%B0%8F%E7%9A%84%E8%B7%AF%E7%BA%BF"><span class="nav-number">1.</span> <span class="nav-text">第 21 章 最短路径:
+寻找总代价最小的路线</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E6%AF%94%E8%BE%83%E4%B8%89%E6%9D%A1%E5%AE%9E%E9%99%85%E5%8F%AF%E8%B5%B0%E7%9A%84%E8%B7%AF%E7%BA%BF"><span class="nav-number">1.1.</span> <span class="nav-text">21.1 先比较三条实际可走的路线</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B9%9D%E5%9F%8E%E5%B8%82%E7%BD%91%E7%BB%9C%E7%9A%84%E6%95%B0%E6%8D%AE"><span class="nav-number">1.1.1.</span> <span class="nav-text">21.1.1 九城市网络的数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E5%AE%8C%E6%95%B4%E8%BE%B9%E8%A1%A8%E4%BF%9D%E5%AD%98%E4%B8%8B%E6%9D%A5"><span class="nav-number">1.1.2.</span> <span class="nav-text">21.1.2 把完整边表保存下来</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%98%8E%E7%A1%AE%E8%B5%B7%E7%82%B9-%E7%BB%88%E7%82%B9%E4%B8%8E%E8%A6%81%E4%BC%98%E5%8C%96%E7%9A%84%E9%87%8F"><span class="nav-number">1.2.</span> <span class="nav-text">21.2 明确起点, 终点与要优化的量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%AF%E5%BE%84%E4%BB%A3%E4%BB%B7%E4%B8%8E%E6%95%B0%E5%AD%A6%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.1.</span> <span class="nav-text">21.2.1 路径代价与数学模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E7%A7%8D%E8%BE%93%E5%87%BA%E8%8C%83%E5%9B%B4"><span class="nav-number">1.2.2.</span> <span class="nav-text">21.2.2 三种输出范围</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E6%97%A0%E7%A9%B7%E4%B8%8E%E6%9C%80%E7%BB%88%E4%B8%8D%E5%8F%AF%E8%BE%BE"><span class="nav-number">1.2.3.</span> <span class="nav-text">21.2.3 初始无穷与最终不可达</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E9%80%89%E7%82%B9%E5%92%8C%E8%B7%9D%E7%A6%BB%E6%9B%B4%E6%96%B0%E6%8B%86%E5%BC%80%E6%9D%A5%E7%9C%8B"><span class="nav-number">1.3.</span> <span class="nav-text">21.3 把选点和距离更新拆开来看</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%93%E5%89%8D%E6%9C%80%E5%A5%BD-%E4%B8%8D%E7%AD%89%E4%BA%8E%E5%B7%B2%E7%BB%8F%E6%9C%80%E7%BB%88%E7%A1%AE%E5%AE%9A"><span class="nav-number">1.3.1.</span> <span class="nav-text">21.3.1 当前最好,
+不等于已经最终确定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5-%E4%BB%8E%E6%9C%AA%E7%A1%AE%E5%AE%9A%E7%82%B9%E4%B8%AD%E9%80%89%E6%9C%80%E5%B0%8F%E5%80%BC"><span class="nav-number">1.3.2.</span> <span class="nav-text">21.3.2 第一步:
+从未确定点中选最小值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5-%E5%B0%9D%E8%AF%95%E7%BB%8F%E9%80%89%E4%B8%AD%E7%82%B9%E5%8E%BB%E5%BE%80%E9%82%BB%E7%82%B9"><span class="nav-number">1.3.3.</span> <span class="nav-text">21.3.3 第二步:
+尝试经选中点去往邻点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%88%E5%B9%B6%E4%B8%BAdijkstra%E5%BE%AA%E7%8E%AF-%E5%86%8D%E8%A7%A3%E9%87%8A%E4%B8%BA%E4%BB%80%E4%B9%88%E6%AD%A3%E7%A1%AE"><span class="nav-number">1.4.</span> <span class="nav-text">21.4 合并为Dijkstra循环,
+再解释为什么正确</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AF%8F%E8%BD%AE%E9%87%8D%E5%A4%8D%E5%90%8C%E4%B8%80%E4%BB%B6%E4%BA%8B"><span class="nav-number">1.4.1.</span> <span class="nav-text">21.4.1 每轮重复同一件事</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E7%85%A7%E5%AE%8C%E6%95%B4%E4%B9%9D%E8%BD%AE%E7%BB%93%E6%9E%9C"><span class="nav-number">1.4.2.</span> <span class="nav-text">21.4.2 对照完整九轮结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%9E%E8%B4%9F%E8%BE%B9%E6%9D%83%E4%B8%BA%E4%BB%80%E4%B9%88%E9%87%8D%E8%A6%81"><span class="nav-number">1.4.3.</span> <span class="nav-text">21.4.3 非负边权为什么重要</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B2%BF%E5%89%8D%E9%A9%B1%E5%9B%9E%E5%88%B0%E8%B5%B7%E7%82%B9-%E6%89%8D%E5%BE%97%E5%88%B0%E5%AE%9E%E9%99%85%E8%B7%AF%E7%BA%BF"><span class="nav-number">1.5.</span> <span class="nav-text">21.5 沿前驱回到起点,
+才得到实际路线</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E9%A9%B1%E8%A1%A8%E7%9A%84%E5%90%AB%E4%B9%89"><span class="nav-number">1.5.1.</span> <span class="nav-text">21.5.1 前驱表的含义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9E%E5%88%B0%E8%BE%B9%E8%A1%A8%E6%A0%B8%E5%AF%B9%E7%BB%93%E6%9E%9C"><span class="nav-number">1.5.2.</span> <span class="nav-text">21.5.2 回到边表核对结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#floyd%E7%9A%84%E4%B8%80%E8%BD%AE%E6%9B%B4%E6%96%B0%E7%A9%B6%E7%AB%9F%E6%AF%94%E8%BE%83%E4%BB%80%E4%B9%88"><span class="nav-number">1.6.</span> <span class="nav-text">21.6
+Floyd的一轮更新究竟比较什么?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E7%9B%B4%E6%8E%A5%E4%BB%A3%E4%BB%B7%E7%9F%A9%E9%98%B5%E5%BC%80%E5%A7%8B"><span class="nav-number">1.6.1.</span> <span class="nav-text">21.6.1 从直接代价矩阵开始</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E6%AC%A1%E5%A2%9E%E5%8A%A0%E4%B8%80%E4%B8%AA%E5%8F%AF%E7%94%A8%E4%B8%AD%E9%97%B4%E7%82%B9"><span class="nav-number">1.6.2.</span> <span class="nav-text">21.6.2 一次增加一个可用中间点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E6%89%80%E6%9C%89%E9%98%B6%E6%AE%B5%E6%8E%A5%E8%B5%B7%E6%9D%A5-%E4%BF%9D%E5%AD%98%E8%B7%9D%E7%A6%BB%E4%B8%8E%E4%B8%8B%E4%B8%80%E8%B7%B3"><span class="nav-number">1.7.</span> <span class="nav-text">21.7 把所有阶段接起来,
+保存距离与下一跳</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9E%E5%88%B0%E4%B9%9D%E5%9F%8E%E5%B8%82%E5%9B%BE"><span class="nav-number">1.7.1.</span> <span class="nav-text">21.7.1 回到九城市图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8B%E4%B8%80%E8%B7%B3%E6%80%8E%E6%A0%B7%E8%BF%98%E5%8E%9F%E8%B7%AF%E7%BA%BF"><span class="nav-number">1.7.2.</span> <span class="nav-text">21.7.2 下一跳怎样还原路线</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E8%AE%A1%E7%AE%97%E7%BB%93%E6%9E%9C%E5%9B%9E%E7%AD%94%E6%9C%8D%E5%8A%A1%E8%8C%83%E5%9B%B4%E4%B8%8E%E9%81%93%E8%B7%AF%E5%85%B3%E9%97%AD%E9%97%AE%E9%A2%98"><span class="nav-number">1.8.</span> <span class="nav-text">21.8
+用计算结果回答服务范围与道路关闭问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E8%8C%83%E5%9B%B4%E5%BA%94%E6%8C%89%E7%BD%91%E7%BB%9C%E8%B7%9D%E7%A6%BB%E7%AD%9B%E9%80%89"><span class="nav-number">1.8.1.</span> <span class="nav-text">21.8.1 服务范围应按网络距离筛选</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%81%93%E8%B7%AF%E5%85%B3%E9%97%AD%E5%90%8E%E9%87%8D%E6%96%B0%E4%BC%98%E5%8C%96"><span class="nav-number">1.8.2.</span> <span class="nav-text">21.8.2 道路关闭后重新优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%90%86%E8%A7%A3%E8%BF%87%E7%A8%8B%E5%90%8E-%E7%94%A8%E6%88%90%E7%86%9F%E6%8E%A5%E5%8F%A3%E5%A4%8D%E6%A0%B8"><span class="nav-number">1.8.3.</span> <span class="nav-text">21.8.3 理解过程后,
+用成熟接口复核</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%B9%E6%9D%83%E5%8F%98%E5%8C%96-%E7%AE%97%E6%B3%95%E6%9D%A1%E4%BB%B6%E4%B9%9F%E8%A6%81%E9%87%8D%E6%96%B0%E6%A3%80%E6%9F%A5"><span class="nav-number">1.9.</span> <span class="nav-text">21.9 边权变化,
+算法条件也要重新检查</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%9F%E6%9D%83%E8%BE%B9%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E7%A0%B4%E5%9D%8Fdijkstra"><span class="nav-number">1.9.1.</span> <span class="nav-text">21.9.1
+负权边为什么会破坏Dijkstra</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%B6%E6%9D%83%E8%BE%B9-%E5%AD%A4%E7%AB%8B%E7%82%B9%E5%92%8C%E5%B9%B6%E5%88%97%E8%B7%AF%E7%BA%BF"><span class="nav-number">1.9.2.</span> <span class="nav-text">21.9.2 零权边, 孤立点和并列路线</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E6%96%B9%E6%B3%95-%E5%86%99%E6%B8%85%E7%BB%93%E6%9E%9C-%E5%86%8D%E5%AE%8C%E6%88%90%E7%BB%83%E4%B9%A0"><span class="nav-number">1.10.</span> <span class="nav-text">21.10 选方法, 写清结果,
+再完成练习</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B9%E6%8D%AE%E4%BB%BB%E5%8A%A1%E8%8C%83%E5%9B%B4%E4%B8%8E%E8%BE%93%E5%85%A5%E9%80%89%E6%96%B9%E6%B3%95"><span class="nav-number">1.10.1.</span> <span class="nav-text">21.10.1 根据任务范围与输入选方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.10.2.</span> <span class="nav-text">21.10.2 练习</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.11.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="第-21-章-最短路径-寻找总代价最小的路线">第 21 章 最短路径:
+寻找总代价最小的路线</h1>
+<p>第 20 章用顶点和边描述连接关系, 并用BFS求经过边数最少的路线.
+当道路代价不同时, 经过的边少, 总代价却未必小. 本章从一次物资配送出发,
+学习怎样比较路线, 逐步更新距离, 并恢复一条实际可走的最短路径.</p>
+<p>先手算一项比较, 再把选点与更新分别写成小程序, 最后合并为Dijkstra循环.
+之后用一个三点例子理解Floyd–Warshall的单轮递推,
+再回到同一张九城市图求全部点对距离. 服务范围和道路关闭两个问题,
+用来检查计算结果怎样进入实际决策.</p>
+<h2 id="先比较三条实际可走的路线">21.1 先比较三条实际可走的路线</h2>
+<h3 id="九城市网络的数据">21.1.1 九城市网络的数据</h3>
+<p>设城市编号为 <span class="math inline">\(0,1,\ldots,8\)</span>,
+有14条无向道路, 两个方向的代价相同. 本例是教学模拟网络,
+权重采用统一的教学代价单位, 不指定为公里或分钟. 图上位置只表示布局,
+计算始终读取边权.</p>
+<p>表 21-1 九城市的十四条无向道路.</p>
+<div class="line-block">道路 | 代价 | 道路 | 代价 |<br />
+: ---: | : ---: | : ---: | : ---: |<br />
+0—1 | 4 | 3—6 | 7 |<br />
+0—2 | 8 | 3—7 | 4 |<br />
+1—2 | 3 | 4—5 | 6 |<br />
+1—3 | 8 | 5—7 | 2 |<br />
+2—4 | 1 | 6—7 | 14 |<br />
+2—5 | 6 | 6—8 | 9 |<br />
+3—4 | 2 | 7—8 | 10 |</div>
+<p><img src="/images/ShortestPath/shortest_path.png" style="width:100%"></p>
+<p>图 21-1 九城市道路网络. 数字表示直接道路代价. 红色路线的代价为24,
+其最优性将通过后面的完整计算说明, 绘图中的线长不参与计算.</p>
+<p>从城市0到城市8, 先比较下列三条候选路径:</p>
+<p>表 21-2 三条候选路线的逐边代价.</p>
+<div class="line-block">路径 | 逐边相加 | 总代价 |<br />
+: --- | : --- | : ---: |<br />
+<span class="math inline">\(0\to2\to4\to3\to7\to8\)</span> | <span
+class="math inline">\(8+1+2+4+10\)</span> | 25 |<br />
+<span class="math inline">\(0\to1\to2\to4\to3\to7\to8\)</span> | <span
+class="math inline">\(4+3+1+2+4+10\)</span> | 24 |<br />
+<span class="math inline">\(0\to1\to3\to7\to8\)</span> | <span
+class="math inline">\(4+8+4+10\)</span> | 26 |</div>
+<p>第二条虽然经过的道路更多, 总代价反而更小. 但只比较三个候选,
+尚不足以排除其他所有路线. 接下来需要一种有正确性依据的方法,
+系统地寻找最小代价.</p>
+<h3 id="把完整边表保存下来">21.1.2 把完整边表保存下来</h3>
+<p>Python用 <code>shortest_data.py</code> 保存数据, MATLAB用
+<code>shortest_data.m</code> 返回相同的边表.
+这两个文件与后面的程序放在同一目录. 先保存一次, 各程序读取同一份输入,
+避免反复抄写导致数据不同.</p>
+<p><strong>Python: <code>shortest_data.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">EDGES = [</span><br><span class="line">    (<span class="number">0</span>, <span class="number">1</span>, <span class="number">4</span>),</span><br><span class="line">    (<span class="number">0</span>, <span class="number">2</span>, <span class="number">8</span>),</span><br><span class="line">    (<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>),</span><br><span class="line">    (<span class="number">1</span>, <span class="number">3</span>, <span class="number">8</span>),</span><br><span class="line">    (<span class="number">2</span>, <span class="number">4</span>, <span class="number">1</span>),</span><br><span class="line">    (<span class="number">2</span>, <span class="number">5</span>, <span class="number">6</span>),</span><br><span class="line">    (<span class="number">3</span>, <span class="number">4</span>, <span class="number">2</span>),</span><br><span class="line">    (<span class="number">3</span>, <span class="number">6</span>, <span class="number">7</span>),</span><br><span class="line">    (<span class="number">3</span>, <span class="number">7</span>, <span class="number">4</span>),</span><br><span class="line">    (<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>),</span><br><span class="line">    (<span class="number">5</span>, <span class="number">7</span>, <span class="number">2</span>),</span><br><span class="line">    (<span class="number">6</span>, <span class="number">7</span>, <span class="number">14</span>),</span><br><span class="line">    (<span class="number">6</span>, <span class="number">8</span>, <span class="number">9</span>),</span><br><span class="line">    (<span class="number">7</span>, <span class="number">8</span>, <span class="number">10</span>),</span><br><span class="line">]</span><br><span class="line">N = <span class="number">9</span></span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>shortest_data.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">E</span> = <span class="title">shortest_data</span><span class="params">()</span></span></span><br><span class="line"><span class="comment">% City identifiers are 0 through 8; convert endpoints by +1 for MATLAB.</span></span><br><span class="line">E = [<span class="number">0</span> <span class="number">1</span> <span class="number">4</span>;</span><br><span class="line">     <span class="number">0</span> <span class="number">2</span> <span class="number">8</span>;</span><br><span class="line">     <span class="number">1</span> <span class="number">2</span> <span class="number">3</span>;</span><br><span class="line">     <span class="number">1</span> <span class="number">3</span> <span class="number">8</span>;</span><br><span class="line">     <span class="number">2</span> <span class="number">4</span> <span class="number">1</span>;</span><br><span class="line">     <span class="number">2</span> <span class="number">5</span> <span class="number">6</span>;</span><br><span class="line">     <span class="number">3</span> <span class="number">4</span> <span class="number">2</span>;</span><br><span class="line">     <span class="number">3</span> <span class="number">6</span> <span class="number">7</span>;</span><br><span class="line">     <span class="number">3</span> <span class="number">7</span> <span class="number">4</span>;</span><br><span class="line">     <span class="number">4</span> <span class="number">5</span> <span class="number">6</span>;</span><br><span class="line">     <span class="number">5</span> <span class="number">7</span> <span class="number">2</span>;</span><br><span class="line">     <span class="number">6</span> <span class="number">7</span> <span class="number">14</span>;</span><br><span class="line">     <span class="number">6</span> <span class="number">8</span> <span class="number">9</span>;</span><br><span class="line">     <span class="number">7</span> <span class="number">8</span> <span class="number">10</span>];</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>MATLAB数组下标从1开始, 所以计算时把城市编号加1, 输出时再减1.
+城市0对应索引1, 城市8对应索引9. 这个映射从始至终保持一致.
+<code>shortest_data.m</code> 中保存的仍是城市编号,
+只有进入数组计算前才转换端点.</p>
+<p><strong>Python: <code>route_cost_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> shortest_data <span class="keyword">import</span> EDGES</span><br><span class="line"></span><br><span class="line">weight = &#123;<span class="built_in">tuple</span>(<span class="built_in">sorted</span>((u, v))): w <span class="keyword">for</span> u, v, w <span class="keyword">in</span> EDGES&#125;</span><br><span class="line">routes = [[<span class="number">0</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">3</span>, <span class="number">7</span>, <span class="number">8</span>], [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">3</span>, <span class="number">7</span>, <span class="number">8</span>], [<span class="number">0</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">7</span>, <span class="number">8</span>]]</span><br><span class="line">costs = []</span><br><span class="line"><span class="keyword">for</span> route <span class="keyword">in</span> routes:</span><br><span class="line">    cost = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> u, v <span class="keyword">in</span> <span class="built_in">zip</span>(route[:-<span class="number">1</span>], route[<span class="number">1</span>:]):</span><br><span class="line">        edge = <span class="built_in">tuple</span>(<span class="built_in">sorted</span>((u, v)))</span><br><span class="line">        <span class="keyword">if</span> edge <span class="keyword">not</span> <span class="keyword">in</span> weight:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;路线中存在没有直接道路连接的一步&quot;</span>)</span><br><span class="line">        cost += weight[edge]</span><br><span class="line">    costs.append(cost)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;路线:&quot;</span>, route, <span class="string">&quot;总代价:&quot;</span>, cost)</span><br><span class="line"><span class="keyword">assert</span> costs == [<span class="number">25</span>, <span class="number">24</span>, <span class="number">26</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>route_cost_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">E = shortest_data();</span><br><span class="line">routes = &#123;[<span class="number">0</span> <span class="number">2</span> <span class="number">4</span> <span class="number">3</span> <span class="number">7</span> <span class="number">8</span>], [<span class="number">0</span> <span class="number">1</span> <span class="number">2</span> <span class="number">4</span> <span class="number">3</span> <span class="number">7</span> <span class="number">8</span>], [<span class="number">0</span> <span class="number">1</span> <span class="number">3</span> <span class="number">7</span> <span class="number">8</span>]&#125;;</span><br><span class="line">costs = <span class="built_in">zeros</span>(<span class="number">1</span>,<span class="built_in">numel</span>(routes));</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">numel</span>(routes)</span><br><span class="line">    route = routes&#123;k&#125;;</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="built_in">numel</span>(route)<span class="number">-1</span></span><br><span class="line">        u = route(<span class="built_in">j</span>); v = route(<span class="built_in">j</span>+<span class="number">1</span>);</span><br><span class="line">        hit = <span class="built_in">find</span>((E(:,<span class="number">1</span>)==u &amp; E(:,<span class="number">2</span>)==v) | (E(:,<span class="number">1</span>)==v &amp; E(:,<span class="number">2</span>)==u));</span><br><span class="line">        assert(<span class="built_in">numel</span>(hit)==<span class="number">1</span>);</span><br><span class="line">        costs(k) = costs(k) + E(hit,<span class="number">3</span>);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    <span class="built_in">disp</span>(route); <span class="built_in">disp</span>(costs(k));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">assert(<span class="built_in">isequal</span>(costs,[<span class="number">25</span> <span class="number">24</span> <span class="number">26</span>]));</span><br></pre></td></tr></table></figure>
+<p>程序先确认每一步确有道路, 再累加代价. 当前图是没有平行边的简单无向图,
+排序后的端点对可以唯一标识一条道路. 若同一对城市间有多条道路,
+要另外保存道路编号, 或按最短代价任务明确保留最小边权,
+不能无说明地覆盖数据.</p>
+<h2 id="明确起点-终点与要优化的量">21.2 明确起点, 终点与要优化的量</h2>
+<h3 id="路径代价与数学模型">21.2.1 路径代价与数学模型</h3>
+<p>设带权图为 <span class="math inline">\(G=(V,E,w)\)</span>, 路径从
+<span class="math inline">\(s\)</span> 出发, 到 <span
+class="math inline">\(t\)</span> 结束:</p>
+<p><span class="math display">\[
+P=(v_0,v_1,\ldots,v_r),\qquad v_0=s,\quad v_r=t.
+\]</span></p>
+<p>相邻顶点之间必须存在允许通行的边. 有向图还须按箭头行走. 若边权可相加,
+路径代价为</p>
+<p><span class="math display">\[
+L(P)=\sum\limits_{\ell=0}^{r-1}w(v_\ell,v_{\ell+1}).
+\]</span></p>
+<p>用 <span class="math inline">\(\mathcal P_{st}\)</span>
+表示所有满足要求的路径组成的集合. 对本例的正权图, 模型为</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\min\quad L(P)=\sum\limits_{e\in P}w(e),\\
+&amp;\mathrm{s.t.}\quad
+\begin{cases}
+P\in\mathcal P_{st}.
+\end{cases}
+\end{aligned}
+\]</span></p>
+<p>最小代价记为 <span class="math inline">\(\delta(s,t)\)</span>,
+达到这个代价的路径称为最短路径. 权重可以表示距离, 时间或费用,
+但必须单位一致且含义清楚. 最小距离不自动等于最小时间;
+若要合并时间与费用, 还须说明换算或多目标规则.</p>
+<h3 id="三种输出范围">21.2.2 三种输出范围</h3>
+<p>表 21-3 最短路径的三种查询范围.</p>
+<div class="line-block">任务 | 输入 | 输出 |<br />
+: --- | : --- | : --- |<br />
+单对顶点最短路径 | 起点 <span class="math inline">\(s\)</span>, 终点
+<span class="math inline">\(t\)</span> | 一个最短代价及对应路径 |<br />
+单源最短路径 | 起点 <span class="math inline">\(s\)</span> | 从 <span
+class="math inline">\(s\)</span> 到各点的最短代价与路径信息 |<br />
+全源最短路径 | 整张图 | 每个有序点对的最短代价与路径信息 |</div>
+<p>本章一次出行是从0到8的单对问题. Dijkstra可计算以0为起点的单源结果,
+从中读取城市8; Floyd–Warshall求全部点对的距离. 有向图中, <span
+class="math inline">\(\delta(s,t)\)</span> 与 <span
+class="math inline">\(\delta(t,s)\)</span> 一般不同.</p>
+<h3 id="初始无穷与最终不可达">21.2.3 初始无穷与最终不可达</h3>
+<p>没有直接道路时, 可以把初始代价记为 <span
+class="math inline">\(+\infty\)</span>; 它仍可能通过别的城市到达.
+全部计算结束后, 若最短距离仍为无穷, 才报告该方向不可达.
+起点到自身允许不走任何边, 空路线代价为0, 输出节点列表通常写为
+<code>[起点]</code>, 与不可达返回空列表不同.</p>
+<p>本章为解释算法, 允许候选路线重复顶点与边, 严格术语称为游走.
+非负边权时删除绕圈不会增加代价, 因而在两点可达时,
+至少存在一条不重复顶点的最短路径. 严格正权时, 最优路线不会包含圈.
+负权与零权的进一步边界见21.9节.</p>
+<h2 id="把选点和距离更新拆开来看">21.3 把选点和距离更新拆开来看</h2>
+<h3 id="当前最好-不等于已经最终确定">21.3.1 当前最好,
+不等于已经最终确定</h3>
+<p>用三个数组保存状态:</p>
+<p>表 21-4 Dijkstra 的三个状态数组.</p>
+<div class="line-block">数组 | 含义 | 初始化 |<br />
+: --- | : --- | : --- |<br />
+<code>distance[v]</code> | 当前找到的起点到 <span
+class="math inline">\(v\)</span> 的最好候选代价 | 起点为0, 其余为无穷
+|<br />
+<code>settled[v]</code> | 这个代价是否已经正式确定 | 全部为假 |<br />
+<code>parent[v]</code> | 当前候选路线中, 到 <span
+class="math inline">\(v\)</span> 前的一个点 | 尚无前驱 |</div>
+<p>处理起点0后, 从直接道路得到城市1的候选代价4, 城市2的候选代价8.
+这时只正式确定了城市0. 城市2虽然已经被发现, 候选代价8仍可能降低.</p>
+<h3 id="第一步-从未确定点中选最小值">21.3.2 第一步:
+从未确定点中选最小值</h3>
+<p>依城市编号扫描, 跳过已确定点, 比较剩余候选值. 当前应选城市1,
+因为4小于8, 也小于其余无穷值. 下列程序只完成选点, 暂不改变确定标记.</p>
+<p><strong>Python: <code>selection_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> inf</span><br><span class="line"></span><br><span class="line">distance = [<span class="number">0</span>, <span class="number">4</span>, <span class="number">8</span>, inf, inf, inf, inf, inf, inf]</span><br><span class="line">settled = [<span class="literal">True</span>, <span class="literal">False</span>, <span class="literal">False</span>, <span class="literal">False</span>, <span class="literal">False</span>, <span class="literal">False</span>, <span class="literal">False</span>, <span class="literal">False</span>, <span class="literal">False</span>]</span><br><span class="line">best = inf</span><br><span class="line">u = <span class="literal">None</span></span><br><span class="line"><span class="keyword">for</span> v <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(distance)):</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> settled[v] <span class="keyword">and</span> distance[v] &lt; best:</span><br><span class="line">        best = distance[v]</span><br><span class="line">        u = v</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;下一次选出的城市:&quot;</span>, u, <span class="string">&quot;其候选距离:&quot;</span>, best)</span><br><span class="line"><span class="keyword">assert</span> u == <span class="number">1</span> <span class="keyword">and</span> best == <span class="number">4</span></span><br><span class="line"><span class="keyword">assert</span> <span class="keyword">not</span> settled[u]</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>selection_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">distance = [<span class="number">0</span> <span class="number">4</span> <span class="number">8</span> <span class="built_in">inf</span> <span class="built_in">inf</span> <span class="built_in">inf</span> <span class="built_in">inf</span> <span class="built_in">inf</span> <span class="built_in">inf</span>];</span><br><span class="line">settled = logical([<span class="number">1</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span>]);</span><br><span class="line">best = <span class="built_in">inf</span>; u = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> v = <span class="number">1</span>:<span class="built_in">numel</span>(distance)</span><br><span class="line">    <span class="keyword">if</span> ~settled(v) &amp;&amp; distance(v) &lt; best</span><br><span class="line">        best = distance(v);</span><br><span class="line">        u = v;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">assert(u&gt;<span class="number">0</span>);</span><br><span class="line"><span class="built_in">disp</span>([u<span class="number">-1</span>,best]);</span><br><span class="line">assert(u<span class="number">-1</span>==<span class="number">1</span> &amp;&amp; best==<span class="number">4</span>);</span><br><span class="line">assert(~settled(u));</span><br></pre></td></tr></table></figure>
+<p>按编号从小到大扫描, 只有严格更小时才替换, 就能在并列时保留较小编号.
+如果没有任何未确定点具有有限候选值, 就停止, 剩余点不可达.</p>
+<h3 id="第二步-尝试经选中点去往邻点">21.3.3 第二步:
+尝试经选中点去往邻点</h3>
+<p>已经知道0到1的最短代价是4, 再沿1—2的代价3, 可以得到到城市2的新候选
+<span class="math inline">\(4+3=7\)</span>. 它比原候选8更小,
+所以更新为7, 并把城市2的前驱由0改为1.</p>
+<p>一般地, 经 <span class="math inline">\(u\)</span> 去往 <span
+class="math inline">\(v\)</span> 的候选值为 <span
+class="math inline">\(d[u]+w(u,v)\)</span>. 若</p>
+<p><span class="math display">\[
+d[u]+w(u,v)&lt;d[v],
+\]</span></p>
+<p>就同时更新距离和前驱. 这一操作称为松弛.</p>
+<p><strong>Python: <code>relaxation_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> inf</span><br><span class="line"></span><br><span class="line">distance = [<span class="number">0</span>, <span class="number">4</span>, <span class="number">8</span>, inf, inf, inf, inf, inf, inf]</span><br><span class="line">parent = [<span class="literal">None</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="literal">None</span>, <span class="literal">None</span>, <span class="literal">None</span>, <span class="literal">None</span>, <span class="literal">None</span>, <span class="literal">None</span>]</span><br><span class="line">u, v, weight = <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span></span><br><span class="line">candidate = distance[u] + weight</span><br><span class="line">before = distance[v]</span><br><span class="line"><span class="keyword">if</span> candidate &lt; distance[v]:</span><br><span class="line">    distance[v] = candidate</span><br><span class="line">    parent[v] = u</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;旧值, 经城市 1 的候选值, 更新后:&quot;</span>, before, candidate, distance[v])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;城市 2 的前驱:&quot;</span>, parent[v])</span><br><span class="line"><span class="keyword">assert</span> (before, candidate, distance[<span class="number">2</span>], parent[<span class="number">2</span>]) == (<span class="number">8</span>, <span class="number">7</span>, <span class="number">7</span>, <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>relaxation_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line"><span class="comment">% Array position is city identifier plus one; parent stores internal positions.</span></span><br><span class="line">distance = [<span class="number">0</span> <span class="number">4</span> <span class="number">8</span> <span class="built_in">inf</span> <span class="built_in">inf</span> <span class="built_in">inf</span> <span class="built_in">inf</span> <span class="built_in">inf</span> <span class="built_in">inf</span>];</span><br><span class="line">parent = [<span class="number">0</span> <span class="number">1</span> <span class="number">1</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span>];</span><br><span class="line">u = <span class="number">1</span>+<span class="number">1</span>; v = <span class="number">2</span>+<span class="number">1</span>; weight = <span class="number">3</span>;</span><br><span class="line">candidate = distance(u) + weight;</span><br><span class="line">before = distance(v);</span><br><span class="line"><span class="keyword">if</span> candidate &lt; distance(v)</span><br><span class="line">    distance(v) = candidate;</span><br><span class="line">    parent(v) = u;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>([before,candidate,distance(v)]);</span><br><span class="line"><span class="built_in">disp</span>(parent(v)<span class="number">-1</span>);</span><br><span class="line">assert(<span class="built_in">isequal</span>([before,candidate,distance(<span class="number">3</span>),parent(<span class="number">3</span>)<span class="number">-1</span>],[<span class="number">8</span> <span class="number">7</span> <span class="number">7</span> <span class="number">1</span>]));</span><br></pre></td></tr></table></figure>
+<p><img src="/images/ShortestPath/relaxation_step.png" style="width:100%"></p>
+<p>图 21-2 从直接路线候选8, 改为经城市1的候选7. 这里只画原九城市图中的0,
+1, 2三点及其三条道路. 距离改变时, 前驱也必须同步改变,
+否则可能得到正确代价却恢复出错误路线.</p>
+<p>代码中的比较必须使用当前记录. 若候选不更短, 保留原距离与前驱.
+单个前驱数组通常只保存一条最短路线;
+处理并列候选时不必把某次保留的前驱误认为唯一可能.</p>
+<h2 id="合并为dijkstra循环-再解释为什么正确">21.4 合并为Dijkstra循环,
+再解释为什么正确</h2>
+<h3 id="每轮重复同一件事">21.4.1 每轮重复同一件事</h3>
+<p>把刚才两项操作放入循环: 选出候选距离最小的未确定点, 正式确定它,
+再用它的边更新邻点. 下面的程序针对已给出的九城市正权图,
+保留每轮状态副本以便对照手算.</p>
+<p><strong>Python: <code>dijkstra_loop_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> inf</span><br><span class="line"><span class="keyword">from</span> shortest_data <span class="keyword">import</span> N, EDGES</span><br><span class="line"></span><br><span class="line"><span class="comment"># Fixed lesson input: an undirected graph with finite positive weights.</span></span><br><span class="line">neighbors = [[] <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(N)]</span><br><span class="line"><span class="keyword">for</span> u, v, weight <span class="keyword">in</span> EDGES:</span><br><span class="line">    neighbors[u].append((v, weight))</span><br><span class="line">    neighbors[v].append((u, weight))</span><br><span class="line">distance = [inf] * N</span><br><span class="line">parent = [<span class="literal">None</span>] * N</span><br><span class="line">settled = [<span class="literal">False</span>] * N</span><br><span class="line">distance[<span class="number">0</span>] = <span class="number">0</span></span><br><span class="line">trace = []</span><br><span class="line"><span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">    best, u = inf, <span class="literal">None</span></span><br><span class="line">    <span class="keyword">for</span> v <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> settled[v] <span class="keyword">and</span> distance[v] &lt; best:</span><br><span class="line">            best, u = distance[v], v</span><br><span class="line">    <span class="keyword">if</span> u <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    settled[u] = <span class="literal">True</span></span><br><span class="line">    <span class="keyword">for</span> v, weight <span class="keyword">in</span> neighbors[u]:</span><br><span class="line">        candidate = distance[u] + weight</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> settled[v] <span class="keyword">and</span> candidate &lt; distance[v]:</span><br><span class="line">            distance[v] = candidate</span><br><span class="line">            parent[v] = u</span><br><span class="line">    trace.append((u, distance.copy(), parent.copy(), settled.copy()))</span><br><span class="line">order = [row[<span class="number">0</span>] <span class="keyword">for</span> row <span class="keyword">in</span> trace]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;确定顺序:&quot;</span>, order)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最终距离:&quot;</span>, distance)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最终前驱:&quot;</span>, parent)</span><br><span class="line"><span class="keyword">assert</span> order == [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">6</span>, <span class="number">8</span>]</span><br><span class="line"><span class="keyword">assert</span> distance == [<span class="number">0</span>, <span class="number">4</span>, <span class="number">7</span>, <span class="number">10</span>, <span class="number">8</span>, <span class="number">13</span>, <span class="number">17</span>, <span class="number">14</span>, <span class="number">24</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>dijkstra_loop_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">E = shortest_data(); E(:,<span class="number">1</span>:<span class="number">2</span>) = E(:,<span class="number">1</span>:<span class="number">2</span>)+<span class="number">1</span>;</span><br><span class="line">n = <span class="number">9</span>; neighbors = cell(<span class="number">1</span>,n);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">size</span>(E,<span class="number">1</span>)</span><br><span class="line">    u = E(k,<span class="number">1</span>); v = E(k,<span class="number">2</span>); weight = E(k,<span class="number">3</span>);</span><br><span class="line">    neighbors&#123;u&#125;(<span class="keyword">end</span>+<span class="number">1</span>,:) = [v,weight];</span><br><span class="line">    neighbors&#123;v&#125;(<span class="keyword">end</span>+<span class="number">1</span>,:) = [u,weight];</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">distance = <span class="built_in">inf</span>(<span class="number">1</span>,n); parent = <span class="built_in">zeros</span>(<span class="number">1</span>,n); settled = <span class="built_in">false</span>(<span class="number">1</span>,n);</span><br><span class="line">distance(<span class="number">1</span>) = <span class="number">0</span>; order = [];</span><br><span class="line">distance_trace = <span class="built_in">zeros</span>(<span class="number">0</span>,n); parent_trace = <span class="built_in">zeros</span>(<span class="number">0</span>,n);</span><br><span class="line"><span class="keyword">for</span> round_id = <span class="number">1</span>:n</span><br><span class="line">    best = <span class="built_in">inf</span>; u = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> v = <span class="number">1</span>:n</span><br><span class="line">        <span class="keyword">if</span> ~settled(v) &amp;&amp; distance(v)&lt;best</span><br><span class="line">            best = distance(v); u = v;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">if</span> u==<span class="number">0</span>, <span class="keyword">break</span>; <span class="keyword">end</span></span><br><span class="line">    settled(u) = <span class="built_in">true</span>;</span><br><span class="line">    <span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">size</span>(neighbors&#123;u&#125;,<span class="number">1</span>)</span><br><span class="line">        v = neighbors&#123;u&#125;(k,<span class="number">1</span>); weight = neighbors&#123;u&#125;(k,<span class="number">2</span>);</span><br><span class="line">        candidate = distance(u)+weight;</span><br><span class="line">        <span class="keyword">if</span> ~settled(v) &amp;&amp; candidate&lt;distance(v)</span><br><span class="line">            distance(v) = candidate; parent(v) = u;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    order(<span class="keyword">end</span>+<span class="number">1</span>) = u<span class="number">-1</span>;</span><br><span class="line">    distance_trace(<span class="keyword">end</span>+<span class="number">1</span>,:) = distance;</span><br><span class="line">    parent_trace(<span class="keyword">end</span>+<span class="number">1</span>,:) = parent;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(order); <span class="built_in">disp</span>(distance);</span><br><span class="line"><span class="comment">% The source has no predecessor; display only other predecessor identifiers.</span></span><br><span class="line"><span class="built_in">disp</span>(parent(<span class="number">2</span>:<span class="keyword">end</span>)<span class="number">-1</span>);</span><br><span class="line">assert(<span class="built_in">isequal</span>(order,[<span class="number">0</span> <span class="number">1</span> <span class="number">2</span> <span class="number">4</span> <span class="number">3</span> <span class="number">5</span> <span class="number">7</span> <span class="number">6</span> <span class="number">8</span>]));</span><br><span class="line">assert(<span class="built_in">isequal</span>(distance,[<span class="number">0</span> <span class="number">4</span> <span class="number">7</span> <span class="number">10</span> <span class="number">8</span> <span class="number">13</span> <span class="number">17</span> <span class="number">14</span> <span class="number">24</span>]));</span><br></pre></td></tr></table></figure>
+<p><code>neighbors</code> 是邻接表.
+一条无向道路在两个端点的列表中分别记录, 道路本身仍只有一条.
+<code>settled[u]=True</code> 表示正式确定;
+不能在第一次发现某点时就这样标记. Python的 <code>copy()</code>
+和MATLAB每轮保存的数组用于保留历史, 避免把后续状态当作先前状态.</p>
+<h3 id="对照完整九轮结果">21.4.2 对照完整九轮结果</h3>
+<p>表中每行是本轮选点并完成松弛后的状态. 未确定点的数值仍是候选值.</p>
+<p>表 21-5 Dijkstra 每轮选点后的距离.</p>
+<div class="line-block">轮次 | 本轮确定 | <span
+class="math inline">\(d[0]\)</span> | <span
+class="math inline">\(d[1]\)</span> | <span
+class="math inline">\(d[2]\)</span> | <span
+class="math inline">\(d[3]\)</span> | <span
+class="math inline">\(d[4]\)</span> | <span
+class="math inline">\(d[5]\)</span> | <span
+class="math inline">\(d[6]\)</span> | <span
+class="math inline">\(d[7]\)</span> | <span
+class="math inline">\(d[8]\)</span> |<br />
+: ---: | : ---: | : ---: | : ---: | : ---: | : ---: | : ---: | : ---: |
+: ---: | : ---: | : ---: |<br />
+初始 | - | 0 | <span class="math inline">\(+\infty\)</span> | <span
+class="math inline">\(+\infty\)</span> | <span
+class="math inline">\(+\infty\)</span> | <span
+class="math inline">\(+\infty\)</span> | <span
+class="math inline">\(+\infty\)</span> | <span
+class="math inline">\(+\infty\)</span> | <span
+class="math inline">\(+\infty\)</span> | <span
+class="math inline">\(+\infty\)</span> |<br />
+1 | 0 | 0 | 4 | 8 | <span class="math inline">\(+\infty\)</span> | <span
+class="math inline">\(+\infty\)</span> | <span
+class="math inline">\(+\infty\)</span> | <span
+class="math inline">\(+\infty\)</span> | <span
+class="math inline">\(+\infty\)</span> | <span
+class="math inline">\(+\infty\)</span> |<br />
+2 | 1 | 0 | 4 | 7 | 12 | <span class="math inline">\(+\infty\)</span> |
+<span class="math inline">\(+\infty\)</span> | <span
+class="math inline">\(+\infty\)</span> | <span
+class="math inline">\(+\infty\)</span> | <span
+class="math inline">\(+\infty\)</span> |<br />
+3 | 2 | 0 | 4 | 7 | 12 | 8 | 13 | <span
+class="math inline">\(+\infty\)</span> | <span
+class="math inline">\(+\infty\)</span> | <span
+class="math inline">\(+\infty\)</span> |<br />
+4 | 4 | 0 | 4 | 7 | 10 | 8 | 13 | <span
+class="math inline">\(+\infty\)</span> | <span
+class="math inline">\(+\infty\)</span> | <span
+class="math inline">\(+\infty\)</span> |<br />
+5 | 3 | 0 | 4 | 7 | 10 | 8 | 13 | 17 | 14 | <span
+class="math inline">\(+\infty\)</span> |<br />
+6 | 5 | 0 | 4 | 7 | 10 | 8 | 13 | 17 | 14 | <span
+class="math inline">\(+\infty\)</span> |<br />
+7 | 7 | 0 | 4 | 7 | 10 | 8 | 13 | 17 | 14 | 24 |<br />
+8 | 6 | 0 | 4 | 7 | 10 | 8 | 13 | 17 | 14 | 24 |<br />
+9 | 8 | 0 | 4 | 7 | 10 | 8 | 13 | 17 | 14 | 24 |</div>
+<p>确定顺序为 <span class="math inline">\(0,1,2,4,3,5,7,6,8\)</span>.
+它是处理顶点的顺序, 不是车辆的行驶路线. 例如算法会处理城市5和6,
+最终0到8的最短路径却不经过它们.</p>
+<p><img src="/images/ShortestPath/dijkstra_progress.png" style="width:100%"></p>
+<p>图 21-3 四个时刻的状态快照. 蓝色表示代价已确定, 浅色表示仍是候选.
+某个候选值可能恰好已等于最终答案, 仍需满足选点条件后才能正式确认.</p>
+<h3 id="非负边权为什么重要">21.4.3 非负边权为什么重要</h3>
+<p>假设已经确定的点都具有正确最短距离, 下一次选出未确定点中候选最小的
+<span class="math inline">\(u\)</span>. 如果存在一条比 <span
+class="math inline">\(d[u]\)</span> 更短的起点到 <span
+class="math inline">\(u\)</span> 的路线, 沿它找到第一个未确定点 <span
+class="math inline">\(y\)</span>. 前一顶点已处理, 因而对应边已经用于松弛
+<span class="math inline">\(y\)</span>.</p>
+<p>由于剩余边权非负, 到 <span class="math inline">\(y\)</span>
+的路线前缀代价不会大于整条路线, 所以有</p>
+<p><span class="math display">\[
+d[y]\leqslant L(s\rightsquigarrow u)&lt;d[u].
+\]</span></p>
+<p>这与 <span class="math inline">\(u\)</span> 的候选距离最小矛盾,
+因此可以安全确定 <span class="math inline">\(u\)</span>.
+从起点开始逐轮应用, 得到全局最优结果. 贪心描述的是选择策略,
+Dijkstra在非负条件下具有全局最优性保证.</p>
+<p>若只求一个终点, 可以在它被正式确定时提前停止.
+第一次发现终点时停止没有这个保证; 提前停止后,
+其余未确定点的候选值也不能全部报告为最终最短距离. 配套
+<code>dijkstra_scan.py</code> 和 <code>.m</code>
+把本节流程封装为可重复调用的函数, 完整输入检查与源码见延伸阅读F.6.</p>
+<h2 id="沿前驱回到起点-才得到实际路线">21.5 沿前驱回到起点,
+才得到实际路线</h2>
+<h3 id="前驱表的含义">21.5.1 前驱表的含义</h3>
+<p>完整计算后, 前驱如下. MATLAB实际保存内部索引,
+表中统一显示城市编号.</p>
+<p>表 21-6 最终前驱对应的城市编号.</p>
+<div class="line-block">城市 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |<br />
+: ---: | : ---: | : ---: | : ---: | : ---: | : ---: | : ---: | : ---: |
+: ---: | : ---: |<br />
+前驱 | 无 | 0 | 1 | 4 | 2 | 2 | 3 | 3 | 7 |</div>
+<p>从终点8查前驱, 先到7, 再到3, 依次回到起点:</p>
+<p><span class="math display">\[
+8\leftarrow7\leftarrow3\leftarrow4\leftarrow2\leftarrow1\leftarrow0.
+\]</span></p>
+<p>最后反转这个列表, 才是出行顺序. 这与把确定顺序抄下来不同.</p>
+<p><strong>Python: <code>predecessor_restore_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> inf</span><br><span class="line"></span><br><span class="line">distance = [<span class="number">0</span>, <span class="number">4</span>, <span class="number">7</span>, <span class="number">10</span>, <span class="number">8</span>, <span class="number">13</span>, <span class="number">17</span>, <span class="number">14</span>, <span class="number">24</span>]</span><br><span class="line">parent = [<span class="literal">None</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">7</span>]</span><br><span class="line">source, target = <span class="number">0</span>, <span class="number">8</span></span><br><span class="line">reverse_route = []</span><br><span class="line"><span class="keyword">if</span> distance[target] == inf:</span><br><span class="line">    route = []</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    v = target</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(parent)):</span><br><span class="line">        reverse_route.append(v)</span><br><span class="line">        <span class="keyword">if</span> v == source:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        v = parent[v]</span><br><span class="line">        <span class="keyword">if</span> v <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;前驱链提前中断&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> reverse_route[-<span class="number">1</span>] != source:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;前驱链未回到源点&quot;</span>)</span><br><span class="line">    route = reverse_route[::-<span class="number">1</span>]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;逆向回溯:&quot;</span>, reverse_route)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;正向路线:&quot;</span>, route)</span><br><span class="line"><span class="keyword">assert</span> route == [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">3</span>, <span class="number">7</span>, <span class="number">8</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>predecessor_restore_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">distance = [<span class="number">0</span> <span class="number">4</span> <span class="number">7</span> <span class="number">10</span> <span class="number">8</span> <span class="number">13</span> <span class="number">17</span> <span class="number">14</span> <span class="number">24</span>];</span><br><span class="line">parent = [<span class="number">0</span> <span class="number">1</span> <span class="number">2</span> <span class="number">5</span> <span class="number">3</span> <span class="number">3</span> <span class="number">4</span> <span class="number">4</span> <span class="number">8</span>];</span><br><span class="line">source = <span class="number">1</span>; target = <span class="number">9</span>; reverse_route = [];</span><br><span class="line"><span class="keyword">if</span> <span class="built_in">isinf</span>(distance(target))</span><br><span class="line">    route = [];</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    v = target;</span><br><span class="line">    <span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">numel</span>(parent)</span><br><span class="line">        reverse_route(<span class="keyword">end</span>+<span class="number">1</span>) = v;</span><br><span class="line">        <span class="keyword">if</span> v==source, <span class="keyword">break</span>; <span class="keyword">end</span></span><br><span class="line">        v = parent(v);</span><br><span class="line">        <span class="keyword">if</span> v==<span class="number">0</span>, error(<span class="string">&#x27;Predecessor chain ends before reaching source.&#x27;</span>); <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    assert(reverse_route(<span class="keyword">end</span>)==source);</span><br><span class="line">    route = <span class="built_in">fliplr</span>(reverse_route);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(reverse_route<span class="number">-1</span>); <span class="built_in">disp</span>(route<span class="number">-1</span>);</span><br><span class="line">assert(<span class="built_in">isequal</span>(route<span class="number">-1</span>,[<span class="number">0</span> <span class="number">1</span> <span class="number">2</span> <span class="number">4</span> <span class="number">3</span> <span class="number">7</span> <span class="number">8</span>]));</span><br></pre></td></tr></table></figure>
+<p>程序用给定最终表演示回溯, 并限制最多检查顶点数那么多步,
+以发现前驱链中断或无法回到源点的情况. 在一般计算中,
+距离和前驱必须来自同一次单源运行, 更换起点后应重新计算. 配套封装版的
+<code>restore_path</code> 完整源码见延伸阅读F.6.</p>
+<h3 id="回到边表核对结果">21.5.2 回到边表核对结果</h3>
+<p>恢复的路线为</p>
+<p><span class="math display">\[
+\boxed{0\to1\to2\to4\to3\to7\to8},
+\]</span></p>
+<p>逐条检查道路存在, 再将权值相加:</p>
+<p><span class="math display">\[
+L=4+3+1+2+4+10=\boxed{24}.
+\]</span></p>
+<p>按城市编号排列的最终距离列向量为</p>
+<p><span class="math display">\[
+\boldsymbol d=(0,4,7,10,8,13,17,14,24)^{\mathsf T}.
+\]</span></p>
+<p>本例0到8的最短路径唯一. 一般输入可能有多条并列最优路线;
+一个合法最优输出, 并不自动证明没有别的同样好的方案.</p>
+<h2 id="floyd的一轮更新究竟比较什么">21.6
+Floyd的一轮更新究竟比较什么?</h2>
+<h3 id="从直接代价矩阵开始">21.6.1 从直接代价矩阵开始</h3>
+<p>若需要任意两点之间的距离, 可以使用Floyd–Warshall算法.
+本节先看一个独立的三城市有向例子: <span
+class="math inline">\(0\to1\)</span> 代价4, <span
+class="math inline">\(1\to2\)</span> 代价3, <span
+class="math inline">\(0\to2\)</span> 代价10. 它只用于解释一轮递推,
+不替换九城市数据.</p>
+<p>按城市顺序0, 1, 2, 初始矩阵为</p>
+<p><span class="math display">\[
+W=\begin{bmatrix}
+0&amp;4&amp;10\\
++\infty&amp;0&amp;3\\
++\infty&amp;+\infty&amp;0
+\end{bmatrix}.
+\]</span></p>
+<p>对角线0表示留在原地不走边, 非对角线无穷表示没有直接边.
+本例允许城市0作为中间点时不会改进任何数值. 再允许城市1作为中间点,
+就发现0到2可由 <span class="math inline">\(0\to1\to2\)</span> 实现代价7,
+比直接代价10更小.</p>
+<h3 id="一次增加一个可用中间点">21.6.2 一次增加一个可用中间点</h3>
+<p>用 <span class="math inline">\(D^{(k)}_{ij}\)</span> 表示只允许城市
+<span class="math inline">\(0,1,\ldots,k-1\)</span>
+作为内部中间点时的最短代价, <span
+class="math inline">\(D^{(0)}=W\)</span>. 增加城市 <span
+class="math inline">\(k\)</span> 后, 比较原方案与经 <span
+class="math inline">\(k\)</span> 的方案:</p>
+<p><span class="math display">\[
+D^{(k+1)}_{ij}=\min\left\{D^{(k)}_{ij},\
+D^{(k)}_{ik}+D^{(k)}_{kj}\right\}.
+\]</span></p>
+<p>这里 <span class="math inline">\(k\)</span>
+表示本轮允许增加的中间城市, 不是路径必须恰好经过的道路条数. 更新0到2时,
+比较的是10和 <span class="math inline">\(4+3\)</span>. 若新方案更短,
+离开0的第一步变为去1, 同步保存下一跳.</p>
+<p><strong>Python: <code>floyd_phase_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> inf</span><br><span class="line"></span><br><span class="line"><span class="comment"># Separate three-city directed example, only for one DP phase.</span></span><br><span class="line">W = [[<span class="number">0</span>, <span class="number">4</span>, <span class="number">10</span>], [inf, <span class="number">0</span>, <span class="number">3</span>], [inf, inf, <span class="number">0</span>]]</span><br><span class="line">previous = [row.copy() <span class="keyword">for</span> row <span class="keyword">in</span> W]</span><br><span class="line">D = [row.copy() <span class="keyword">for</span> row <span class="keyword">in</span> W]</span><br><span class="line">next_hop = [[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>], [<span class="literal">None</span>, <span class="number">1</span>, <span class="number">2</span>], [<span class="literal">None</span>, <span class="literal">None</span>, <span class="number">2</span>]]</span><br><span class="line">previous_next = [row.copy() <span class="keyword">for</span> row <span class="keyword">in</span> next_hop]</span><br><span class="line">k = <span class="number">1</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">        candidate = previous[i][k] + previous[k][j]</span><br><span class="line">        <span class="keyword">if</span> candidate &lt; previous[i][j]:</span><br><span class="line">            D[i][j] = candidate</span><br><span class="line">            next_hop[i][j] = previous_next[i][k]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;允许城市 1 作为中间点后的矩阵:&quot;</span>, D)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;0 到 2 的下一跳:&quot;</span>, next_hop[<span class="number">0</span>][<span class="number">2</span>])</span><br><span class="line"><span class="keyword">assert</span> D[<span class="number">0</span>][<span class="number">2</span>] == <span class="number">7</span> <span class="keyword">and</span> next_hop[<span class="number">0</span>][<span class="number">2</span>] == <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>floyd_phase_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">W = [<span class="number">0</span> <span class="number">4</span> <span class="number">10</span>; <span class="built_in">inf</span> <span class="number">0</span> <span class="number">3</span>; <span class="built_in">inf</span> <span class="built_in">inf</span> <span class="number">0</span>];</span><br><span class="line">previous = W; D = W;</span><br><span class="line">next_hop = [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span>; <span class="number">0</span> <span class="number">2</span> <span class="number">3</span>; <span class="number">0</span> <span class="number">0</span> <span class="number">3</span>];</span><br><span class="line">previous_next = next_hop;</span><br><span class="line">k = <span class="number">1</span>+<span class="number">1</span>;</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="number">3</span></span><br><span class="line">        candidate = previous(<span class="built_in">i</span>,k)+previous(k,<span class="built_in">j</span>);</span><br><span class="line">        <span class="keyword">if</span> candidate&lt;previous(<span class="built_in">i</span>,<span class="built_in">j</span>)</span><br><span class="line">            D(<span class="built_in">i</span>,<span class="built_in">j</span>) = candidate;</span><br><span class="line">            next_hop(<span class="built_in">i</span>,<span class="built_in">j</span>) = previous_next(<span class="built_in">i</span>,k);</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(D); <span class="built_in">disp</span>(next_hop(<span class="number">1</span>,<span class="number">3</span>)<span class="number">-1</span>);</span><br><span class="line">assert(D(<span class="number">1</span>,<span class="number">3</span>)==<span class="number">7</span> &amp;&amp; next_hop(<span class="number">1</span>,<span class="number">3</span>)<span class="number">-1</span>==<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+<p><code>previous</code> 保存上一轮矩阵, <code>previous_next</code>
+保存上一轮下一跳. 本轮所有候选都从这些副本读取, 因而可直接与递推式对照.
+单轮程序只演示允许城市1这一阶段; 一般网络需要依次完成全部阶段.</p>
+<h2 id="把所有阶段接起来-保存距离与下一跳">21.7 把所有阶段接起来,
+保存距离与下一跳</h2>
+<h3 id="回到九城市图">21.7.1 回到九城市图</h3>
+<p>九城市图的初始矩阵仍用统一约定</p>
+<p><span class="math display">\[
+W_{ij}=\begin{cases}
+0,&amp;i=j,\\
+w(i,j),&amp;i\ne j\text{ 且有直接边},\\
++\infty,&amp;i\ne j\text{ 且无直接边}.
+\end{cases}
+\]</span></p>
+<p>若同一端点有多条边, 仅求最短加性代价时可保留最小边权.
+这种压缩会舍去边的独立身份, 在逐桥遍历任务中应保留原边编号.
+初始矩阵必须按约定从边表构造,
+不能把无穷直接传给按非零元素建边的接口.</p>
+<p>下面从同一份九城市数据初始化, 外层依次允许中间城市0至8,
+内层更新全部点对. 当前教学输入严格正权, 不存在负权圈.</p>
+<p><strong>Python: <code>floyd_loop_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> inf</span><br><span class="line"><span class="keyword">from</span> shortest_data <span class="keyword">import</span> N, EDGES</span><br><span class="line"></span><br><span class="line"><span class="comment"># Fixed lesson input has positive weights and no negative cycles.</span></span><br><span class="line">D = [[inf] * N <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(N)]</span><br><span class="line">next_hop = [[<span class="literal">None</span>] * N <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(N)]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">    D[i][i] = <span class="number">0</span></span><br><span class="line">    next_hop[i][i] = i</span><br><span class="line"><span class="keyword">for</span> u, v, weight <span class="keyword">in</span> EDGES:</span><br><span class="line">    <span class="keyword">if</span> weight &lt; D[u][v]:</span><br><span class="line">        D[u][v] = D[v][u] = weight</span><br><span class="line">        next_hop[u][v] = v</span><br><span class="line">        next_hop[v][u] = u</span><br><span class="line">phases = []</span><br><span class="line"><span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">    previous = [row.copy() <span class="keyword">for</span> row <span class="keyword">in</span> D]</span><br><span class="line">    previous_next = [row.copy() <span class="keyword">for</span> row <span class="keyword">in</span> next_hop]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">            candidate = previous[i][k] + previous[k][j]</span><br><span class="line">            <span class="keyword">if</span> candidate &lt; previous[i][j]:</span><br><span class="line">                D[i][j] = candidate</span><br><span class="line">                next_hop[i][j] = previous_next[i][k]</span><br><span class="line">    phases.append([row.copy() <span class="keyword">for</span> row <span class="keyword">in</span> D])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;城市 0 到全部城市的距离:&quot;</span>, D[<span class="number">0</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;城市 0 到城市 8 的下一跳:&quot;</span>, next_hop[<span class="number">0</span>][<span class="number">8</span>])</span><br><span class="line"><span class="keyword">assert</span> D[<span class="number">0</span>] == [<span class="number">0</span>, <span class="number">4</span>, <span class="number">7</span>, <span class="number">10</span>, <span class="number">8</span>, <span class="number">13</span>, <span class="number">17</span>, <span class="number">14</span>, <span class="number">24</span>]</span><br><span class="line"><span class="keyword">assert</span> next_hop[<span class="number">0</span>][<span class="number">8</span>] == <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>floyd_loop_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">E = shortest_data(); E(:,<span class="number">1</span>:<span class="number">2</span>) = E(:,<span class="number">1</span>:<span class="number">2</span>)+<span class="number">1</span>;</span><br><span class="line">n = <span class="number">9</span>; D = <span class="built_in">inf</span>(n); next_hop = <span class="built_in">zeros</span>(n);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:n</span><br><span class="line">    D(<span class="built_in">i</span>,<span class="built_in">i</span>) = <span class="number">0</span>; next_hop(<span class="built_in">i</span>,<span class="built_in">i</span>) = <span class="built_in">i</span>;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">for</span> edge_id = <span class="number">1</span>:<span class="built_in">size</span>(E,<span class="number">1</span>)</span><br><span class="line">    u = E(edge_id,<span class="number">1</span>); v = E(edge_id,<span class="number">2</span>); weight = E(edge_id,<span class="number">3</span>);</span><br><span class="line">    <span class="keyword">if</span> weight&lt;D(u,v)</span><br><span class="line">        D(u,v) = weight; D(v,u) = weight;</span><br><span class="line">        next_hop(u,v) = v; next_hop(v,u) = u;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">phases = cell(<span class="number">1</span>,n);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:n</span><br><span class="line">    previous = D; previous_next = next_hop;</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:n</span><br><span class="line">        <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:n</span><br><span class="line">            candidate = previous(<span class="built_in">i</span>,k)+previous(k,<span class="built_in">j</span>);</span><br><span class="line">            <span class="keyword">if</span> candidate&lt;previous(<span class="built_in">i</span>,<span class="built_in">j</span>)</span><br><span class="line">                D(<span class="built_in">i</span>,<span class="built_in">j</span>) = candidate;</span><br><span class="line">                next_hop(<span class="built_in">i</span>,<span class="built_in">j</span>) = previous_next(<span class="built_in">i</span>,k);</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    phases&#123;k&#125; = D;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(D(<span class="number">1</span>,:)); <span class="built_in">disp</span>(next_hop(<span class="number">1</span>,<span class="number">9</span>)<span class="number">-1</span>);</span><br><span class="line">assert(<span class="built_in">isequal</span>(D(<span class="number">1</span>,:),[<span class="number">0</span> <span class="number">4</span> <span class="number">7</span> <span class="number">10</span> <span class="number">8</span> <span class="number">13</span> <span class="number">17</span> <span class="number">14</span> <span class="number">24</span>]));</span><br><span class="line">assert(next_hop(<span class="number">1</span>,<span class="number">9</span>)<span class="number">-1</span>==<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+<p>最外层是中间点 <code>k</code>, 之后才是起点 <code>i</code> 与终点
+<code>j</code>. 随意交换最外层会破坏这里的阶段含义.
+本版为教学保留每轮副本与快照, 便于核对递推; 封装版采用原地更新,
+并检查负权圈, 完整实现与说明见延伸阅读F.8.</p>
+<p>最终距离矩阵如下. 它与直接道路矩阵不同, 例如初始 <span
+class="math inline">\(W_{08}=+\infty\)</span>, 最终 <span
+class="math inline">\(D_{08}=24\)</span>.</p>
+<p>表 21-7 全部点对的最短距离矩阵.</p>
+<div class="line-block"><span class="math inline">\(D\)</span> | 0 | 1 |
+2 | 3 | 4 | 5 | 6 | 7 | 8 |<br />
+: ---: | : ---: | : ---: | : ---: | : ---: | : ---: | : ---: | : ---: |
+: ---: | : ---: |<br />
+0 | 0 | 4 | 7 | 10 | 8 | 13 | 17 | 14 | 24 |<br />
+1 | 4 | 0 | 3 | 6 | 4 | 9 | 13 | 10 | 20 |<br />
+2 | 7 | 3 | 0 | 3 | 1 | 6 | 10 | 7 | 17 |<br />
+3 | 10 | 6 | 3 | 0 | 2 | 6 | 7 | 4 | 14 |<br />
+4 | 8 | 4 | 1 | 2 | 0 | 6 | 9 | 6 | 16 |<br />
+5 | 13 | 9 | 6 | 6 | 6 | 0 | 13 | 2 | 12 |<br />
+6 | 17 | 13 | 10 | 7 | 9 | 13 | 0 | 11 | 9 |<br />
+7 | 14 | 10 | 7 | 4 | 6 | 2 | 11 | 0 | 10 |<br />
+8 | 24 | 20 | 17 | 14 | 16 | 12 | 9 | 10 | 0 |</div>
+<h3 id="下一跳怎样还原路线">21.7.2 下一跳怎样还原路线</h3>
+<p><code>next_hop[i][j]</code> 保存从 <span
+class="math inline">\(i\)</span> 去往 <span
+class="math inline">\(j\)</span> 的当前最优路线中, 离开 <span
+class="math inline">\(i\)</span> 后首先到达的点. 经 <span
+class="math inline">\(k\)</span> 严格改进时,</p>
+<p><span class="math display">\[
+\operatorname{Next}[i][j]=\operatorname{Next}[i][k].
+\]</span></p>
+<p>它保存第一步, 不是任意中转点. 恢复时从当前位置查向目标的下一跳,
+再继续查. 对21.6节的三城市例子, 0到2的下一跳为1, 1到2的下一跳为2,
+因而得到 <span class="math inline">\(0\to1\to2\)</span>.</p>
+<p><strong>Python: <code>next_hop_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># The same separate three-city directed example as floyd_phase_step.</span></span><br><span class="line">next_hop = [[<span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>], [<span class="literal">None</span>, <span class="number">1</span>, <span class="number">2</span>], [<span class="literal">None</span>, <span class="literal">None</span>, <span class="number">2</span>]]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">restore_small</span>(<span class="params">source, target</span>):</span><br><span class="line">    <span class="keyword">if</span> next_hop[source][target] <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        <span class="keyword">return</span> []</span><br><span class="line">    route = [source]</span><br><span class="line">    <span class="keyword">while</span> route[-<span class="number">1</span>] != target:</span><br><span class="line">        v = next_hop[route[-<span class="number">1</span>]][target]</span><br><span class="line">        <span class="keyword">if</span> v <span class="keyword">is</span> <span class="literal">None</span> <span class="keyword">or</span> <span class="built_in">len</span>(route) &gt;= <span class="built_in">len</span>(next_hop):</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;下一跳不能构成有效路线&quot;</span>)</span><br><span class="line">        route.append(v)</span><br><span class="line">    <span class="keyword">return</span> route</span><br><span class="line"></span><br><span class="line">route = restore_small(<span class="number">0</span>, <span class="number">2</span>)</span><br><span class="line">unreachable = restore_small(<span class="number">2</span>, <span class="number">0</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;0 到 2 的路线:&quot;</span>, route)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;2 到 0 的路线:&quot;</span>, unreachable)</span><br><span class="line"><span class="keyword">assert</span> route == [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>] <span class="keyword">and</span> unreachable == []</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>next_hop_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">next_hop = [<span class="number">1</span> <span class="number">2</span> <span class="number">2</span>; <span class="number">0</span> <span class="number">2</span> <span class="number">3</span>; <span class="number">0</span> <span class="number">0</span> <span class="number">3</span>];</span><br><span class="line">queries = [<span class="number">0</span> <span class="number">2</span>; <span class="number">2</span> <span class="number">0</span>]; routes = cell(<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">size</span>(queries,<span class="number">1</span>)</span><br><span class="line">    source = queries(k,<span class="number">1</span>)+<span class="number">1</span>; target = queries(k,<span class="number">2</span>)+<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> next_hop(source,target)==<span class="number">0</span></span><br><span class="line">        route = [];</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        route = source;</span><br><span class="line">        <span class="keyword">while</span> route(<span class="keyword">end</span>)~=target</span><br><span class="line">            v = next_hop(route(<span class="keyword">end</span>),target);</span><br><span class="line">            assert(v&gt;<span class="number">0</span> &amp;&amp; <span class="built_in">numel</span>(route)&lt;<span class="built_in">size</span>(next_hop,<span class="number">1</span>));</span><br><span class="line">            route(<span class="keyword">end</span>+<span class="number">1</span>) = v;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    routes&#123;k&#125; = route<span class="number">-1</span>;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(routes);</span><br><span class="line">assert(<span class="built_in">isequal</span>(routes&#123;<span class="number">1</span>&#125;,[<span class="number">0</span> <span class="number">1</span> <span class="number">2</span>]) &amp;&amp; <span class="built_in">isempty</span>(routes&#123;<span class="number">2</span>&#125;));</span><br></pre></td></tr></table></figure>
+<p>该例2到0不可达, 返回空列表. 起点等于终点则返回仅含该点的列表.
+九城市图使用同一恢复逻辑, 封装后的 <code>restore_floyd_path</code>
+及完整双语言演示见延伸阅读F.8. 只保存距离矩阵, 无法直接读出中间城市顺序,
+所以需要另外保存路径信息.</p>
+<h2 id="用计算结果回答服务范围与道路关闭问题">21.8
+用计算结果回答服务范围与道路关闭问题</h2>
+<h3 id="服务范围应按网络距离筛选">21.8.1 服务范围应按网络距离筛选</h3>
+<p>服务站设在城市2, 要求最短代价不超过10. 先计算城市2到各点的最终距离,
+再筛选. 阈值包括等号, 因而代价恰为10的城市6也在范围内. 如要排除站点自身,
+另外写明 <span class="math inline">\(v\ne2\)</span>.</p>
+<p><strong>Python: <code>service_query_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> shortest_data <span class="keyword">import</span> N, EDGES</span><br><span class="line"><span class="keyword">from</span> dijkstra_scan <span class="keyword">import</span> dijkstra</span><br><span class="line"></span><br><span class="line">source = <span class="number">2</span></span><br><span class="line">distance, parent, _ = dijkstra(N, EDGES, source)</span><br><span class="line">radius = <span class="number">10</span></span><br><span class="line">nearby = [(v, distance[v]) <span class="keyword">for</span> v <span class="keyword">in</span> <span class="built_in">range</span>(N)</span><br><span class="line">          <span class="keyword">if</span> v != source <span class="keyword">and</span> distance[v] &lt;= radius]</span><br><span class="line">nearby.sort(key=<span class="keyword">lambda</span> item: (item[<span class="number">1</span>], item[<span class="number">0</span>]))</span><br><span class="line">including_station = [(source, <span class="number">0</span>)] + nearby</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;范围内其他城市, 按距离与编号排序:&quot;</span>, nearby)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;包含服务站:&quot;</span>, including_station)</span><br><span class="line"><span class="keyword">assert</span> nearby == [(<span class="number">4</span>, <span class="number">1</span>), (<span class="number">1</span>, <span class="number">3</span>), (<span class="number">3</span>, <span class="number">3</span>), (<span class="number">5</span>, <span class="number">6</span>), (<span class="number">0</span>, <span class="number">7</span>), (<span class="number">7</span>, <span class="number">7</span>), (<span class="number">6</span>, <span class="number">10</span>)]</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>service_query_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">E = shortest_data(); E(:,<span class="number">1</span>:<span class="number">2</span>) = E(:,<span class="number">1</span>:<span class="number">2</span>)+<span class="number">1</span>;</span><br><span class="line">source_city = <span class="number">2</span>; source = source_city+<span class="number">1</span>;</span><br><span class="line">[distance,parent] = dijkstra_scan(<span class="number">9</span>,E,source,<span class="built_in">false</span>,<span class="built_in">false</span>);</span><br><span class="line">radius = <span class="number">10</span>; nearby = <span class="built_in">zeros</span>(<span class="number">0</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">for</span> v = <span class="number">1</span>:<span class="number">9</span></span><br><span class="line">    <span class="keyword">if</span> v~=source &amp;&amp; distance(v)&lt;=radius</span><br><span class="line">        nearby(<span class="keyword">end</span>+<span class="number">1</span>,:) = [v<span class="number">-1</span>,distance(v)];</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">nearby = <span class="built_in">sortrows</span>(nearby,[<span class="number">2</span> <span class="number">1</span>]);</span><br><span class="line">including_station = [source_city,<span class="number">0</span>; nearby];</span><br><span class="line"><span class="built_in">disp</span>(nearby); <span class="built_in">disp</span>(including_station);</span><br><span class="line">assert(<span class="built_in">isequal</span>(nearby,[<span class="number">4</span> <span class="number">1</span>; <span class="number">1</span> <span class="number">3</span>; <span class="number">3</span> <span class="number">3</span>; <span class="number">5</span> <span class="number">6</span>; <span class="number">0</span> <span class="number">7</span>; <span class="number">7</span> <span class="number">7</span>; <span class="number">6</span> <span class="number">10</span>]));</span><br></pre></td></tr></table></figure>
+<p>结果按代价, 再按城市编号排序. 站点是否计入服务清单是业务约定,
+程序同时给出包含站点的版本. 阈值是网络代价,
+不能用示意图中的几何半径替代.</p>
+<p><img src="/images/ShortestPath/service_radius.png" style="width:100%"></p>
+<p>图 21-4 城市2的服务范围. 绿色为站点, 蓝色为其他代价不超过10的城市,
+灰色城市8超出范围. 节点旁的 <code>d</code>
+是从站点出发的最终最短代价.</p>
+<h3 id="道路关闭后重新优化">21.8.2 道路关闭后重新优化</h3>
+<p>关闭道路3—7, 应从可行边表中删除这条无向边, 再次计算.
+不能只在原路线里改一个数或随意替换一段, 就断言新方案最优.</p>
+<p><strong>Python: <code>closure_recompute_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> shortest_data <span class="keyword">import</span> N, EDGES</span><br><span class="line"><span class="keyword">from</span> dijkstra_scan <span class="keyword">import</span> dijkstra, restore_path</span><br><span class="line"></span><br><span class="line">closed = &#123;<span class="number">3</span>, <span class="number">7</span>&#125;</span><br><span class="line">remaining = [(u, v, w) <span class="keyword">for</span> u, v, w <span class="keyword">in</span> EDGES <span class="keyword">if</span> &#123;u, v&#125; != closed]</span><br><span class="line">original_distance, _, _ = dijkstra(N, EDGES, <span class="number">0</span>)</span><br><span class="line">distance, parent, _ = dijkstra(N, remaining, <span class="number">0</span>)</span><br><span class="line">route = restore_path(parent, distance, <span class="number">0</span>, <span class="number">8</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;原代价:&quot;</span>, original_distance[<span class="number">8</span>], <span class="string">&quot;关闭后代价:&quot;</span>, distance[<span class="number">8</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;新路线:&quot;</span>, route)</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">len</span>(remaining) == <span class="number">13</span> <span class="keyword">and</span> <span class="built_in">len</span>(EDGES) == <span class="number">14</span></span><br><span class="line"><span class="keyword">assert</span> original_distance[<span class="number">8</span>] == <span class="number">24</span> <span class="keyword">and</span> distance[<span class="number">8</span>] == <span class="number">25</span></span><br><span class="line"><span class="keyword">assert</span> route == [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">8</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>closure_recompute_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">E_city = shortest_data();</span><br><span class="line">closed = (E_city(:,<span class="number">1</span>)==<span class="number">3</span> &amp; E_city(:,<span class="number">2</span>)==<span class="number">7</span>) | ...</span><br><span class="line">         (E_city(:,<span class="number">1</span>)==<span class="number">7</span> &amp; E_city(:,<span class="number">2</span>)==<span class="number">3</span>);</span><br><span class="line">remaining = E_city(~closed,:);</span><br><span class="line">E = E_city; E(:,<span class="number">1</span>:<span class="number">2</span>) = E(:,<span class="number">1</span>:<span class="number">2</span>)+<span class="number">1</span>;</span><br><span class="line">[original_distance,~] = dijkstra_scan(<span class="number">9</span>,E,<span class="number">1</span>,<span class="built_in">false</span>,<span class="built_in">false</span>);</span><br><span class="line">remaining(:,<span class="number">1</span>:<span class="number">2</span>) = remaining(:,<span class="number">1</span>:<span class="number">2</span>)+<span class="number">1</span>;</span><br><span class="line">[distance,parent] = dijkstra_scan(<span class="number">9</span>,remaining,<span class="number">1</span>,<span class="built_in">false</span>,<span class="built_in">false</span>);</span><br><span class="line">route = restore_path(parent,distance,<span class="number">1</span>,<span class="number">9</span>)<span class="number">-1</span>;</span><br><span class="line"><span class="built_in">disp</span>([original_distance(<span class="number">9</span>),distance(<span class="number">9</span>)]); <span class="built_in">disp</span>(route);</span><br><span class="line">assert(<span class="built_in">size</span>(remaining,<span class="number">1</span>)==<span class="number">13</span> &amp;&amp; <span class="built_in">size</span>(E_city,<span class="number">1</span>)==<span class="number">14</span>);</span><br><span class="line">assert(original_distance(<span class="number">9</span>)==<span class="number">24</span> &amp;&amp; distance(<span class="number">9</span>)==<span class="number">25</span>);</span><br><span class="line">assert(<span class="built_in">isequal</span>(route,[<span class="number">0</span> <span class="number">1</span> <span class="number">2</span> <span class="number">5</span> <span class="number">7</span> <span class="number">8</span>]));</span><br></pre></td></tr></table></figure>
+<p>新代价为25, 路线是 <span
+class="math inline">\(0\to1\to2\to5\to7\to8\)</span>. 原始边表保持14条,
+用于新问题的边表有13条, 便于区分两次计算所依据的数据.</p>
+<h3 id="理解过程后-用成熟接口复核">21.8.3 理解过程后,
+用成熟接口复核</h3>
+<p>下例保留原有库函数演示. Python和MATLAB均读取相同道路表,
+节点映射与前文一致. 注意两个接口的返回顺序不同,
+MATLAB还可返回具体边索引, 用于回代图对象中的边权. [1, 2]</p>
+<p><strong>Python: <code>library_demo.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> networkx <span class="keyword">as</span> nx</span><br><span class="line"><span class="keyword">from</span> shortest_data <span class="keyword">import</span> N, EDGES</span><br><span class="line">G = nx.Graph()</span><br><span class="line">G.add_nodes_from(<span class="built_in">range</span>(N))</span><br><span class="line">G.add_weighted_edges_from(EDGES)</span><br><span class="line">length, path = nx.single_source_dijkstra(G, <span class="number">0</span>, target=<span class="number">8</span>, weight=<span class="string">&quot;weight&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Path:&quot;</span>, path, <span class="string">&quot;Length:&quot;</span>, length)</span><br><span class="line">distance = nx.single_source_dijkstra_path_length(G, <span class="number">2</span>, weight=<span class="string">&quot;weight&quot;</span>)</span><br><span class="line">nearby = <span class="built_in">sorted</span>((v, d) <span class="keyword">for</span> v, d <span class="keyword">in</span> distance.items() <span class="keyword">if</span> v != <span class="number">2</span> <span class="keyword">and</span> d &lt;= <span class="number">10</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Within range, sorted by city:&quot;</span>, nearby)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>library_demo.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">E=shortest_data();</span><br><span class="line">G=graph(E(:,<span class="number">1</span>)+<span class="number">1</span>,E(:,<span class="number">2</span>)+<span class="number">1</span>,E(:,<span class="number">3</span>),<span class="number">9</span>);</span><br><span class="line">[route,cost,edge_ids]=shortestpath(G,<span class="number">1</span>,<span class="number">9</span>,<span class="string">&#x27;Method&#x27;</span>,<span class="string">&#x27;positive&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;City route:&#x27;</span>); <span class="built_in">disp</span>(route<span class="number">-1</span>); <span class="built_in">disp</span>(cost);</span><br><span class="line">assert(cost==<span class="number">24</span> &amp;&amp; sum(G.Edges.Weight(edge_ids))==cost);</span><br><span class="line">D=distances(G,<span class="string">&#x27;Method&#x27;</span>,<span class="string">&#x27;positive&#x27;</span>);</span><br><span class="line">assert(<span class="built_in">isequal</span>(D(<span class="number">1</span>,:),[<span class="number">0</span>,<span class="number">4</span>,<span class="number">7</span>,<span class="number">10</span>,<span class="number">8</span>,<span class="number">13</span>,<span class="number">17</span>,<span class="number">14</span>,<span class="number">24</span>]));</span><br><span class="line">[nodes,d]=nearest(G,<span class="number">3</span>,<span class="number">10</span>,<span class="string">&#x27;Method&#x27;</span>,<span class="string">&#x27;positive&#x27;</span>);</span><br><span class="line">nearby=<span class="built_in">sortrows</span>([nodes(:)<span class="number">-1</span>,d(:)],[<span class="number">2</span>,<span class="number">1</span>]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Other cities and distances:&#x27;</span>); <span class="built_in">disp</span>(nearby);</span><br><span class="line">assert(<span class="built_in">isequal</span>(nearby,[<span class="number">4</span>,<span class="number">1</span>;<span class="number">1</span>,<span class="number">3</span>;<span class="number">3</span>,<span class="number">3</span>;<span class="number">5</span>,<span class="number">6</span>;<span class="number">0</span>,<span class="number">7</span>;<span class="number">7</span>,<span class="number">7</span>;<span class="number">6</span>,<span class="number">10</span>]));</span><br></pre></td></tr></table></figure>
+<p>Python的范围清单按城市编号展示, MATLAB这里按代价再按编号展示,
+集合与距离相同. MATLAB的 <code>nearest</code> 不包含源点,
+即使存在自环也如此; 业务需要时应自行补入. [3] <code>distances</code>
+返回距离矩阵, 其具体算法取决于方法参数,
+不能仅因返回矩阵就称它为Floyd实现. [4]</p>
+<h2 id="边权变化-算法条件也要重新检查">21.9 边权变化,
+算法条件也要重新检查</h2>
+<h3 id="负权边为什么会破坏dijkstra">21.9.1
+负权边为什么会破坏Dijkstra</h3>
+<p>另看有向图: <span class="math inline">\(0\to1\)</span> 代价2, <span
+class="math inline">\(0\to2\)</span> 代价5, <span
+class="math inline">\(2\to1\)</span> 代价-4.
+若机械地把最小候选2确定后不再修改, 就会错过 <span
+class="math inline">\(0\to2\to1\)</span>, 其代价为1. 这个图没有圈,
+却已说明非负条件不可省略.</p>
+<p>原有封装版Dijkstra会拒绝负权输入. Floyd可以处理有向负权边;
+检测到负权圈后, 本章封装实现报错, 拒绝返回整张距离矩阵.
+这是一种明确的程序约定: 某个负权圈实际只影响能从起点到达该圈,
+且又能由该圈到达终点的点对, 并非必然影响全图全部点对.</p>
+<p>若对某点对允许反复经过这样的负权圈, 总代价可以任意降低,
+因而不存在有限的最短代价. 无向负权边可以来回走出负代价闭游走, 也要处理.
+更完整的负权例子与验证见延伸阅读F.2, F.7, F.10.</p>
+<h3 id="零权边-孤立点和并列路线">21.9.2 零权边, 孤立点和并列路线</h3>
+<p>零权边表示真实存在且代价为0, 与没有边分开保存.
+它满足Dijkstra的非负条件. 孤立顶点应保留在顶点表中,
+最终不可达时报告无穷距离和空路径.</p>
+<p>多条路线可以总代价相同. 单个前驱或下一跳一般只保存其中一条.
+对严格正权且两段距离有限的本例, 若</p>
+<p><span class="math display">\[
+\delta(s,t)=\delta(s,k)+\delta(k,t),
+\]</span></p>
+<p>则 <span class="math inline">\(k\)</span> 位于至少一条最短路径上.
+还需比较其他最优路径, 才能判断它是否所有最短路径都必经.
+两条同为代价2的路线 <span class="math inline">\(s\to a\to t\)</span> 和
+<span class="math inline">\(s\to b\to t\)</span>
+就说明至少一条与每一条不同.</p>
+<p>若存在零权圈, 上式可能只给出经过 <span
+class="math inline">\(k\)</span> 的最短游走, 不保证有经过它的简单路径.
+例如 <span class="math inline">\(s\to a\)</span> 代价1, <span
+class="math inline">\(a\to k\)</span> 与 <span
+class="math inline">\(k\to a\)</span> 代价0, <span
+class="math inline">\(a\to t\)</span> 代价1, 经 <span
+class="math inline">\(k\)</span> 的游走仍长2, 却必须重复 <span
+class="math inline">\(a\)</span>.
+完整判定范围与九城市的成员表保留在延伸阅读F.9.</p>
+<h2 id="选方法-写清结果-再完成练习">21.10 选方法, 写清结果,
+再完成练习</h2>
+<h3 id="根据任务范围与输入选方法">21.10.1 根据任务范围与输入选方法</h3>
+<p>表 21-8 最短路径方法的条件与计算量.</p>
+<div class="line-block">方法 | 典型用途 | 关键条件与计算量 |<br />
+: --- | : --- | : --- |<br />
+BFS | 按最少边数求单源距离 | 每边代价相同的正数, 常用 <span
+class="math inline">\(O(n+m)\)</span> |<br />
+扫描版Dijkstra | 非负权单源或单对 | 时间 <span
+class="math inline">\(O(n^2+m)\)</span>, 基本存储 <span
+class="math inline">\(O(n+m)\)</span> |<br />
+堆版Dijkstra | 较大稀疏非负权图 | 常用简单图实现约 <span
+class="math inline">\(O((n+m)\log n)\)</span> |<br />
+Floyd–Warshall | 全部点对距离与路线 | 时间 <span
+class="math inline">\(O(n^3)\)</span>, 距离与下一跳为 <span
+class="math inline">\(O(n^2)\)</span> |<br />
+Bellman–Ford | 有向负权边的单源任务 | 时间 <span
+class="math inline">\(O(nm)\)</span>, 检测源点可达负权圈 |</div>
+<p>本章Dijkstra教学版保存逐轮状态, 最坏额外占用 <span
+class="math inline">\(O(n^2)\)</span> 空间.
+Floyd教学版保留全部矩阵快照时额外占用 <span
+class="math inline">\(O(n^3)\)</span> 空间,
+只保留当前矩阵与上一轮副本则为 <span
+class="math inline">\(O(n^2)\)</span>.
+延伸阅读中的封装Floyd不保存全部快照, 原地递推的基本空间为 <span
+class="math inline">\(O(n^2)\)</span>.
+计算量与教学记录开销需要分开说明.</p>
+<p>非负权稀疏图要计算全部点对时, 也可对不同起点重复运行Dijkstra.
+方法由任务, 图规模与权重条件共同决定.
+本章给定教学数据下的简洁循环便于理解, 配套封装函数提供输入检查,
+正式换数据时应核对方向, 端点范围, 单位, 有限性及负权条件.
+浮点数据须按实际尺度处理舍入和并列判断.</p>
+<p>结果报告应包含: 使用的道路数据与版本, 起终点或查询范围,
+最短代价和单位, 一条具体路线, 逐边回代, 算法条件及不可达或并列情况.
+实际交通限制应进入可行边集; 同时配送多个地点并决定访问次序,
+还需要进一步的车辆路径等模型.</p>
+<p>下一章讨论以最小总代价连接全部顶点. 那时优化对象是一组建设边,
+而本章优化的是两点之间的一条路线, 两种目标应分别建模.</p>
+<h3 id="练习">21.10.2 练习</h3>
+<ol type="1">
+<li>手算21.1节三条候选路径的代价. 为什么只比较这三条,
+尚不能证明总代价24已经最优?</li>
+<li>在21.3节处理城市1时, 写出到城市2的旧候选, 新候选与前驱变化.
+为什么第一次发现城市2时不能正式确定其代价?</li>
+<li>已确定0, 1后, 候选距离为 <span
+class="math inline">\(0,4,7,12,+\infty,+\infty,+\infty,+\infty,+\infty\)</span>.
+下一轮选哪座城市? 本轮会改变哪些距离和前驱?</li>
+<li>用最终前驱表恢复0到8的路线, 说明它为什么不同于确定顺序.
+若把城市3的前驱错误保留为1,
+恢复的路线与代价是否还能与最短距离24对应?</li>
+<li>对21.6节的三城市有向图,
+写出允许城市1作为中间点后的完整矩阵与0到2的下一跳.
+能否从城市2返回0?</li>
+<li>对四顶点有向图, 边为 <span class="math inline">\(0\to1\)</span>
+代价0, <span class="math inline">\(1\to2\)</span> 代价4, 顶点3孤立.
+写出从0到各点的最短距离, 到2和3的路径, 说明0边权与无边的区别.</li>
+<li>对21.9节的三点负权反例手算0到1的最短路径. 选择合适的封装算法,
+并说明存在负权边与存在负权圈是否等价.</li>
+<li>把城市2的服务范围阈值改为7, 按代价和编号列出其他城市.
+业务若要求包含站点, 应如何调整?</li>
+<li>删除道路3—7后, 重新计算0到8的路线与代价.
+为什么不能只在原答案里作一项局部替换就宣告最优?</li>
+<li>有两条同长最短路径 <span class="math inline">\(s\to a\to t\)</span>
+与 <span class="math inline">\(s\to b\to t\)</span>, 每条边权均为1.
+验证距离等式, 并说明它能判断至少一条路径成员, 还是所有最短路径的必经点.
+使用该等式前为什么还要排除不可达与零权圈等情形?</li>
+</ol>
+<p>参考解答见 <code>ExerciseHints.md</code>.
+延伸阅读F.11保留原有7题及对应完整解答.</p>
+<p>配套阅读与实验: <a
+href="../reading/21/Index.md">本章资料索引</a>.</p>
+<h2 id="参考资料">参考资料</h2>
+<p>[1] NetworkX官方文档: <a
+target="_blank" rel="noopener" href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.shortest_paths.weighted.single_source_dijkstra.html">single_source_dijkstra</a>.
+[2] MathWorks官方文档: <a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/matlab/ref/graph.shortestpath.html">shortestpath</a>.
+[3] MathWorks官方文档: <a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/matlab/ref/graph.nearest.html">nearest</a>.
+[4] MathWorks官方文档: <a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/matlab/ref/graph.distances.html">distances</a>.</p>
+<p><code>ShortestPathFurtherReading.md</code> 完整保留原有11节内容,
+包括原始9行初始矩阵, 完整距离与松弛说明表, Dijkstra证明,
+全部通用函数与演示, Floyd原地递推说明, 路径成员判定,
+边界情形和原有7道练习. 可按需要查阅对应节次.</p>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

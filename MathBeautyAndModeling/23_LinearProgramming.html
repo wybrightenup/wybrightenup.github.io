@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="第 23 章 线性规划: 在资源约束下优化配置 志愿者工时有限, 两个服务点怎样分配讲解时间, 才能服务更多人次? 第 22 章按网络结构选择建设边, 本章把更一般的资源限制写成等式, 不等式与变量边界, 交给线性规划求解器. 本章先从可以取小数的服务时长开始. 先检查一套方案, 再把逐项相加写成矩阵, 然后调用求解器, 读取状态并回代原模型. 最后比较连续变量与整数场数, 为下一章">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/MathBeautyAndModeling/23_LinearProgramming.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="第 23 章 线性规划: 在资源约束下优化配置 志愿者工时有限, 两个服务点怎样分配讲解时间, 才能服务更多人次? 第 22 章按网络结构选择建设边, 本章把更一般的资源限制写成等式, 不等式与变量边界, 交给线性规划求解器. 本章先从可以取小数的服务时长开始. 先检查一套方案, 再把逐项相加写成矩阵, 然后调用求解器, 读取状态并回代原模型. 最后比较连续变量与整数场数, 为下一章">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/LinearProgramming/LP-Hours.png">
+<meta property="og:image" content="http://example.com/images/LinearProgramming/LP-1.png">
+<meta property="og:image" content="http://example.com/images/LinearProgramming/LP-2.png">
+<meta property="og:image" content="http://example.com/images/LinearProgramming/LP-3.png">
+<meta property="article:published_time" content="2026-11-02T02:53:08.989Z">
+<meta property="article:modified_time" content="2026-10-31T09:20:36.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/LinearProgramming/LP-Hours.png">
+
+
+<link rel="canonical" href="http://example.com/MathBeautyAndModeling/23_LinearProgramming">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/MathBeautyAndModeling/23_LinearProgramming.html","path":"MathBeautyAndModeling/23_LinearProgramming.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-23-%E7%AB%A0-%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92-%E5%9C%A8%E8%B5%84%E6%BA%90%E7%BA%A6%E6%9D%9F%E4%B8%8B%E4%BC%98%E5%8C%96%E9%85%8D%E7%BD%AE"><span class="nav-number">1.</span> <span class="nav-text">第 23 章 线性规划:
+在资源约束下优化配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%B3%E5%AE%9A%E4%BB%80%E4%B9%88-%E4%BC%98%E5%8C%96%E4%BB%80%E4%B9%88-%E5%BF%85%E9%A1%BB%E6%BB%A1%E8%B6%B3%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.</span> <span class="nav-text">23.1 决定什么, 优化什么,
+必须满足什么?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E6%9C%8D%E5%8A%A1%E7%82%B9%E7%9A%84%E6%97%B6%E9%95%BF%E5%AE%89%E6%8E%92"><span class="nav-number">1.1.1.</span> <span class="nav-text">23.1.1 两个服务点的时长安排</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E6%89%8B%E5%B7%A5%E6%A3%80%E6%9F%A5%E5%87%A0%E4%B8%AA%E5%80%99%E9%80%89"><span class="nav-number">1.1.2.</span> <span class="nav-text">23.1.2 先手工检查几个候选</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%8E%E6%A0%B7%E5%88%A4%E6%96%AD%E7%BA%BF%E6%80%A7-%E6%80%8E%E6%A0%B7%E8%A1%A8%E8%BE%BE%E6%A0%87%E5%87%86%E6%B1%82%E8%A7%A3%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.</span> <span class="nav-text">23.2 怎样判断线性,
+怎样表达标准求解模型?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E6%95%B0%E5%B7%B2%E7%9F%A5-%E5%8F%98%E9%87%8F%E5%8F%AA%E4%BB%A5%E4%B8%80%E6%AC%A1%E9%A1%B9%E5%87%BA%E7%8E%B0"><span class="nav-number">1.2.1.</span> <span class="nav-text">23.2.1 系数已知,
+变量只以一次项出现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E7%A7%8Dlinprog%E9%83%BD%E6%9C%80%E5%B0%8F%E5%8C%96%E4%B8%80%E4%B8%AA%E7%BA%BF%E6%80%A7%E7%9B%AE%E6%A0%87%E5%87%BD%E6%95%B0"><span class="nav-number">1.2.2.</span> <span class="nav-text">23.2.2
+两种linprog都最小化一个线性目标函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AF%8F%E8%A1%8C%E4%B8%80%E6%9D%A1%E7%BA%A6%E6%9D%9F-%E6%AF%8F%E5%88%97%E4%B8%80%E4%B8%AA%E5%8F%98%E9%87%8F"><span class="nav-number">1.3.</span> <span class="nav-text">23.3 每行一条约束, 每列一个变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E6%8A%8A%E4%B8%80%E8%A1%8C%E4%B9%98%E6%B3%95%E6%89%8B%E7%AE%97%E5%87%BA%E6%9D%A5"><span class="nav-number">1.3.1.</span> <span class="nav-text">23.3.1 先把一行乘法手算出来</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%84%E8%A3%85%E5%9B%9B%E7%B1%BB%E6%95%B0%E6%8D%AE%E5%B9%B6%E6%A3%80%E6%9F%A5%E7%BB%B4%E5%BA%A6"><span class="nav-number">1.3.2.</span> <span class="nav-text">23.3.2 组装四类数据并检查维度</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AC%E6%8D%A2%E6%96%B9%E5%90%91%E4%B8%8E%E8%BE%B9%E7%95%8C%E6%97%B6-%E4%BF%9D%E6%8C%81%E6%A8%A1%E5%9E%8B%E5%90%AB%E4%B9%89"><span class="nav-number">1.4.</span> <span class="nav-text">23.4 转换方向与边界时,
+保持模型含义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%A4%A7%E5%8C%96%E6%95%B4%E4%BD%93%E5%8F%98%E5%8F%B7-%E8%BF%94%E5%9B%9E%E5%90%8E%E8%BF%98%E5%8E%9F%E7%9B%AE%E6%A0%87"><span class="nav-number">1.4.1.</span> <span class="nav-text">23.4.1 最大化整体变号,
+返回后还原目标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%A7%E4%BA%8E%E7%AD%89%E4%BA%8E%E7%BA%A6%E6%9D%9F%E4%B8%A4%E8%BE%B9%E5%90%8C%E6%97%B6%E5%8F%98%E5%8F%B7"><span class="nav-number">1.4.2.</span> <span class="nav-text">23.4.2 大于等于约束两边同时变号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%B9%E7%95%8C%E9%BB%98%E8%AE%A4%E5%80%BC%E4%BC%9A%E6%94%B9%E5%8F%98%E5%8F%AF%E8%A1%8C%E5%9F%9F"><span class="nav-number">1.4.3.</span> <span class="nav-text">23.4.3 边界默认值会改变可行域</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E6%B1%82%E8%A7%A3%E5%99%A8-%E5%86%8D%E8%AF%BB%E5%8F%96%E8%A7%A3%E4%B8%8E%E5%8E%9F%E7%9B%AE%E6%A0%87"><span class="nav-number">1.5.</span> <span class="nav-text">23.5 调用求解器,
+再读取解与原目标</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E4%B8%80%E4%B8%AA%E6%9C%8D%E5%8A%A1%E6%97%B6%E9%95%BF%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%AE%8C%E6%95%B4%E5%8F%8C%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.5.1.</span> <span class="nav-text">23.5.1
+同一个服务时长模型的完整双语言实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9E%E4%BB%A3%E7%BA%A6%E6%9D%9F-%E8%BF%98%E8%A6%81%E8%AF%B4%E6%98%8E%E4%B8%BA%E4%BB%80%E4%B9%88%E6%9C%80%E4%BC%98"><span class="nav-number">1.6.</span> <span class="nav-text">23.6 回代约束,
+还要说明为什么最优</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%90%E9%A1%B9%E8%AE%A1%E7%AE%97%E5%89%A9%E4%BD%99%E9%87%8F%E4%B8%8E%E8%AF%AF%E5%B7%AE"><span class="nav-number">1.6.1.</span> <span class="nav-text">23.6.1 逐项计算剩余量与误差</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E4%BB%A3%E6%95%B0%E7%BB%99%E6%9C%8D%E5%8A%A1%E6%97%B6%E9%95%BF%E4%BE%8B%E5%AD%90%E4%BD%9C%E7%8B%AC%E7%AB%8B%E8%AF%81%E6%98%8E"><span class="nav-number">1.6.2.</span> <span class="nav-text">23.6.2
+用代数给服务时长例子作独立证明</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E4%BA%8C%E7%BB%B4%E5%9B%BE%E5%BD%A2%E7%90%86%E8%A7%A3%E5%8F%AF%E8%A1%8C%E5%9F%9F%E4%B8%8E%E9%A1%B6%E7%82%B9"><span class="nav-number">1.7.</span> <span class="nav-text">23.7 用二维图形理解可行域与顶点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%A6%E7%9C%8B%E4%B8%A4%E7%B1%BB%E6%B4%BB%E5%8A%A8%E7%9A%84%E8%BF%9E%E7%BB%AD%E6%9D%BE%E5%BC%9B"><span class="nav-number">1.7.1.</span> <span class="nav-text">23.7.1 另看两类活动的连续松弛</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%81%94%E7%AB%8B%E8%BE%B9%E7%95%8C-%E7%AD%9B%E5%87%BA%E5%8F%AF%E8%A1%8C%E9%A1%B6%E7%82%B9"><span class="nav-number">1.7.2.</span> <span class="nav-text">23.7.2 联立边界, 筛出可行顶点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%98%E5%8C%96%E8%BE%93%E5%85%A5%E6%97%B6-%E5%85%88%E7%9C%8B%E7%8A%B6%E6%80%81%E5%86%8D%E8%A7%A3%E9%87%8A%E8%B5%84%E6%BA%90%E4%BB%B7%E5%80%BC"><span class="nav-number">1.8.</span> <span class="nav-text">23.8 变化输入时,
+先看状态再解释资源价值</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%8F%AF%E8%A1%8C-%E6%97%A0%E7%95%8C%E4%B8%8E%E6%AD%A3%E5%B8%B8%E6%9C%80%E4%BC%98%E5%88%86%E5%88%AB%E6%8A%A5%E5%91%8A"><span class="nav-number">1.8.1.</span> <span class="nav-text">23.8.1 不可行,
+无界与正常最优分别报告</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%9D%E6%8C%81%E6%80%BB%E6%97%B6%E9%95%BF%E4%B8%8E%E8%BE%B9%E7%95%8C-%E6%94%B9%E5%8F%98%E5%8F%AF%E7%94%A8%E5%B7%A5%E6%97%B6"><span class="nav-number">1.8.2.</span> <span class="nav-text">23.8.2 保持总时长与边界,
+改变可用工时</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9E%E7%BB%AD%E8%A7%A3%E4%B8%8D%E8%83%BD%E7%9B%B4%E6%8E%A5%E4%BB%A3%E6%9B%BF%E6%95%B4%E6%95%B0%E6%89%A7%E8%A1%8C%E6%96%B9%E6%A1%88"><span class="nav-number">1.9.</span> <span class="nav-text">23.9
+连续解不能直接代替整数执行方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%88%8D%E5%85%A5%E5%8F%AF%E8%83%BD%E8%BF%9D%E5%8F%8D%E7%BA%A6%E6%9D%9F"><span class="nav-number">1.9.1.</span> <span class="nav-text">23.9.1 舍入可能违反约束</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B5%84%E6%BA%90%E6%9B%B2%E7%BA%BF%E4%B9%9F%E5%8F%97%E5%8F%98%E9%87%8F%E7%B1%BB%E5%9E%8B%E5%BD%B1%E5%93%8D"><span class="nav-number">1.9.2.</span> <span class="nav-text">23.9.2 资源曲线也受变量类型影响</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%89%E5%9B%BA%E5%AE%9A%E9%A1%BA%E5%BA%8F%E5%BB%BA%E6%A8%A1-%E6%8C%89%E5%AD%A6%E4%B9%A0%E8%BF%9B%E5%BA%A6%E6%8B%93%E5%B1%95"><span class="nav-number">1.10.</span> <span class="nav-text">23.10 按固定顺序建模,
+按学习进度拓展</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E9%A2%98%E6%84%8F%E5%88%B0%E7%BB%93%E6%9E%9C%E7%9A%84%E5%85%AD%E6%AD%A5"><span class="nav-number">1.10.1.</span> <span class="nav-text">23.10.1 从题意到结果的六步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E6%8B%93%E5%B1%95%E6%9D%90%E6%96%99%E7%9A%84%E9%98%85%E8%AF%BB%E4%BD%8D%E7%BD%AE"><span class="nav-number">1.10.2.</span> <span class="nav-text">23.10.2 完整拓展材料的阅读位置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.10.3.</span> <span class="nav-text">23.10.3 练习</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.11.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="第-23-章-线性规划-在资源约束下优化配置">第 23 章 线性规划:
+在资源约束下优化配置</h1>
+<p>志愿者工时有限, 两个服务点怎样分配讲解时间, 才能服务更多人次? 第 22
+章按网络结构选择建设边, 本章把更一般的资源限制写成等式,
+不等式与变量边界, 交给线性规划求解器.</p>
+<p>本章先从可以取小数的服务时长开始. 先检查一套方案,
+再把逐项相加写成矩阵, 然后调用求解器, 读取状态并回代原模型.
+最后比较连续变量与整数场数, 为下一章作准备. 原有活动安排, 资金配置,
+最低手续费和收益风险权衡的全部模型与程序完整保留在延伸阅读中.</p>
+<h2 id="决定什么-优化什么-必须满足什么">23.1 决定什么, 优化什么,
+必须满足什么?</h2>
+<h3 id="两个服务点的时长安排">23.1.1 两个服务点的时长安排</h3>
+<p>社区科普团队在A, B两处提供讲解服务. A点每小时预计服务8人次,
+需要2人时; B点每小时预计服务10人次, 需要3人时. 两处服务时长合计6小时,
+可用志愿者工时不超过16.5人时. A点最多服务4小时, B点最多5小时.</p>
+<p>表 23-1 两个服务点的数据与时长上限.</p>
+<div class="line-block">服务点 | 每小时预计人次 | 每小时所需志愿者工时 |
+服务时长上限 |<br />
+: ---: | : ---: | : ---: | : ---: |<br />
+A | 8 | 2人时 | 4小时 |<br />
+B | 10 | 3人时 | 5小时 |</div>
+<p>本例数据为教学设定, 假设需求充足, 每小时服务量和工时消耗固定,
+可以逐项相加. "人时"是人数乘服务时间, 例如两名志愿者各工作两小时共4人时.
+"人次"按参与次数计数, 预计服务量采用线性估计.</p>
+<p>设 <span class="math inline">\(x_1,x_2\)</span> 分别是A,
+B点的服务时长, 单位为小时. 这是要决定的量, 称为决策变量. 时长可以取小数.
+总预计服务人次为 <span class="math inline">\(z=8x_1+10x_2\)</span>,
+希望它最大. 完整模型为</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\max\quad z=8x_1+10x_2,\\
+&amp;\mathrm{s.t.}\quad\begin{cases}
+2x_1+3x_2\leqslant16.5,\\
+x_1+x_2=6,\\
+0\leqslant x_1\leqslant4,\\
+0\leqslant x_2\leqslant5.
+\end{cases}
+\end{aligned}
+\]</span></p>
+<p>等式保证总时长恰为6, 工时不等式限制资源, 上下界限制各点时长.
+这些条件必须同时满足. 把工时用满, 并不能代替检查总时长和边界.</p>
+<h3 id="先手工检查几个候选">23.1.2 先手工检查几个候选</h3>
+<p>例如安排 <span class="math inline">\((1.5,4.5)\)</span> 小时,
+总时长为6, 用工 <span
+class="math inline">\(2\times1.5+3\times4.5=16.5\)</span> 人时, 预计服务
+<span class="math inline">\(8\times1.5+10\times4.5=57\)</span> 人次,
+且各点边界满足. 安排 <span class="math inline">\((1,5)\)</span>
+虽有更高预计人次58, 却用17人时, 超过预算.</p>
+<p><strong>Python: <code>hours_candidate_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">candidates = [(<span class="number">1</span>, <span class="number">5</span>), (<span class="number">1.5</span>, <span class="number">4.5</span>), (<span class="number">2</span>, <span class="number">4</span>), (<span class="number">4</span>, <span class="number">2</span>), (<span class="number">0</span>, <span class="number">6</span>)]</span><br><span class="line">records = []</span><br><span class="line">tol = <span class="number">1e-9</span></span><br><span class="line"><span class="keyword">for</span> x1, x2 <span class="keyword">in</span> candidates:</span><br><span class="line">    hours = x1 + x2</span><br><span class="line">    labor = <span class="number">2</span> * x1 + <span class="number">3</span> * x2</span><br><span class="line">    benefit = <span class="number">8</span> * x1 + <span class="number">10</span> * x2</span><br><span class="line">    feasible = (<span class="built_in">abs</span>(hours - <span class="number">6</span>) &lt;= tol <span class="keyword">and</span> labor &lt;= <span class="number">16.5</span> + tol</span><br><span class="line">                <span class="keyword">and</span> <span class="number">0</span> &lt;= x1 &lt;= <span class="number">4</span> <span class="keyword">and</span> <span class="number">0</span> &lt;= x2 &lt;= <span class="number">5</span>)</span><br><span class="line">    records.append(<span class="built_in">dict</span>(x=(x1, x2), hours=hours, labor=labor,</span><br><span class="line">                        benefit=benefit, feasible=feasible))</span><br><span class="line">    <span class="built_in">print</span>(records[-<span class="number">1</span>])</span><br><span class="line"><span class="keyword">assert</span> [r[<span class="string">&quot;feasible&quot;</span>] <span class="keyword">for</span> r <span class="keyword">in</span> records] == [<span class="literal">False</span>, <span class="literal">True</span>, <span class="literal">True</span>, <span class="literal">True</span>, <span class="literal">False</span>]</span><br><span class="line"><span class="keyword">assert</span> [r[<span class="string">&quot;benefit&quot;</span>] <span class="keyword">for</span> r <span class="keyword">in</span> records] == [<span class="number">58</span>, <span class="number">57</span>, <span class="number">56</span>, <span class="number">52</span>, <span class="number">60</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>hours_candidate_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">candidates=[<span class="number">1</span> <span class="number">5</span>; <span class="number">1.5</span> <span class="number">4.5</span>; <span class="number">2</span> <span class="number">4</span>; <span class="number">4</span> <span class="number">2</span>; <span class="number">0</span> <span class="number">6</span>];</span><br><span class="line">feasible=<span class="built_in">false</span>(<span class="number">1</span>,<span class="built_in">size</span>(candidates,<span class="number">1</span>)); benefits=<span class="built_in">zeros</span>(<span class="number">1</span>,<span class="built_in">size</span>(candidates,<span class="number">1</span>));</span><br><span class="line">tol=<span class="number">1e-9</span>;</span><br><span class="line"><span class="keyword">for</span> k=<span class="number">1</span>:<span class="built_in">size</span>(candidates,<span class="number">1</span>)</span><br><span class="line">    x1=candidates(k,<span class="number">1</span>); x2=candidates(k,<span class="number">2</span>);</span><br><span class="line">    hours=x1+x2; labor=<span class="number">2</span>*x1+<span class="number">3</span>*x2; benefits(k)=<span class="number">8</span>*x1+<span class="number">10</span>*x2;</span><br><span class="line">    feasible(k)=<span class="built_in">abs</span>(hours<span class="number">-6</span>)&lt;=tol &amp;&amp; labor&lt;=<span class="number">16.5</span>+tol &amp;&amp; ...</span><br><span class="line">        x1&gt;=<span class="number">0</span> &amp;&amp; x1&lt;=<span class="number">4</span> &amp;&amp; x2&gt;=<span class="number">0</span> &amp;&amp; x2&lt;=<span class="number">5</span>;</span><br><span class="line">    <span class="built_in">disp</span>([x1,x2,hours,labor,benefits(k),feasible(k)]);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">assert(<span class="built_in">isequal</span>(feasible,logical([<span class="number">0</span> <span class="number">1</span> <span class="number">1</span> <span class="number">1</span> <span class="number">0</span>])));</span><br><span class="line">assert(<span class="built_in">isequal</span>(benefits,[<span class="number">58</span> <span class="number">57</span> <span class="number">56</span> <span class="number">52</span> <span class="number">60</span>]));</span><br></pre></td></tr></table></figure>
+<p>满足全部约束的方案称为可行方案. 在全部可行方案中目标值最好的,
+才是最优方案. 本程序只检查给定候选; 证明57为最优,
+还需排除其他全部可行安排, 后面将用代数和求解器分别说明.</p>
+<h2 id="怎样判断线性-怎样表达标准求解模型">23.2 怎样判断线性,
+怎样表达标准求解模型?</h2>
+<h3 id="系数已知-变量只以一次项出现">23.2.1 系数已知,
+变量只以一次项出现</h3>
+<p><span class="math inline">\(8x_1+10x_2\)</span> 与 <span
+class="math inline">\(2x_1+3x_2\)</span> 都是线性的, 系数是已知常数. 当
+<span class="math inline">\(x_1,x_2\)</span> 都是决策变量时, <span
+class="math inline">\(x_1x_2\)</span>, <span
+class="math inline">\(x_1^2\)</span>, <span
+class="math inline">\(1/x_1\)</span>, <span
+class="math inline">\(\mathrm{e}^{x_1}\)</span> 都不是线性表达式.
+若某个量已给定为常数, 它乘变量仍是常系数的一次项.</p>
+<p>目标中加一个常数, 如 <span
+class="math inline">\(8x_1+10x_2+100\)</span>, 不改变最优时长,
+但目标值会增加100. 带常数项严格称为仿射表达式. 开办费用,
+折扣或数量改变引起的效率变化, 需要根据规则进一步建模.</p>
+<p>连续线性规划允许变量在边界内取实数. 人数,
+车辆数和完整活动场数等离散量, 需要另外规定整数条件.
+本章先把连续模型的表达与检验学清楚.</p>
+<h3 id="两种linprog都最小化一个线性目标函数">23.2.2
+两种linprog都最小化一个线性目标函数</h3>
+<p>"最小化"是优化方向, 目标函数是被优化的函数. SciPy和MATLAB的
+<code>linprog</code> 都按最小化方向接受系数,
+最大化任务需要把目标系数整体取相反数. [1, 2]</p>
+<p><strong>Python接口的数学形式</strong></p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\min_x\quad c^{\mathsf T}x,\\
+&amp;\mathrm{s.t.}\quad\begin{cases}
+A_{\mathrm{ub}}x\leqslant b_{\mathrm{ub}},\\
+A_{\mathrm{eq}}x=b_{\mathrm{eq}},\\
+l\leqslant x\leqslant u.
+\end{cases}
+\end{aligned}
+\]</span></p>
+<p><strong>MATLAB接口的数学形式</strong></p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\min_x\quad f^{\mathsf T}x,\\
+&amp;\mathrm{s.t.}\quad\begin{cases}
+Ax\leqslant b,\\
+A_{\mathrm{eq}}x=b_{\mathrm{eq}},\\
+l\leqslant x\leqslant u.
+\end{cases}
+\end{aligned}
+\]</span></p>
+<p>本章MATLAB采用 <code>b</code> 为普通数值向量的基本调用, 不等式按
+<span class="math inline">\(Ax\leqslant b\)</span> 填写.
+两个模型的结构相同, 参数名称与边界传法不同.</p>
+<p>表 23-2 线性规划的双语言参数映射.</p>
+<div class="line-block">数学任务 | Python参数 | MATLAB参数 |<br />
+: --- | : --- | : --- |<br />
+最小化目标的系数 | <code>c</code> | <code>f</code> |<br />
+不等式左端及右端 | <code>A_ub</code>, <code>b_ub</code> |
+<code>A</code>, <code>b</code> |<br />
+等式左端及右端 | <code>A_eq</code>, <code>b_eq</code> |
+<code>Aeq</code>, <code>beq</code> |<br />
+变量下界及上界 | <code>bounds</code>中的成对边界 | <code>lb</code>,
+<code>ub</code> |<br />
+解与最小目标值 | <code>result.x</code>, <code>result.fun</code> |
+<code>x</code>, <code>fval</code> |</div>
+<p>等式直接放入等式参数, 不需要拆成两个不等式. 没有该类约束时,
+Python可省略相应参数或用 <code>None</code>, MATLAB用 <code>[]</code>.
+所有数据须遵循同一变量顺序.</p>
+<h2 id="每行一条约束-每列一个变量">23.3 每行一条约束, 每列一个变量</h2>
+<h3 id="先把一行乘法手算出来">23.3.1 先把一行乘法手算出来</h3>
+<p>固定变量顺序为A点时长, B点时长, 写成列向量</p>
+<p><span class="math display">\[
+x=(x_1,x_2)^{\mathsf T}.
+\]</span></p>
+<p>工时一行系数为 <span class="math inline">\((2,3)\)</span>, 与 <span
+class="math inline">\(x\)</span> 相乘就是 <span
+class="math inline">\(2x_1+3x_2\)</span>. 总时长一行系数为 <span
+class="math inline">\((1,1)\)</span>, 与 <span
+class="math inline">\(x\)</span> 相乘就是 <span
+class="math inline">\(x_1+x_2\)</span>. 先按原来的加法核对,
+再看矩阵运算.</p>
+<p><strong>Python: <code>constraint_dot_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">x = [<span class="number">1.5</span>, <span class="number">4.5</span>]</span><br><span class="line">labor_row = [<span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line">hours_row = [<span class="number">1</span>, <span class="number">1</span>]</span><br><span class="line">benefit_row = [<span class="number">8</span>, <span class="number">10</span>]</span><br><span class="line">labor_terms = [labor_row[j] * x[j] <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>)]</span><br><span class="line">labor = <span class="built_in">sum</span>(labor_terms)</span><br><span class="line">hours = <span class="built_in">sum</span>(hours_row[j] * x[j] <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>))</span><br><span class="line">benefit = <span class="built_in">sum</span>(benefit_row[j] * x[j] <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;工时逐项乘积与合计:&quot;</span>, labor_terms, labor)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;总服务时长:&quot;</span>, hours, <span class="string">&quot;预计人次:&quot;</span>, benefit)</span><br><span class="line"><span class="keyword">assert</span> labor == <span class="number">16.5</span> <span class="keyword">and</span> hours == <span class="number">6</span> <span class="keyword">and</span> benefit == <span class="number">57</span></span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>constraint_dot_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">x=[<span class="number">1.5</span>,<span class="number">4.5</span>].&#x27;; labor_row=[<span class="number">2</span>,<span class="number">3</span>]; hours_row=[<span class="number">1</span>,<span class="number">1</span>]; benefit_row=[<span class="number">8</span>,<span class="number">10</span>];</span><br><span class="line">labor_terms=labor_row.*x.&#x27;;</span><br><span class="line">labor=labor_row*x; hours=hours_row*x; benefit=benefit_row*x;</span><br><span class="line"><span class="built_in">disp</span>(labor_terms); <span class="built_in">disp</span>([labor,hours,benefit]);</span><br><span class="line">assert(labor==<span class="number">16.5</span> &amp;&amp; hours==<span class="number">6</span> &amp;&amp; benefit==<span class="number">57</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="组装四类数据并检查维度">23.3.2 组装四类数据并检查维度</h3>
+<p>对服务时长模型, 最大化系数取相反数后为</p>
+<p><span class="math display">\[
+c=f=(-8,-10)^{\mathsf T},\quad
+A_{\mathrm{ub}}=A=\begin{pmatrix}2&amp;3\end{pmatrix},\quad
+b_{\mathrm{ub}}=b=(16.5)^{\mathsf T},
+\]</span></p>
+<p><span class="math display">\[
+A_{\mathrm{eq}}=\begin{pmatrix}1&amp;1\end{pmatrix},\quad
+b_{\mathrm{eq}}=(6)^{\mathsf T},\quad
+l=(0,0)^{\mathsf T},\quad u=(4,5)^{\mathsf T}.
+\]</span></p>
+<p>这里有2个变量, 1条工时不等式和1条时长等式. 两个系数矩阵都是 <span
+class="math inline">\(1\times2\)</span>, 右端分别只有1个数.
+第一列始终对应A, 第二列始终对应B.</p>
+<p><strong>Python: <code>matrix_data_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">benefit = np.array([<span class="number">8.0</span>, <span class="number">10.0</span>])</span><br><span class="line">c = -benefit</span><br><span class="line">A_ub = np.array([[<span class="number">2.0</span>, <span class="number">3.0</span>]])</span><br><span class="line">b_ub = np.array([<span class="number">16.5</span>])</span><br><span class="line">A_eq = np.array([[<span class="number">1.0</span>, <span class="number">1.0</span>]])</span><br><span class="line">b_eq = np.array([<span class="number">6.0</span>])</span><br><span class="line">lower = np.array([<span class="number">0.0</span>, <span class="number">0.0</span>])</span><br><span class="line">upper = np.array([<span class="number">4.0</span>, <span class="number">5.0</span>])</span><br><span class="line">bounds = <span class="built_in">list</span>(<span class="built_in">zip</span>(lower, upper))</span><br><span class="line">x = np.array([<span class="number">1.5</span>, <span class="number">4.5</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最小化系数:&quot;</span>, c)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;不等式矩阵与等式矩阵的形状:&quot;</span>, A_ub.shape, A_eq.shape)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;左右端:&quot;</span>, A_ub @ x, b_ub, A_eq @ x, b_eq)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最小化目标值:&quot;</span>, c @ x)</span><br><span class="line"><span class="keyword">assert</span> A_ub.shape == A_eq.shape == (<span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line"><span class="keyword">assert</span> c.shape == lower.shape == upper.shape == (<span class="number">2</span>,)</span><br><span class="line"><span class="keyword">assert</span> c @ x == -<span class="number">57</span></span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>matrix_data_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">benefit=[<span class="number">8</span>,<span class="number">10</span>].&#x27;; f=-benefit;</span><br><span class="line">A=[<span class="number">2</span>,<span class="number">3</span>]; b=<span class="number">16.5</span>; Aeq=[<span class="number">1</span>,<span class="number">1</span>]; beq=<span class="number">6</span>;</span><br><span class="line">lb=[<span class="number">0</span>,<span class="number">0</span>].&#x27;; ub=[<span class="number">4</span>,<span class="number">5</span>].&#x27;; x=[<span class="number">1.5</span>,<span class="number">4.5</span>].&#x27;;</span><br><span class="line"><span class="built_in">disp</span>(f); <span class="built_in">disp</span>(<span class="built_in">size</span>(A)); <span class="built_in">disp</span>(<span class="built_in">size</span>(Aeq));</span><br><span class="line"><span class="built_in">disp</span>([A*x,b,Aeq*x,beq]); <span class="built_in">disp</span>(f.&#x27;*x);</span><br><span class="line">assert(<span class="built_in">isequal</span>(<span class="built_in">size</span>(A),[<span class="number">1</span> <span class="number">2</span>]) &amp;&amp; <span class="built_in">isequal</span>(<span class="built_in">size</span>(Aeq),[<span class="number">1</span> <span class="number">2</span>]));</span><br><span class="line">assert(<span class="built_in">isequal</span>(<span class="built_in">size</span>(f),[<span class="number">2</span> <span class="number">1</span>]) &amp;&amp; <span class="built_in">isequal</span>(<span class="built_in">size</span>(lb),[<span class="number">2</span> <span class="number">1</span>]));</span><br><span class="line">assert(f.&#x27;*x==<span class="number">-57</span>);</span><br></pre></td></tr></table></figure>
+<p>数学上使用列向量, SciPy接口的目标系数和右端数据使用一维数组, 形状如
+<code>(2,)</code>, <code>(1,)</code>; 即使只有一条约束,
+系数矩阵也仍是二维, 如 <code>[[2,3]]</code>. MATLAB用 <code>.'</code>
+将行向量转为列向量. 矩阵宽度必须等于变量数量,
+右端长度必须等于矩阵行数.</p>
+<h2 id="转换方向与边界时-保持模型含义">23.4 转换方向与边界时,
+保持模型含义</h2>
+<h3 id="最大化整体变号-返回后还原目标">23.4.1 最大化整体变号,
+返回后还原目标</h3>
+<p>原目标 <span class="math inline">\(z=8x_1+10x_2\)</span> 最大, 等价于
+<span class="math inline">\(-8x_1-10x_2\)</span> 最小. 因而传入负系数,
+成功后读取的最小值为-57时, 原题最大值是57. 若目标另含常数100,
+应在恢复原目标值时补上100.</p>
+<h3 id="大于等于约束两边同时变号">23.4.2 大于等于约束两边同时变号</h3>
+<p>作为独立代数例子, <span
+class="math inline">\(2x_1+3x_2\geqslant7\)</span> 等价于 <span
+class="math inline">\(-2x_1-3x_2\leqslant-7\)</span>.
+系数与右端同时变号, 可行点集合才保持一致.</p>
+<p><strong>Python: <code>inequality_flip_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Separate algebra example: 2*x1 + 3*x2 &gt;= 7.</span></span><br><span class="line">points = [(<span class="number">1</span>, <span class="number">1</span>), (<span class="number">1</span>, <span class="number">2</span>), (<span class="number">0</span>, <span class="number">3</span>), (<span class="number">2</span>, <span class="number">0</span>)]</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> x1, x2 <span class="keyword">in</span> points:</span><br><span class="line">    original_lhs = <span class="number">2</span> * x1 + <span class="number">3</span> * x2</span><br><span class="line">    converted_lhs = -<span class="number">2</span> * x1 - <span class="number">3</span> * x2</span><br><span class="line">    original_ok = original_lhs &gt;= <span class="number">7</span></span><br><span class="line">    converted_ok = converted_lhs &lt;= -<span class="number">7</span></span><br><span class="line">    records.append((original_ok, converted_ok))</span><br><span class="line">    <span class="built_in">print</span>((x1, x2), original_lhs, converted_lhs, original_ok, converted_ok)</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">all</span>(left == right <span class="keyword">for</span> left, right <span class="keyword">in</span> records)</span><br><span class="line"><span class="keyword">assert</span> [left <span class="keyword">for</span> left, right <span class="keyword">in</span> records] == [<span class="literal">False</span>, <span class="literal">True</span>, <span class="literal">True</span>, <span class="literal">False</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>inequality_flip_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">points=[<span class="number">1</span> <span class="number">1</span>; <span class="number">1</span> <span class="number">2</span>; <span class="number">0</span> <span class="number">3</span>; <span class="number">2</span> <span class="number">0</span>];</span><br><span class="line">original_ok=<span class="built_in">false</span>(<span class="number">1</span>,<span class="number">4</span>); converted_ok=<span class="built_in">false</span>(<span class="number">1</span>,<span class="number">4</span>);</span><br><span class="line"><span class="keyword">for</span> k=<span class="number">1</span>:<span class="built_in">size</span>(points,<span class="number">1</span>)</span><br><span class="line">    x=points(k,:).&#x27;;</span><br><span class="line">    original_lhs=[<span class="number">2</span>,<span class="number">3</span>]*x; converted_lhs=[<span class="number">-2</span>,<span class="number">-3</span>]*x;</span><br><span class="line">    original_ok(k)=original_lhs&gt;=<span class="number">7</span>;</span><br><span class="line">    converted_ok(k)=converted_lhs&lt;=<span class="number">-7</span>;</span><br><span class="line">    <span class="built_in">disp</span>([x.&#x27;,original_lhs,converted_lhs,original_ok(k),converted_ok(k)]);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">assert(<span class="built_in">isequal</span>(original_ok,converted_ok));</span><br><span class="line">assert(<span class="built_in">isequal</span>(original_ok,logical([<span class="number">0</span> <span class="number">1</span> <span class="number">1</span> <span class="number">0</span>])));</span><br></pre></td></tr></table></figure>
+<p>仅把不等号方向换掉, 或只变左边, 都会得到另一个条件.
+变换后可用几个具体点核验, 但一般等价性来自两边同乘-1的代数规则.</p>
+<h3 id="边界默认值会改变可行域">23.4.3 边界默认值会改变可行域</h3>
+<p>SciPy的 <code>linprog</code> 默认变量非负; MATLAB的
+<code>linprog</code> 不自动补非负条件. 非负变量都应显式设置下界0.
+无正负限制时, SciPy使用 <code>(None,None)</code>,
+MATLAB使用没有下界/上界的相应设置, 或显式 <code>-Inf</code>,
+<code>Inf</code>. [1, 2]</p>
+<p>下面是独立一变量例子: 在 <span class="math inline">\(-2\leqslant
+x\leqslant3\)</span> 中最小化 <span class="math inline">\(x\)</span>.
+真正最优为-2. 若额外加上 <span
+class="math inline">\(x\geqslant0\)</span>, 最优就变为0.</p>
+<p><strong>Python: <code>bounds_effect_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linprog</span><br><span class="line"></span><br><span class="line"><span class="comment"># min x subject to -2 &lt;= x &lt;= 3, represented by two inequalities.</span></span><br><span class="line">A = [[-<span class="number">1.0</span>], [<span class="number">1.0</span>]]</span><br><span class="line">b = [<span class="number">2.0</span>, <span class="number">3.0</span>]</span><br><span class="line">default = linprog([<span class="number">1.0</span>], A_ub=A, b_ub=b, method=<span class="string">&quot;highs&quot;</span>)</span><br><span class="line">free = linprog([<span class="number">1.0</span>], A_ub=A, b_ub=b, bounds=(<span class="literal">None</span>, <span class="literal">None</span>), method=<span class="string">&quot;highs&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> default.success <span class="keyword">or</span> <span class="keyword">not</span> free.success:</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(<span class="string">&quot;没有确认两个模型的最优结果&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;SciPy默认非负边界:&quot;</span>, default.x, default.fun)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;显式取消默认非负边界:&quot;</span>, free.x, free.fun)</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">abs</span>(default.x[<span class="number">0</span>]) &lt; <span class="number">1e-8</span></span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">abs</span>(free.x[<span class="number">0</span>] + <span class="number">2</span>) &lt; <span class="number">1e-8</span></span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>bounds_effect_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">A=[<span class="number">-1</span>;<span class="number">1</span>]; b=[<span class="number">2</span>,<span class="number">3</span>].&#x27;;</span><br><span class="line">options=optimoptions(<span class="string">&#x27;linprog&#x27;</span>,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;none&#x27;</span>);</span><br><span class="line">[xFree,fFree,flagFree]=linprog(<span class="number">1</span>,A,b,[],[],[],[],options);</span><br><span class="line">[xNonnegative,fNonnegative,flagNonnegative]=linprog(<span class="number">1</span>,A,b,[],[],<span class="number">0</span>,[],options);</span><br><span class="line"><span class="keyword">if</span> flagFree~=<span class="number">1</span> || flagNonnegative~=<span class="number">1</span>, error(<span class="string">&#x27;Optimality not confirmed.&#x27;</span>); <span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>([xFree,fFree]); <span class="built_in">disp</span>([xNonnegative,fNonnegative]);</span><br><span class="line">assert(<span class="built_in">abs</span>(xFree+<span class="number">2</span>)&lt;<span class="number">1e-8</span> &amp;&amp; <span class="built_in">abs</span>(xNonnegative)&lt;<span class="number">1e-8</span>);</span><br></pre></td></tr></table></figure>
+<p>两段程序展示相同数学数据下的边界差异.
+Python显式取消默认非负边界后得到-2; MATLAB不给边界即为-2,
+再加下界0得到0. 选择上下界依据变量实际含义, 不依赖跨软件猜测默认值.</p>
+<h2 id="调用求解器-再读取解与原目标">23.5 调用求解器,
+再读取解与原目标</h2>
+<h3 id="同一个服务时长模型的完整双语言实现">23.5.1
+同一个服务时长模型的完整双语言实现</h3>
+<p>下面给出服务时长模型的完整程序. 它先组装数据, 调用
+<code>linprog</code>, 检查是否确认最优, 然后回代. Python使用
+<code>method="highs"</code>; MATLAB使用Optimization Toolbox.</p>
+<p><strong>Python: <code>service_hours.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linprog</span><br><span class="line"></span><br><span class="line"><span class="comment"># 变量顺序：服务点A的时长、服务点B的时长。</span></span><br><span class="line">benefit = np.array([<span class="number">8.0</span>, <span class="number">10.0</span>])</span><br><span class="line">c = -benefit                    <span class="comment"># 最大化转为最小化。</span></span><br><span class="line">A_ub = np.array([[<span class="number">2.0</span>, <span class="number">3.0</span>]])</span><br><span class="line">b_ub = np.array([<span class="number">16.5</span>])</span><br><span class="line">A_eq = np.array([[<span class="number">1.0</span>, <span class="number">1.0</span>]])</span><br><span class="line">b_eq = np.array([<span class="number">6.0</span>])</span><br><span class="line">bounds = [(<span class="number">0.0</span>, <span class="number">4.0</span>), (<span class="number">0.0</span>, <span class="number">5.0</span>)]</span><br><span class="line"></span><br><span class="line">result = linprog(c, A_ub=A_ub, b_ub=b_ub,</span><br><span class="line">                 A_eq=A_eq, b_eq=b_eq,</span><br><span class="line">                 bounds=bounds, method=<span class="string">&quot;highs&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> result.success:</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(result.message)</span><br><span class="line"></span><br><span class="line">x = result.x</span><br><span class="line">tol = <span class="number">1e-6</span></span><br><span class="line"><span class="keyword">assert</span> np.<span class="built_in">all</span>(A_ub @ x &lt;= b_ub + tol)</span><br><span class="line"><span class="keyword">assert</span> np.<span class="built_in">all</span>(np.<span class="built_in">abs</span>(A_eq @ x - b_eq) &lt;= tol)</span><br><span class="line"><span class="keyword">assert</span> np.<span class="built_in">all</span>(x &gt;= -tol) <span class="keyword">and</span> np.<span class="built_in">all</span>(x &lt;= np.array([<span class="number">4.0</span>, <span class="number">5.0</span>]) + tol)</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">abs</span>(benefit @ x + result.fun) &lt;= tol</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;服务时长（小时）：&quot;</span>, x)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;预计最大服务人次：&quot;</span>, -result.fun)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>service_hours.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line"><span class="comment">% 变量顺序：服务点A的时长、服务点B的时长。</span></span><br><span class="line">benefit = [<span class="number">8</span>,<span class="number">10</span>].&#x27;;</span><br><span class="line">f = -benefit;                  <span class="comment">% 最大化转为最小化。</span></span><br><span class="line">A = [<span class="number">2</span>,<span class="number">3</span>];</span><br><span class="line">b = <span class="number">16.5</span>;</span><br><span class="line">Aeq = [<span class="number">1</span>,<span class="number">1</span>];</span><br><span class="line">beq = <span class="number">6</span>;</span><br><span class="line">lb = [<span class="number">0</span>,<span class="number">0</span>].&#x27;;</span><br><span class="line">ub = [<span class="number">4</span>,<span class="number">5</span>].&#x27;;</span><br><span class="line">options = optimoptions(<span class="string">&#x27;linprog&#x27;</span>,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;none&#x27;</span>);</span><br><span class="line"></span><br><span class="line">[x,fval,exitflag,output] = linprog(f,A,b,Aeq,beq,lb,ub,options);</span><br><span class="line"><span class="keyword">if</span> exitflag ~= <span class="number">1</span></span><br><span class="line">    error(<span class="string">&#x27;未确认最优解：%s&#x27;</span>,output.message);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">tol = <span class="number">1e-6</span>;</span><br><span class="line">assert(all(A*x &lt;= b+tol));</span><br><span class="line">assert(all(<span class="built_in">abs</span>(Aeq*x-beq) &lt;= tol));</span><br><span class="line">assert(all(x &gt;= lb-tol) &amp;&amp; all(x &lt;= ub+tol));</span><br><span class="line">assert(<span class="built_in">abs</span>(benefit.&#x27;*x+fval) &lt;= tol);</span><br><span class="line">fprintf(<span class="string">&#x27;服务时长（小时）：A=%.2f，B=%.2f\n&#x27;</span>,x(<span class="number">1</span>),x(<span class="number">2</span>));</span><br><span class="line">fprintf(<span class="string">&#x27;预计最大服务人次：%.2f\n&#x27;</span>,-fval);</span><br></pre></td></tr></table></figure>
+<p>得到</p>
+<p><span class="math display">\[
+x^*=(1.5,4.5)^{\mathsf T},\qquad z^*=57.
+\]</span></p>
+<p>这表示A点1.5小时, B点4.5小时. 原题求最大预计服务人次,
+所以需要把最小化接口的负目标值取相反数. 数组顺序仍是输入时的A, B,
+不是按时长大小重新排序.</p>
+<p><img src="/images/LinearProgramming/LP-Hours.png" style="width:100%"></p>
+<p>图 23-1 服务时长的可行线段与工时变化. 左图绿色线段同时满足总时长6,
+工时16.5与各点上下界, 橙色为最优点; 红叉方案用17人时而不可行.
+右图保持其他条件不变, 工时低于14时不可行, 从14到17时服务量增加,
+此后受B点时长上界限制进入58人次的平台. 右图的重算见23.8节.</p>
+<h2 id="回代约束-还要说明为什么最优">23.6 回代约束,
+还要说明为什么最优</h2>
+<h3 id="逐项计算剩余量与误差">23.6.1 逐项计算剩余量与误差</h3>
+<p>对不等式 <span class="math inline">\(Ax\leqslant b\)</span>, 松弛量为
+<span class="math inline">\(s=b-Ax\)</span>. 当它表示资源上限时,
+正松弛量表示还有资源剩余. 等式可以检查 <span
+class="math inline">\(A_{\mathrm{eq}}x-b_{\mathrm{eq}}\)</span>
+是否接近0; 变量边界分别检查 <span class="math inline">\(x-l\)</span> 与
+<span class="math inline">\(u-x\)</span>.</p>
+<p><strong>Python: <code>residual_check_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">A_ub = np.array([[<span class="number">2.0</span>, <span class="number">3.0</span>]])</span><br><span class="line">b_ub = np.array([<span class="number">16.5</span>])</span><br><span class="line">A_eq = np.array([[<span class="number">1.0</span>, <span class="number">1.0</span>]])</span><br><span class="line">b_eq = np.array([<span class="number">6.0</span>])</span><br><span class="line">lower = np.array([<span class="number">0.0</span>, <span class="number">0.0</span>])</span><br><span class="line">upper = np.array([<span class="number">4.0</span>, <span class="number">5.0</span>])</span><br><span class="line">benefit = np.array([<span class="number">8.0</span>, <span class="number">10.0</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">audit</span>(<span class="params">x</span>):</span><br><span class="line">    slack = b_ub - A_ub @ x</span><br><span class="line">    equality_error = A_eq @ x - b_eq</span><br><span class="line">    lower_gap, upper_gap = x - lower, upper - x</span><br><span class="line">    tol = <span class="number">1e-8</span></span><br><span class="line">    feasible = <span class="built_in">bool</span>(np.<span class="built_in">all</span>(slack &gt;= -tol) <span class="keyword">and</span> np.<span class="built_in">all</span>(np.<span class="built_in">abs</span>(equality_error) &lt;= tol)</span><br><span class="line">                    <span class="keyword">and</span> np.<span class="built_in">all</span>(lower_gap &gt;= -tol) <span class="keyword">and</span> np.<span class="built_in">all</span>(upper_gap &gt;= -tol))</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">dict</span>(slack=slack.tolist(), equality_error=equality_error.tolist(),</span><br><span class="line">                lower_gap=lower_gap.tolist(), upper_gap=upper_gap.tolist(),</span><br><span class="line">                benefit=<span class="built_in">float</span>(benefit @ x), feasible=feasible)</span><br><span class="line"></span><br><span class="line">good = audit(np.array([<span class="number">1.5</span>, <span class="number">4.5</span>]))</span><br><span class="line">bad = audit(np.array([<span class="number">1.0</span>, <span class="number">5.0</span>]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;方案(1.5,4.5)的回代:&quot;</span>, good)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;方案(1,5)的回代:&quot;</span>, bad)</span><br><span class="line">solver_fun = -<span class="number">57.0</span></span><br><span class="line"><span class="keyword">assert</span> good[<span class="string">&quot;feasible&quot;</span>] <span class="keyword">and</span> <span class="built_in">abs</span>(good[<span class="string">&quot;benefit&quot;</span>] + solver_fun) &lt; <span class="number">1e-8</span></span><br><span class="line"><span class="keyword">assert</span> <span class="keyword">not</span> bad[<span class="string">&quot;feasible&quot;</span>] <span class="keyword">and</span> bad[<span class="string">&quot;slack&quot;</span>] == [-<span class="number">0.5</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>residual_check_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">A=[<span class="number">2</span>,<span class="number">3</span>]; b=<span class="number">16.5</span>; Aeq=[<span class="number">1</span>,<span class="number">1</span>]; beq=<span class="number">6</span>;</span><br><span class="line">lb=[<span class="number">0</span>,<span class="number">0</span>].&#x27;; ub=[<span class="number">4</span>,<span class="number">5</span>].&#x27;; benefit=[<span class="number">8</span>,<span class="number">10</span>].&#x27;;</span><br><span class="line">points=[<span class="number">1.5</span> <span class="number">4.5</span>; <span class="number">1</span> <span class="number">5</span>]; feasible=<span class="built_in">false</span>(<span class="number">1</span>,<span class="number">2</span>); values=<span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">for</span> k=<span class="number">1</span>:<span class="built_in">size</span>(points,<span class="number">1</span>)</span><br><span class="line">    x=points(k,:).&#x27;; slack=b-A*x; equality_error=Aeq*x-beq;</span><br><span class="line">    lower_gap=x-lb; upper_gap=ub-x; tol=<span class="number">1e-8</span>;</span><br><span class="line">    feasible(k)=all(slack&gt;=-tol) &amp;&amp; all(<span class="built_in">abs</span>(equality_error)&lt;=tol) &amp;&amp; ...</span><br><span class="line">        all(lower_gap&gt;=-tol) &amp;&amp; all(upper_gap&gt;=-tol);</span><br><span class="line">    values(k)=benefit.&#x27;*x;</span><br><span class="line">    <span class="built_in">disp</span>(slack); <span class="built_in">disp</span>(equality_error); <span class="built_in">disp</span>([lower_gap,upper_gap]);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">solver_fun=<span class="number">-57</span>;</span><br><span class="line">assert(feasible(<span class="number">1</span>) &amp;&amp; <span class="built_in">abs</span>(values(<span class="number">1</span>)+solver_fun)&lt;<span class="number">1e-8</span>);</span><br><span class="line">assert(~feasible(<span class="number">2</span>) &amp;&amp; b-A*points(<span class="number">2</span>,:).&#x27;==<span class="number">-0.5</span>);</span><br></pre></td></tr></table></figure>
+<p>最优时长的工时松弛为0, 等式误差为0, 两个下界距离为1.5, 4.5,
+两个上界距离为2.5, 0.5. 方案 <span class="math inline">\((1,5)\)</span>
+的工时松弛为-0.5, 表明超用资源. 数值程序使用容差判断,
+避免把浮点舍入误差误判成模型违约.</p>
+<p>松弛为0称为紧约束, 但紧约束本身不能证明方案最优,
+也不自动说明增加该资源一定有效. 返回的目标还应与原题表达式独立核对,
+本例检查 <span
+class="math inline">\(8x_1+10x_2=-\mathrm{fun}\)</span>.</p>
+<h3 id="用代数给服务时长例子作独立证明">23.6.2
+用代数给服务时长例子作独立证明</h3>
+<p>由 <span class="math inline">\(x_1+x_2=6\)</span> 得 <span
+class="math inline">\(x_2=6-x_1\)</span>. 工时限制变为</p>
+<p><span class="math display">\[
+2x_1+3(6-x_1)\leqslant16.5
+\quad\Longrightarrow\quad x_1\geqslant1.5.
+\]</span></p>
+<p>目标变为 <span class="math inline">\(z=60-2x_1\)</span>,
+因而任意可行方案都有 <span class="math inline">\(z\leqslant57\)</span>.
+取 <span class="math inline">\(x_1=1.5,x_2=4.5\)</span> 时全部条件满足,
+恰好达到上界57, 所以最优. 目标随 <span
+class="math inline">\(x_1\)</span> 严格下降, 也说明此例最优解唯一.</p>
+<p>求解器状态, 可行性回代和独立最优性理由各有作用. 一个满足限制的候选,
+仍可能有更好的可行替代; 只有打印出数字, 尚未说明这些层次.</p>
+<h2 id="用二维图形理解可行域与顶点">23.7 用二维图形理解可行域与顶点</h2>
+<h3 id="另看两类活动的连续松弛">23.7.1 另看两类活动的连续松弛</h3>
+<p>为画出二维区域, 考虑活动类型A, B, 每场预计服务20, 30人次, 使用4,
+8人时. 总场数最多20, 工时预算100. 本节暂允许活动场数连续取值,
+用于理解几何与松弛模型, 整数执行条件在23.9节讨论.</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\max\quad 20x_1+30x_2,\\
+&amp;\mathrm{s.t.}\quad\begin{cases}
+4x_1+8x_2\leqslant100,\\
+x_1+x_2\leqslant20,\\
+x_1,x_2\geqslant0.
+\end{cases}
+\end{aligned}
+\]</span></p>
+<p>每条不等式确定半平面, 同时满足全部条件的点组成可行域.
+与服务时长例子的等式可行线段不同, 当前模型的可行域是二维多边形.</p>
+<p><img src="/images/LinearProgramming/LP-1.png" style="width:100%"></p>
+<p>图 23-2 两活动连续模型的可行域与目标等值线. 虚线上的点具有相同目标值,
+平移到最后接触可行域时达到最优.</p>
+<h3 id="联立边界-筛出可行顶点">23.7.2 联立边界, 筛出可行顶点</h3>
+<p>将两条边界联立, 得到候选交点; 再逐条检查全部约束, 剔除不可行交点.
+无法唯一相交的平行边界不产生这类候选. 对当前模型得到四个可行顶点:</p>
+<p>表 23-3 二维连续例子的可行顶点.</p>
+<div class="line-block">顶点 | 原目标值 |<br />
+: ---: | : ---: |<br />
+<span class="math inline">\((0,0)\)</span> | 0 |<br />
+<span class="math inline">\((20,0)\)</span> | 400 |<br />
+<span class="math inline">\((15,5)\)</span> | 450 |<br />
+<span class="math inline">\((0,12.5)\)</span> | 375 |</div>
+<p><strong>Python: <code>vertex_candidates_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> itertools <span class="keyword">import</span> combinations</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># Continuous two-activity relaxation, separate from the service-hours model.</span></span><br><span class="line">A = np.array([[<span class="number">4.0</span>, <span class="number">8.0</span>], [<span class="number">1.0</span>, <span class="number">1.0</span>], [-<span class="number">1.0</span>, <span class="number">0.0</span>], [<span class="number">0.0</span>, -<span class="number">1.0</span>]])</span><br><span class="line">b = np.array([<span class="number">100.0</span>, <span class="number">20.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>])</span><br><span class="line">benefit = np.array([<span class="number">20.0</span>, <span class="number">30.0</span>])</span><br><span class="line">vertices = []</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> i, j <span class="keyword">in</span> combinations(<span class="built_in">range</span>(<span class="built_in">len</span>(b)), <span class="number">2</span>):</span><br><span class="line">    rows = A[[i, j]]</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">abs</span>(np.linalg.det(rows)) &lt;= <span class="number">1e-12</span>:</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    x = np.linalg.solve(rows, b[[i, j]])</span><br><span class="line">    feasible = <span class="built_in">bool</span>(np.<span class="built_in">all</span>(A @ x &lt;= b + <span class="number">1e-8</span>))</span><br><span class="line">    records.append(<span class="built_in">dict</span>(rows=(i, j), x=x.tolist(), feasible=feasible))</span><br><span class="line">    <span class="keyword">if</span> feasible <span class="keyword">and</span> <span class="keyword">not</span> <span class="built_in">any</span>(np.allclose(x, v) <span class="keyword">for</span> v <span class="keyword">in</span> vertices):</span><br><span class="line">        vertices.append(x)</span><br><span class="line">best = <span class="built_in">max</span>(vertices, key=<span class="keyword">lambda</span> x: benefit @ x)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;可行顶点及目标值:&quot;</span>, [(v.tolist(), <span class="built_in">float</span>(benefit @ v)) <span class="keyword">for</span> v <span class="keyword">in</span> vertices])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最优顶点:&quot;</span>, best, <span class="string">&quot;目标值:&quot;</span>, benefit @ best)</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">len</span>(vertices) == <span class="number">4</span></span><br><span class="line"><span class="keyword">assert</span> np.allclose(best, [<span class="number">15</span>, <span class="number">5</span>]) <span class="keyword">and</span> <span class="built_in">abs</span>(benefit @ best - <span class="number">450</span>) &lt; <span class="number">1e-8</span></span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>vertex_candidates_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">A=[<span class="number">4</span> <span class="number">8</span>; <span class="number">1</span> <span class="number">1</span>; <span class="number">-1</span> <span class="number">0</span>; <span class="number">0</span> <span class="number">-1</span>]; b=[<span class="number">100</span>,<span class="number">20</span>,<span class="number">0</span>,<span class="number">0</span>].&#x27;; benefit=[<span class="number">20</span>,<span class="number">30</span>].&#x27;;</span><br><span class="line">pairs=<span class="built_in">nchoosek</span>(<span class="number">1</span>:<span class="built_in">numel</span>(b),<span class="number">2</span>); vertices=<span class="built_in">zeros</span>(<span class="number">0</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">for</span> k=<span class="number">1</span>:<span class="built_in">size</span>(pairs,<span class="number">1</span>)</span><br><span class="line">    ids=pairs(k,:); rows=A(ids,:);</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">abs</span>(det(rows))&lt;=<span class="number">1e-12</span>, <span class="keyword">continue</span>; <span class="keyword">end</span></span><br><span class="line">    x=linsolve(rows,b(ids));</span><br><span class="line">    <span class="keyword">if</span> all(A*x&lt;=b+<span class="number">1e-8</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">isempty</span>(vertices) || all(<span class="built_in">max</span>(<span class="built_in">abs</span>(vertices-x.&#x27;),[],<span class="number">2</span>)&gt;<span class="number">1e-8</span>)</span><br><span class="line">            vertices(<span class="keyword">end</span>+<span class="number">1</span>,:)=x.&#x27;;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">values=vertices*benefit; [bestValue,index]=<span class="built_in">max</span>(values); best=vertices(index,:);</span><br><span class="line"><span class="built_in">disp</span>([vertices,values]); <span class="built_in">disp</span>(best);</span><br><span class="line">assert(<span class="built_in">size</span>(vertices,<span class="number">1</span>)==<span class="number">4</span> &amp;&amp; all(<span class="built_in">abs</span>(best-[<span class="number">15</span>,<span class="number">5</span>])&lt;<span class="number">1e-8</span>) &amp;&amp; <span class="built_in">abs</span>(bestValue<span class="number">-450</span>)&lt;<span class="number">1e-8</span>);</span><br></pre></td></tr></table></figure>
+<p>对非空有界多面体, 线性目标至少在一个顶点达到最优. 本例由顶点比较确认
+<span class="math inline">\((15,5)\)</span> 为最优.
+若整条边与目标等值线重合, 该边上的点都可能最优;
+求解器返回一个端点并不能自动证明唯一. 顶点枚举用于理解小图,
+高维大模型交给适合的专门算法.</p>
+<h2 id="变化输入时-先看状态再解释资源价值">23.8 变化输入时,
+先看状态再解释资源价值</h2>
+<h3 id="不可行-无界与正常最优分别报告">23.8.1 不可行,
+无界与正常最优分别报告</h3>
+<p>Python先检查 <code>result.success</code>, 再按 <code>status</code> 与
+<code>message</code> 了解终止原因; MATLAB按 <code>exitflag</code> 和
+<code>output.message</code> 判断. 本章只有在确认正常最优后才读取最优解.
+提前终止所得到的可行候选, 需要另外分析其最优性保证. [1, 2]</p>
+<p><strong>Python: <code>solver_status_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linprog</span><br><span class="line"></span><br><span class="line">cases = [</span><br><span class="line">    (<span class="string">&quot;有限最优&quot;</span>, <span class="built_in">dict</span>(c=[-<span class="number">1.0</span>], bounds=[(<span class="number">0</span>, <span class="number">1</span>)])),</span><br><span class="line">    (<span class="string">&quot;不可行&quot;</span>, <span class="built_in">dict</span>(c=[<span class="number">1.0</span>], A_ub=[[-<span class="number">1.0</span>], [<span class="number">1.0</span>]], b_ub=[-<span class="number">2.0</span>, <span class="number">1.0</span>], bounds=(<span class="literal">None</span>, <span class="literal">None</span>))),</span><br><span class="line">    (<span class="string">&quot;目标无界&quot;</span>, <span class="built_in">dict</span>(c=[-<span class="number">1.0</span>], bounds=(<span class="number">0</span>, <span class="literal">None</span>))),</span><br><span class="line">    (<span class="string">&quot;无界可行域但最优值有限&quot;</span>, <span class="built_in">dict</span>(c=[<span class="number">1.0</span>], bounds=(<span class="number">0</span>, <span class="literal">None</span>))),</span><br><span class="line">    (<span class="string">&quot;可能有多个最优解&quot;</span>, <span class="built_in">dict</span>(c=[-<span class="number">1.0</span>, -<span class="number">1.0</span>], A_ub=[[<span class="number">1.0</span>, <span class="number">1.0</span>]], b_ub=[<span class="number">1.0</span>], bounds=(<span class="number">0</span>, <span class="literal">None</span>))),</span><br><span class="line">]</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> name, data <span class="keyword">in</span> cases:</span><br><span class="line">    result = linprog(**data, method=<span class="string">&quot;highs&quot;</span>)</span><br><span class="line">    record = <span class="built_in">dict</span>(name=name, status=result.status, success=result.success)</span><br><span class="line">    <span class="keyword">if</span> result.success:</span><br><span class="line">        record.update(x=result.x.tolist(), fun=<span class="built_in">float</span>(result.fun))</span><br><span class="line">    records.append(record)</span><br><span class="line">    <span class="built_in">print</span>(record)</span><br><span class="line"><span class="keyword">assert</span> [r[<span class="string">&quot;status&quot;</span>] <span class="keyword">for</span> r <span class="keyword">in</span> records] == [<span class="number">0</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">0</span>, <span class="number">0</span>]</span><br><span class="line"><span class="keyword">assert</span> records[<span class="number">3</span>][<span class="string">&quot;x&quot;</span>] == [<span class="number">0.0</span>]</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">abs</span>(records[<span class="number">4</span>][<span class="string">&quot;fun&quot;</span>] + <span class="number">1</span>) &lt; <span class="number">1e-8</span></span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>solver_status_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">options=optimoptions(<span class="string">&#x27;linprog&#x27;</span>,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;none&#x27;</span>);</span><br><span class="line">flags=<span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">5</span>); values=<span class="built_in">nan</span>(<span class="number">1</span>,<span class="number">5</span>);</span><br><span class="line"><span class="keyword">for</span> k=<span class="number">1</span>:<span class="number">5</span></span><br><span class="line">    <span class="keyword">switch</span> k</span><br><span class="line">        <span class="keyword">case</span> <span class="number">1</span></span><br><span class="line">            f=<span class="number">-1</span>; A=[]; b=[]; lb=<span class="number">0</span>; ub=<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">2</span></span><br><span class="line">            f=<span class="number">1</span>; A=[<span class="number">-1</span>;<span class="number">1</span>]; b=[<span class="number">-2</span>,<span class="number">1</span>].&#x27;; lb=[]; ub=[];</span><br><span class="line">        <span class="keyword">case</span> <span class="number">3</span></span><br><span class="line">            f=<span class="number">-1</span>; A=[]; b=[]; lb=<span class="number">0</span>; ub=[];</span><br><span class="line">        <span class="keyword">case</span> <span class="number">4</span></span><br><span class="line">            f=<span class="number">1</span>; A=[]; b=[]; lb=<span class="number">0</span>; ub=[];</span><br><span class="line">        <span class="keyword">case</span> <span class="number">5</span></span><br><span class="line">            f=[<span class="number">-1</span>,<span class="number">-1</span>].&#x27;; A=[<span class="number">1</span>,<span class="number">1</span>]; b=<span class="number">1</span>; lb=[<span class="number">0</span>,<span class="number">0</span>].&#x27;; ub=[];</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    [x,fval,flag,out]=linprog(f,A,b,[],[],lb,ub,options);</span><br><span class="line">    flags(k)=flag;</span><br><span class="line">    <span class="keyword">if</span> flag==<span class="number">1</span></span><br><span class="line">        values(k)=fval; <span class="built_in">disp</span>(x); <span class="built_in">disp</span>(fval);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="built_in">disp</span>(out.message);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(flags);</span><br><span class="line">assert(<span class="built_in">isequal</span>(flags,[<span class="number">1</span> <span class="number">-2</span> <span class="number">-3</span> <span class="number">1</span> <span class="number">1</span>]));</span><br><span class="line">assert(<span class="built_in">abs</span>(values(<span class="number">4</span>))&lt;<span class="number">1e-8</span> &amp;&amp; <span class="built_in">abs</span>(values(<span class="number">5</span>)+<span class="number">1</span>)&lt;<span class="number">1e-8</span>);</span><br></pre></td></tr></table></figure>
+<p>表 23-4 求解状态与应报告的结论.</p>
+<div class="line-block">数学情况 | 本例Python状态 | 本例MATLAB标志 |
+应解释的内容 |<br />
+: --- | : ---: | : ---: | : --- |<br />
+正常最优 | 0 | 1 | 再回代变量与目标 |<br />
+不可行 | 2 | -2 | 没有方案同时满足约束 |<br />
+目标无界 | 3 | -3 | 存在使目标无限改善的可行方向 |</div>
+<p>状态表针对上述清楚的小例子. 其他终止码还可能表示迭代限制或数值问题,
+要结合消息处理. 最后两个例子说明: 可行域无界时, 目标仍可能有有限最小值;
+正常最优状态也不会自动告诉我们是否存在多个最优解.</p>
+<h3 id="保持总时长与边界-改变可用工时">23.8.2 保持总时长与边界,
+改变可用工时</h3>
+<p>回到服务时长例子, 将16.5改为预算 <span
+class="math inline">\(B\)</span>, 其他条件保持. 由等式和边界, <span
+class="math inline">\(1\leqslant x_1\leqslant4\)</span>, 工时限制又要求
+<span class="math inline">\(x_1\geqslant18-B\)</span>.
+因而可行条件与最优值为</p>
+<p><span class="math display">\[
+z^*(B)=\begin{cases}
+\text{不可行},&amp;B&lt;14,\\
+2B+24,&amp;14\leqslant B\leqslant17,\\
+58,&amp;B&gt;17.
+\end{cases}
+\]</span></p>
+<p>预算14时只能安排 <span class="math inline">\((4,2)\)</span>;
+到17时达到 <span class="math inline">\((1,5)\)</span>, B点已到5小时上限.
+继续增加工时, 仍受总服务时长与该上界限制, 预计人次停在58. 图
+23-1右图展示这一变化.</p>
+<p><strong>Python: <code>resource_sweep_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linprog</span><br><span class="line"></span><br><span class="line">budgets = [<span class="number">13.0</span>, <span class="number">14.0</span>, <span class="number">15.0</span>, <span class="number">16.5</span>, <span class="number">17.0</span>, <span class="number">18.0</span>]</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> budget <span class="keyword">in</span> budgets:</span><br><span class="line">    result = linprog([-<span class="number">8.0</span>, -<span class="number">10.0</span>], A_ub=[[<span class="number">2.0</span>, <span class="number">3.0</span>]], b_ub=[budget],</span><br><span class="line">                     A_eq=[[<span class="number">1.0</span>, <span class="number">1.0</span>]], b_eq=[<span class="number">6.0</span>],</span><br><span class="line">                     bounds=[(<span class="number">0</span>, <span class="number">4</span>), (<span class="number">0</span>, <span class="number">5</span>)], method=<span class="string">&quot;highs&quot;</span>)</span><br><span class="line">    record = <span class="built_in">dict</span>(budget=budget, status=result.status, success=result.success)</span><br><span class="line">    <span class="keyword">if</span> result.success:</span><br><span class="line">        record.update(x=result.x.tolist(), benefit=<span class="built_in">float</span>(-result.fun),</span><br><span class="line">                      labor_slack=<span class="built_in">float</span>(budget - <span class="number">2</span>*result.x[<span class="number">0</span>] - <span class="number">3</span>*result.x[<span class="number">1</span>]))</span><br><span class="line">    records.append(record)</span><br><span class="line">    <span class="built_in">print</span>(record)</span><br><span class="line"><span class="keyword">assert</span> [r[<span class="string">&quot;status&quot;</span>] <span class="keyword">for</span> r <span class="keyword">in</span> records] == [<span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]</span><br><span class="line"><span class="keyword">assert</span> [r[<span class="string">&quot;benefit&quot;</span>] <span class="keyword">for</span> r <span class="keyword">in</span> records[<span class="number">1</span>:]] == [<span class="number">52</span>, <span class="number">54</span>, <span class="number">57</span>, <span class="number">58</span>, <span class="number">58</span>]</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">abs</span>(records[-<span class="number">1</span>][<span class="string">&quot;labor_slack&quot;</span>] - <span class="number">1</span>) &lt; <span class="number">1e-8</span></span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>resource_sweep_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">budgets=[<span class="number">13</span>,<span class="number">14</span>,<span class="number">15</span>,<span class="number">16.5</span>,<span class="number">17</span>,<span class="number">18</span>]; flags=<span class="built_in">zeros</span>(<span class="built_in">size</span>(budgets)); values=<span class="built_in">nan</span>(<span class="built_in">size</span>(budgets));</span><br><span class="line">options=optimoptions(<span class="string">&#x27;linprog&#x27;</span>,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;none&#x27;</span>);</span><br><span class="line"><span class="keyword">for</span> k=<span class="number">1</span>:<span class="built_in">numel</span>(budgets)</span><br><span class="line">    [x,fval,flag,out]=linprog([<span class="number">-8</span>,<span class="number">-10</span>].&#x27;,[<span class="number">2</span>,<span class="number">3</span>],budgets(k),[<span class="number">1</span>,<span class="number">1</span>],<span class="number">6</span>, ...</span><br><span class="line">        [<span class="number">0</span>,<span class="number">0</span>].&#x27;,[<span class="number">4</span>,<span class="number">5</span>].&#x27;,options);</span><br><span class="line">    flags(k)=flag;</span><br><span class="line">    <span class="keyword">if</span> flag==<span class="number">1</span></span><br><span class="line">        values(k)=-fval; labor_slack=budgets(k)-[<span class="number">2</span>,<span class="number">3</span>]*x;</span><br><span class="line">        <span class="built_in">disp</span>([budgets(k),x.&#x27;,values(k),labor_slack]);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="built_in">disp</span>(out.message);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">assert(<span class="built_in">isequal</span>(flags,[<span class="number">-2</span> <span class="number">1</span> <span class="number">1</span> <span class="number">1</span> <span class="number">1</span> <span class="number">1</span>]));</span><br><span class="line">assert(all(<span class="built_in">abs</span>(values(<span class="number">2</span>:<span class="keyword">end</span>)-[<span class="number">52</span> <span class="number">54</span> <span class="number">57</span> <span class="number">58</span> <span class="number">58</span>])&lt;<span class="number">1e-8</span>));</span><br></pre></td></tr></table></figure>
+<p>只有变化前后都在14至17的区间内,
+才能把斜率2解释为本模型每增加1人时的最优预计增益. 进入平台后,
+再多1人时也不提高目标. 资源价值依赖当前约束结构,
+应通过参数分析或重新求解确认.</p>
+<h2 id="连续解不能直接代替整数执行方案">23.9
+连续解不能直接代替整数执行方案</h2>
+<h3 id="舍入可能违反约束">23.9.1 舍入可能违反约束</h3>
+<p>对23.7节两类活动, 将工时预算改为99, 其他条件不变. 连续最优解为 <span
+class="math inline">\((15.25,4.75)\)</span>, 服务447.5人次.
+直接四舍五入为 <span class="math inline">\((15,5)\)</span>,
+却需要100人时, 超过预算.</p>
+<p>整数模型最优方案为 <span class="math inline">\((16,4)\)</span>,
+用96人时, 服务440人次. 仅向下取整也不保证找到整数最优,
+应按变量类型使用整数方法.</p>
+<p><img src="/images/LinearProgramming/LP-2.png" style="width:100%"></p>
+<p>图 23-3 两类活动在99人时下的连续解, 整数点与舍入反例.
+红点不是可执行方案.</p>
+<p>若允许第三类C活动, 每场服务45人次, 需15人时, 三类合计仍最多20场,
+则99人时的整数最优值为445. 这是可选活动类型改变后的另一个模型,
+与两类模型的440分开核对. 原有 <code>solve_activity</code>
+同时支持这两种输入, 完整函数与整数求解程序见延伸阅读F.4, F.6.</p>
+<p><strong>Python: <code>rounding_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> activity_budget <span class="keyword">import</span> solve_activity</span><br><span class="line"></span><br><span class="line">continuous, lp_value = solve_activity(<span class="number">99</span>, integer=<span class="literal">False</span>, two_types=<span class="literal">True</span>)</span><br><span class="line">rounded = np.rint(continuous)</span><br><span class="line">rounded_labor = <span class="built_in">float</span>(np.array([<span class="number">4</span>, <span class="number">8</span>, <span class="number">15</span>]) @ rounded)</span><br><span class="line">integer_two, ip_two = solve_activity(<span class="number">99</span>, integer=<span class="literal">True</span>, two_types=<span class="literal">True</span>)</span><br><span class="line">integer_three, ip_three = solve_activity(<span class="number">99</span>, integer=<span class="literal">True</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;两类连续解:&quot;</span>, continuous, lp_value)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;直接舍入与工时:&quot;</span>, rounded, rounded_labor)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;两类整数方案:&quot;</span>, integer_two, ip_two)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;允许第三类后的整数方案:&quot;</span>, integer_three, ip_three)</span><br><span class="line"><span class="keyword">assert</span> np.allclose(continuous, [<span class="number">15.25</span>, <span class="number">4.75</span>, <span class="number">0</span>]) <span class="keyword">and</span> lp_value == <span class="number">447.5</span></span><br><span class="line"><span class="keyword">assert</span> rounded_labor == <span class="number">100</span> <span class="keyword">and</span> rounded_labor &gt; <span class="number">99</span></span><br><span class="line"><span class="keyword">assert</span> ip_two == <span class="number">440</span> <span class="keyword">and</span> ip_three == <span class="number">445</span></span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>rounding_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">[continuous,lp_value]=solve_activity(<span class="number">99</span>,<span class="built_in">false</span>,<span class="built_in">true</span>,<span class="number">0</span>);</span><br><span class="line">rounded=<span class="built_in">round</span>(continuous); rounded_labor=[<span class="number">4</span>,<span class="number">8</span>,<span class="number">15</span>]*rounded;</span><br><span class="line">[integer_two,ip_two]=solve_activity(<span class="number">99</span>,<span class="built_in">true</span>,<span class="built_in">true</span>,<span class="number">0</span>);</span><br><span class="line">[integer_three,ip_three]=solve_activity(<span class="number">99</span>,<span class="built_in">true</span>,<span class="built_in">false</span>,<span class="number">0</span>);</span><br><span class="line"><span class="built_in">disp</span>(continuous); <span class="built_in">disp</span>(lp_value); <span class="built_in">disp</span>([rounded.&#x27;,rounded_labor]);</span><br><span class="line"><span class="built_in">disp</span>(integer_two); <span class="built_in">disp</span>(ip_two); <span class="built_in">disp</span>(integer_three); <span class="built_in">disp</span>(ip_three);</span><br><span class="line">assert(all(<span class="built_in">abs</span>(continuous-[<span class="number">15.25</span>,<span class="number">4.75</span>,<span class="number">0</span>].&#x27;)&lt;<span class="number">1e-8</span>) &amp;&amp; <span class="built_in">abs</span>(lp_value<span class="number">-447.5</span>)&lt;<span class="number">1e-8</span>);</span><br><span class="line">assert(rounded_labor==<span class="number">100</span> &amp;&amp; rounded_labor&gt;<span class="number">99</span>);</span><br><span class="line">assert(ip_two==<span class="number">440</span> &amp;&amp; ip_three==<span class="number">445</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="资源曲线也受变量类型影响">23.9.2 资源曲线也受变量类型影响</h3>
+<p>三类活动在预算80至160人时的连续松弛最优值为 <span
+class="math inline">\(200+2.5B\)</span>, 整数模型则呈台阶.
+该公式和区间属于本节三类活动, 最多20场的模型,
+具体推导与完整复算保留在延伸阅读F.1, F.6.</p>
+<p><img src="/images/LinearProgramming/LP-3.png" style="width:100%"></p>
+<p>图 23-4 三类活动的连续松弛与整数最优值. 整数预算逐点计算,
+台阶反映可执行场数组合的变化. 连续最优值可作最大化整数问题的上界,
+但不直接替代整数方案.</p>
+<p>下一章系统讨论整数规划与0-1变量. 本章保留这个边界,
+目的是让变量类型由实际含义决定, 并正确解释连续LP输出.</p>
+<h2 id="按固定顺序建模-按学习进度拓展">23.10 按固定顺序建模,
+按学习进度拓展</h2>
+<h3 id="从题意到结果的六步">23.10.1 从题意到结果的六步</h3>
+<ol type="1">
+<li>写清决策变量的含义, 单位, 顺序与可分割性.</li>
+<li>用原题量写目标, 逐条翻译资源, 平衡关系与上下界.</li>
+<li>判断线性, 明确常系数, 加性和适用假设.</li>
+<li>按固定顺序组装矩阵, 转换目标方向及大于等于约束, 显式设置边界.</li>
+<li>调用合适的求解器, 确认终止状态后读取候选结果.</li>
+<li>回代原约束与目标, 解释最优性, 资源变化, 整数执行与实际条件.</li>
+</ol>
+<p>一些教材的数学标准型采用等式与非负变量:</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\min\quad f^{\mathsf T}x,\\
+&amp;\mathrm{s.t.}\quad\begin{cases}
+Ax=b,\\
+x\geqslant0.
+\end{cases}
+\end{aligned}
+\]</span></p>
+<p>不等式可以增加松弛变量转成等式, 如 <span
+class="math inline">\(2x_1+3x_2+s=16.5\)</span>, <span
+class="math inline">\(s\geqslant0\)</span>.
+求解器接口本身已经接受不等式, 无须为本章调用手工添加这些变量.
+数学标准型, 接口参数形式与变量单位分别说明.</p>
+<h3 id="完整拓展材料的阅读位置">23.10.2 完整拓展材料的阅读位置</h3>
+<p>表 23-5 线性规划配套拓展索引.</p>
+<div class="line-block">内容 | 延伸阅读位置 |<br />
+: --- | : --- |<br />
+三类活动, 最优性上界与整数求解 | F.1, F.4, F.6 |<br />
+两种linprog完整形式, 参数映射与服务时长 | F.2, F.3 |<br />
+可行域, 顶点与不同求解状态 | F.5 |<br />
+资金配置, 风险上限与比例手续费 | F.7, F.8 |<br />
+最低手续费, 16种启用组合与混合整数模型 | F.9 |<br />
+最低收益要求下风险最小, 加权权衡 | F.10 |<br />
+原有5题及全部答案 | F.11与配套答案 |</div>
+<p>资金配置使用历史赛题参数, 原有表格, 模型和双语言程序完整保留.
+最低费用涉及离散启用选择, 权衡目标涉及多目标表达, 可分别结合第 24 章与第
+26 章继续学习. 先完成本章变量, 矩阵, 求解与回代的基本过程,
+再学习这些扩展.</p>
+<h3 id="练习">23.10.3 练习</h3>
+<ol type="1">
+<li>对服务时长候选 <span class="math inline">\((2,4)\)</span> 与 <span
+class="math inline">\((1,5)\)</span>, 分别计算总时长, 工时和预计人次,
+判断可行性. 为什么只比较若干候选不足以证明最优?</li>
+<li>固定变量顺序A, B, 写出服务时长的目标系数, 不等式, 等式及边界.
+若改为B, A顺序, 哪些数据必须同步改变?</li>
+<li>将 <span class="math inline">\(3x_1+2x_2\geqslant12\)</span>
+转为求解器使用的不等式. 写出最大化 <span
+class="math inline">\(5x_1+4x_2+7\)</span> 时的最小化系数,
+以及恢复原目标值的办法.</li>
+<li>在 <span class="math inline">\(-2\leqslant x\leqslant3\)</span>
+中最小化 <span class="math inline">\(x\)</span>, 写出最优值.
+若无意加入非负条件, 结果怎样改变? 两种linprog的默认边界有何区别?</li>
+<li>用 <span class="math inline">\(x=(1.5,4.5)^{\mathsf T}\)</span>
+回代工时, 等式与边界, 再解释求解器 <code>fun=-57</code> 的含义.
+用消元法证明最优性.</li>
+<li>对两活动100人时连续模型, 求四个顶点及目标值. 若目标改为 <span
+class="math inline">\(x_1+x_2\)</span>, 是否仍只有一个最优点?</li>
+<li>判断"不可行", "目标无界",
+"可行域无界但目标有限"分别对应怎样的数学情况, 各给一个一变量例子.
+成功状态能否单独证明唯一性?</li>
+<li>服务时长模型的工时预算改为15, 17, 18, 分别写出最优时长与服务人次,
+解释为何17以后再增加工时没有增益. 哪个区间的边际增益为2?</li>
+<li>两类活动在99人时下, 为什么 <span
+class="math inline">\((15,5)\)</span> 不可行?
+整数最优值440与加入C类后的445对应哪些不同条件?</li>
+<li>若A点每小时服务量随时长下降, 或每开一个服务点收取固定启用费用,
+普通常系数连续LP是否已经完整表达? 应先补充什么机制,
+以及怎样检查一个新模型的解?</li>
+</ol>
+<p>参考解答见 <code>ExerciseHints.md</code>,
+原有5题的完整答案也保留.</p>
+<p>配套阅读与实验: <a
+href="../reading/23/Index.md">本章资料索引</a>.</p>
+<h2 id="参考资料">参考资料</h2>
+<p>[1] SciPy官方文档, 与本次数值环境对应的1.17.0版: <a
+target="_blank" rel="noopener" href="https://docs.scipy.org/doc/scipy-1.17.0/reference/generated/scipy.optimize.linprog.html">linprog</a>.
+[2] MathWorks官方文档: <a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/optim/ug/linprog.html">linprog</a>.</p>
+<p>更多历史赛题, 整数接口与权衡模型资料见
+<code>LinearProgrammingFurtherReading.md</code> 的F.12参考文献.</p>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

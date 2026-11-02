@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="第 25 章 非线性规划: 从模型建立到数值求解 上一章讨论完整次数与0-1选择, 本章回到连续变量, 但允许目标或约束出现平方, 距离等非线性关系. 先用一个能手工核对的二元问题学习目标值, 约束, 梯度与初值, 再进入料场选址和运输的联合优化. 学习主线是: 先算一个点, 再检查一步, 然后调用完整求解器; 得到候选后回代, 最后判断能够支持多强的最优性结论. 原有数学证明, 多">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/MathBeautyAndModeling/25_NonlinearProgramming.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="第 25 章 非线性规划: 从模型建立到数值求解 上一章讨论完整次数与0-1选择, 本章回到连续变量, 但允许目标或约束出现平方, 距离等非线性关系. 先用一个能手工核对的二元问题学习目标值, 约束, 梯度与初值, 再进入料场选址和运输的联合优化. 学习主线是: 先算一个点, 再检查一步, 然后调用完整求解器; 得到候选后回代, 最后判断能够支持多强的最优性结论. 原有数学证明, 多">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/NonlinearProgramming/NLP-1.png">
+<meta property="og:image" content="http://example.com/images/NonlinearProgramming/NLP-GradientStep.png">
+<meta property="og:image" content="http://example.com/images/NonlinearProgramming/NLP-2.png">
+<meta property="og:image" content="http://example.com/images/NonlinearProgramming/NLP-3.png">
+<meta property="og:image" content="http://example.com/images/NonlinearProgramming/NLP-Smoothing.png">
+<meta property="og:image" content="http://example.com/images/NonlinearProgramming/NLP-4.png">
+<meta property="article:published_time" content="2026-11-02T02:53:09.104Z">
+<meta property="article:modified_time" content="2026-10-31T09:20:36.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/NonlinearProgramming/NLP-1.png">
+
+
+<link rel="canonical" href="http://example.com/MathBeautyAndModeling/25_NonlinearProgramming">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/MathBeautyAndModeling/25_NonlinearProgramming.html","path":"MathBeautyAndModeling/25_NonlinearProgramming.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-25-%E7%AB%A0-%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92-%E4%BB%8E%E6%A8%A1%E5%9E%8B%E5%BB%BA%E7%AB%8B%E5%88%B0%E6%95%B0%E5%80%BC%E6%B1%82%E8%A7%A3"><span class="nav-number">1.</span> <span class="nav-text">第 25 章 非线性规划:
+从模型建立到数值求解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E7%AE%97%E7%9B%AE%E6%A0%87%E5%80%BC-%E5%86%8D%E7%9C%8B%E7%82%B9%E6%98%AF%E5%90%A6%E5%8F%AF%E8%A1%8C"><span class="nav-number">1.1.</span> <span class="nav-text">25.1 先算目标值, 再看点是否可行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E4%B8%80%E4%B8%AA%E5%87%BD%E6%95%B0-%E5%8F%AF%E4%BB%A5%E9%97%AE%E6%9C%80%E5%A4%A7%E4%B9%9F%E5%8F%AF%E4%BB%A5%E9%97%AE%E6%9C%80%E5%B0%8F"><span class="nav-number">1.1.1.</span> <span class="nav-text">25.1.1 同一个函数,
+可以问最大也可以问最小</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E7%9C%8B%E8%A7%81%E5%8F%AF%E8%A1%8C%E5%8C%BA%E5%9F%9F"><span class="nav-number">1.1.2.</span> <span class="nav-text">25.1.2 先看见可行区域</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E6%95%B0%E5%AD%A6%E6%96%B9%E5%90%91%E4%B8%8E%E6%8E%A5%E5%8F%A3%E6%96%B9%E5%90%91%E5%88%86%E5%88%AB%E8%AF%B4%E6%B8%85%E6%A5%9A"><span class="nav-number">1.2.</span> <span class="nav-text">25.2
+把数学方向与接口方向分别说清楚</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87%E5%87%BD%E6%95%B0%E6%9C%80%E5%B0%8F%E5%8C%96-%E4%B8%8D%E7%AD%89%E5%BC%8F%E6%8C%89%E6%8E%A5%E5%8F%A3%E5%A1%AB%E5%86%99"><span class="nav-number">1.2.1.</span> <span class="nav-text">25.2.1 目标函数最小化,
+不等式按接口填写</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E5%85%B7%E4%BD%93%E7%82%B9%E6%A0%B8%E5%AF%B9%E6%AE%8B%E5%B7%AE%E5%8F%98%E5%8F%B7"><span class="nav-number">1.2.2.</span> <span class="nav-text">25.2.2 用具体点核对残差变号</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E7%90%86%E8%A7%A3%E4%B8%80%E6%AC%A1%E6%A2%AF%E5%BA%A6%E6%AD%A5-%E5%86%8D%E8%B0%83%E7%94%A8%E5%AE%8C%E6%95%B4%E6%B1%82%E8%A7%A3%E5%99%A8"><span class="nav-number">1.3.</span> <span class="nav-text">25.3 先理解一次梯度步,
+再调用完整求解器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6%E5%91%8A%E8%AF%89%E6%88%91%E4%BB%AC%E5%BD%93%E5%89%8D%E7%9A%84%E5%B1%80%E9%83%A8%E5%8F%98%E5%8C%96"><span class="nav-number">1.3.1.</span> <span class="nav-text">25.3.1
+梯度告诉我们当前的局部变化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%85%83%E4%BE%8B%E5%AD%90%E7%9A%84%E5%AE%8C%E6%95%B4python%E4%B8%8Ematlab%E6%B1%82%E8%A7%A3"><span class="nav-number">1.3.2.</span> <span class="nav-text">25.3.2
+二元例子的完整Python与MATLAB求解</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9D%E5%80%BC%E6%94%B9%E5%8F%98%E5%80%99%E9%80%89%E7%BB%93%E6%9E%9C-%E6%95%B0%E5%AD%A6%E5%88%86%E6%9E%90%E5%86%B3%E5%AE%9A%E7%BB%93%E8%AE%BA"><span class="nav-number">1.4.</span> <span class="nav-text">25.4 初值改变候选结果,
+数学分析决定结论</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%B6%E6%A2%AF%E5%BA%A6%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%98%E4%B8%8D%E8%83%BD%E5%AE%A3%E5%B8%83%E6%9C%80%E5%A4%A7"><span class="nav-number">1.4.1.</span> <span class="nav-text">25.4.1
+零梯度为什么还不能宣布最大?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E8%AF%81%E6%98%8E%E6%9C%80%E5%B0%8F%E5%80%BC-%E5%86%8D%E8%AF%81%E6%98%8E%E6%9C%80%E5%A4%A7%E5%80%BC"><span class="nav-number">1.4.2.</span> <span class="nav-text">25.4.2 先证明最小值,
+再证明最大值</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%8D%E7%BD%AE%E5%9B%BA%E5%AE%9A%E6%97%B6-%E5%85%88%E5%AD%A6%E4%BC%9A%E7%AE%97%E8%B7%9D%E7%A6%BB%E4%B8%8E%E8%BF%90%E8%BE%93%E9%87%8F"><span class="nav-number">1.5.</span> <span class="nav-text">25.5 位置固定时,
+先学会算距离与运输量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE-%E5%8D%95%E4%BD%8D%E4%B8%8E%E6%9C%AC%E4%BE%8B%E5%81%87%E8%AE%BE"><span class="nav-number">1.5.1.</span> <span class="nav-text">25.5.1 数据, 单位与本例假设</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E6%9D%A1%E5%AE%B9%E9%87%8F%E8%A1%8C%E4%B8%8E%E4%B8%80%E6%9D%A1%E9%9C%80%E6%B1%82%E8%A1%8C%E5%88%86%E5%88%AB%E7%BB%9F%E8%AE%A1%E4%BB%80%E4%B9%88"><span class="nav-number">1.5.2.</span> <span class="nav-text">25.5.2
+一条容量行与一条需求行分别统计什么?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BA%E5%AE%9A%E4%BD%8D%E7%BD%AE%E7%9A%84%E5%AE%8C%E6%95%B4%E8%BF%90%E8%BE%93%E6%B1%82%E8%A7%A3%E5%87%BD%E6%95%B0"><span class="nav-number">1.5.3.</span> <span class="nav-text">25.5.3
+固定位置的完整运输求解函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%8D%E7%BD%AE%E4%B9%9F%E5%8F%98%E5%8C%96%E6%97%B6-%E6%80%8E%E6%A0%B7%E6%9E%84%E9%80%A0%E4%B8%80%E4%B8%AA%E5%8F%AF%E8%A1%8C%E5%88%9D%E5%80%BC"><span class="nav-number">1.6.</span> <span class="nav-text">25.6 位置也变化时,
+怎样构造一个可行初值?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%BE%93%E9%87%8F%E4%B8%8E%E4%BD%8D%E7%BD%AE%E5%85%B1%E5%90%8C%E8%BF%9B%E5%85%A5%E7%9B%AE%E6%A0%87"><span class="nav-number">1.6.1.</span> <span class="nav-text">25.6.1 运输量与位置共同进入目标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E9%80%89%E4%BD%8D%E7%BD%AE-%E5%86%8D%E7%94%A8lp%E9%85%8D%E5%B9%B3%E8%BF%90%E8%BE%93%E9%87%8F"><span class="nav-number">1.6.2.</span> <span class="nav-text">25.6.2 先选位置,
+再用LP配平运输量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%89%E6%BB%91%E8%BF%91%E4%BC%BC%E4%B8%8E%E6%A2%AF%E5%BA%A6%E6%A3%80%E6%9F%A5-%E5%88%86%E5%88%AB%E8%A7%A3%E5%86%B3%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98"><span class="nav-number">1.7.</span> <span class="nav-text">25.7 光滑近似与梯度检查,
+分别解决什么问题?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E5%90%88%E7%82%B9%E4%B8%8D%E8%83%BD%E7%9B%B4%E6%8E%A5%E9%99%A4%E4%BB%A5%E9%9B%B6%E8%B7%9D%E7%A6%BB"><span class="nav-number">1.7.1.</span> <span class="nav-text">25.7.1 重合点不能直接除以零距离</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6%E5%85%88%E5%88%86%E4%B8%A4%E9%83%A8%E5%88%86-%E5%86%8D%E7%94%A8%E5%B7%AE%E5%88%86%E6%A0%B8%E5%AF%B9"><span class="nav-number">1.7.2.</span> <span class="nav-text">25.7.2 梯度先分两部分,
+再用差分核对</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E5%8F%AF%E8%A1%8C%E5%88%9D%E5%80%BC%E4%B8%8E%E5%B1%80%E9%83%A8%E6%B1%82%E8%A7%A3%E6%8E%A5%E8%B5%B7%E6%9D%A5"><span class="nav-number">1.8.</span> <span class="nav-text">25.8 把可行初值与局部求解接起来</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E5%AE%8C%E6%95%B4%E8%81%94%E5%90%88%E6%90%9C%E7%B4%A2%E7%9A%84%E5%9B%9B%E6%AD%A5"><span class="nav-number">1.8.1.</span> <span class="nav-text">25.8.1 原完整联合搜索的四步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%99%E4%BA%9B%E8%BF%90%E8%A1%8C%E8%83%BD%E5%A4%9F%E8%AF%B4%E6%98%8E%E4%BB%80%E4%B9%88"><span class="nav-number">1.8.2.</span> <span class="nav-text">25.8.2 这些运行能够说明什么?</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%AC%E4%BE%8B%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%98%E8%83%BD%E4%BD%9C%E6%9B%B4%E5%BC%BA%E7%9A%84%E5%85%A8%E5%B1%80%E6%A0%B8%E9%AA%8C"><span class="nav-number">1.9.</span> <span class="nav-text">25.9
+本例为什么还能作更强的全局核验?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%E8%BF%90%E8%BE%93%E9%A1%B6%E7%82%B9-%E5%88%86%E6%88%90%E6%9C%89%E9%99%90%E4%B8%AA%E5%87%B8%E4%BD%8D%E7%BD%AE%E5%AD%90%E9%97%AE%E9%A2%98"><span class="nav-number">1.9.1.</span> <span class="nav-text">25.9.1 利用运输顶点,
+分成有限个凸位置子问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A9%E4%B8%8A%E4%B8%8B%E7%95%8C%E6%94%AF%E6%8C%81%E6%9C%80%E7%BB%88%E6%95%B0%E5%80%BC"><span class="nav-number">1.9.2.</span> <span class="nav-text">25.9.2 让上下界支持最终数值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E6%95%B0%E5%80%BC%E8%BF%98%E5%8E%9F%E6%88%90%E5%8F%AF%E8%A7%A3%E9%87%8A%E7%9A%84%E4%BE%9B%E5%BA%94%E8%AE%A1%E5%88%92"><span class="nav-number">1.9.3.</span> <span class="nav-text">25.9.3
+把数值还原成可解释的供应计划</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E5%80%99%E9%80%89%E6%96%B9%E6%A1%88%E5%88%B0%E5%8F%AF%E9%9D%A0%E7%BB%93%E8%AE%BA%E7%9A%84%E6%A3%80%E6%9F%A5%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.10.</span> <span class="nav-text">25.10
+从候选方案到可靠结论的检查顺序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%9C%E6%A3%80%E6%9F%A5%E5%BA%94%E5%9B%9E%E7%AD%94%E4%B8%89%E4%B8%AA%E5%B1%82%E6%AC%A1"><span class="nav-number">1.10.1.</span> <span class="nav-text">25.10.1 结果检查应回答三个层次</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E6%8B%93%E5%B1%95%E6%9D%90%E6%96%99%E7%9A%84%E9%98%85%E8%AF%BB%E4%BD%8D%E7%BD%AE"><span class="nav-number">1.10.2.</span> <span class="nav-text">25.10.2 完整拓展材料的阅读位置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.10.3.</span> <span class="nav-text">25.10.3 练习</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.11.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="第-25-章-非线性规划-从模型建立到数值求解">第 25 章 非线性规划:
+从模型建立到数值求解</h1>
+<p>上一章讨论完整次数与0-1选择, 本章回到连续变量,
+但允许目标或约束出现平方, 距离等非线性关系.
+先用一个能手工核对的二元问题学习目标值, 约束, 梯度与初值,
+再进入料场选址和运输的联合优化.</p>
+<p>学习主线是: 先算一个点, 再检查一步, 然后调用完整求解器;
+得到候选后回代, 最后判断能够支持多强的最优性结论. 原有数学证明, 多初值,
+联合搜索, 全局核验与KKT选读全部保留.</p>
+<h2 id="先算目标值-再看点是否可行">25.1 先算目标值, 再看点是否可行</h2>
+<h3 id="同一个函数-可以问最大也可以问最小">25.1.1 同一个函数,
+可以问最大也可以问最小</h3>
+<p>本章先做一个独立数学练习:</p>
+<p><span class="math display">\[
+F(x)=x_1^2+x_2^2-x_1x_2-2x_1-5x_2,
+\qquad x=(x_1,x_2)^{\mathsf T}.
+\]</span></p>
+<p>先在下面的条件中最大化F:</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\max_x\quad F(x),\\
+&amp;\text{s.t.}\quad\left\{\begin{aligned}
+&amp;(x_1-1)^2-x_2\leqslant0,\\
+&amp;-2x_1+3x_2\leqslant6.
+\end{aligned}\right.
+\end{aligned}
+\]</span></p>
+<p>没有 <span class="math inline">\(x_1\geqslant0\)</span> 的条件,
+不应擅自补上. 给定一个点后, 可以把不等式左边减右边, 计算</p>
+<p><span class="math display">\[
+c_1(x)=(x_1-1)^2-x_2,\qquad c_2(x)=-2x_1+3x_2-6.
+\]</span></p>
+<p>两项都不大于0时可行. 例如 <span class="math inline">\((1,1)\)</span>
+的F为-6, 两个残差为-1与-5; <span class="math inline">\((1,0)\)</span>
+的F为-1, 也可行. 最大化按原数值比较, -1大于-6, 不按绝对值比较.</p>
+<p><strong>Python: <code>candidate_value_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">F</span>(<span class="params">x</span>):</span><br><span class="line">    a,b = x</span><br><span class="line">    <span class="keyword">return</span> a*a+b*b-a*b-<span class="number">2</span>*a-<span class="number">5</span>*b</span><br><span class="line"></span><br><span class="line">points = [(<span class="number">1.</span>,<span class="number">1.</span>),(<span class="number">1.</span>,<span class="number">0.</span>),(<span class="number">3.</span>,<span class="number">4.</span>),(-<span class="number">1</span>/<span class="number">3</span>,<span class="number">16</span>/<span class="number">9</span>),(<span class="number">0.</span>,<span class="number">0.</span>),(-<span class="number">.3</span>,<span class="number">1.7</span>)]</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> a,b <span class="keyword">in</span> points:</span><br><span class="line">    c1, c2 = (a-<span class="number">1</span>)**<span class="number">2</span>-b, -<span class="number">2</span>*a+<span class="number">3</span>*b-<span class="number">6</span></span><br><span class="line">    row = <span class="built_in">dict</span>(x=(a,b),value=F((a,b)),c1=c1,c2=c2,</span><br><span class="line">               feasible=c1&lt;=<span class="number">1e-10</span> <span class="keyword">and</span> c2&lt;=<span class="number">1e-10</span>)</span><br><span class="line">    records.append(row)</span><br><span class="line">    <span class="built_in">print</span>(row)</span><br><span class="line"><span class="keyword">assert</span> [r[<span class="string">&#x27;feasible&#x27;</span>] <span class="keyword">for</span> r <span class="keyword">in</span> records] == [<span class="literal">True</span>,<span class="literal">True</span>,<span class="literal">True</span>,<span class="literal">True</span>,<span class="literal">False</span>,<span class="literal">True</span>]</span><br><span class="line"><span class="keyword">assert</span> records[<span class="number">1</span>][<span class="string">&#x27;value&#x27;</span>]==-<span class="number">1</span> <span class="keyword">and</span> records[<span class="number">2</span>][<span class="string">&#x27;value&#x27;</span>]==-<span class="number">13</span></span><br><span class="line"><span class="keyword">assert</span> records[<span class="number">4</span>][<span class="string">&#x27;value&#x27;</span>]==<span class="number">0</span> <span class="keyword">and</span> <span class="keyword">not</span> records[<span class="number">4</span>][<span class="string">&#x27;feasible&#x27;</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>candidate_value_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">F=@(x) x(<span class="number">1</span>)^<span class="number">2</span>+x(<span class="number">2</span>)^<span class="number">2</span>-x(<span class="number">1</span>)*x(<span class="number">2</span>)<span class="number">-2</span>*x(<span class="number">1</span>)<span class="number">-5</span>*x(<span class="number">2</span>);</span><br><span class="line">points=[<span class="number">1</span>,<span class="number">1</span>;<span class="number">1</span>,<span class="number">0</span>;<span class="number">3</span>,<span class="number">4</span>;<span class="number">-1</span>/<span class="number">3</span>,<span class="number">16</span>/<span class="number">9</span>;<span class="number">0</span>,<span class="number">0</span>;<span class="number">-.3</span>,<span class="number">1.7</span>]; records=struct([]);</span><br><span class="line"><span class="keyword">for</span> k=<span class="number">1</span>:<span class="built_in">size</span>(points,<span class="number">1</span>)</span><br><span class="line">    x=points(k,:).&#x27;; c1=(x(<span class="number">1</span>)<span class="number">-1</span>)^<span class="number">2</span>-x(<span class="number">2</span>); c2=<span class="number">-2</span>*x(<span class="number">1</span>)+<span class="number">3</span>*x(<span class="number">2</span>)<span class="number">-6</span>;</span><br><span class="line">    records(k)=struct(<span class="string">&#x27;x&#x27;</span>,x,<span class="string">&#x27;value&#x27;</span>,F(x),<span class="string">&#x27;c1&#x27;</span>,c1,<span class="string">&#x27;c2&#x27;</span>,c2, ...</span><br><span class="line">        <span class="string">&#x27;feasible&#x27;</span>,c1&lt;=<span class="number">1e-10</span> &amp;&amp; c2&lt;=<span class="number">1e-10</span>);</span><br><span class="line">    <span class="built_in">disp</span>(records(k));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">assert(<span class="built_in">isequal</span>([records.feasible],[<span class="built_in">true</span>,<span class="built_in">true</span>,<span class="built_in">true</span>,<span class="built_in">true</span>,<span class="built_in">false</span>,<span class="built_in">true</span>]));</span><br><span class="line">assert(records(<span class="number">2</span>).value==<span class="number">-1</span> &amp;&amp; records(<span class="number">3</span>).value==<span class="number">-13</span>);</span><br><span class="line">assert(records(<span class="number">5</span>).value==<span class="number">0</span> &amp;&amp; ~records(<span class="number">5</span>).feasible);</span><br></pre></td></tr></table></figure>
+<p><span class="math inline">\((0,0)\)</span> 的F为0, 看起来比-1更大,
+但第一条残差为1而不可行. <span class="math inline">\((-0.3,1.7)\)</span>
+则说明负的第一分量并未被原模型排除. 比较若干点可以排除较差方案,
+还不能证明已经找遍全部可行点.</p>
+<h3 id="先看见可行区域">25.1.2 先看见可行区域</h3>
+<p>把两条约束整理为</p>
+<p><span class="math display">\[
+(x_1-1)^2\leqslant x_2\leqslant\frac{2x_1+6}{3},
+\qquad -\frac13\leqslant x_1\leqslant3.
+\]</span></p>
+<p>可行域在抛物线与直线之间, 非空, 闭且有界. F连续,
+因而最大值与最小值都能够取得, 但它们未必在同一点.</p>
+<p><img src="/images/NonlinearProgramming/NLP-1.png" style="width:100%"></p>
+<p>图 25-1 二元问题的可行域和三类候选点. 此处先辨认边界与可行点,
+后面分别证明最大值, 最小值, 并解释初值影响. 第一分量允许负值.</p>
+<h2 id="把数学方向与接口方向分别说清楚">25.2
+把数学方向与接口方向分别说清楚</h2>
+<h3 id="目标函数最小化-不等式按接口填写">25.2.1 目标函数最小化,
+不等式按接口填写</h3>
+<p>SciPy的 <code>minimize</code> 与MATLAB的 <code>fmincon</code>
+都求最小化. 最大化F时传入-F, 结果再用原F重新计算. 例如传入目标最小值为1,
+对应原最大值-1, 不能把1报成原F的最大值. [1, 2]</p>
+<p>本章的数学模型及MATLAB基本形式为:</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\min_x\quad f(x),\\
+&amp;\text{s.t.}\quad\left\{\begin{aligned}
+&amp;A x\leqslant b,\\
+&amp;A_{\mathrm{eq}}x=b_{\mathrm{eq}},\\
+&amp;c_i(x)\leqslant0,\quad i=1,\ldots,m,\\
+&amp;h_j(x)=0,\quad j=1,\ldots,p,\\
+&amp;\ell\leqslant x\leqslant u.
+\end{aligned}\right.
+\end{aligned}
+\]</span></p>
+<p>SciPy本章采用SLSQP的字典约束接口, 不等式函数应非负:</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\min_x\quad f(x),\\
+&amp;\text{s.t.}\quad\left\{\begin{aligned}
+&amp;g_i(x)\geqslant0,\quad i=1,\ldots,m,\\
+&amp;h_j(x)=0,\quad j=1,\ldots,p,\\
+&amp;\ell\leqslant x\leqslant u.
+\end{aligned}\right.
+\end{aligned}
+\]</span></p>
+<p>对同一条件, <code>c(x)&lt;=0</code> 与 <code>g(x)=-c(x)&gt;=0</code>
+表示同一可行集合. 这项非负约定只针对所用的字典接口,
+不能推广到所有SciPy约束对象.</p>
+<p>表 25-1 同一不等式的接口符号.</p>
+<div class="line-block">条件 | MATLAB | 本章SciPy字典接口 |<br />
+: --- | : --- | : --- |<br />
+非线性不等式 | 返回c, 要求不大于0 | 返回-c, 要求不小于0 |<br />
+线性上界 | A*x不超过b | 返回b-A@x |<br />
+等式 | Aeq*x=beq或ceq=0 | type为eq, 返回值等于0 |<br />
+变量边界 | lb, ub | bounds |</div>
+<h3 id="用具体点核对残差变号">25.2.2 用具体点核对残差变号</h3>
+<p>下面暂把二元例子的两条限制都计算成残差, 对照变号前后的可行判断.
+正式MATLAB调用中, 线性条件仍通过A, b单独提交, 不重复加入非线性函数.</p>
+<p><strong>Python: <code>constraint_sign_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">matlab_residual</span>(<span class="params">x</span>):</span><br><span class="line">    a,b = x</span><br><span class="line">    <span class="keyword">return</span> np.array([(a-<span class="number">1</span>)**<span class="number">2</span>-b,-<span class="number">2</span>*a+<span class="number">3</span>*b-<span class="number">6</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">slsqp_dictionary_residual</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> -matlab_residual(x)</span><br><span class="line"></span><br><span class="line">points = [(<span class="number">1</span>,<span class="number">1</span>),(<span class="number">1</span>,<span class="number">0</span>),(<span class="number">0</span>,<span class="number">0</span>),(-<span class="number">.3</span>,<span class="number">1.7</span>),(<span class="number">2</span>,<span class="number">5</span>)]</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> point <span class="keyword">in</span> points:</span><br><span class="line">    c = matlab_residual(point)</span><br><span class="line">    g = slsqp_dictionary_residual(point)</span><br><span class="line">    left, right = <span class="built_in">bool</span>(np.<span class="built_in">all</span>(c&lt;=<span class="number">1e-10</span>)), <span class="built_in">bool</span>(np.<span class="built_in">all</span>(g&gt;=-<span class="number">1e-10</span>))</span><br><span class="line">    records.append(<span class="built_in">dict</span>(x=point,c=c.tolist(),g=g.tolist(),matlab_ok=left,slsqp_ok=right))</span><br><span class="line">    <span class="built_in">print</span>(records[-<span class="number">1</span>])</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">all</span>(r[<span class="string">&#x27;matlab_ok&#x27;</span>]==r[<span class="string">&#x27;slsqp_ok&#x27;</span>] <span class="keyword">for</span> r <span class="keyword">in</span> records)</span><br><span class="line"><span class="keyword">assert</span> [r[<span class="string">&#x27;slsqp_ok&#x27;</span>] <span class="keyword">for</span> r <span class="keyword">in</span> records] == [<span class="literal">True</span>,<span class="literal">True</span>,<span class="literal">False</span>,<span class="literal">True</span>,<span class="literal">False</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>constraint_sign_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">points=[<span class="number">1</span>,<span class="number">1</span>;<span class="number">1</span>,<span class="number">0</span>;<span class="number">0</span>,<span class="number">0</span>;<span class="number">-.3</span>,<span class="number">1.7</span>;<span class="number">2</span>,<span class="number">5</span>]; records=struct([]);</span><br><span class="line"><span class="keyword">for</span> k=<span class="number">1</span>:<span class="built_in">size</span>(points,<span class="number">1</span>)</span><br><span class="line">    x=points(k,:).&#x27;;</span><br><span class="line">    c=[(x(<span class="number">1</span>)<span class="number">-1</span>)^<span class="number">2</span>-x(<span class="number">2</span>),<span class="number">-2</span>*x(<span class="number">1</span>)+<span class="number">3</span>*x(<span class="number">2</span>)<span class="number">-6</span>].&#x27;;</span><br><span class="line">    g=-c; matlab_ok=all(c&lt;=<span class="number">1e-10</span>); slsqp_ok=all(g&gt;=<span class="number">-1e-10</span>);</span><br><span class="line">    records(k)=struct(<span class="string">&#x27;x&#x27;</span>,x,<span class="string">&#x27;c&#x27;</span>,c,<span class="string">&#x27;g&#x27;</span>,g,<span class="string">&#x27;matlab_ok&#x27;</span>,matlab_ok,<span class="string">&#x27;slsqp_ok&#x27;</span>,slsqp_ok);</span><br><span class="line">    <span class="built_in">disp</span>(records(k));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">assert(<span class="built_in">isequal</span>([records.matlab_ok],[records.slsqp_ok]));</span><br><span class="line">assert(<span class="built_in">isequal</span>([records.slsqp_ok],[<span class="built_in">true</span>,<span class="built_in">true</span>,<span class="built_in">false</span>,<span class="built_in">true</span>,<span class="built_in">false</span>]));</span><br></pre></td></tr></table></figure>
+<p>等式无需变成非负不等式, 直接检查接近0即可.
+目标变号与约束变号属于两件事, 要分别依据优化方向和接口约定处理.</p>
+<h2 id="先理解一次梯度步-再调用完整求解器">25.3 先理解一次梯度步,
+再调用完整求解器</h2>
+<h3 id="梯度告诉我们当前的局部变化">25.3.1
+梯度告诉我们当前的局部变化</h3>
+<p>F的梯度为</p>
+<p><span class="math display">\[
+\nabla F(x)=(2x_1-x_2-2,2x_2-x_1-5)^{\mathsf T}.
+\]</span></p>
+<p>在 <span class="math inline">\((1,1)^{\mathsf T}\)</span> 处为 <span
+class="math inline">\((-1,-4)^{\mathsf T}\)</span>. 对最小化F,
+可先观察负梯度方向 <span class="math inline">\((1,4)^{\mathsf
+T}\)</span>: 取步长0.1, 得 <span
+class="math inline">\((1.1,1.4)^{\mathsf T}\)</span>, F从-6降到-7.57,
+当前仍可行. 对最大化F, 小步沿梯度可把F提高到-4.17.</p>
+<p><strong>Python: <code>gradient_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">F</span>(<span class="params">x</span>):</span><br><span class="line">    a,b = x</span><br><span class="line">    <span class="keyword">return</span> a*a+b*b-a*b-<span class="number">2</span>*a-<span class="number">5</span>*b</span><br><span class="line"></span><br><span class="line">x0 = np.array([<span class="number">1.</span>,<span class="number">1.</span>])</span><br><span class="line">gradient = np.array([<span class="number">2</span>*x0[<span class="number">0</span>]-x0[<span class="number">1</span>]-<span class="number">2</span>,<span class="number">2</span>*x0[<span class="number">1</span>]-x0[<span class="number">0</span>]-<span class="number">5</span>])</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> name, direction, step <span class="keyword">in</span> [(<span class="string">&#x27;small descent&#x27;</span>,-gradient,<span class="number">.1</span>),</span><br><span class="line">                              (<span class="string">&#x27;small ascent&#x27;</span>,gradient,<span class="number">.1</span>),</span><br><span class="line">                              (<span class="string">&#x27;large descent&#x27;</span>,-gradient,<span class="number">1.</span>)]:</span><br><span class="line">    x = x0+step*direction</span><br><span class="line">    residual = np.array([(x[<span class="number">0</span>]-<span class="number">1</span>)**<span class="number">2</span>-x[<span class="number">1</span>],-<span class="number">2</span>*x[<span class="number">0</span>]+<span class="number">3</span>*x[<span class="number">1</span>]-<span class="number">6</span>])</span><br><span class="line">    row = <span class="built_in">dict</span>(name=name,x=x.tolist(),value=<span class="built_in">float</span>(F(x)),</span><br><span class="line">               feasible=<span class="built_in">bool</span>(np.<span class="built_in">all</span>(residual&lt;=<span class="number">1e-10</span>)))</span><br><span class="line">    records.append(row)</span><br><span class="line">    <span class="built_in">print</span>(row)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Initial gradient:&#x27;</span>,gradient,<span class="string">&#x27;Initial value:&#x27;</span>,F(x0))</span><br><span class="line"><span class="keyword">assert</span> np.array_equal(gradient,[-<span class="number">1</span>,-<span class="number">4</span>])</span><br><span class="line"><span class="keyword">assert</span> records[<span class="number">0</span>][<span class="string">&#x27;value&#x27;</span>]&lt;F(x0)&lt;records[<span class="number">1</span>][<span class="string">&#x27;value&#x27;</span>]</span><br><span class="line"><span class="keyword">assert</span> [r[<span class="string">&#x27;feasible&#x27;</span>] <span class="keyword">for</span> r <span class="keyword">in</span> records] == [<span class="literal">True</span>,<span class="literal">True</span>,<span class="literal">False</span>]</span><br><span class="line"><span class="keyword">assert</span> np.allclose([r[<span class="string">&#x27;value&#x27;</span>] <span class="keyword">for</span> r <span class="keyword">in</span> records],[-<span class="number">7.57</span>,-<span class="number">4.17</span>,-<span class="number">10</span>])</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>gradient_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">F=@(x) x(<span class="number">1</span>)^<span class="number">2</span>+x(<span class="number">2</span>)^<span class="number">2</span>-x(<span class="number">1</span>)*x(<span class="number">2</span>)<span class="number">-2</span>*x(<span class="number">1</span>)<span class="number">-5</span>*x(<span class="number">2</span>);</span><br><span class="line">x0=[<span class="number">1</span>,<span class="number">1</span>].&#x27;; gradient=[<span class="number">2</span>*x0(<span class="number">1</span>)-x0(<span class="number">2</span>)<span class="number">-2</span>,<span class="number">2</span>*x0(<span class="number">2</span>)-x0(<span class="number">1</span>)<span class="number">-5</span>].&#x27;;</span><br><span class="line">names=&#123;<span class="string">&#x27;small descent&#x27;</span>,<span class="string">&#x27;small ascent&#x27;</span>,<span class="string">&#x27;large descent&#x27;</span>&#125;;</span><br><span class="line">directions=[-gradient,gradient,-gradient]; steps=[<span class="number">.1</span>,<span class="number">.1</span>,<span class="number">1</span>]; records=struct([]);</span><br><span class="line"><span class="keyword">for</span> k=<span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    x=x0+steps(k)*directions(:,k);</span><br><span class="line">    residual=[(x(<span class="number">1</span>)<span class="number">-1</span>)^<span class="number">2</span>-x(<span class="number">2</span>),<span class="number">-2</span>*x(<span class="number">1</span>)+<span class="number">3</span>*x(<span class="number">2</span>)<span class="number">-6</span>].&#x27;;</span><br><span class="line">    records(k)=struct(<span class="string">&#x27;name&#x27;</span>,names&#123;k&#125;,<span class="string">&#x27;x&#x27;</span>,x,<span class="string">&#x27;value&#x27;</span>,F(x),<span class="string">&#x27;feasible&#x27;</span>,all(residual&lt;=<span class="number">1e-10</span>));</span><br><span class="line">    <span class="built_in">disp</span>(records(k));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Initial gradient and value:&#x27;</span>); <span class="built_in">disp</span>(gradient); <span class="built_in">disp</span>(F(x0));</span><br><span class="line">assert(<span class="built_in">isequal</span>(gradient,[<span class="number">-1</span>,<span class="number">-4</span>].&#x27;));</span><br><span class="line">assert(records(<span class="number">1</span>).value&lt;F(x0) &amp;&amp; F(x0)&lt;records(<span class="number">2</span>).value);</span><br><span class="line">assert(<span class="built_in">isequal</span>([records.feasible],[<span class="built_in">true</span>,<span class="built_in">true</span>,<span class="built_in">false</span>]));</span><br><span class="line">assert(<span class="built_in">max</span>(<span class="built_in">abs</span>([records.value]-[<span class="number">-7.57</span>,<span class="number">-4.17</span>,<span class="number">-10</span>]))&lt;<span class="number">1e-10</span>);</span><br></pre></td></tr></table></figure>
+<p>沿同一个下降方向把步长改为1, 得 <span
+class="math inline">\((2,5)\)</span>, F虽降到-10, 线性约束却被违反.
+方向有局部意义, 仍须选择步长并处理约束. 这个脚本只演示一步计算,
+不充当完整的约束优化算法.</p>
+<p><img src="/images/NonlinearProgramming/NLP-GradientStep.png" style="width:100%"></p>
+<p>图 25-2 同一负梯度方向上的两种步长. 小步停在可行域内,
+大步越过线性约束边界. 目标改善不代替可行性检查,
+此图也不是SLSQP的迭代日志.</p>
+<h3 id="二元例子的完整python与matlab求解">25.3.2
+二元例子的完整Python与MATLAB求解</h3>
+<p>下面保留原完整程序. Python一次比较最大化与最小化两个方向.
+MATLAB的非线性函数只返回抛物线条件, 线性条件另交给A, b. 使用MATLAB前,
+将完整约束函数与主程序放在同一目录.</p>
+<p><strong>Python: <code>quadratic_demo.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> minimize</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">original_objective</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> x[<span class="number">0</span>]**<span class="number">2</span>+x[<span class="number">1</span>]**<span class="number">2</span>-x[<span class="number">0</span>]*x[<span class="number">1</span>]-<span class="number">2</span>*x[<span class="number">0</span>]-<span class="number">5</span>*x[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">inequalities</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> np.array([x[<span class="number">1</span>]-(x[<span class="number">0</span>]-<span class="number">1</span>)**<span class="number">2</span>, <span class="number">2</span>*x[<span class="number">0</span>]-<span class="number">3</span>*x[<span class="number">1</span>]+<span class="number">6</span>])</span><br><span class="line"></span><br><span class="line">constraints = [&#123;<span class="string">&quot;type&quot;</span>: <span class="string">&quot;ineq&quot;</span>, <span class="string">&quot;fun&quot;</span>: inequalities&#125;]</span><br><span class="line">x0 = np.array([<span class="number">1.0</span>, <span class="number">1.0</span>])   <span class="comment"># 可行初值</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> name, sign <span class="keyword">in</span> [(<span class="string">&quot;最大化 F&quot;</span>, -<span class="number">1.0</span>), (<span class="string">&quot;最小化 F&quot;</span>, <span class="number">1.0</span>)]:</span><br><span class="line">    result = minimize(</span><br><span class="line">        <span class="keyword">lambda</span> x: sign*original_objective(x), x0,</span><br><span class="line">        method=<span class="string">&quot;SLSQP&quot;</span>, constraints=constraints,</span><br><span class="line">        options=&#123;<span class="string">&quot;ftol&quot;</span>: <span class="number">1e-12</span>, <span class="string">&quot;maxiter&quot;</span>: <span class="number">1000</span>&#125;,</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> result.success:</span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(result.message)</span><br><span class="line">    <span class="keyword">if</span> np.<span class="built_in">min</span>(inequalities(result.x)) &lt; -<span class="number">1e-7</span>:</span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(<span class="string">&quot;约束检查失败&quot;</span>)</span><br><span class="line">    value = original_objective(result.x)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> np.isclose(value, result.fun/sign, atol=<span class="number">1e-7</span>):</span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(<span class="string">&quot;目标方向或目标值检查失败&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(name, <span class="string">&quot;候选解: &quot;</span>, np.<span class="built_in">round</span>(result.x, <span class="number">8</span>), <span class="string">&quot;原目标值: &quot;</span>, value)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>quadraticConstraints.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[c,ceq]</span> = <span class="title">quadraticConstraints</span><span class="params">(x)</span></span></span><br><span class="line">    c = (x(<span class="number">1</span>)<span class="number">-1</span>)^<span class="number">2</span>-x(<span class="number">2</span>);</span><br><span class="line">    ceq = [];</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>quadratic_demo.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">x0 = [<span class="number">1</span>,<span class="number">1</span>].&#x27;;</span><br><span class="line">F = @(x) x(<span class="number">1</span>)^<span class="number">2</span>+x(<span class="number">2</span>)^<span class="number">2</span>-x(<span class="number">1</span>)*x(<span class="number">2</span>)<span class="number">-2</span>*x(<span class="number">1</span>)<span class="number">-5</span>*x(<span class="number">2</span>);</span><br><span class="line">options = optimoptions(<span class="string">&#x27;fmincon&#x27;</span>,<span class="string">&#x27;Algorithm&#x27;</span>,<span class="string">&#x27;sqp&#x27;</span>,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;none&#x27;</span>, ...</span><br><span class="line">    <span class="string">&#x27;ConstraintTolerance&#x27;</span>,<span class="number">1e-10</span>,<span class="string">&#x27;OptimalityTolerance&#x27;</span>,<span class="number">1e-10</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">sign</span> = [<span class="number">-1</span>,<span class="number">1</span>]</span><br><span class="line">    [x,fval,flag,out] = fmincon(@(x) <span class="built_in">sign</span>*F(x),x0, ...</span><br><span class="line">        [<span class="number">-2</span>,<span class="number">3</span>],<span class="number">6</span>,[],[],[],[],@quadraticConstraints,options);</span><br><span class="line">    [c,~] = quadraticConstraints(x);</span><br><span class="line">    violation = <span class="built_in">max</span>([<span class="number">0</span>;<span class="number">-2</span>*x(<span class="number">1</span>)+<span class="number">3</span>*x(<span class="number">2</span>)<span class="number">-6</span>;c]);</span><br><span class="line">    <span class="keyword">if</span> flag &lt;= <span class="number">0</span> || violation &gt; <span class="number">1e-7</span> || any(~<span class="built_in">isfinite</span>(x))</span><br><span class="line">        error(<span class="string">&#x27;Candidate failed checks: %s&#x27;</span>,out.message);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    fprintf(<span class="string">&#x27;sign=%d, x=(%.8f,%.8f), F=%.9f, violation=%.3g\n&#x27;</span>, ...</span><br><span class="line">        <span class="built_in">sign</span>,x(<span class="number">1</span>),x(<span class="number">2</span>),F(x),violation);</span><br><span class="line">    assert(<span class="built_in">abs</span>(F(x)-fval/<span class="built_in">sign</span>)&lt;<span class="number">1e-7</span>);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>从 <span class="math inline">\((1,1)^{\mathsf T}\)</span> 出发,
+本例最大化候选为 <span class="math inline">\((1,0)^{\mathsf T}\)</span>,
+F约-1; 最小化候选为 <span class="math inline">\((3,4)^{\mathsf
+T}\)</span>, F约-13. 程序先查状态与残差, 再恢复原目标.
+是否最优还要结合下一节的数学证据.</p>
+<p><code>ftol</code> 参与SLSQP多种终止条件, 不表示坐标误差小于它.
+MATLAB也要结合 <code>exitflag</code>, <code>output.message</code>
+和残差判断终止原因. 容差与成功标志都不是对任意非凸问题的全局保证. [1,
+2]</p>
+<h2 id="初值改变候选结果-数学分析决定结论">25.4 初值改变候选结果,
+数学分析决定结论</h2>
+<h3 id="零梯度为什么还不能宣布最大">25.4.1
+零梯度为什么还不能宣布最大?</h3>
+<p>原多初值程序在最大化F时观察到:</p>
+<p>表 25-2 不同初值的候选与数学判断.</p>
+<div class="line-block">初值 | 候选点 | 原F值 | 数学判断 |<br />
+: --- | : --- | : --- | : --- |<br />
+<span class="math inline">\((1,1)^{\mathsf T}\)</span> | <span
+class="math inline">\((1,0)^{\mathsf T}\)</span> | -1 | 全局最大点
+|<br />
+<span class="math inline">\((-0.3,1.7)^{\mathsf T}\)</span> | <span
+class="math inline">\((-1/3,16/9)^{\mathsf T}\)</span> | 约-4.358025 |
+较差的局部最大点 |<br />
+<span class="math inline">\((3,4)^{\mathsf T}\)</span> | <span
+class="math inline">\((3,4)^{\mathsf T}\)</span> | -13 | 驻点,
+不是局部最大点 |</div>
+<p>表格来自配套Python程序的一次示范运行,
+不规定其他算法或版本必须走同一路径. 完整多初值与随机粗搜见
+<code>quadratic_multistart.py</code>,
+<code>quadratic_multistart.m</code> 和延伸阅读F.1.5.</p>
+<p>在 <span class="math inline">\((3,4)\)</span> 处, 梯度为0,
+但考虑沿直线边界的可行点</p>
+<p><span class="math display">\[
+x(t)=(3-t,4-2t/3)^{\mathsf T},\qquad 0&lt;t\leqslant1.
+\]</span></p>
+<p>代入得 <span
+class="math inline">\(F(x(t))=-13+7t^2/9&gt;-13\)</span>. t可以任意小,
+附近总有更大的可行值, 所以该驻点不是局部最大点.
+一阶停止条件不能排除这种情况.</p>
+<p><strong>Python: <code>stationary_path_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">F</span>(<span class="params">x</span>):</span><br><span class="line">    a,b = x</span><br><span class="line">    <span class="keyword">return</span> a*a+b*b-a*b-<span class="number">2</span>*a-<span class="number">5</span>*b</span><br><span class="line"></span><br><span class="line">stationary = np.array([<span class="number">3.</span>,<span class="number">4.</span>])</span><br><span class="line">gradient = np.array([<span class="number">2</span>*<span class="number">3</span>-<span class="number">4</span>-<span class="number">2</span>,<span class="number">2</span>*<span class="number">4</span>-<span class="number">3</span>-<span class="number">5</span>])</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> [<span class="number">.1</span>,<span class="number">.5</span>,<span class="number">1.</span>]:</span><br><span class="line">    x = np.array([<span class="number">3</span>-t,<span class="number">4</span>-<span class="number">2</span>*t/<span class="number">3</span>])</span><br><span class="line">    c = [(x[<span class="number">0</span>]-<span class="number">1</span>)**<span class="number">2</span>-x[<span class="number">1</span>],-<span class="number">2</span>*x[<span class="number">0</span>]+<span class="number">3</span>*x[<span class="number">1</span>]-<span class="number">6</span>]</span><br><span class="line">    gain = <span class="built_in">float</span>(F(x)-F(stationary))</span><br><span class="line">    records.append(<span class="built_in">dict</span>(t=t,x=x.tolist(),gain=gain,feasible=<span class="built_in">bool</span>(<span class="built_in">max</span>(c)&lt;=<span class="number">1e-10</span>)))</span><br><span class="line">    <span class="built_in">print</span>(records[-<span class="number">1</span>])</span><br><span class="line"><span class="keyword">assert</span> np.array_equal(gradient,[<span class="number">0</span>,<span class="number">0</span>])</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">all</span>(r[<span class="string">&#x27;feasible&#x27;</span>] <span class="keyword">and</span> r[<span class="string">&#x27;gain&#x27;</span>]&gt;<span class="number">0</span> <span class="keyword">for</span> r <span class="keyword">in</span> records)</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">all</span>(<span class="built_in">abs</span>(r[<span class="string">&#x27;gain&#x27;</span>]-<span class="number">7</span>*r[<span class="string">&#x27;t&#x27;</span>]**<span class="number">2</span>/<span class="number">9</span>)&lt;<span class="number">1e-12</span> <span class="keyword">for</span> r <span class="keyword">in</span> records)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Zero gradient at (3,4) does not make it a local maximum.&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>stationary_path_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">F=@(x) x(<span class="number">1</span>)^<span class="number">2</span>+x(<span class="number">2</span>)^<span class="number">2</span>-x(<span class="number">1</span>)*x(<span class="number">2</span>)<span class="number">-2</span>*x(<span class="number">1</span>)<span class="number">-5</span>*x(<span class="number">2</span>);</span><br><span class="line">stationary=[<span class="number">3</span>,<span class="number">4</span>].&#x27;; gradient=[<span class="number">2</span>*<span class="number">3</span><span class="number">-4</span><span class="number">-2</span>,<span class="number">2</span>*<span class="number">4</span><span class="number">-3</span><span class="number">-5</span>].&#x27;;</span><br><span class="line">times=[<span class="number">.1</span>,<span class="number">.5</span>,<span class="number">1</span>]; records=struct([]);</span><br><span class="line"><span class="keyword">for</span> k=<span class="number">1</span>:<span class="built_in">numel</span>(times)</span><br><span class="line">    t=times(k); x=[<span class="number">3</span>-t,<span class="number">4</span><span class="number">-2</span>*t/<span class="number">3</span>].&#x27;;</span><br><span class="line">    c=[(x(<span class="number">1</span>)<span class="number">-1</span>)^<span class="number">2</span>-x(<span class="number">2</span>),<span class="number">-2</span>*x(<span class="number">1</span>)+<span class="number">3</span>*x(<span class="number">2</span>)<span class="number">-6</span>].&#x27;;</span><br><span class="line">    gain=F(x)-F(stationary);</span><br><span class="line">    records(k)=struct(<span class="string">&#x27;t&#x27;</span>,t,<span class="string">&#x27;x&#x27;</span>,x,<span class="string">&#x27;gain&#x27;</span>,gain,<span class="string">&#x27;feasible&#x27;</span>,<span class="built_in">max</span>(c)&lt;=<span class="number">1e-10</span>);</span><br><span class="line">    <span class="built_in">disp</span>(records(k));</span><br><span class="line">    assert(records(k).feasible &amp;&amp; gain&gt;<span class="number">0</span> &amp;&amp; <span class="built_in">abs</span>(gain<span class="number">-7</span>*t^<span class="number">2</span>/<span class="number">9</span>)&lt;<span class="number">1e-12</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">assert(<span class="built_in">isequal</span>(gradient,[<span class="number">0</span>,<span class="number">0</span>].&#x27;));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Zero gradient at (3,4) does not make it a local maximum.&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="先证明最小值-再证明最大值">25.4.2 先证明最小值,
+再证明最大值</h3>
+<p>令 <span class="math inline">\(u=x_1-3,v=x_2-4\)</span>,
+原平方和分解为</p>
+<p><span class="math display">\[
+F(x)=-13+\frac12\bigl[u^2+v^2+(u-v)^2\bigr]\geqslant-13.
+\]</span></p>
+<p>等号仅在u=v=0时成立, 且 <span class="math inline">\((3,4)\)</span>
+可行, 因而它是唯一全局最小点.
+原Hessian与严格凸性的解释完整保留在延伸阅读F.1.3.
+凸性支持这个最小化结论, 不能直接用来宣布最大化的局部候选为全局最大.</p>
+<p>求最大值时, 固定 <span class="math inline">\(x_1\)</span>, F对 <span
+class="math inline">\(x_2\)</span> 是凸二次函数,
+在允许闭区间上的最大值可在端点取得. 因此只需检查抛物线和直线两条边界.
+直线边界上F为凸二次式, 最大值再比较区间两端; 抛物线边界上</p>
+<p><span class="math display">\[
+\phi(x_1)=F\bigl(x_1,(x_1-1)^2\bigr)
+=x_1^4-5x_1^3+4x_1^2+3x_1-4,
+\]</span></p>
+<p><span class="math display">\[
+\phi&#39;(x_1)=(x_1-1)(4x_1+1)(x_1-3).
+\]</span></p>
+<p>在 <span class="math inline">\([-1/3,3]\)</span> 内比较端点及全部驻点
+<span class="math inline">\(-1/4,1,3\)</span>. 由完整边界分析得到候选后,
+才进行程序比较:</p>
+<p><strong>Python: <code>boundary_candidates_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">F</span>(<span class="params">a,b</span>):</span><br><span class="line">    <span class="keyword">return</span> a*a+b*b-a*b-<span class="number">2</span>*a-<span class="number">5</span>*b</span><br><span class="line"></span><br><span class="line">records = []</span><br><span class="line"><span class="comment"># These candidates come from the complete boundary analysis in the text.</span></span><br><span class="line"><span class="keyword">for</span> boundary, points <span class="keyword">in</span> [(<span class="string">&#x27;parabola&#x27;</span>,[-<span class="number">1</span>/<span class="number">3</span>,-<span class="number">.25</span>,<span class="number">1.</span>,<span class="number">3.</span>]),(<span class="string">&#x27;line&#x27;</span>,[-<span class="number">1</span>/<span class="number">3</span>,<span class="number">3.</span>])]:</span><br><span class="line">    <span class="keyword">for</span> a <span class="keyword">in</span> points:</span><br><span class="line">        b = (a-<span class="number">1</span>)**<span class="number">2</span> <span class="keyword">if</span> boundary==<span class="string">&#x27;parabola&#x27;</span> <span class="keyword">else</span> (<span class="number">2</span>*a+<span class="number">6</span>)/<span class="number">3</span></span><br><span class="line">        row = <span class="built_in">dict</span>(boundary=boundary,x=(a,b),value=F(a,b))</span><br><span class="line">        records.append(row)</span><br><span class="line">        <span class="built_in">print</span>(row)</span><br><span class="line">best = <span class="built_in">max</span>(records,key=<span class="keyword">lambda</span> r:r[<span class="string">&#x27;value&#x27;</span>])</span><br><span class="line">worst = <span class="built_in">min</span>(records,key=<span class="keyword">lambda</span> r:r[<span class="string">&#x27;value&#x27;</span>])</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">abs</span>(best[<span class="string">&#x27;value&#x27;</span>]+<span class="number">1</span>)&lt;<span class="number">1e-12</span> <span class="keyword">and</span> best[<span class="string">&#x27;x&#x27;</span>]==(<span class="number">1.</span>,<span class="number">0.</span>)</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">abs</span>(worst[<span class="string">&#x27;value&#x27;</span>]+<span class="number">13</span>)&lt;<span class="number">1e-12</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Boundary maximum:&#x27;</span>,best,<span class="string">&#x27;Minimum value:&#x27;</span>,worst[<span class="string">&#x27;value&#x27;</span>])</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>boundary_candidates_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">F=@(a,b) a^<span class="number">2</span>+b^<span class="number">2</span>-a*b<span class="number">-2</span>*a<span class="number">-5</span>*b;</span><br><span class="line">parabola=[<span class="number">-1</span>/<span class="number">3</span>,<span class="number">-.25</span>,<span class="number">1</span>,<span class="number">3</span>]; line=[<span class="number">-1</span>/<span class="number">3</span>,<span class="number">3</span>]; records=struct([]); k=<span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> a=parabola</span><br><span class="line">    b=(a<span class="number">-1</span>)^<span class="number">2</span>; k=k+<span class="number">1</span>;</span><br><span class="line">    records(k)=struct(<span class="string">&#x27;boundary&#x27;</span>,<span class="string">&#x27;parabola&#x27;</span>,<span class="string">&#x27;x&#x27;</span>,[a,b].&#x27;,<span class="string">&#x27;value&#x27;</span>,F(a,b));</span><br><span class="line">    <span class="built_in">disp</span>(records(k));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">for</span> a=line</span><br><span class="line">    b=(<span class="number">2</span>*a+<span class="number">6</span>)/<span class="number">3</span>; k=k+<span class="number">1</span>;</span><br><span class="line">    records(k)=struct(<span class="string">&#x27;boundary&#x27;</span>,<span class="string">&#x27;line&#x27;</span>,<span class="string">&#x27;x&#x27;</span>,[a,b].&#x27;,<span class="string">&#x27;value&#x27;</span>,F(a,b));</span><br><span class="line">    <span class="built_in">disp</span>(records(k));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">[best_value,<span class="built_in">i</span>]=<span class="built_in">max</span>([records.value]); worst_value=<span class="built_in">min</span>([records.value]);</span><br><span class="line">assert(<span class="built_in">abs</span>(best_value+<span class="number">1</span>)&lt;<span class="number">1e-12</span> &amp;&amp; <span class="built_in">isequal</span>(records(<span class="built_in">i</span>).x,[<span class="number">1</span>,<span class="number">0</span>].&#x27;));</span><br><span class="line">assert(<span class="built_in">abs</span>(worst_value+<span class="number">13</span>)&lt;<span class="number">1e-12</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Boundary maximum and minimum values:&#x27;</span>); <span class="built_in">disp</span>([best_value,worst_value]);</span><br></pre></td></tr></table></figure>
+<p>抛物线上的四个F值依次为 <span
+class="math inline">\(-353/81,-1131/256,-1,-13\)</span>. 两边界比较后,
+全局最大值为-1, 在 <span class="math inline">\((1,0)\)</span> 达到.
+这里的全局判断来自对全部可行点的边界归约,
+不是随意取几个点得到的结论.</p>
+<p><img src="/images/NonlinearProgramming/NLP-2.png" style="width:100%"></p>
+<p>图 25-3 两条边界上的目标函数值. 图帮助看变化,
+最大值由端点与全部驻点的比较支持. 多初值可以发现更好候选,
+其本身不提供这样的覆盖证明.</p>
+<h2 id="位置固定时-先学会算距离与运输量">25.5 位置固定时,
+先学会算距离与运输量</h2>
+<h3 id="数据-单位与本例假设">25.5.1 数据, 单位与本例假设</h3>
+<p>两个料场向六个工点供建材, 工点位置单位千米, 每日需求单位吨:</p>
+<p>表 25-3 六个工点的位置与需求.</p>
+<div class="line-block">工点 | 横坐标 | 纵坐标 | 需求 |<br />
+: --- | ---: | ---: | ---: |<br />
+I | 1.25 | 1.25 | 3 |<br />
+II | 8.75 | 0.75 | 5 |<br />
+III | 0.50 | 4.75 | 4 |<br />
+IV | 5.75 | 5.00 | 7 |<br />
+V | 3.00 | 6.50 | 6 |<br />
+VI | 7.25 | 7.75 | 11 |</div>
+<p>原料场A位于 <span class="math inline">\((5,1)^{\mathsf T}\)</span>,
+B位于 <span class="math inline">\((2,7)^{\mathsf T}\)</span>,
+每日上限各20吨. 总需求36吨, 总能力40吨. 建材允许连续分配,
+一个工点可由两个料场共同供应, 两料场单位运价相同.
+用直线距离近似运输距离, 不计建设, 搬迁, 装卸, 道路和车辆固定费用.</p>
+<p>先算A到I: 横纵差为3.75与-0.25, 距离为 <span
+class="math inline">\(\sqrt{14.125}\)</span> 千米. 运3吨对应 <span
+class="math inline">\(3\sqrt{14.125}\)</span> 吨千米. 这是运输工作量,
+还不是工程总费用.</p>
+<p><strong>Python: <code>distance_cost_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> hypot</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> location_data <span class="keyword">import</span> SITES, OLD_CENTERS, true_cost</span><br><span class="line"></span><br><span class="line">flow = np.array([[<span class="number">3.</span>,<span class="number">5.</span>,<span class="number">0.</span>,<span class="number">7.</span>,<span class="number">0.</span>,<span class="number">1.</span>],[<span class="number">0.</span>,<span class="number">0.</span>,<span class="number">4.</span>,<span class="number">0.</span>,<span class="number">6.</span>,<span class="number">10.</span>]])</span><br><span class="line">distance = np.zeros((<span class="number">2</span>,<span class="number">6</span>))</span><br><span class="line">terms = np.zeros((<span class="number">2</span>,<span class="number">6</span>))</span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">6</span>):</span><br><span class="line">        dx,dy = OLD_CENTERS[j]-SITES[i]</span><br><span class="line">        distance[j,i] = hypot(dx,dy)</span><br><span class="line">        terms[j,i] = flow[j,i]*distance[j,i]</span><br><span class="line">first_distance, first_work = distance[<span class="number">0</span>,<span class="number">0</span>], terms[<span class="number">0</span>,<span class="number">0</span>]</span><br><span class="line">total = <span class="built_in">float</span>(terms.<span class="built_in">sum</span>())</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;A to site I, distance in km:&#x27;</span>,first_distance)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;3 tonnes times that distance, tonne-km:&#x27;</span>,first_work)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Work from each depot:&#x27;</span>,terms.<span class="built_in">sum</span>(axis=<span class="number">1</span>),<span class="string">&#x27;Total:&#x27;</span>,total)</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">abs</span>(first_distance**<span class="number">2</span>-<span class="number">14.125</span>)&lt;<span class="number">1e-12</span></span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">abs</span>(first_work-<span class="number">3</span>*first_distance)&lt;<span class="number">1e-12</span></span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">abs</span>(total-<span class="number">136.22751988318157</span>)&lt;<span class="number">1e-10</span></span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">abs</span>(total-true_cost(flow,OLD_CENTERS))&lt;<span class="number">1e-10</span></span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>distance_cost_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">sites=[<span class="number">1.25</span>,<span class="number">1.25</span>;<span class="number">8.75</span>,<span class="number">.75</span>;<span class="number">.5</span>,<span class="number">4.75</span>;<span class="number">5.75</span>,<span class="number">5</span>;<span class="number">3</span>,<span class="number">6.5</span>;<span class="number">7.25</span>,<span class="number">7.75</span>];</span><br><span class="line">centers=[<span class="number">5</span>,<span class="number">1</span>;<span class="number">2</span>,<span class="number">7</span>]; flow=[<span class="number">3</span>,<span class="number">5</span>,<span class="number">0</span>,<span class="number">7</span>,<span class="number">0</span>,<span class="number">1</span>;<span class="number">0</span>,<span class="number">0</span>,<span class="number">4</span>,<span class="number">0</span>,<span class="number">6</span>,<span class="number">10</span>];</span><br><span class="line">distance=<span class="built_in">zeros</span>(<span class="number">2</span>,<span class="number">6</span>); terms=<span class="built_in">zeros</span>(<span class="number">2</span>,<span class="number">6</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span>=<span class="number">1</span>:<span class="number">2</span></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>:<span class="number">6</span></span><br><span class="line">        delta=centers(<span class="built_in">j</span>,:)-sites(<span class="built_in">i</span>,:);</span><br><span class="line">        distance(<span class="built_in">j</span>,<span class="built_in">i</span>)=<span class="built_in">hypot</span>(delta(<span class="number">1</span>),delta(<span class="number">2</span>));</span><br><span class="line">        terms(<span class="built_in">j</span>,<span class="built_in">i</span>)=flow(<span class="built_in">j</span>,<span class="built_in">i</span>)*distance(<span class="built_in">j</span>,<span class="built_in">i</span>);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">first_distance=distance(<span class="number">1</span>,<span class="number">1</span>); first_work=terms(<span class="number">1</span>,<span class="number">1</span>); total=sum(terms(:));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;A to site I, km, and its work for 3 tonnes:&#x27;</span>); <span class="built_in">disp</span>([first_distance,first_work]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Work from each depot and total, tonne-km:&#x27;</span>); <span class="built_in">disp</span>(sum(terms,<span class="number">2</span>)); <span class="built_in">disp</span>(total);</span><br><span class="line">assert(<span class="built_in">abs</span>(first_distance^<span class="number">2</span><span class="number">-14.125</span>)&lt;<span class="number">1e-12</span>);</span><br><span class="line">assert(<span class="built_in">abs</span>(first_work<span class="number">-3</span>*first_distance)&lt;<span class="number">1e-12</span> &amp;&amp; <span class="built_in">abs</span>(total<span class="number">-136.22751988318157</span>)&lt;<span class="number">1e-10</span>);</span><br></pre></td></tr></table></figure>
+<p>本程序使用一套给定可行供应量, 先展示距离乘运输量再相加.
+下面再用运输LP证明这套计划在原固定位置下最优. 公共数据与真实距离计算在
+<code>location_data.py</code>, 与其他Python文件一同分发.</p>
+<h3 id="一条容量行与一条需求行分别统计什么">25.5.2
+一条容量行与一条需求行分别统计什么?</h3>
+<p>设 <span class="math inline">\(q_{ij}\)</span>
+是料场j到工点i的运输量. 固定料场位置后, 距离 <span
+class="math inline">\(r_{ij}\)</span> 就是已知常数, 模型是线性规划:</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\min_q\quad
+T(q)=\sum\limits_{j=1}^{2}\sum\limits_{i=1}^{6}r_{ij}q_{ij},\\
+&amp;\text{s.t.}\quad\left\{\begin{aligned}
+&amp;\sum\limits_{i=1}^{6}q_{ij}\leqslant20,\quad j=1,2,\\
+&amp;q_{i1}+q_{i2}=d_i,\quad i=1,\ldots,6,\\
+&amp;q_{ij}\geqslant0,\quad i=1,\ldots,6,\ j=1,2.
+\end{aligned}\right.
+\end{aligned}
+\]</span></p>
+<p>按料场分块, 先A的六个运输量, 再B的六个:</p>
+<p><span class="math display">\[
+q=(q_{11},q_{21},\ldots,q_{61},q_{12},q_{22},\ldots,q_{62})^{\mathsf T}.
+\]</span></p>
+<p>容量矩阵A有2行, 每行加总一个料场的六项; 需求矩阵E有6行,
+每行加总一个工点从两料场收到的量. 两个矩阵都有12列.
+先直接用循环把对应位置填1, 再回代:</p>
+<p><strong>Python: <code>transport_rows_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> location_data <span class="keyword">import</span> DEMAND, CAPACITY</span><br><span class="line"></span><br><span class="line">A, E = np.zeros((<span class="number">2</span>,<span class="number">12</span>)), np.zeros((<span class="number">6</span>,<span class="number">12</span>))</span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">6</span>):</span><br><span class="line">        k = <span class="number">6</span>*j+i</span><br><span class="line">        A[j,k] = <span class="number">1</span></span><br><span class="line">        E[i,k] = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">audit_flow</span>(<span class="params">flow</span>):</span><br><span class="line">    q = np.asarray(flow,dtype=<span class="built_in">float</span>).reshape(<span class="number">12</span>)</span><br><span class="line">    slack, error = CAPACITY-A@q, E@q-DEMAND</span><br><span class="line">    violation = <span class="built_in">max</span>(<span class="number">0.</span>,<span class="built_in">float</span>(np.<span class="built_in">max</span>(-q)),<span class="built_in">float</span>(np.<span class="built_in">max</span>(-slack)),<span class="built_in">float</span>(np.<span class="built_in">max</span>(np.<span class="built_in">abs</span>(error))))</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">dict</span>(supply=(A@q).tolist(),capacity_slack=slack.tolist(),</span><br><span class="line">                demand_error=error.tolist(),minimum_flow=<span class="built_in">float</span>(q.<span class="built_in">min</span>()),</span><br><span class="line">                violation=violation,feasible=<span class="built_in">bool</span>(np.<span class="built_in">all</span>(np.isfinite(q)) <span class="keyword">and</span> violation&lt;=<span class="number">1e-7</span>))</span><br><span class="line"></span><br><span class="line">good = np.array([[<span class="number">3.</span>,<span class="number">5.</span>,<span class="number">0.</span>,<span class="number">7.</span>,<span class="number">0.</span>,<span class="number">1.</span>],[<span class="number">0.</span>,<span class="number">0.</span>,<span class="number">4.</span>,<span class="number">0.</span>,<span class="number">6.</span>,<span class="number">10.</span>]])</span><br><span class="line">bad = good.copy(); bad[<span class="number">0</span>,<span class="number">0</span>] += <span class="number">5</span></span><br><span class="line">negative = good.copy()</span><br><span class="line">negative[<span class="number">0</span>,<span class="number">2</span>] -= <span class="number">1</span>; negative[<span class="number">1</span>,<span class="number">2</span>] += <span class="number">1</span></span><br><span class="line">negative[<span class="number">0</span>,<span class="number">5</span>] += <span class="number">1</span>; negative[<span class="number">1</span>,<span class="number">5</span>] -= <span class="number">1</span></span><br><span class="line">records = [audit_flow(q) <span class="keyword">for</span> q <span class="keyword">in</span> [good,bad,negative]]</span><br><span class="line"><span class="keyword">for</span> name,row <span class="keyword">in</span> <span class="built_in">zip</span>([<span class="string">&#x27;given feasible plan&#x27;</span>,<span class="string">&#x27;supply and demand violated&#x27;</span>,<span class="string">&#x27;negative shipment&#x27;</span>],records):</span><br><span class="line">    <span class="built_in">print</span>(name,row)</span><br><span class="line"><span class="keyword">assert</span> [r[<span class="string">&#x27;feasible&#x27;</span>] <span class="keyword">for</span> r <span class="keyword">in</span> records] == [<span class="literal">True</span>,<span class="literal">False</span>,<span class="literal">False</span>]</span><br><span class="line"><span class="keyword">assert</span> records[<span class="number">0</span>][<span class="string">&#x27;supply&#x27;</span>]==[<span class="number">16</span>,<span class="number">20</span>] <span class="keyword">and</span> records[<span class="number">0</span>][<span class="string">&#x27;capacity_slack&#x27;</span>]==[<span class="number">4</span>,<span class="number">0</span>]</span><br><span class="line"><span class="keyword">assert</span> records[<span class="number">1</span>][<span class="string">&#x27;violation&#x27;</span>]==<span class="number">5</span></span><br><span class="line"><span class="keyword">assert</span> records[<span class="number">2</span>][<span class="string">&#x27;demand_error&#x27;</span>]==[<span class="number">0</span>]*<span class="number">6</span> <span class="keyword">and</span> records[<span class="number">2</span>][<span class="string">&#x27;minimum_flow&#x27;</span>]==-<span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>transport_rows_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">demand=[<span class="number">3</span>,<span class="number">5</span>,<span class="number">4</span>,<span class="number">7</span>,<span class="number">6</span>,<span class="number">11</span>].&#x27;; capacity=[<span class="number">20</span>,<span class="number">20</span>].&#x27;; A=<span class="built_in">zeros</span>(<span class="number">2</span>,<span class="number">12</span>); E=<span class="built_in">zeros</span>(<span class="number">6</span>,<span class="number">12</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span>=<span class="number">1</span>:<span class="number">2</span></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>:<span class="number">6</span></span><br><span class="line">        k=<span class="number">6</span>*(<span class="built_in">j</span><span class="number">-1</span>)+<span class="built_in">i</span>; A(<span class="built_in">j</span>,k)=<span class="number">1</span>; E(<span class="built_in">i</span>,k)=<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">good=[<span class="number">3</span>,<span class="number">5</span>,<span class="number">0</span>,<span class="number">7</span>,<span class="number">0</span>,<span class="number">1</span>;<span class="number">0</span>,<span class="number">0</span>,<span class="number">4</span>,<span class="number">0</span>,<span class="number">6</span>,<span class="number">10</span>]; bad=good; bad(<span class="number">1</span>,<span class="number">1</span>)=bad(<span class="number">1</span>,<span class="number">1</span>)+<span class="number">5</span>;</span><br><span class="line">negative=good; negative(<span class="number">1</span>,<span class="number">3</span>)=negative(<span class="number">1</span>,<span class="number">3</span>)<span class="number">-1</span>; negative(<span class="number">2</span>,<span class="number">3</span>)=negative(<span class="number">2</span>,<span class="number">3</span>)+<span class="number">1</span>;</span><br><span class="line">negative(<span class="number">1</span>,<span class="number">6</span>)=negative(<span class="number">1</span>,<span class="number">6</span>)+<span class="number">1</span>; negative(<span class="number">2</span>,<span class="number">6</span>)=negative(<span class="number">2</span>,<span class="number">6</span>)<span class="number">-1</span>;</span><br><span class="line">records=[auditFlow(good,A,E,capacity,demand),auditFlow(bad,A,E,capacity,demand), ...</span><br><span class="line">    auditFlow(negative,A,E,capacity,demand)];</span><br><span class="line"><span class="built_in">disp</span>(records);</span><br><span class="line">assert(<span class="built_in">isequal</span>([records.feasible],[<span class="built_in">true</span>,<span class="built_in">false</span>,<span class="built_in">false</span>]));</span><br><span class="line">assert(<span class="built_in">isequal</span>(records(<span class="number">1</span>).supply,[<span class="number">16</span>,<span class="number">20</span>].&#x27;) &amp;&amp; <span class="built_in">isequal</span>(records(<span class="number">1</span>).capacity_slack,[<span class="number">4</span>,<span class="number">0</span>].&#x27;));</span><br><span class="line">assert(records(<span class="number">2</span>).violation==<span class="number">5</span> &amp;&amp; records(<span class="number">3</span>).minimum_flow==<span class="number">-1</span>);</span><br><span class="line">assert(all(records(<span class="number">3</span>).demand_error==<span class="number">0</span>));</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">result</span>=<span class="title">auditFlow</span><span class="params">(flow,A,E,capacity,demand)</span></span></span><br><span class="line">    q=<span class="built_in">reshape</span>(flow.&#x27;,<span class="number">12</span>,<span class="number">1</span>); slack=capacity-A*q; difference=E*q-demand;</span><br><span class="line">    violation=<span class="built_in">max</span>([<span class="number">0</span>;-q;-slack;<span class="built_in">abs</span>(difference)]);</span><br><span class="line">    result=struct(<span class="string">&#x27;supply&#x27;</span>,A*q,<span class="string">&#x27;capacity_slack&#x27;</span>,slack,<span class="string">&#x27;demand_error&#x27;</span>,difference, ...</span><br><span class="line">        <span class="string">&#x27;minimum_flow&#x27;</span>,<span class="built_in">min</span>(q),<span class="string">&#x27;violation&#x27;</span>,violation,<span class="string">&#x27;feasible&#x27;</span>,all(<span class="built_in">isfinite</span>(q)) &amp;&amp; violation&lt;=<span class="number">1e-7</span>);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>第二个方案给I多运5吨, 同时违反容量与需求.
+第三个方案的容量和需求仍满足, 却含-1吨, 所以还必须检查非负性.
+多类约束不能互相代替.</p>
+<h3 id="固定位置的完整运输求解函数">25.5.3
+固定位置的完整运输求解函数</h3>
+<p>保留原完整函数. Python距离矩阵按料场的两行, 工点的六列排列, 按行展开;
+MATLAB距离矩阵按工点的六行, 料场的两列排列, 按列展开.
+两者得到相同的q顺序.</p>
+<p><strong>Python: <code>shipping.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;For fixed depot positions, solve and check the transport LP.&quot;&quot;&quot;</span></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linprog</span><br><span class="line"><span class="keyword">from</span> location_data <span class="keyword">import</span> SITES, DEMAND, CAPACITY, A, AEQ, true_cost</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">shipping</span>(<span class="params">centers</span>):</span><br><span class="line">    distance = np.linalg.norm(centers[:,<span class="literal">None</span>,:]-SITES[<span class="literal">None</span>,:,:], axis=<span class="number">2</span>)</span><br><span class="line">    result = linprog(distance.ravel(), A_ub=A, b_ub=CAPACITY,</span><br><span class="line">                     A_eq=AEQ, b_eq=DEMAND, bounds=(<span class="number">0</span>,<span class="literal">None</span>), method=<span class="string">&#x27;highs&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> result.success:</span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(result.message)</span><br><span class="line">    q = result.x</span><br><span class="line">    violation = <span class="built_in">max</span>(<span class="number">0.</span>, <span class="built_in">float</span>(np.<span class="built_in">max</span>(-q)), <span class="built_in">float</span>(np.<span class="built_in">max</span>(A@q-CAPACITY)),</span><br><span class="line">                    <span class="built_in">float</span>(np.<span class="built_in">max</span>(np.<span class="built_in">abs</span>(AEQ@q-DEMAND))))</span><br><span class="line">    <span class="keyword">if</span> violation &gt; <span class="number">1e-7</span>:</span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(<span class="string">&#x27;Transport constraints failed.&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> q, true_cost(q, centers)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="keyword">from</span> location_data <span class="keyword">import</span> OLD_CENTERS</span><br><span class="line">    q, value = shipping(OLD_CENTERS)</span><br><span class="line">    <span class="built_in">print</span>(q.reshape(<span class="number">2</span>,<span class="number">6</span>))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;Transport work: <span class="subst">&#123;value:<span class="number">.9</span>f&#125;</span> tonne-km&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>shipping.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[flow,value]</span> = <span class="title">shipping</span><span class="params">(centers)</span></span></span><br><span class="line">    sites = [<span class="number">1.25</span>,<span class="number">1.25</span>;<span class="number">8.75</span>,<span class="number">.75</span>;<span class="number">.5</span>,<span class="number">4.75</span>;<span class="number">5.75</span>,<span class="number">5</span>;<span class="number">3</span>,<span class="number">6.5</span>;<span class="number">7.25</span>,<span class="number">7.75</span>];</span><br><span class="line">    demand = [<span class="number">3</span>,<span class="number">5</span>,<span class="number">4</span>,<span class="number">7</span>,<span class="number">6</span>,<span class="number">11</span>].&#x27;;</span><br><span class="line">    capacity = [<span class="number">20</span>,<span class="number">20</span>].&#x27;;</span><br><span class="line">    A = [<span class="built_in">ones</span>(<span class="number">1</span>,<span class="number">6</span>),<span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">6</span>);<span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">6</span>),<span class="built_in">ones</span>(<span class="number">1</span>,<span class="number">6</span>)];</span><br><span class="line">    E = [<span class="built_in">eye</span>(<span class="number">6</span>),<span class="built_in">eye</span>(<span class="number">6</span>)];</span><br><span class="line">    distance = <span class="built_in">zeros</span>(<span class="number">6</span>,<span class="number">2</span>);</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">        distance(:,<span class="built_in">j</span>) = <span class="built_in">hypot</span>(centers(<span class="built_in">j</span>,<span class="number">1</span>)-sites(:,<span class="number">1</span>),centers(<span class="built_in">j</span>,<span class="number">2</span>)-sites(:,<span class="number">2</span>));</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    options = optimoptions(<span class="string">&#x27;linprog&#x27;</span>,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;none&#x27;</span>);</span><br><span class="line">    [q,~,flag,out] = linprog(distance(:),A,capacity,E,demand, ...</span><br><span class="line">                            <span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">12</span>).&#x27;,[],options);</span><br><span class="line">    <span class="keyword">if</span> flag ~= <span class="number">1</span>, error(<span class="string">&#x27;LP failed: %s&#x27;</span>,out.message); <span class="keyword">end</span></span><br><span class="line">    violation = <span class="built_in">max</span>([<span class="number">0</span>;-q;A*q-capacity;<span class="built_in">abs</span>(E*q-demand)]);</span><br><span class="line">    <span class="keyword">if</span> violation &gt; <span class="number">1e-7</span>, error(<span class="string">&#x27;Transport constraints failed.&#x27;</span>); <span class="keyword">end</span></span><br><span class="line">    flow = <span class="built_in">reshape</span>(q,<span class="number">6</span>,<span class="number">2</span>).&#x27;;</span><br><span class="line">    value = sum(sum(flow.&#x27;.*distance));</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>Python可直接运行该文件查看原位置结果; MATLAB用
+<code>shipping([5,1;2,7])</code> 调用. 最优供应矩阵每行一个料场:</p>
+<p><span class="math display">\[
+Q_{\mathrm{old}}=\begin{pmatrix}
+3&amp;5&amp;0&amp;7&amp;0&amp;1\\
+0&amp;0&amp;4&amp;0&amp;6&amp;10
+\end{pmatrix}.
+\]</span></p>
+<p>A供应16吨, B供应20吨, 每列之和等于需求,
+固定位置最小运输工作量约136.227520吨千米. 距离虽由平方根计算,
+位置固定后距离是常数, 对决策变量q的目标仍线性.</p>
+<p><img src="/images/NonlinearProgramming/NLP-3.png" style="width:100%"></p>
+<p>图 25-4 原料场位置下的最优供应方案. 线段数字为吨数, 横纵坐标为千米,
+目标为吨千米, 三种量的单位分别解释.</p>
+<h2 id="位置也变化时-怎样构造一个可行初值">25.6 位置也变化时,
+怎样构造一个可行初值?</h2>
+<h3 id="运输量与位置共同进入目标">25.6.1 运输量与位置共同进入目标</h3>
+<p>令料场位置 <span class="math inline">\(z_j=(u_j,v_j)^{\mathsf
+T}\)</span> 也由模型决定:</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\min_{q,z_1,z_2}\quad T(q,z)=
+\sum\limits_{j=1}^{2}\sum\limits_{i=1}^{6}q_{ij}\|z_j-p_i\|_2,\\
+&amp;\text{s.t.}\quad\left\{\begin{aligned}
+&amp;\sum\limits_{i=1}^{6}q_{ij}\leqslant20,\quad j=1,2,\\
+&amp;q_{i1}+q_{i2}=d_i,\quad i=1,\ldots,6,\\
+&amp;q_{ij}\geqslant0,\quad i=1,\ldots,6,\ j=1,2,\\
+&amp;0.5\leqslant u_j\leqslant8.75,\quad j=1,2,\\
+&amp;0.75\leqslant v_j\leqslant7.75,\quad j=1,2.
+\end{aligned}\right.
+\end{aligned}
+\]</span></p>
+<p>位置限制在工点包围矩形内. 对当前无障碍的直线距离目标,
+把矩形外位置按坐标投影回来不会增加到任何工点的距离,
+因而这个范围不会排除全部全局最优方案. 若有禁建区或道路条件,
+则需重新分析.</p>
+<p>固定位置后q子问题线性; 固定q后位置子问题是距离的非负加权和, 为凸优化.
+二者共同变化时, 运输量乘距离一般不联合凸,
+不能据两个子问题分别容易就认定整体容易.</p>
+<h3 id="先选位置-再用lp配平运输量">25.6.2 先选位置,
+再用LP配平运输量</h3>
+<p>把16个变量依次写为</p>
+<p><span class="math display">\[
+w=(q^{\mathsf T},u_1,v_1,u_2,v_2)^{\mathsf T}.
+\]</span></p>
+<p>容量和需求矩阵右侧各补4列零, 因为这些线性限制只作用于前12个运输量.
+直接随机填运输量通常不满足6个需求等式. 更可控的做法是给定位置,
+调用shipping生成可行运输量, 再接上坐标.</p>
+<p><strong>Python: <code>feasible_start_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> location_data <span class="keyword">import</span> SITES, DEMAND, CAPACITY, OLD_CENTERS, A, AEQ</span><br><span class="line"><span class="keyword">from</span> shipping <span class="keyword">import</span> shipping</span><br><span class="line"></span><br><span class="line">lower, upper = SITES.<span class="built_in">min</span>(axis=<span class="number">0</span>), SITES.<span class="built_in">max</span>(axis=<span class="number">0</span>)</span><br><span class="line">A16, E16 = np.hstack([A,np.zeros((<span class="number">2</span>,<span class="number">4</span>))]), np.hstack([AEQ,np.zeros((<span class="number">6</span>,<span class="number">4</span>))])</span><br><span class="line">rng = np.random.default_rng(<span class="number">20261031</span>)</span><br><span class="line">positions = [OLD_CENTERS,np.array([[<span class="number">3.</span>,<span class="number">5.</span>],[<span class="number">7.</span>,<span class="number">7.</span>]]),rng.uniform(lower,upper,size=(<span class="number">2</span>,<span class="number">2</span>))]</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> centers <span class="keyword">in</span> positions:</span><br><span class="line">    q,value = shipping(centers)</span><br><span class="line">    w = np.r_[q,centers.ravel()]</span><br><span class="line">    violation = <span class="built_in">max</span>(<span class="number">0.</span>,<span class="built_in">float</span>(np.<span class="built_in">max</span>(A16@w-CAPACITY)),</span><br><span class="line">                    <span class="built_in">float</span>(np.<span class="built_in">max</span>(np.<span class="built_in">abs</span>(E16@w-DEMAND))),<span class="built_in">float</span>(np.<span class="built_in">max</span>(-q)),</span><br><span class="line">                    <span class="built_in">float</span>(np.<span class="built_in">max</span>(q-np.tile(DEMAND,<span class="number">2</span>))),<span class="built_in">float</span>(np.<span class="built_in">max</span>(lower-centers)),</span><br><span class="line">                    <span class="built_in">float</span>(np.<span class="built_in">max</span>(centers-upper)))</span><br><span class="line">    records.append(<span class="built_in">dict</span>(w=w,value=value,violation=violation))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;Feasible start, true transport work, violation:&#x27;</span>,w.shape,value,violation)</span><br><span class="line">zero_flow = np.r_[np.zeros(<span class="number">12</span>),OLD_CENTERS.ravel()]</span><br><span class="line">zero_demand_error = E16@zero_flow-DEMAND</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Zero shipments fail the demand equalities:&#x27;</span>,zero_demand_error)</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">all</span>(r[<span class="string">&#x27;w&#x27;</span>].shape==(<span class="number">16</span>,) <span class="keyword">and</span> r[<span class="string">&#x27;violation&#x27;</span>]&lt;=<span class="number">1e-7</span> <span class="keyword">for</span> r <span class="keyword">in</span> records)</span><br><span class="line"><span class="keyword">assert</span> np.<span class="built_in">max</span>(np.<span class="built_in">abs</span>(zero_demand_error))==<span class="number">11</span></span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>feasible_start_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">sites=[<span class="number">1.25</span>,<span class="number">1.25</span>;<span class="number">8.75</span>,<span class="number">.75</span>;<span class="number">.5</span>,<span class="number">4.75</span>;<span class="number">5.75</span>,<span class="number">5</span>;<span class="number">3</span>,<span class="number">6.5</span>;<span class="number">7.25</span>,<span class="number">7.75</span>];</span><br><span class="line">demand=[<span class="number">3</span>,<span class="number">5</span>,<span class="number">4</span>,<span class="number">7</span>,<span class="number">6</span>,<span class="number">11</span>].&#x27;; capacity=[<span class="number">20</span>,<span class="number">20</span>].&#x27;; lower=<span class="built_in">min</span>(sites,[],<span class="number">1</span>); upper=<span class="built_in">max</span>(sites,[],<span class="number">1</span>);</span><br><span class="line">A=[<span class="built_in">ones</span>(<span class="number">1</span>,<span class="number">6</span>),<span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">6</span>);<span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">6</span>),<span class="built_in">ones</span>(<span class="number">1</span>,<span class="number">6</span>)]; E=[<span class="built_in">eye</span>(<span class="number">6</span>),<span class="built_in">eye</span>(<span class="number">6</span>)];</span><br><span class="line">A16=[A,<span class="built_in">zeros</span>(<span class="number">2</span>,<span class="number">4</span>)]; E16=[E,<span class="built_in">zeros</span>(<span class="number">6</span>,<span class="number">4</span>)]; rng(<span class="number">20261031</span>,<span class="string">&#x27;twister&#x27;</span>);</span><br><span class="line">positions=<span class="built_in">zeros</span>(<span class="number">2</span>,<span class="number">2</span>,<span class="number">3</span>); positions(:,:,<span class="number">1</span>)=[<span class="number">5</span>,<span class="number">1</span>;<span class="number">2</span>,<span class="number">7</span>]; positions(:,:,<span class="number">2</span>)=[<span class="number">3</span>,<span class="number">5</span>;<span class="number">7</span>,<span class="number">7</span>];</span><br><span class="line">positions(:,:,<span class="number">3</span>)=lower+(upper-lower).*<span class="built_in">rand</span>(<span class="number">2</span>,<span class="number">2</span>); records=struct([]);</span><br><span class="line"><span class="keyword">for</span> k=<span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    centers=positions(:,:,k); [flow,value]=shipping(centers);</span><br><span class="line">    q=<span class="built_in">reshape</span>(flow.&#x27;,<span class="number">12</span>,<span class="number">1</span>); w=[q;<span class="built_in">reshape</span>(centers.&#x27;,<span class="number">4</span>,<span class="number">1</span>)];</span><br><span class="line">    lowGap=lower-centers; highGap=centers-upper;</span><br><span class="line">    violation=<span class="built_in">max</span>([<span class="number">0</span>;A16*w-capacity;<span class="built_in">abs</span>(E16*w-demand);-q;q-<span class="built_in">repmat</span>(demand,<span class="number">2</span>,<span class="number">1</span>); ...</span><br><span class="line">        lowGap(:);highGap(:)]);</span><br><span class="line">    records(k)=struct(<span class="string">&#x27;w&#x27;</span>,w,<span class="string">&#x27;value&#x27;</span>,value,<span class="string">&#x27;violation&#x27;</span>,violation);</span><br><span class="line">    <span class="built_in">disp</span>([value,violation]); assert(<span class="built_in">numel</span>(w)==<span class="number">16</span> &amp;&amp; violation&lt;=<span class="number">1e-7</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">old=[<span class="number">5</span>,<span class="number">1</span>;<span class="number">2</span>,<span class="number">7</span>]; zero_flow=[<span class="built_in">zeros</span>(<span class="number">12</span>,<span class="number">1</span>);<span class="built_in">reshape</span>(old.&#x27;,<span class="number">4</span>,<span class="number">1</span>)];</span><br><span class="line">zero_demand_error=E16*zero_flow-demand;</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Zero shipments fail the demand equalities:&#x27;</span>); <span class="built_in">disp</span>(zero_demand_error);</span><br><span class="line">assert(<span class="built_in">max</span>(<span class="built_in">abs</span>(zero_demand_error))==<span class="number">11</span>);</span><br></pre></td></tr></table></figure>
+<p>程序比较三个位置初值, 不是执行完整非线性搜索. 原位置,
+一套新给定位置和一套固定种子的随机位置, 都先通过运输LP产生q.
+全零运输量即使非负也不满足需求, 最大缺口11吨. 可行初值检查包括容量,
+需求, 非负, 运输量上界与位置范围.</p>
+<p>本例容量充足且每个料场都能服务每个工点,
+因而这些位置不会使运输LP不可行. 若有服务资格或道路限制,
+不能只看总能力就下同样结论.</p>
+<h2 id="光滑近似与梯度检查-分别解决什么问题">25.7 光滑近似与梯度检查,
+分别解决什么问题?</h2>
+<h3 id="重合点不能直接除以零距离">25.7.1 重合点不能直接除以零距离</h3>
+<p>欧氏距离在料场与工点重合时不可微. 原程序以</p>
+<p><span class="math display">\[
+r_{ij}^{(\varepsilon)}=\sqrt{(u_j-a_i)^2+(v_j-b_i)^2+\varepsilon^2}
+\]</span></p>
+<p>作光滑近似. 对同一组决策, 单项距离增加量在0与 <span
+class="math inline">\(\varepsilon\)</span> 之间.
+因为可行运输量非负且总计36吨:</p>
+<p><span class="math display">\[
+0\leqslant T_{\varepsilon}(q,z)-T(q,z)\leqslant36\varepsilon.
+\]</span></p>
+<p>下面固定一套可行运输量与位置, 只比较同一个决策在两个目标下的数值.
+该决策不是新宣称的最优方案.</p>
+<p><strong>Python: <code>smoothing_bound_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> location_data <span class="keyword">import</span> SITES, true_cost</span><br><span class="line"></span><br><span class="line"><span class="comment"># A fixed feasible decision for comparing two objectives, not a new optimum claim.</span></span><br><span class="line">flow = np.array([[<span class="number">3.</span>,<span class="number">0.</span>,<span class="number">4.</span>,<span class="number">7.</span>,<span class="number">6.</span>,<span class="number">0.</span>],[<span class="number">0.</span>,<span class="number">5.</span>,<span class="number">0.</span>,<span class="number">0.</span>,<span class="number">0.</span>,<span class="number">11.</span>]])</span><br><span class="line">centers = np.array([[<span class="number">3.25</span>,<span class="number">5.65</span>],SITES[<span class="number">5</span>]])</span><br><span class="line">delta = centers[:,<span class="literal">None</span>,:]-SITES[<span class="literal">None</span>,:,:]</span><br><span class="line">squared = np.<span class="built_in">sum</span>(delta**<span class="number">2</span>,axis=<span class="number">2</span>)</span><br><span class="line">true_value = true_cost(flow,centers)</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> epsilon <span class="keyword">in</span> [<span class="number">1e-3</span>,<span class="number">1e-5</span>,<span class="number">1e-6</span>]:</span><br><span class="line">    smooth = <span class="built_in">float</span>(np.<span class="built_in">sum</span>(flow*np.sqrt(squared+epsilon**<span class="number">2</span>)))</span><br><span class="line">    gap = smooth-true_value</span><br><span class="line">    row = <span class="built_in">dict</span>(epsilon=epsilon,true_value=true_value,smooth=smooth,gap=gap,bound=<span class="number">36</span>*epsilon)</span><br><span class="line">    records.append(row)</span><br><span class="line">    <span class="built_in">print</span>(row)</span><br><span class="line">    <span class="keyword">assert</span> -<span class="number">1e-12</span>&lt;=gap&lt;=<span class="number">36</span>*epsilon+<span class="number">1e-12</span></span><br><span class="line">    <span class="keyword">assert</span> gap&gt;=<span class="number">11</span>*epsilon-<span class="number">1e-12</span></span><br><span class="line"><span class="keyword">assert</span> flow.<span class="built_in">sum</span>()==<span class="number">36</span> <span class="keyword">and</span> squared[<span class="number">1</span>,<span class="number">5</span>]==<span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>smoothing_bound_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">sites=[<span class="number">1.25</span>,<span class="number">1.25</span>;<span class="number">8.75</span>,<span class="number">.75</span>;<span class="number">.5</span>,<span class="number">4.75</span>;<span class="number">5.75</span>,<span class="number">5</span>;<span class="number">3</span>,<span class="number">6.5</span>;<span class="number">7.25</span>,<span class="number">7.75</span>];</span><br><span class="line"><span class="comment">% Fixed feasible decision; this script does not claim a new optimum.</span></span><br><span class="line">flow=[<span class="number">3</span>,<span class="number">0</span>,<span class="number">4</span>,<span class="number">7</span>,<span class="number">6</span>,<span class="number">0</span>;<span class="number">0</span>,<span class="number">5</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">11</span>]; centers=[<span class="number">3.25</span>,<span class="number">5.65</span>;sites(<span class="number">6</span>,:)];</span><br><span class="line">squared=<span class="built_in">zeros</span>(<span class="number">2</span>,<span class="number">6</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span>=<span class="number">1</span>:<span class="number">2</span>, squared(<span class="built_in">j</span>,:)=sum((centers(<span class="built_in">j</span>,:)-sites).^<span class="number">2</span>,<span class="number">2</span>).&#x27;; <span class="keyword">end</span></span><br><span class="line"><span class="built_in">true</span>_value=sum(sum(flow.*<span class="built_in">sqrt</span>(squared))); epsilons=[<span class="number">1e-3</span>,<span class="number">1e-5</span>,<span class="number">1e-6</span>]; records=struct([]);</span><br><span class="line"><span class="keyword">for</span> k=<span class="number">1</span>:<span class="built_in">numel</span>(epsilons)</span><br><span class="line">    epsilon=epsilons(k); smooth=sum(sum(flow.*<span class="built_in">sqrt</span>(squared+epsilon^<span class="number">2</span>)));</span><br><span class="line">    gap=smooth-<span class="built_in">true</span>_value;</span><br><span class="line">    records(k)=struct(<span class="string">&#x27;epsilon&#x27;</span>,epsilon,<span class="string">&#x27;true_value&#x27;</span>,<span class="built_in">true</span>_value,<span class="string">&#x27;smooth&#x27;</span>,smooth, ...</span><br><span class="line">        <span class="string">&#x27;gap&#x27;</span>,gap,<span class="string">&#x27;bound&#x27;</span>,<span class="number">36</span>*epsilon);</span><br><span class="line">    <span class="built_in">disp</span>(records(k));</span><br><span class="line">    assert(gap&gt;=<span class="number">-1e-12</span> &amp;&amp; gap&lt;=<span class="number">36</span>*epsilon+<span class="number">1e-12</span> &amp;&amp; gap&gt;=<span class="number">11</span>*epsilon<span class="number">-1e-12</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">assert(sum(flow(:))==<span class="number">36</span> &amp;&amp; squared(<span class="number">2</span>,<span class="number">6</span>)==<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<p><img src="/images/NonlinearProgramming/NLP-Smoothing.png" style="width:100%"></p>
+<p>图 25-5 同一个可行决策下的光滑误差与36倍epsilon上界,
+横纵轴均为对数坐标. 固定方案中B与工点VI重合,
+11吨的对应项贡献11倍epsilon. 上界比较同一决策的两个目标,
+不衡量局部搜索与全局最优的差距.</p>
+<p>光滑误差, 求解终止误差与尚未搜索到更好位置的差距属于不同来源.
+最终需按真实距离回算, 并在该位置重新优化运输量.</p>
+<h3 id="梯度先分两部分-再用差分核对">25.7.2 梯度先分两部分,
+再用差分核对</h3>
+<p>光滑目标对运输量的偏导是对应距离; 对每个位置的梯度为</p>
+<p><span class="math display">\[
+\frac{\partial T_{\varepsilon}}{\partial q_{ij}}=r_{ij}^{(\varepsilon)},
+\qquad
+\nabla_{z_j}T_{\varepsilon}
+=\sum\limits_{i=1}^{6}q_{ij}\frac{z_j-p_i}{r_{ij}^{(\varepsilon)}}.
+\]</span></p>
+<p>完整函数 <code>location_objective.py</code>,
+<code>locationObjective.m</code> 保留在延伸阅读F.4.3.
+先检查它返回的16个梯度分量是否与w顺序一致, 再供求解器使用.
+用中心差分逐分量对照:</p>
+<p><span class="math display">\[
+\frac{\partial T_{\varepsilon}}{\partial w_k}
+\approx\frac{T_{\varepsilon}(w+h e_k)-T_{\varepsilon}(w-h e_k)}{2h},
+\]</span></p>
+<p>其中 <span class="math inline">\(e_k\)</span>
+是第k个分量为1的单位向量. 这只是检查已定义函数的导数,
+扰动点不必作为可行运输方案执行.</p>
+<p><strong>Python: <code>gradient_audit_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> location_data <span class="keyword">import</span> OLD_CENTERS</span><br><span class="line"><span class="keyword">from</span> shipping <span class="keyword">import</span> shipping</span><br><span class="line"><span class="keyword">from</span> location_objective <span class="keyword">import</span> smooth_objective_gradient</span><br><span class="line"></span><br><span class="line">q,_ = shipping(OLD_CENTERS)</span><br><span class="line">w = np.r_[q,OLD_CENTERS.ravel()]</span><br><span class="line">value,analytic = smooth_objective_gradient(w)</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> h <span class="keyword">in</span> [<span class="number">1e-4</span>,<span class="number">1e-5</span>,<span class="number">1e-6</span>]:</span><br><span class="line">    numerical = np.zeros(<span class="number">16</span>)</span><br><span class="line">    <span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">16</span>):</span><br><span class="line">        direction = np.zeros(<span class="number">16</span>); direction[k] = <span class="number">1</span></span><br><span class="line">        plus = smooth_objective_gradient(w+h*direction)[<span class="number">0</span>]</span><br><span class="line">        minus = smooth_objective_gradient(w-h*direction)[<span class="number">0</span>]</span><br><span class="line">        numerical[k] = (plus-minus)/(<span class="number">2</span>*h)</span><br><span class="line">    error = <span class="built_in">float</span>(np.<span class="built_in">max</span>(np.<span class="built_in">abs</span>(analytic-numerical)))</span><br><span class="line">    records.append(<span class="built_in">dict</span>(h=h,error=error))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;Difference step and maximum gradient error:&#x27;</span>,h,error)</span><br><span class="line">wrong = analytic.copy(); wrong[<span class="number">0</span>] += <span class="number">1</span></span><br><span class="line">wrong_error = <span class="built_in">float</span>(np.<span class="built_in">max</span>(np.<span class="built_in">abs</span>(wrong-numerical)))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;A deliberately wrong gradient is detected:&#x27;</span>,wrong_error)</span><br><span class="line"><span class="keyword">assert</span> analytic.shape==(<span class="number">16</span>,) <span class="keyword">and</span> <span class="built_in">all</span>(r[<span class="string">&#x27;error&#x27;</span>]&lt;<span class="number">2e-6</span> <span class="keyword">for</span> r <span class="keyword">in</span> records)</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">min</span>(r[<span class="string">&#x27;error&#x27;</span>] <span class="keyword">for</span> r <span class="keyword">in</span> records)&lt;<span class="number">1e-7</span> <span class="keyword">and</span> wrong_error&gt;<span class="number">.99</span></span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>gradient_audit_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">sites=[<span class="number">1.25</span>,<span class="number">1.25</span>;<span class="number">8.75</span>,<span class="number">.75</span>;<span class="number">.5</span>,<span class="number">4.75</span>;<span class="number">5.75</span>,<span class="number">5</span>;<span class="number">3</span>,<span class="number">6.5</span>;<span class="number">7.25</span>,<span class="number">7.75</span>];</span><br><span class="line">centers=[<span class="number">5</span>,<span class="number">1</span>;<span class="number">2</span>,<span class="number">7</span>]; [flow,~]=shipping(centers);</span><br><span class="line">w=[<span class="built_in">reshape</span>(flow.&#x27;,<span class="number">12</span>,<span class="number">1</span>);<span class="built_in">reshape</span>(centers.&#x27;,<span class="number">4</span>,<span class="number">1</span>)]; epsilon=<span class="number">1e-6</span>;</span><br><span class="line">[value,analytic]=locationObjective(w,sites,epsilon); steps=[<span class="number">1e-4</span>,<span class="number">1e-5</span>,<span class="number">1e-6</span>]; errors=<span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">3</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span>=<span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    h=steps(<span class="built_in">j</span>); numerical=<span class="built_in">zeros</span>(<span class="number">16</span>,<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span> k=<span class="number">1</span>:<span class="number">16</span></span><br><span class="line">        direction=<span class="built_in">zeros</span>(<span class="number">16</span>,<span class="number">1</span>); direction(k)=<span class="number">1</span>;</span><br><span class="line">        plus=locationObjective(w+h*direction,sites,epsilon);</span><br><span class="line">        minus=locationObjective(w-h*direction,sites,epsilon);</span><br><span class="line">        numerical(k)=(plus-minus)/(<span class="number">2</span>*h);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    errors(<span class="built_in">j</span>)=<span class="built_in">max</span>(<span class="built_in">abs</span>(analytic-numerical)); <span class="built_in">disp</span>([h,errors(<span class="built_in">j</span>)]);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">wrong=analytic; wrong(<span class="number">1</span>)=wrong(<span class="number">1</span>)+<span class="number">1</span>; wrong_error=<span class="built_in">max</span>(<span class="built_in">abs</span>(wrong-numerical));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;A deliberately wrong gradient is detected:&#x27;</span>); <span class="built_in">disp</span>(wrong_error);</span><br><span class="line">assert(<span class="built_in">numel</span>(analytic)==<span class="number">16</span> &amp;&amp; all(errors&lt;<span class="number">2e-6</span>) &amp;&amp; <span class="built_in">min</span>(errors)&lt;<span class="number">1e-7</span> &amp;&amp; wrong_error&gt;<span class="number">.99</span>);</span><br></pre></td></tr></table></figure>
+<p>程序选取不与工点重合的原位置, 比较三种差分步长,
+并故意把一个梯度分量加1作反例. 差分太小会受浮点相消影响, 不是越小越可靠.
+本例变量量级相近时作这种简单演示;
+大尺度混合单位模型应结合缩放选择逐分量步长.</p>
+<p>表 25-4 三类数值参数的含义.</p>
+<div class="line-block">参数 | 作用 | 不能直接解释成什么 |<br />
+: --- | : --- | : --- |<br />
+epsilon | 距离光滑尺度, 本例为千米 | 非凸搜索的全局误差 |<br />
+h | 差分检查的数值步长 | 真实方案应改变的决策量 |<br />
+ftol | SLSQP终止条件中的精度目标 | 坐标误差的统一上界 |</div>
+<h2 id="把可行初值与局部求解接起来">25.8 把可行初值与局部求解接起来</h2>
+<h3 id="原完整联合搜索的四步">25.8.1 原完整联合搜索的四步</h3>
+<p>原Python与MATLAB完整实现保留在 <code>LocationSearch.md</code>, 对应
+<code>location_search.py</code>, <code>location_search.m</code>.
+解析目标与梯度放在相邻完整函数中, 按以下顺序组合:</p>
+<ol type="1">
+<li>在矩形内生成200组位置, 每次用运输LP生成可行运输量.</li>
+<li>按真实运输工作量排序, 取最好12组, 加原方案共13个初值.</li>
+<li>对每个初值执行光滑目标的约束局部搜索, 检查状态, 有限性,
+全部线性残差和边界.</li>
+<li>对接纳的位置重新求解真实距离运输LP, 用原指标比较,
+保存最好可行方案.</li>
+</ol>
+<p><code>best</code> 从已知原可行方案开始, 避免更差候选覆盖已有结果.
+Python的 <code>jac=True</code> 表示目标同时返回函数值与梯度; MATLAB使用
+<code>SpecifyObjectiveGradient=true</code>.
+两种语言各自遵守运输量与位置的展开顺序. [1, 2]</p>
+<p>配套Python联合搜索示范接纳13次局部运行,
+最好真实指标约85.266044吨千米, 同时出现约89.883475和93.140808等较差候选.
+不同算法或版本可能产生不同路径, 要保留状态和残差再比较.</p>
+<h3 id="这些运行能够说明什么">25.8.2 这些运行能够说明什么?</h3>
+<p>它们说明已找到明显优于原位置的可行方案. 它们没有覆盖所有可能位置,
+不能只因13次中最好就称为全局最优. 两料场编号互换不改变目标,
+按横坐标排序展示时也必须同步交换供应矩阵的行.</p>
+<p>光滑后再使用真实距离, 仍只是对给定位置作运输改进. 将局部搜索,
+固定位置运输优化与下一节的全局结构核验分开叙述,
+才能准确解释每一步提供的保证.</p>
+<h2 id="本例为什么还能作更强的全局核验">25.9
+本例为什么还能作更强的全局核验?</h2>
+<h3 id="利用运输顶点-分成有限个凸位置子问题">25.9.1 利用运输顶点,
+分成有限个凸位置子问题</h3>
+<p>令 <span class="math inline">\(s_i=q_{i1}\)</span>, 需求平衡给出
+<span class="math inline">\(q_{i2}=d_i-s_i\)</span>.
+原运输可行集等价于</p>
+<p><span class="math display">\[
+0\leqslant s_i\leqslant d_i,\qquad
+16\leqslant\sum\limits_{i=1}^{6}s_i\leqslant20.
+\]</span></p>
+<p>对固定位置, 运输目标线性, 至少存在一个顶点最优解.
+联合可行集紧致且目标连续, 从一个联合全局最优方案出发,
+可在同位置换成某个运输顶点最优解而不变差.
+因而本例只需检查全部运输顶点对应的最佳位置.</p>
+<p>原数据有106个顶点, 含料场互换的对称方案. 固定一个顶点后,
+两个料场分别求加权几何中位点:</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\min_z\quad\sum\limits_{i=1}^{6}w_i\|z-p_i\|_2,\\
+&amp;\text{s.t.}\quad\left\{\begin{aligned}
+&amp;z\in\mathbb R^2.
+\end{aligned}\right.
+\end{aligned}
+\]</span></p>
+<p>权重是该料场给各工点的供应量. 距离的非负加权和是凸函数, 但可能不可微,
+不能把它误作距离平方和并直接取加权平均. 在本例无障碍直线距离下,
+也可在工点包围矩形内取得最优, 与前面位置范围相容.</p>
+<h3 id="让上下界支持最终数值">25.9.2 让上下界支持最终数值</h3>
+<p>完整顶点枚举, 重合点检查, Weiszfeld迭代和下界构造保留在
+<code>GlobalLocationVerification.md</code>, 对应
+<code>transport_vertices.py</code>, <code>transportVertices.m</code>,
+<code>geometric_median.py</code>, <code>geometricMedian.m</code>,
+<code>global_location.py/.m</code>. 原详细证明在延伸阅读F.5.
+这里的全部程序使用真实距离.</p>
+<p>每个运输顶点k的位置子问题给出下界 <span
+class="math inline">\(L_k\)</span> 与可行上界 <span
+class="math inline">\(U_k\)</span>, 联合最优值满足</p>
+<p><span class="math display">\[
+\min_k L_k\leqslant T^*\leqslant\min_k U_k.
+\]</span></p>
+<p>本次原程序计算的汇总下界约85.266040872021,
+上界约85.266040872111吨千米. 差约 <span
+class="math inline">\(8.9\times10^{-11}\)</span>,
+支持报告六位小数的全局数值结果85.266041. 计算使用普通双精度,
+未作有向舍入区间验证, 不把末位当成严格区间证书;
+目标值精度也不直接表示坐标同样精确.</p>
+<h3 id="把数值还原成可解释的供应计划">25.9.3
+把数值还原成可解释的供应计划</h3>
+<p>位置与供应量为</p>
+<p><span class="math display">\[
+z_A\approx(3.254883,5.652332)^{\mathsf T},\qquad
+z_B=(7.25,7.75)^{\mathsf T},
+\]</span></p>
+<p><span class="math display">\[
+Q_{\mathrm{new}}=\begin{pmatrix}
+3&amp;0&amp;4&amp;7&amp;6&amp;0\\
+0&amp;5&amp;0&amp;0&amp;0&amp;11
+\end{pmatrix}.
+\]</span></p>
+<p>A供应20吨, B供应16吨, 每个工点需求均满足. B与VI重合,
+对应11吨的直线运输工作量为0, 不表示采购, 装卸和场地等现实费用为0.</p>
+<p><img src="/images/NonlinearProgramming/NLP-4.png" style="width:100%"></p>
+<p>图 25-6 全局结构核验对应的供应计划. B与VI重合,
+省略两者间的零长度线段. 目标单位仍为吨千米.</p>
+<p>相对原位置, 每日运输工作量减少约50.961479吨千米, 降幅约37.41%.
+这不是工程总费用下降37.41%的结论. 加入用地, 搬迁或道路规则后,
+需要重新建模; 有禁建圆时, 固定运输量的位置子问题可能不再凸,
+原全局核验不能照搬.</p>
+<h2 id="从候选方案到可靠结论的检查顺序">25.10
+从候选方案到可靠结论的检查顺序</h2>
+<h3 id="结果检查应回答三个层次">25.10.1 结果检查应回答三个层次</h3>
+<p>表 25-5 非线性求解的三个检查层次.</p>
+<div class="line-block">层次 | 应检查的内容 |<br />
+: --- | : --- |<br />
+模型 | 变量, 单位, 目标, 约束与实际含义是否一致 |<br />
+候选 | 状态, 有限性, 原约束, 边界和原目标是否通过 |<br />
+最优性 | 局部与全局是否分清, 是否有凸性, 解析分析或有效界 |</div>
+<p>按以下顺序完成一个新问题:</p>
+<ol type="1">
+<li>写清变量, 数据与单位, 判断哪些量是常数, 哪些量参与决策.</li>
+<li>判断非线性来自目标还是约束, 明确最大化或最小化.</li>
+<li>按接口分别填写约束方向和边界, 检查具体点的残差.</li>
+<li>从可解释的可行方案构造初值, 核对目标与梯度顺序.</li>
+<li>调用求解器并读终止原因, 不只读x和fun.</li>
+<li>回代全部原约束与边界, 用原目标和真实距离重新计算.</li>
+<li>比较多个候选, 再依据结构说明局部或全局结论和精度范围.</li>
+<li>回到现实条件, 说明当前模型没有表达的成本与执行限制.</li>
+</ol>
+<p>KKT的驻点, 原始可行, 对偶可行和互补松弛条件完整保留在
+<code>OptimalityConditions.md</code>. 一般非凸模型满足KKT不保证全局最优;
+凸问题中的充分性和约束资格条件也分别说明.
+可结合作者公开的凸优化教材继续阅读. [3]</p>
+<h3 id="完整拓展材料的阅读位置">25.10.2 完整拓展材料的阅读位置</h3>
+<p>表 25-6 非线性规划配套拓展索引.</p>
+<div class="line-block">内容 | 位置 |<br />
+: --- | : --- |<br />
+原二元完整证明与初值实验 | 延伸阅读F.1, quadratic_multistart. py/. m
+|<br />
+完整接口与算法选择 | 延伸阅读F.2 |<br />
+运输数据, 矩阵与原固定位置函数 | 延伸阅读F.3, location_data. py,
+shipping. py/. m |<br />
+联合目标, 光滑误差, 解析梯度 | 延伸阅读F.4 |<br />
+完整200组抽样与13初值搜索 | LocationSearch. md |<br />
+106顶点, 几何中位点, 下界与全局结果 | 延伸阅读F.5,
+GlobalLocationVerification. md |<br />
+KKT及适用条件 | OptimalityConditions. md |<br />
+原6题及答案 | 延伸阅读F.7, ExerciseHints. md |</div>
+<p>下一章的多目标规划继续讨论互相冲突的目标与偏好.
+这里先把一个目标的可行性, 候选与最优性层次分清.</p>
+<h3 id="练习">25.10.3 练习</h3>
+<ol type="1">
+<li>计算 <span class="math inline">\((1,1)\)</span>, <span
+class="math inline">\((1,0)\)</span>, <span
+class="math inline">\((0,0)\)</span> 的F与两项残差, 判断可行性.
+最大化时为什么不能选F为0的第三个点?</li>
+<li>写出本例两条条件的MATLAB残差与SLSQP字典残差. 最大化F时传入什么目标?
+怎样恢复原F? ftol为何不是坐标误差上界?</li>
+<li>手算 <span class="math inline">\((1,1)\)</span> 的梯度,
+沿负梯度取步长0.1与1, 分别算新点, F和约束,
+解释小步与大步的不同结果.</li>
+<li>在 <span class="math inline">\((3,4)\)</span> 处核对梯度为0, 再用
+<span class="math inline">\(x(t)=(3-t,4-2t/3)^{\mathsf T}\)</span>
+证明它不是局部最大点. 这一结论与成功终止标志是否矛盾?</li>
+<li>用平方和证明全局最小值-13且唯一. 利用两条边界与给定的导数分解,
+说明为什么最大值的候选不能只看一个初值结果.</li>
+<li>计算A原位置到工点I的距离与运3吨的运输工作量, 写出单位.
+为什么不能把吨千米直接当成工程总费用?</li>
+<li>写出12个运输变量的顺序, A和E的维度及含义. 为什么容量和需求都满足后,
+仍须检查运输量非负? 用本章第三个检查方案说明.</li>
+<li>为什么先生成位置再求运输LP,
+比直接随机填写12个运输量更容易构造可行初值?
+这种保证依赖本例哪些供应和连接假设?</li>
+<li>epsilon分别取 <span
+class="math inline">\(10^{-3},10^{-5},10^{-6}\)</span> 时,
+同一可行决策的光滑误差上界各是多少? epsilon, 差分h和ftol各自控制什么,
+哪个能直接保证全局搜索误差?</li>
+<li>本例局部搜索与106顶点核验分别提供什么证据?
+普通浮点上下界为何不称为严格区间证书? 加入禁止建设的圆形区域后,
+哪些结构需要重新分析?</li>
+</ol>
+<p>答案见 <code>ExerciseHints.md</code>, 延伸阅读另有6道练习及答案.</p>
+<p>配套阅读与实验: <a
+href="../reading/25/Index.md">本章资料索引</a>.</p>
+<h2 id="参考资料">参考资料</h2>
+<p>[1] SciPy1.17.0: <a
+target="_blank" rel="noopener" href="https://docs.scipy.org/doc/scipy-1.17.0/reference/generated/scipy.optimize.minimize.html">minimize</a>,
+<a
+target="_blank" rel="noopener" href="https://docs.scipy.org/doc/scipy-1.17.0/reference/optimize.minimize-slsqp.html">SLSQP</a>.
+[2] MathWorks: <a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/optim/ug/fmincon.html">fmincon</a>.
+[3] Boyd S, Vandenberghe L. Convex Optimization, 2004. <a
+target="_blank" rel="noopener" href="https://web.stanford.edu/~boyd/cvxbook/">作者公开页面</a>.</p>
+<p>更多参考文献见延伸阅读F.8.</p>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

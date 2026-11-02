@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="第 14 章 机理分析模型: 用方程描述演化过程 前两章从历史序列出发预测变化. 本章先问另一件事: 数量为什么增加, 又为什么减少? 如果把增加与减少的来源分别写清楚, 就能从机制假设出发建立演化方程, 再与观测数据比较. 先只算一步. 某个教学种群当前数量为100, 此刻每个个体的净增长率为0.036每时间单位, 那么总增加率为3.6. 若在接下来的0.5个时间单位内暂时沿用这个">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/MathBeautyAndModeling/14_MechanisticAnalysis.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="第 14 章 机理分析模型: 用方程描述演化过程 前两章从历史序列出发预测变化. 本章先问另一件事: 数量为什么增加, 又为什么减少? 如果把增加与减少的来源分别写清楚, 就能从机制假设出发建立演化方程, 再与观测数据比较. 先只算一步. 某个教学种群当前数量为100, 此刻每个个体的净增长率为0.036每时间单位, 那么总增加率为3.6. 若在接下来的0.5个时间单位内暂时沿用这个">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-Euler.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-13.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-15.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-20.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-25.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-33.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-30.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-Calibration.png">
+<meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-34.png">
+<meta property="article:published_time" content="2026-11-02T02:53:08.446Z">
+<meta property="article:modified_time" content="2026-10-31T09:20:34.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/MechanisticModels/Mech-Euler.png">
+
+
+<link rel="canonical" href="http://example.com/MathBeautyAndModeling/14_MechanisticAnalysis">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/MathBeautyAndModeling/14_MechanisticAnalysis.html","path":"MathBeautyAndModeling/14_MechanisticAnalysis.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-14-%E7%AB%A0-%E6%9C%BA%E7%90%86%E5%88%86%E6%9E%90%E6%A8%A1%E5%9E%8B-%E7%94%A8%E6%96%B9%E7%A8%8B%E6%8F%8F%E8%BF%B0%E6%BC%94%E5%8C%96%E8%BF%87%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">第 14 章 机理分析模型:
+用方程描述演化过程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BD%93%E5%89%8D%E6%95%B0%E9%87%8F%E5%8A%A0%E4%B8%8A%E5%8F%98%E5%8C%96%E9%87%8F-%E5%85%88%E6%8A%8A%E4%B8%80%E6%AD%A5%E7%AE%97%E6%B8%85%E6%A5%9A"><span class="nav-number">1.1.</span> <span class="nav-text">14.1 当前数量加上变化量:
+先把一步算清楚</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E5%8C%96%E7%8E%87%E6%80%8E%E6%A0%B7%E5%8F%98%E6%88%90%E7%9F%AD%E6%97%B6%E9%97%B4%E7%9A%84%E5%8F%98%E5%8C%96%E9%87%8F"><span class="nav-number">1.1.1.</span> <span class="nav-text">14.1.1
+变化率怎样变成短时间的变化量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E5%90%8C%E4%B8%80%E6%AD%A5%E6%94%BE%E8%BF%9B%E5%BE%AA%E7%8E%AF"><span class="nav-number">1.1.2.</span> <span class="nav-text">14.1.2 把同一步放进循环</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E6%9B%B4%E6%96%B0%E6%AD%A5%E9%AA%A4%E5%88%B0%E8%BF%9E%E7%BB%AD%E6%96%B9%E7%A8%8B-%E5%86%8D%E6%8E%A5%E4%B8%8A%E5%AE%8C%E6%95%B4%E6%B1%82%E8%A7%A3"><span class="nav-number">1.2.</span> <span class="nav-text">14.2 从更新步骤到连续方程,
+再接上完整求解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E7%A8%8B%E8%A1%A8%E8%BE%BE%E7%9A%84%E6%98%AF%E7%9E%AC%E6%97%B6%E5%8F%98%E5%8C%96%E7%8E%87"><span class="nav-number">1.2.1.</span> <span class="nav-text">14.2.1 方程表达的是瞬时变化率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B1%82%E8%A7%A3%E5%99%A8%E6%8E%A5%E6%94%B6%E5%8F%B3%E7%AB%AF-%E6%97%B6%E9%97%B4%E8%8C%83%E5%9B%B4%E5%92%8C%E5%88%9D%E5%80%BC"><span class="nav-number">1.2.2.</span> <span class="nav-text">14.2.2 求解器接收右端,
+时间范围和初值</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E7%A7%8D%E7%BE%A4%E5%90%8C%E6%97%B6%E5%8F%98%E5%8C%96-%E5%85%88%E5%88%86%E5%88%AB%E5%88%97%E5%A2%9E%E5%8A%A0%E9%A1%B9%E5%92%8C%E5%87%8F%E5%B0%91%E9%A1%B9"><span class="nav-number">1.3.</span> <span class="nav-text">14.3 两个种群同时变化:
+先分别列增加项和减少项</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E7%9B%B8%E9%81%87%E4%BD%9C%E7%94%A8%E5%86%99%E8%BF%9B%E4%B8%A4%E4%B8%AA%E6%96%B9%E7%A8%8B"><span class="nav-number">1.3.1.</span> <span class="nav-text">14.3.1 把相遇作用写进两个方程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9F%AD%E6%AD%A5%E5%8F%98%E5%8C%96%E4%B8%8E%E9%95%BF%E6%9C%9F%E6%80%A7%E8%B4%A8%E5%88%86%E5%BC%80%E5%88%A4%E6%96%AD"><span class="nav-number">1.3.2.</span> <span class="nav-text">14.3.2
+短步变化与长期性质分开判断</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AB%9E%E4%BA%89-%E4%B8%A4%E7%B1%BB%E9%83%BD%E5%9C%A8%E5%A2%9E%E9%95%BF-%E4%B9%9F%E5%8F%AF%E8%83%BD%E6%9C%89%E4%B8%80%E7%B1%BB%E6%9C%80%E7%BB%88%E8%B6%8B%E9%9B%B6"><span class="nav-number">1.4.</span> <span class="nav-text">14.4 竞争: 两类都在增长,
+也可能有一类最终趋零</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#si-%E5%90%8C%E4%B8%80%E8%82%A1%E6%B5%81%E9%87%8F-%E5%9C%A8%E4%B8%80%E5%A4%84%E5%87%8F%E5%8E%BB-%E5%9C%A8%E5%8F%A6%E4%B8%80%E5%A4%84%E5%8A%A0%E4%B8%8A"><span class="nav-number">1.5.</span> <span class="nav-text">14.5 SI: 同一股流量,
+在一处减去, 在另一处加上</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E7%AE%97%E4%B8%80%E6%AC%A1%E7%8A%B6%E6%80%81%E8%BD%AC%E7%A7%BB"><span class="nav-number">1.5.1.</span> <span class="nav-text">14.5.1 先算一次状态转移</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E5%9C%A8%E5%B7%B2%E7%9F%A5%E6%97%B6%E5%88%BB%E6%94%B9%E5%8F%98-%E5%B0%B1%E5%9C%A8%E8%AF%A5%E5%A4%84%E9%87%8D%E6%96%B0%E8%B5%B7%E7%AE%97"><span class="nav-number">1.5.2.</span> <span class="nav-text">14.5.2 参数在已知时刻改变,
+就在该处重新起算</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sis-%E5%8A%A0%E5%9B%9E%E6%81%A2%E5%A4%8D%E6%B5%81%E9%87%8F%E5%90%8E-%E9%98%88%E5%80%BC%E6%80%8E%E6%A0%B7%E5%87%BA%E7%8E%B0"><span class="nav-number">1.6.</span> <span class="nav-text">14.6 SIS: 加回恢复流量后,
+阈值怎样出现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E5%90%8C%E4%B8%80%E5%88%9D%E5%A7%8B%E7%8A%B6%E6%80%81%E6%AF%94%E8%BE%83%E6%B5%81%E5%85%A5%E4%B8%8E%E6%B5%81%E5%87%BA"><span class="nav-number">1.6.1.</span> <span class="nav-text">14.6.1
+在同一初始状态比较流入与流出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E7%A7%AF%E5%88%86%E8%A7%82%E5%AF%9F%E4%B8%89%E7%A7%8D%E9%95%BF%E6%9C%9F%E8%B6%8B%E5%8A%BF"><span class="nav-number">1.6.2.</span> <span class="nav-text">14.6.2 完整积分观察三种长期趋势</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BA%E7%94%9F%E4%B8%8E%E6%AD%BB%E4%BA%A1-%E5%85%88%E6%8A%8A%E5%BD%93%E5%89%8D%E6%95%B0%E9%87%8F%E5%92%8C%E7%B4%AF%E8%AE%A1%E8%B4%A6%E7%9B%AE%E5%88%86%E5%BC%80"><span class="nav-number">1.7.</span> <span class="nav-text">14.7 出生与死亡:
+先把当前数量和累计账目分开</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E6%95%B0%E6%8D%AE%E4%BC%B0%E8%AE%A1%E5%8F%82%E6%95%B0-%E5%81%9A%E4%B8%80%E6%AC%A1%E8%BE%B9%E7%95%8C%E6%B8%85%E6%A5%9A%E7%9A%84%E7%BB%83%E4%B9%A0"><span class="nav-number">1.8.</span> <span class="nav-text">14.8 用数据估计参数:
+做一次边界清楚的练习</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E8%AF%B4%E6%98%8E%E5%93%AA%E4%BA%9B%E6%98%AF%E4%BA%BA%E9%80%A0%E6%95%B0%E6%8D%AE-%E5%93%AA%E4%BA%9B%E5%8F%82%E5%8A%A0%E6%8B%9F%E5%90%88"><span class="nav-number">1.8.1.</span> <span class="nav-text">14.8.1 先说明哪些是人造数据,
+哪些参加拟合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%84%E5%88%86%E7%94%A8%E7%95%99%E5%87%BA%E7%82%B9-%E8%A7%A3%E9%87%8A%E4%BB%8D%E8%A6%81%E5%9B%9E%E5%88%B0%E6%95%B0%E6%8D%AE%E6%9D%A5%E6%BA%90"><span class="nav-number">1.8.2.</span> <span class="nav-text">14.8.2 评分用留出点,
+解释仍要回到数据来源</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E6%B8%85%E5%9B%9B%E7%A7%8D%E6%A3%80%E6%9F%A5-%E5%86%8D%E8%A7%A3%E9%87%8A%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%9C"><span class="nav-number">1.9.</span> <span class="nav-text">14.9 分清四种检查,
+再解释模型结果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.10.</span> <span class="nav-text">14.10 练习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.11.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="第-14-章-机理分析模型-用方程描述演化过程">第 14 章 机理分析模型:
+用方程描述演化过程</h1>
+<p>前两章从历史序列出发预测变化. 本章先问另一件事: 数量为什么增加,
+又为什么减少? 如果把增加与减少的来源分别写清楚,
+就能从机制假设出发建立演化方程, 再与观测数据比较.</p>
+<p>先只算一步. 某个教学种群当前数量为100,
+此刻每个个体的净增长率为0.036每时间单位, 那么总增加率为3.6.
+若在接下来的0.5个时间单位内暂时沿用这个速率, 就近似增加1.8,
+新数量约为101.8. 这次乘法与加法, 是读懂数值求解器的起点.</p>
+<p>本章先算一次, 再用循环重复, 然后交给完整求解器. 在此基础上研究捕食,
+竞争和状态转移, 最后用一组明确的人造数据练习参数估计与留出检验.
+各生态与传播参数均为教学设定, 时间单位按案例统一,
+不对应真实物种或具体疾病的实测参数.</p>
+<h2 id="当前数量加上变化量-先把一步算清楚">14.1 当前数量加上变化量:
+先把一步算清楚</h2>
+<h3 id="变化率怎样变成短时间的变化量">14.1.1
+变化率怎样变成短时间的变化量</h3>
+<p>设 <span class="math inline">\(x(t)\)</span> 是数量的连续近似.
+用一个简单的资源受限假设表示人均净增长率:</p>
+<p><span class="math display">\[
+r\left(1-\frac{x}{K}\right).
+\]</span></p>
+<p>这里 <span class="math inline">\(r&gt;0\)</span>
+是资源限制很弱时的人均净增长率, <span
+class="math inline">\(K&gt;0\)</span> 是固定环境下的模型容量. 若当前
+<span class="math inline">\(x=100,r=0.04,K=1000\)</span>, 则</p>
+<p><span class="math display">\[
+0.04\left(1-\frac{100}{1000}\right)=0.036.
+\]</span></p>
+<p>再乘当前数量100, 得到总变化率 <span
+class="math inline">\(f(x)=3.6\)</span>. 注意区分三个量:</p>
+<p>表 14-1 人均增长率与总变化率的单位.</p>
+<div class="line-block">量 | 本例数值 | 单位 |</div>
+<p>|: ---: |: ---: |: ---: | | 当前数量 <span
+class="math inline">\(x\)</span> | 100 | 数量单位 | | 当前总变化率 <span
+class="math inline">\(f(x)\)</span> | 3.6 | 数量单位/时间单位 | |
+时间长度 <span class="math inline">\(h=0.5\)</span> 内的近似变化量 <span
+class="math inline">\(hf(x)\)</span> | 1.8 | 数量单位 |</p>
+<p>因此这一步的近似更新为</p>
+<p><span class="math display">\[
+x_{\mathrm{new}}=100+0.5\times3.6=101.8.
+\]</span></p>
+<p><strong>code/logistic_one_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">x, r, K, h = <span class="number">100.</span>, <span class="number">.04</span>, <span class="number">1000.</span>, <span class="number">.5</span></span><br><span class="line">per_capita_rate = r*(<span class="number">1</span>-x/K)</span><br><span class="line">total_rate = x*per_capita_rate</span><br><span class="line">increase = h*total_rate</span><br><span class="line">next_x = x+increase</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Per-capita rate, total rate:&#x27;</span>, per_capita_rate, total_rate)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Approximate increase and next level:&#x27;</span>, increase, next_x)</span><br><span class="line"><span class="comment"># A finite Euler step is an approximation to the ODE, not its exact solution.</span></span><br></pre></td></tr></table></figure>
+<p><strong>code/logistic_one_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">x = <span class="number">100</span>; r = <span class="number">.04</span>; K = <span class="number">1000</span>; h = <span class="number">.5</span>;</span><br><span class="line">perCapitaRate = r*(<span class="number">1</span>-x/K);</span><br><span class="line">totalRate = x*perCapitaRate;</span><br><span class="line">increase = h*totalRate; nextX = x+increase;</span><br><span class="line">fprintf(<span class="string">&#x27;Per-capita rate=%.6f, total rate=%.6f\n&#x27;</span>,perCapitaRate,totalRate);</span><br><span class="line">fprintf(<span class="string">&#x27;Approximate increase=%.6f, next level=%.6f\n&#x27;</span>,increase,nextX);</span><br><span class="line"><span class="comment">% This finite Euler step approximates the ODE.</span></span><br></pre></td></tr></table></figure>
+<p>"速率乘时间"在这里是短步近似. 数量增长后速率也会改变,
+所以101.8不是连续模型在0.5时刻的精确解,
+也不是下一次真实观测的保证值.</p>
+<h3 id="把同一步放进循环">14.1.2 把同一步放进循环</h3>
+<p>把时间离散成 <span class="math inline">\(t_k=kh\)</span>, 用 <span
+class="math inline">\(x_k\)</span> 近似 <span
+class="math inline">\(x(t_k)\)</span>, 每次重新计算当前速率:</p>
+<p><span class="math display">\[
+x_{k+1}=x_k+h\,0.04x_k\left(1-\frac{x_k}{1000}\right).
+\]</span></p>
+<p>例如选择 <span class="math inline">\(h=1\)</span>,
+第一步从100得到103.6; 第二步先用103.6重新计算速率, 再更新数量.
+不能一直加3.6, 因为3.6只是初始时刻的速率. 这种方法叫显式Euler方法.</p>
+<p><strong>code/euler_growth_loop. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">euler</span>(<span class="params">h</span>):</span><br><span class="line">    steps = <span class="built_in">round</span>(<span class="number">20</span>/h)</span><br><span class="line">    <span class="keyword">assert</span> steps &gt; <span class="number">0</span> <span class="keyword">and</span> <span class="built_in">abs</span>(steps*h-<span class="number">20</span>)&lt;<span class="number">1e-12</span></span><br><span class="line">    t = np.arange(steps+<span class="number">1</span>)*h</span><br><span class="line">    x = np.zeros(steps+<span class="number">1</span>); x[<span class="number">0</span>] = <span class="number">100.</span></span><br><span class="line">    <span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(steps):</span><br><span class="line">        rate = <span class="number">.04</span>*x[k]*(<span class="number">1</span>-x[k]/<span class="number">1000.</span>)</span><br><span class="line">        x[k+<span class="number">1</span>] = x[k]+h*rate</span><br><span class="line">    <span class="keyword">return</span> t, x</span><br><span class="line"></span><br><span class="line">table = []</span><br><span class="line"><span class="keyword">for</span> h <span class="keyword">in</span> [<span class="number">2.</span>, <span class="number">1.</span>, <span class="number">.5</span>, <span class="number">.25</span>]:</span><br><span class="line">    t, x = euler(h)</span><br><span class="line">    exact = <span class="number">1000</span>/(<span class="number">1</span>+<span class="number">9</span>*np.exp(-<span class="number">.04</span>*t))</span><br><span class="line">    table.append([h, x[-<span class="number">1</span>], <span class="built_in">abs</span>(x[-<span class="number">1</span>]-exact[-<span class="number">1</span>])])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;h, Euler x(20), endpoint absolute error:&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(np.array(table))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Exact x(20):&#x27;</span>, exact[-<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
+<p><strong>code/euler_growth_loop. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">tableValue = <span class="built_in">zeros</span>(<span class="number">4</span>,<span class="number">3</span>); hs = [<span class="number">2</span>,<span class="number">1</span>,<span class="number">.5</span>,<span class="number">.25</span>];</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="built_in">numel</span>(hs)</span><br><span class="line">    h = hs(<span class="built_in">j</span>); steps = <span class="built_in">round</span>(<span class="number">20</span>/h);</span><br><span class="line">    assert(steps&gt;<span class="number">0</span> &amp;&amp; <span class="built_in">abs</span>(steps*h<span class="number">-20</span>)&lt;<span class="number">1e-12</span>);</span><br><span class="line">    t = (<span class="number">0</span>:steps)&#x27;*h; x = <span class="built_in">zeros</span>(steps+<span class="number">1</span>,<span class="number">1</span>); x(<span class="number">1</span>) = <span class="number">100</span>;</span><br><span class="line">    <span class="keyword">for</span> k = <span class="number">1</span>:steps</span><br><span class="line">        rate = <span class="number">.04</span>*x(k)*(<span class="number">1</span>-x(k)/<span class="number">1000</span>);</span><br><span class="line">        x(k+<span class="number">1</span>) = x(k)+h*rate;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    exact = <span class="number">1000.</span>/(<span class="number">1</span>+<span class="number">9</span>*<span class="built_in">exp</span>(<span class="number">-.04</span>*t));</span><br><span class="line">    tableValue(<span class="built_in">j</span>,:) = [h,x(<span class="keyword">end</span>),<span class="built_in">abs</span>(x(<span class="keyword">end</span>)-exact(<span class="keyword">end</span>))];</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;h, Euler x(20), endpoint absolute error:&#x27;</span>); <span class="built_in">disp</span>(tableValue);</span><br><span class="line">fprintf(<span class="string">&#x27;Exact x(20): %.10f\n&#x27;</span>,exact(<span class="keyword">end</span>));</span><br></pre></td></tr></table></figure>
+<p>表 14-2 Euler 步长与解析误差.</p>
+<div class="line-block">固定步长 <span class="math inline">\(h\)</span>
+| Euler计算的 <span class="math inline">\(x(20)\)</span> |
+与解析值的绝对差 |</div>
+<p>|: ---: |: ---: |: ---: | | 2 | 194.766908 | 3.489990 | | 1 |
+196.480753 | 1.776145 | | 0.5 | 197.360872 | 0.896027 | | 0.25 |
+197.806876 | 0.450023 |</p>
+<p>本例的解析值为198.256899. 在这组步长下, 步长减半后误差大约减半.
+这是该方法在当前光滑问题上的表现, 不能当作任意模型的精度保证.
+步长过大还可能破坏非负性或稳定性, 不能只凭循环结束就接受结果.</p>
+<p><img src="/images/MechanisticModels/Mech-Euler.png" style="width:100%"></p>
+<p>图 14-1 重复短步计算, 并与解析结果比较</p>
+<p>左图比较两种Euler步长与解析轨线, 右图比较四种步长的终点误差.
+图中的误差是数值方法相对于给定方程解析解的误差,
+不是相对于真实观测的预测误差.</p>
+<h2 id="从更新步骤到连续方程-再接上完整求解">14.2 从更新步骤到连续方程,
+再接上完整求解</h2>
+<h3 id="方程表达的是瞬时变化率">14.2.1 方程表达的是瞬时变化率</h3>
+<p>对足够小的 <span class="math inline">\(h\)</span>, 有</p>
+<p><span class="math display">\[
+x(t+h)-x(t)=f(t,x(t))h+o(h).
+\]</span></p>
+<p>除以 <span class="math inline">\(h\)</span> 后取极限, 得到微分方程.
+上面的资源受限假设对应Logistic模型:</p>
+<p><span class="math display">\[
+\frac{\mathrm{d}x}{\mathrm{d}t}=rx\left(1-\frac{x}{K}\right),
+\qquad x(0)=100.
+\]</span></p>
+<p>初值说明从哪里出发, 右端说明到达某个状态时怎样变化. <span
+class="math inline">\(r\)</span> 的单位是时间的倒数, <span
+class="math inline">\(x\)</span> 与 <span
+class="math inline">\(K\)</span> 的单位相同. 容量 <span
+class="math inline">\(K\)</span> 由当前环境假设决定,
+不是现实中永远固定的上限.</p>
+<p>在 <span class="math inline">\(r&gt;0,K&gt;0,x(0)=x_0&gt;0\)</span>
+时, 解析解为</p>
+<p><span class="math display">\[
+x(t)=\frac{K}{1+(K/x_0-1)\mathrm{e}^{-rt}}.
+\]</span></p>
+<p><span class="math inline">\(0&lt;x_0&lt;K\)</span> 时递增, <span
+class="math inline">\(x_0&gt;K\)</span> 时递减, <span
+class="math inline">\(x_0=K\)</span> 时不变. <span
+class="math inline">\(x_0=0\)</span> 则始终为0, 不直接代入含 <span
+class="math inline">\(K/x_0\)</span> 的公式.
+所以Logistic轨线不总是一条完整的S形上升曲线.</p>
+<h3 id="求解器接收右端-时间范围和初值">14.2.2 求解器接收右端,
+时间范围和初值</h3>
+<p>先完成Euler练习, 再读下面的完整程序. Python的 <code>rate(t,x)</code>
+返回当前变化率, <code>solve_ivp</code>负责选择内部步长.
+MATLAB的对应接口为 <code>ode45</code>. 两个程序都对照解析解,
+检查是否正确求解同一个方程.</p>
+<p><strong>code/logistic_solve. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.integrate <span class="keyword">import</span> solve_ivp</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">rate</span>(<span class="params">t, x</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="number">.04</span>*x*(<span class="number">1</span>-x/<span class="number">1000.</span>)</span><br><span class="line"></span><br><span class="line">times = np.linspace(<span class="number">0</span>, <span class="number">200</span>, <span class="number">401</span>)</span><br><span class="line">sol = solve_ivp(rate, (<span class="number">0.</span>,<span class="number">200.</span>), [<span class="number">100.</span>], t_eval=times,</span><br><span class="line">                rtol=<span class="number">1e-9</span>, atol=<span class="number">1e-10</span>, max_step=<span class="number">.5</span>)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> sol.success <span class="keyword">or</span> <span class="keyword">not</span> np.isfinite(sol.y).<span class="built_in">all</span>():</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(sol.message)</span><br><span class="line">x = sol.y[<span class="number">0</span>]</span><br><span class="line">exact = <span class="number">1000</span>/(<span class="number">1</span>+<span class="number">9</span>*np.exp(-<span class="number">.04</span>*times))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;t, numerical level, exact level:&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(np.column_stack((times, x, exact))[[<span class="number">0</span>,<span class="number">40</span>,<span class="number">100</span>,<span class="number">200</span>,<span class="number">400</span>]])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Maximum absolute numerical error:&#x27;</span>, np.<span class="built_in">max</span>(<span class="built_in">abs</span>(x-exact)))</span><br></pre></td></tr></table></figure>
+<p><strong>code/logistic_solve. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">rate = @(t,x) <span class="number">.04</span>*x.*(<span class="number">1</span>-x/<span class="number">1000</span>);</span><br><span class="line">times = <span class="built_in">linspace</span>(<span class="number">0</span>,<span class="number">200</span>,<span class="number">401</span>);</span><br><span class="line">options = odeset(<span class="string">&#x27;RelTol&#x27;</span>,<span class="number">1e-9</span>,<span class="string">&#x27;AbsTol&#x27;</span>,<span class="number">1e-10</span>,<span class="string">&#x27;MaxStep&#x27;</span>,<span class="number">.5</span>);</span><br><span class="line">[t,x] = ode45(rate,times,<span class="number">100</span>,options);</span><br><span class="line">assert(all(<span class="built_in">isfinite</span>(x)));</span><br><span class="line">exact = <span class="number">1000.</span>/(<span class="number">1</span>+<span class="number">9</span>*<span class="built_in">exp</span>(<span class="number">-.04</span>*t));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;t, numerical level, exact level:&#x27;</span>);</span><br><span class="line">tableValue = [t,x,exact]; <span class="built_in">disp</span>(tableValue([<span class="number">1</span>,<span class="number">41</span>,<span class="number">101</span>,<span class="number">201</span>,<span class="number">401</span>],:));</span><br><span class="line">fprintf(<span class="string">&#x27;Maximum absolute numerical error: %.10g\n&#x27;</span>,<span class="built_in">max</span>(<span class="built_in">abs</span>(x-exact)));</span><br></pre></td></tr></table></figure>
+<p><code>t_eval</code>或MATLAB中列出的输出时刻, 指定的是在哪里保存解,
+不等于求解器的内部步长. 本例的Euler循环固定使用 <span
+class="math inline">\(h\)</span>, 完整求解器则依据容差调整内部计算.
+不能只把输出时刻加密, 就声称内部求解误差一定减小.</p>
+<p>Python的 <code>sol.y</code> 每行对应一个状态, 每列对应一个时刻;
+MATLAB返回的 <code>x</code> 每行对应一个时刻. 后面两个或更多状态的模型,
+尤其要注意数组的方向.</p>
+<p><img src="/images/MechanisticModels/Mech-13.png" style="width:100%"></p>
+<p>图 14-2 同一Logistic模型的轨线与增长速率</p>
+<p>该图沿用完整原程序的参数 <span
+class="math inline">\(x_0=100,r=0.04,K=1000\)</span>.
+数量为500时总增长速率最大, 等于 <span
+class="math inline">\(rK/4=10\)</span>; 此后数量还在增长,
+只是增加得越来越慢. 拐点时刻约54.9306.
+更完整的推导和1000时间单位计算见<a
+href="../reading/14/MechanisticFurtherReading.md">拓展阅读F.1</a>.</p>
+<p>解析解与数值解接近, 说明程序与方程一致.
+现实中究竟是否应采用Logistic机制, 仍需观测数据来判断.
+很小的数值误差不能替代模型检验.</p>
+<h2 id="两个种群同时变化-先分别列增加项和减少项">14.3 两个种群同时变化:
+先分别列增加项和减少项</h2>
+<h3 id="把相遇作用写进两个方程">14.3.1 把相遇作用写进两个方程</h3>
+<p>设 <span class="math inline">\(x_1\)</span> 为猎物数量, <span
+class="math inline">\(x_2\)</span> 为捕食者数量. 假设猎物自身按比例增加,
+捕食者在没有猎物时按比例减少, 两类相遇机会与 <span
+class="math inline">\(x_1x_2\)</span> 成正比.
+再令两类种群都按同一个人均捕获强度 <span
+class="math inline">\(e\)</span> 减少, 得到</p>
+<p><span class="math display">\[
+\left\{\begin{aligned}
+\frac{\mathrm{d}x_1}{\mathrm{d}t}&amp;=x_1[(1-e)-0.1x_2],\\
+\frac{\mathrm{d}x_2}{\mathrm{d}t}&amp;=x_2[-(0.5+e)+0.02x_1].
+\end{aligned}\right.
+\]</span></p>
+<p>本例系数按所用数量与时间单位给定. 0.1和0.02分别描述两种作用,
+不要求相等. 相同的人均捕获强度也不表示从两类种群中减去相同个体数.</p>
+<p>初始状态为列向量 <span class="math inline">\((25,2)^{\mathsf
+T}\)</span>. 取 <span class="math inline">\(e=0.3\)</span>,
+初始变化率分别为</p>
+<p><span class="math display">\[
+x_1&#39;=25(1-0.3-0.1\times2)=12.5,\qquad
+x_2&#39;=2(-0.5-0.3+0.02\times25)=-0.6.
+\]</span></p>
+<p>当 <span class="math inline">\(h=0.1\)</span> 时, 同一步近似更新为
+<span class="math inline">\((26.25,1.94)^{\mathsf T}\)</span>.
+两个速率都必须由原状态 <span class="math inline">\((25,2)^{\mathsf
+T}\)</span> 计算, 不能先更新猎物,
+再拿更新后的猎物计算同一步的捕食者速率.</p>
+<p><strong>code/predator_pair_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">prey, predator, e, h = <span class="number">25.</span>, <span class="number">2.</span>, <span class="number">.3</span>, <span class="number">.1</span></span><br><span class="line">prey_rate = prey*(<span class="number">1</span>-e-<span class="number">.1</span>*predator)</span><br><span class="line">predator_rate = predator*(-<span class="number">.5</span>-e+<span class="number">.02</span>*prey)</span><br><span class="line"><span class="comment"># Both rates use the same OLD state, then both states are updated.</span></span><br><span class="line">next_state = np.array([prey+h*prey_rate, predator+h*predator_rate])</span><br><span class="line">equilibrium = np.array([(<span class="number">.5</span>+e)/<span class="number">.02</span>, (<span class="number">1</span>-e)/<span class="number">.1</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Rates: prey, predator:&#x27;</span>, prey_rate, predator_rate)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;One approximate step:&#x27;</span>, next_state)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Positive equilibrium:&#x27;</span>, equilibrium)</span><br></pre></td></tr></table></figure>
+<p><strong>code/predator_pair_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">prey = <span class="number">25</span>; predator = <span class="number">2</span>; e = <span class="number">.3</span>; h = <span class="number">.1</span>;</span><br><span class="line">preyRate = prey*(<span class="number">1</span>-e<span class="number">-.1</span>*predator);</span><br><span class="line">predatorRate = predator*(<span class="number">-.5</span>-e+<span class="number">.02</span>*prey);</span><br><span class="line"><span class="comment">% Both rates use the same OLD state.</span></span><br><span class="line">nextState = [prey+h*preyRate;predator+h*predatorRate];</span><br><span class="line">equilibrium = [(<span class="number">.5</span>+e)/<span class="number">.02</span>;(<span class="number">1</span>-e)/<span class="number">.1</span>];</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Rates: prey, predator:&#x27;</span>); <span class="built_in">disp</span>([preyRate,predatorRate]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;One approximate step:&#x27;</span>); <span class="built_in">disp</span>(nextState&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Positive equilibrium:&#x27;</span>); <span class="built_in">disp</span>(equilibrium&#x27;);</span><br></pre></td></tr></table></figure>
+<h3 id="短步变化与长期性质分开判断">14.3.2
+短步变化与长期性质分开判断</h3>
+<p>令两个右端同时为0, 正平衡为</p>
+<p><span class="math display">\[
+x_1^*=\frac{0.5+e}{0.02},\qquad x_2^*=\frac{1-e}{0.1}.
+\]</span></p>
+<p><span class="math inline">\(e=0.3\)</span>时得到40与7, <span
+class="math inline">\(e=0.1\)</span>时得到30与9. 在这组经典方程中,
+非平衡的正轨线围绕平衡点周期变化, 并不自动收缩到平衡点.
+对一个完整周期积分, 平均数量分别等于这两个平衡数量.</p>
+<p><img src="/images/MechanisticModels/Mech-15.png" style="width:100%"></p>
+<p>图 14-3 两种独立捕获情景中的数量变化</p>
+<p>每个面板分别显示猎物与捕食者, 捕食者高峰滞后于猎物高峰.
+两个情景不是同一段历史前后接起来的结果, 也不是实测生态记录.</p>
+<p>平均数量之比, 瞬时比例的时间平均, 任意固定窗口平均是不同的量.
+完整求解程序用同方向返回事件确定周期, 再积分计算平均;
+这部分连同守恒量和相轨线保留在<a
+href="../reading/14/MechanisticFurtherReading.md">拓展阅读F.2</a>.
+先读懂当前一步, 再研究完整周期, 不必第一次就同时掌握事件与积分接口.</p>
+<h2 id="竞争-两类都在增长-也可能有一类最终趋零">14.4 竞争: 两类都在增长,
+也可能有一类最终趋零</h2>
+<p>对两个受资源限制的种群, 写成</p>
+<p><span class="math display">\[
+\left\{\begin{aligned}
+x_1&#39;&amp;=0.5x_1\left(1-\frac{x_1}{300}-\sigma_1\frac{x_2}{500}\right),\\
+x_2&#39;&amp;=0.5x_2\left(1-\frac{x_2}{500}-\sigma_2\frac{x_1}{300}\right).
+\end{aligned}\right.
+\]</span></p>
+<p>各自数量除以容量后再进入抑制项. <span
+class="math inline">\(\sigma_1\)</span> 描述乙对甲的归一化抑制强度,
+<span class="math inline">\(\sigma_2\)</span>
+描述甲对乙的归一化抑制强度. 仅仅使用相同食物, 不能推出两系数乘积为1.</p>
+<p>初始数量80与100, 情景A取 <span
+class="math inline">\(\sigma_1=0.5,\sigma_2=2\)</span>.
+初始两种群的变化率分别为</p>
+<p><span class="math display">\[
+0.5\times80\left(1-\frac{80}{300}-0.5\frac{100}{500}\right)
+\approx25.333333,
+\]</span></p>
+<p><span class="math display">\[
+0.5\times100\left(1-\frac{100}{500}-2\frac{80}{300}\right)
+\approx13.333333.
+\]</span></p>
+<p>此刻两类都增长, 不能据此断言长期必定共存. 情景B把 <span
+class="math inline">\(\sigma_2\)</span> 改为4, 情景C取 <span
+class="math inline">\(\sigma_1=0.4,\sigma_2=0.2\)</span>.
+先用短程序核对三组初始速率.</p>
+<p><strong>code/competition_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">x1, x2, h = <span class="number">80.</span>, <span class="number">100.</span>, <span class="number">.1</span></span><br><span class="line">rows = []</span><br><span class="line"><span class="keyword">for</span> name, s1, s2 <span class="keyword">in</span> [(<span class="string">&#x27;A&#x27;</span>,<span class="number">.5</span>,<span class="number">2.</span>), (<span class="string">&#x27;B&#x27;</span>,<span class="number">.5</span>,<span class="number">4.</span>), (<span class="string">&#x27;C&#x27;</span>,<span class="number">.4</span>,<span class="number">.2</span>)]:</span><br><span class="line">    rates = np.array([<span class="number">.5</span>*x1*(<span class="number">1</span>-x1/<span class="number">300</span>-s1*x2/<span class="number">500</span>),</span><br><span class="line">                      <span class="number">.5</span>*x2*(<span class="number">1</span>-x2/<span class="number">500</span>-s2*x1/<span class="number">300</span>)])</span><br><span class="line">    next_state = np.array([x1,x2])+h*rates</span><br><span class="line">    rows.append([name, rates, next_state])</span><br><span class="line">    <span class="built_in">print</span>(name, <span class="string">&#x27;initial rates:&#x27;</span>, rates, <span class="string">&#x27;one step:&#x27;</span>, next_state)</span><br><span class="line"><span class="comment"># Solve the two normalized zero-growth equations for scenario C only.</span></span><br><span class="line">s1, s2 = <span class="number">.4</span>, <span class="number">.2</span></span><br><span class="line">p = (<span class="number">1</span>-s1)/(<span class="number">1</span>-s1*s2)</span><br><span class="line">q = (<span class="number">1</span>-s2)/(<span class="number">1</span>-s1*s2)</span><br><span class="line">coexistence = np.array([<span class="number">300</span>*p, <span class="number">500</span>*q])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;C positive coexistence:&#x27;</span>, coexistence)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;A denominator:&#x27;</span>, <span class="number">1</span>-<span class="number">.5</span>*<span class="number">2.</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>code/competition_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">x1 = <span class="number">80</span>; x2 = <span class="number">100</span>; h = <span class="number">.1</span>;</span><br><span class="line">settings = [<span class="number">.5</span>,<span class="number">2</span>;<span class="number">.5</span>,<span class="number">4</span>;<span class="number">.4</span>,<span class="number">.2</span>]; names = &#123;<span class="string">&#x27;A&#x27;</span>,<span class="string">&#x27;B&#x27;</span>,<span class="string">&#x27;C&#x27;</span>&#125;;</span><br><span class="line">initialRates = <span class="built_in">zeros</span>(<span class="number">3</span>,<span class="number">2</span>); nextStates = <span class="built_in">zeros</span>(<span class="number">3</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    s1 = settings(<span class="built_in">j</span>,<span class="number">1</span>); s2 = settings(<span class="built_in">j</span>,<span class="number">2</span>);</span><br><span class="line">    rates = [<span class="number">.5</span>*x1*(<span class="number">1</span>-x1/<span class="number">300</span>-s1*x2/<span class="number">500</span>); ...</span><br><span class="line">             <span class="number">.5</span>*x2*(<span class="number">1</span>-x2/<span class="number">500</span>-s2*x1/<span class="number">300</span>)];</span><br><span class="line">    nextState = [x1;x2]+h*rates;</span><br><span class="line">    initialRates(<span class="built_in">j</span>,:) = rates&#x27;; nextStates(<span class="built_in">j</span>,:) = nextState&#x27;;</span><br><span class="line">    fprintf(<span class="string">&#x27;%s initial rates and one step:\n&#x27;</span>,names&#123;<span class="built_in">j</span>&#125;); <span class="built_in">disp</span>([rates,nextState]);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">s1 = <span class="number">.4</span>; s2 = <span class="number">.2</span>;</span><br><span class="line">p = (<span class="number">1</span>-s1)/(<span class="number">1</span>-s1*s2); q = (<span class="number">1</span>-s2)/(<span class="number">1</span>-s1*s2);</span><br><span class="line">coexistence = [<span class="number">300</span>*p;<span class="number">500</span>*q];</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;C positive coexistence:&#x27;</span>); <span class="built_in">disp</span>(coexistence&#x27;);</span><br><span class="line">fprintf(<span class="string">&#x27;A denominator: %.6f\n&#x27;</span>,<span class="number">1</span><span class="number">-.5</span>*<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+<p>情景C的正共存平衡约为 <span
+class="math inline">\((195.652174,434.782609)^{\mathsf T}\)</span>.
+情景A中 <span class="math inline">\(1-\sigma_1\sigma_2=0\)</span>,
+不能代入带这个分母的通用共存公式. 它的两条零增长线平行且不重合,
+没有正共存点.</p>
+<p><img src="/images/MechanisticModels/Mech-20.png" style="width:100%"></p>
+<p>图 14-4 将长期趋零与穿过观察阈值分开</p>
+<p>图中将乙数量的观察阈值定为1, A和B向下穿越时刻约为14.466786与6.402003.
+阈值用于观察轨线, 没有作为动力学中的突然清零规则. 对这个连续模型,
+低于1与在有限时间精确等于0不同.</p>
+<p>不同参数下的共存, 单方占优, 强竞争鞍点与特殊初值,
+以及完整事件求解程序见<a
+href="../reading/14/MechanisticFurtherReading.md">拓展阅读F.3</a>.
+不能只比较两个竞争系数谁大, 就决定全部长期结局.</p>
+<h2 id="si-同一股流量-在一处减去-在另一处加上">14.5 SI: 同一股流量,
+在一处减去, 在另一处加上</h2>
+<h3 id="先算一次状态转移">14.5.1 先算一次状态转移</h3>
+<p>用 <span class="math inline">\(S\)</span> 表示易感状态, <span
+class="math inline">\(I\)</span> 表示具有传播能力的感染状态.
+它们不自动等于全部健康人数和报告确诊人数. 先假设没有恢复, 出生,
+死亡与迁移, 总数 <span class="math inline">\(N=S+I\)</span> 固定.
+采用均匀混合与频率依赖传播, 感染流量为</p>
+<p><span class="math display">\[
+F=\beta\frac{SI}{N}.
+\]</span></p>
+<p><span class="math inline">\(\beta\)</span>的单位为时间的倒数, <span
+class="math inline">\(F\)</span>为人数/时间单位. 当 <span
+class="math inline">\(S=999,I=1,N=1000,\beta=0.1\)</span> 时,
+初始感染流量为0.0999. 在 <span class="math inline">\(h=0.5\)</span>
+内近似转移0.04995, 所以</p>
+<p><span class="math display">\[
+S_{\mathrm{new}}=998.95005,\qquad I_{\mathrm{new}}=1.04995.
+\]</span></p>
+<p>两者之和仍为1000, 同一股流量没有创造新人口.
+连续模型中的小数表示数量的连续近似.</p>
+<p><strong>code/si_transfer_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">S, I, N, beta, h = <span class="number">999.</span>, <span class="number">1.</span>, <span class="number">1000.</span>, <span class="number">.1</span>, <span class="number">.5</span></span><br><span class="line">flow = beta*S*I/N</span><br><span class="line">transfer = h*flow</span><br><span class="line">next_S, next_I = S-transfer, I+transfer</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Infection flow per unit time:&#x27;</span>, flow)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Approximate transfer in h:&#x27;</span>, transfer)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Next S, I, total:&#x27;</span>, next_S, next_I, next_S+next_I)</span><br></pre></td></tr></table></figure>
+<p><strong>code/si_transfer_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">S = <span class="number">999</span>; I = <span class="number">1</span>; N = <span class="number">1000</span>; <span class="built_in">beta</span> = <span class="number">.1</span>; h = <span class="number">.5</span>;</span><br><span class="line">flow = <span class="built_in">beta</span>*S*I/N; transfer = h*flow;</span><br><span class="line">nextS = S-transfer; nextI = I+transfer;</span><br><span class="line">fprintf(<span class="string">&#x27;Infection flow=%.8f, transfer=%.8f\n&#x27;</span>,flow,transfer);</span><br><span class="line">fprintf(<span class="string">&#x27;Next S=%.8f, I=%.8f, total=%.8f\n&#x27;</span>,nextS,nextI,nextS+nextI);</span><br></pre></td></tr></table></figure>
+<p>重复这项收支关系并取连续极限, 得到</p>
+<p><span class="math display">\[
+\left\{\begin{aligned}
+S&#39;&amp;=-\beta SI/N,\\
+I&#39;&amp;=\beta SI/N.
+\end{aligned}\right.
+\]</span></p>
+<p>如果改用密度依赖的 <span class="math inline">\(\widetilde\beta
+SI\)</span>, 参数的单位和机制也随之改变,
+不能只删去分母而保留原参数解释.</p>
+<h3 id="参数在已知时刻改变-就在该处重新起算">14.5.2 参数在已知时刻改变,
+就在该处重新起算</h3>
+<p>本例比较两种教学情景: 基本情景始终取 <span
+class="math inline">\(\beta=0.1\)</span>; 另一情景在 <span
+class="math inline">\(t=60\)</span>将其降为0.01. 先解到60,
+将该时刻的状态作为第二段初值. 状态连续, 变化率可以在60处突变.
+仅把60写进输出时刻数组, 不能代替分段求解.</p>
+<p><strong>si_intervention. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.integrate <span class="keyword">import</span> solve_ivp</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">rhs</span>(<span class="params">beta</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">fun</span>(<span class="params">t,y</span>):</span><br><span class="line">        S,I = y</span><br><span class="line">        infection = beta*S*I/<span class="number">1000.</span></span><br><span class="line">        <span class="keyword">return</span> [-infection,infection]</span><br><span class="line">    <span class="keyword">return</span> fun</span><br><span class="line">options = <span class="built_in">dict</span>(rtol=<span class="number">1e-9</span>,atol=<span class="number">1e-10</span>,max_step=<span class="number">.5</span>,dense_output=<span class="literal">True</span>)</span><br><span class="line">base = solve_ivp(rhs(<span class="number">.1</span>),(<span class="number">0</span>,<span class="number">200</span>),[<span class="number">999.</span>,<span class="number">1.</span>],t_eval=np.linspace(<span class="number">0</span>,<span class="number">200</span>,<span class="number">401</span>),**options)</span><br><span class="line"><span class="comment"># Restart exactly where beta changes; carry the final state into the next segment.</span></span><br><span class="line">before = solve_ivp(rhs(<span class="number">.1</span>),(<span class="number">0</span>,<span class="number">60</span>),[<span class="number">999.</span>,<span class="number">1.</span>],t_eval=np.linspace(<span class="number">0</span>,<span class="number">60</span>,<span class="number">121</span>),**options)</span><br><span class="line">after = solve_ivp(rhs(<span class="number">.01</span>),(<span class="number">60</span>,<span class="number">1000</span>),before.y[:,-<span class="number">1</span>],</span><br><span class="line">                  t_eval=np.linspace(<span class="number">60</span>,<span class="number">1000</span>,<span class="number">1881</span>),**options)</span><br><span class="line"><span class="keyword">for</span> sol <span class="keyword">in</span> [base,before,after]:</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> sol.success <span class="keyword">or</span> <span class="keyword">not</span> np.isfinite(sol.y).<span class="built_in">all</span>():</span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(sol.message)</span><br><span class="line">t = np.r_[before.t,after.t[<span class="number">1</span>:]]</span><br><span class="line">y = np.column_stack((before.y,after.y[:,<span class="number">1</span>:]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;SI at t=200:&#x27;</span>,base.y[:,-<span class="number">1</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Changed beta, t=200 and 1000:&#x27;</span>,after.sol(<span class="number">200</span>),after.y[:,-<span class="number">1</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Population-balance error:&#x27;</span>,np.<span class="built_in">max</span>(<span class="built_in">abs</span>(y.<span class="built_in">sum</span>(axis=<span class="number">0</span>)-<span class="number">1000</span>)))</span><br><span class="line">solutions = &#123;<span class="string">&#x27;base&#x27;</span>:base,<span class="string">&#x27;before&#x27;</span>:before,<span class="string">&#x27;after&#x27;</span>:after&#125;</span><br><span class="line">numbers = &#123;<span class="string">&#x27;base_200&#x27;</span>:base.y[:,-<span class="number">1</span>].tolist(),<span class="string">&#x27;changed_200&#x27;</span>:after.sol(<span class="number">200</span>).tolist(),</span><br><span class="line">           <span class="string">&#x27;changed_1000&#x27;</span>:after.y[:,-<span class="number">1</span>].tolist()&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>si_intervention. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">options = odeset(<span class="string">&#x27;RelTol&#x27;</span>,<span class="number">1e-9</span>,<span class="string">&#x27;AbsTol&#x27;</span>,<span class="number">1e-10</span>,<span class="string">&#x27;MaxStep&#x27;</span>,<span class="number">.5</span>);</span><br><span class="line">baseRHS = @(t,y) [<span class="number">-.1</span>*y(<span class="number">1</span>)*y(<span class="number">2</span>)/<span class="number">1000</span>;<span class="number">.1</span>*y(<span class="number">1</span>)*y(<span class="number">2</span>)/<span class="number">1000</span>];</span><br><span class="line">afterRHS = @(t,y) [<span class="number">-.01</span>*y(<span class="number">1</span>)*y(<span class="number">2</span>)/<span class="number">1000</span>;<span class="number">.01</span>*y(<span class="number">1</span>)*y(<span class="number">2</span>)/<span class="number">1000</span>];</span><br><span class="line">[tb,yb] = ode45(baseRHS,<span class="built_in">linspace</span>(<span class="number">0</span>,<span class="number">200</span>,<span class="number">401</span>),[<span class="number">999</span>;<span class="number">1</span>],options);</span><br><span class="line">[t1,y1] = ode45(baseRHS,<span class="built_in">linspace</span>(<span class="number">0</span>,<span class="number">60</span>,<span class="number">121</span>),[<span class="number">999</span>;<span class="number">1</span>],options);</span><br><span class="line">[t2,y2] = ode45(afterRHS,<span class="built_in">linspace</span>(<span class="number">60</span>,<span class="number">1000</span>,<span class="number">1881</span>),y1(<span class="keyword">end</span>,:)&#x27;,options);</span><br><span class="line">t = [t1;t2(<span class="number">2</span>:<span class="keyword">end</span>)]; y = [y1;y2(<span class="number">2</span>:<span class="keyword">end</span>,:)];</span><br><span class="line">[~,at200] = <span class="built_in">min</span>(<span class="built_in">abs</span>(t2<span class="number">-200</span>));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;SI at t=200:&#x27;</span>); <span class="built_in">disp</span>(yb(<span class="keyword">end</span>,:));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Changed beta at t=200 and 1000:&#x27;</span>); <span class="built_in">disp</span>(y2([at200,<span class="keyword">end</span>],:));</span><br><span class="line">fprintf(<span class="string">&#x27;Population-balance error %.10g\n&#x27;</span>,<span class="built_in">max</span>(<span class="built_in">abs</span>(sum(y,<span class="number">2</span>)<span class="number">-1000</span>)));</span><br></pre></td></tr></table></figure>
+<p>降低参数的情景中, <span
+class="math inline">\(I(200)\approx620.870625\)</span>, <span
+class="math inline">\(I(1000)\approx999.795195\)</span>.
+在这个没有恢复且后期传播参数仍为正的SI模型中, 下降的传播率延缓了过程,
+没有增加消除感染的流出机制. 这不是对某项现实措施效果的估计.</p>
+<p><img src="/images/MechanisticModels/Mech-25.png" style="width:100%"></p>
+<p>图 14-5 同一次参数改变, 短期延缓与长期结局不同</p>
+<p>左图只看到200, 右图延长至1000. 两图使用相同模型与切换时刻.
+完整解析解可用累计传播强度核对, 推导见<a
+href="../reading/14/MechanisticFurtherReading.md">拓展阅读F.4</a>.</p>
+<h2 id="sis-加回恢复流量后-阈值怎样出现">14.6 SIS: 加回恢复流量后,
+阈值怎样出现</h2>
+<h3 id="在同一初始状态比较流入与流出">14.6.1
+在同一初始状态比较流入与流出</h3>
+<p>SIS假设感染者恢复后重新进入易感状态. 这是结构假设,
+不能仅凭"疾病会变异"等描述就认定适用. 设恢复率 <span
+class="math inline">\(\alpha=0.06\)</span>, 恢复流量为 <span
+class="math inline">\(\alpha I\)</span>. 两条方程成为</p>
+<p><span class="math display">\[
+\left\{\begin{aligned}
+S&#39;&amp;=\alpha I-\beta SI/N,\\
+I&#39;&amp;=\beta SI/N-\alpha I.
+\end{aligned}\right.
+\]</span></p>
+<p>从相同的999与1出发, 当 <span class="math inline">\(\beta=0.1\)</span>
+时, 感染流量0.0999, 恢复流量0.06, 感染净增加率0.0399. 当 <span
+class="math inline">\(\beta=0.06\)</span> 时, 净增加率是-0.00006,
+不是恰好为0; 当前易感比例还小于1.</p>
+<p><strong>code/sis_flow_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">S, I, N, alpha, h = <span class="number">999.</span>, <span class="number">1.</span>, <span class="number">1000.</span>, <span class="number">.06</span>, <span class="number">.5</span></span><br><span class="line">rows = []</span><br><span class="line"><span class="keyword">for</span> beta <span class="keyword">in</span> [<span class="number">.1</span>,<span class="number">.06</span>,<span class="number">.04</span>]:</span><br><span class="line">    infection = beta*S*I/N</span><br><span class="line">    recovery = alpha*I</span><br><span class="line">    net_I_rate = infection-recovery</span><br><span class="line">    next_I = I+h*net_I_rate</span><br><span class="line">    next_S = S-h*net_I_rate</span><br><span class="line">    rows.append([beta,beta/alpha,infection,recovery,net_I_rate,next_I,next_S])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;beta, R0, infection, recovery, net I rate, next I, next S:&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(np.array(rows))</span><br></pre></td></tr></table></figure>
+<p><strong>code/sis_flow_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">S = <span class="number">999</span>; I = <span class="number">1</span>; N = <span class="number">1000</span>; alpha = <span class="number">.06</span>; h = <span class="number">.5</span>;</span><br><span class="line">rows = <span class="built_in">zeros</span>(<span class="number">3</span>,<span class="number">7</span>); betas = [<span class="number">.1</span>,<span class="number">.06</span>,<span class="number">.04</span>];</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    <span class="built_in">beta</span> = betas(<span class="built_in">j</span>);</span><br><span class="line">    infection = <span class="built_in">beta</span>*S*I/N; recovery = alpha*I;</span><br><span class="line">    netIRate = infection-recovery;</span><br><span class="line">    nextI = I+h*netIRate; nextS = S-h*netIRate;</span><br><span class="line">    rows(<span class="built_in">j</span>,:) = [<span class="built_in">beta</span>,<span class="built_in">beta</span>/alpha,infection,recovery,netIRate,nextI,nextS];</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;beta, R0, infection, recovery, net I rate, next I, next S:&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>(rows);</span><br></pre></td></tr></table></figure>
+<h3 id="完整积分观察三种长期趋势">14.6.2 完整积分观察三种长期趋势</h3>
+<p>用 <span class="math inline">\(S=N-I\)</span> 消去一个状态, 得到</p>
+<p><span class="math display">\[
+I&#39;=I\left[(\beta-\alpha)-\frac{\beta I}{N}\right].
+\]</span></p>
+<p>当 <span class="math inline">\(\alpha&gt;0,\beta\geqslant0\)</span>
+时, 阈值为 <span class="math inline">\(\mathcal
+R_0=\beta/\alpha\)</span>. 从正感染初值出发, <span
+class="math inline">\(\mathcal R_0\leqslant1\)</span> 时感染数量趋于0;
+<span class="math inline">\(\mathcal R_0&gt;1\)</span> 时趋于 <span
+class="math inline">\(N(1-\alpha/\beta)\)</span>.</p>
+<p><strong>sis. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.integrate <span class="keyword">import</span> solve_ivp</span><br><span class="line"></span><br><span class="line">solutions,numbers = &#123;&#125;,&#123;&#125;</span><br><span class="line"><span class="keyword">for</span> beta <span class="keyword">in</span> [<span class="number">.1</span>,<span class="number">.06</span>,<span class="number">.04</span>]:</span><br><span class="line">    alpha,N = <span class="number">.06</span>,<span class="number">1000.</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">rhs</span>(<span class="params">t,y</span>):</span><br><span class="line">        S,I = y</span><br><span class="line">        transfer = beta*S*I/N-alpha*I</span><br><span class="line">        <span class="keyword">return</span> [-transfer,transfer]</span><br><span class="line">    sol = solve_ivp(rhs,(<span class="number">0</span>,<span class="number">500</span>),[<span class="number">999.</span>,<span class="number">1.</span>],t_eval=np.linspace(<span class="number">0</span>,<span class="number">500</span>,<span class="number">1001</span>),</span><br><span class="line">                    rtol=<span class="number">1e-9</span>,atol=<span class="number">1e-10</span>,max_step=<span class="number">.5</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> sol.success <span class="keyword">or</span> <span class="keyword">not</span> np.isfinite(sol.y).<span class="built_in">all</span>():</span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(sol.message)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;beta, R0, final S/I:&#x27;</span>,beta,beta/alpha,sol.y[:,-<span class="number">1</span>])</span><br><span class="line">    solutions[<span class="built_in">str</span>(beta)] = sol</span><br><span class="line">    numbers[<span class="built_in">str</span>(beta)] = sol.y[:,-<span class="number">1</span>].tolist()</span><br></pre></td></tr></table></figure>
+<p><strong>sis. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">alpha = <span class="number">.06</span>; N = <span class="number">1000</span>;</span><br><span class="line">options = odeset(<span class="string">&#x27;RelTol&#x27;</span>,<span class="number">1e-9</span>,<span class="string">&#x27;AbsTol&#x27;</span>,<span class="number">1e-10</span>,<span class="string">&#x27;MaxStep&#x27;</span>,<span class="number">.5</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">beta</span> = [<span class="number">.1</span>,<span class="number">.06</span>,<span class="number">.04</span>]</span><br><span class="line">    rhs = @(t,y) [-<span class="built_in">beta</span>*y(<span class="number">1</span>)*y(<span class="number">2</span>)/N+alpha*y(<span class="number">2</span>);<span class="built_in">beta</span>*y(<span class="number">1</span>)*y(<span class="number">2</span>)/N-alpha*y(<span class="number">2</span>)];</span><br><span class="line">    [t,y] = ode45(rhs,<span class="built_in">linspace</span>(<span class="number">0</span>,<span class="number">500</span>,<span class="number">1001</span>),[<span class="number">999</span>;<span class="number">1</span>],options);</span><br><span class="line">    fprintf(<span class="string">&#x27;beta %.2f, R0 %.6f, final S/I %.10f, %.10f\n&#x27;</span>, ...</span><br><span class="line">        <span class="built_in">beta</span>,<span class="built_in">beta</span>/alpha,y(<span class="keyword">end</span>,<span class="number">1</span>),y(<span class="keyword">end</span>,<span class="number">2</span>));</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>表 14-3 SIS 阈值两侧的条件轨线.</p>
+<div class="line-block"><span class="math inline">\(\beta\)</span> |
+<span class="math inline">\(\mathcal R_0\)</span> | <span
+class="math inline">\(I(500)\)</span> | 当前模型的长期趋势 |</div>
+<p>|: ---: |: ---: |: ---: |: ---: | | 0.10 | 1.6667 | 399.999671 |
+趋于400 | | 0.06 | 1 | 0.970874 | 缓慢趋于0 | | 0.04 | 0.6667 |
+0.0000453 | 趋于0 |</p>
+<p>临界时 <span class="math inline">\(I(t)=I_0/[1+(\beta
+I_0/N)t]\)</span>, 按代数速度趋零. 因而500时仍接近1不与长期趋零矛盾.
+非零平衡时感染与恢复流量相等, 也不表示这两种活动停止.</p>
+<p><img src="/images/MechanisticModels/Mech-33.png" style="width:100%"></p>
+<p>图 14-6 阈值两侧与临界情景的轨线</p>
+<p>右图用对数纵轴比较感染数量,
+不把临界情景的慢衰减隐藏在同一条接近零的水平线上. 解析解及条件见<a
+href="../reading/14/MechanisticFurtherReading.md">拓展阅读F.5</a>.</p>
+<h2 id="出生与死亡-先把当前数量和累计账目分开">14.7 出生与死亡:
+先把当前数量和累计账目分开</h2>
+<p>新增出生与死亡后, 不再默认 <span
+class="math inline">\(S+I\)</span>不变. 当前存活人口为 <span
+class="math inline">\(N=S+I\)</span>, 累计因病死亡 <span
+class="math inline">\(D_I\)</span>, 累计自然死亡 <span
+class="math inline">\(D_N\)</span>和累计出生 <span
+class="math inline">\(B\)</span>记录历史流量.
+累计死亡不再参与感染分母.</p>
+<p>教学情景取 <span class="math inline">\(\beta=0.1\)</span>, 出生率
+<span class="math inline">\(\mu=0.002\)</span>, 自然死亡率 <span
+class="math inline">\(\nu=0.001\)</span>, 因病死亡率 <span
+class="math inline">\(d=0.01\)</span>, 暂无恢复. 同一初始状态999与1时,
+出生流量2, 自然死亡流量1, 因病死亡流量0.01. 感染仍只在S与I之间转移.</p>
+<p>对应方程为</p>
+<p><span class="math display">\[
+\left\{\begin{aligned}
+S&#39;&amp;=-\beta SI/N+\mu N-\nu S,\\
+I&#39;&amp;=\beta SI/N-(\nu+d)I,\\
+D_I&#39;&amp;=dI,\\
+D_N&#39;&amp;=\nu N,\\
+B&#39;&amp;=\mu N.
+\end{aligned}\right.
+\]</span></p>
+<p>从 <span class="math inline">\((S,I,D_I,D_N,B)^{\mathsf
+T}=(999,1,0,0,0)^{\mathsf T}\)</span> 出发, 初始五个变化率是 <span
+class="math inline">\((0.9011,0.0889,0.01,1,2)^{\mathsf T}\)</span>. 取
+<span class="math inline">\(h=0.5\)</span> 一次更新, 得到</p>
+<p><span class="math display">\[
+(999.45055,1.04445,0.005,0.5,1)^{\mathsf T}.
+\]</span></p>
+<p><strong>code/population_budget_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># S, I, cumulative disease deaths, natural deaths, births.</span></span><br><span class="line">state = np.array([<span class="number">999.</span>,<span class="number">1.</span>,<span class="number">0.</span>,<span class="number">0.</span>,<span class="number">0.</span>])</span><br><span class="line">S, I, DI, DN, B = state</span><br><span class="line">beta, mu, nu, d, h = <span class="number">.1</span>, <span class="number">.002</span>, <span class="number">.001</span>, <span class="number">.01</span>, <span class="number">.5</span></span><br><span class="line">N = S+I</span><br><span class="line">infection = beta*S*I/N</span><br><span class="line">births, natural_deaths, disease_deaths = mu*N, nu*N, d*I</span><br><span class="line">rates = np.array([-infection+births-nu*S,</span><br><span class="line">                  infection-(nu+d)*I,disease_deaths,natural_deaths,births])</span><br><span class="line">next_state = state+h*rates</span><br><span class="line">balance = next_state[:<span class="number">4</span>].<span class="built_in">sum</span>()-next_state[<span class="number">4</span>]-<span class="number">1000.</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Five state rates:&#x27;</span>, rates)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Next five states:&#x27;</span>, next_state)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Population budget residual:&#x27;</span>, balance)</span><br></pre></td></tr></table></figure>
+<p><strong>code/population_budget_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line"><span class="comment">% S, I, cumulative disease deaths, natural deaths, births.</span></span><br><span class="line">state = [<span class="number">999</span>;<span class="number">1</span>;<span class="number">0</span>;<span class="number">0</span>;<span class="number">0</span>]; S = state(<span class="number">1</span>); I = state(<span class="number">2</span>);</span><br><span class="line"><span class="built_in">beta</span> = <span class="number">.1</span>; mu = <span class="number">.002</span>; nu = <span class="number">.001</span>; d = <span class="number">.01</span>; h = <span class="number">.5</span>;</span><br><span class="line">N = S+I; infection = <span class="built_in">beta</span>*S*I/N;</span><br><span class="line">births = mu*N; naturalDeaths = nu*N; diseaseDeaths = d*I;</span><br><span class="line">rates = [-infection+births-nu*S;infection-(nu+d)*I; ...</span><br><span class="line">         diseaseDeaths;naturalDeaths;births];</span><br><span class="line">nextState = state+h*rates;</span><br><span class="line">balance = sum(nextState(<span class="number">1</span>:<span class="number">4</span>))-nextState(<span class="number">5</span>)<span class="number">-1000</span>;</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Five state rates:&#x27;</span>); <span class="built_in">disp</span>(rates&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Next five states:&#x27;</span>); <span class="built_in">disp</span>(nextState&#x27;);</span><br><span class="line">fprintf(<span class="string">&#x27;Population budget residual: %.12g\n&#x27;</span>,balance);</span><br></pre></td></tr></table></figure>
+<p>应满足的收支是</p>
+<p><span class="math display">\[
+S+I+D_I+D_N=N(0)+B.
+\]</span></p>
+<p>新存活数1000.495加累计两类死亡0.505, 恰好等于初始1000加累计出生1.
+这项收支有助于检查方程符号和程序, 不表示数量恒定.</p>
+<p><img src="/images/MechanisticModels/Mech-30.png" style="width:100%"></p>
+<p>图 14-7 当前存活状态与累计流量记录</p>
+<p>出生进入S是当前模型的假设. 同样是I减少, 在SIS中可来自恢复,
+在这里也可来自死亡, 必须看具体流出项. 不能把感染数量下降自动称为康复.
+三种出生死亡情景, 感染比例方程与完整程序见<a
+href="../reading/14/DemographicModels.md">人口收支扩展</a>.</p>
+<h2 id="用数据估计参数-做一次边界清楚的练习">14.8 用数据估计参数:
+做一次边界清楚的练习</h2>
+<h3 id="先说明哪些是人造数据-哪些参加拟合">14.8.1 先说明哪些是人造数据,
+哪些参加拟合</h3>
+<p>前面是在给定参数下求轨线, 还没有从真实观测估计参数. 为练习这一步,
+这里明确构造一组人造数据: 用 <span
+class="math inline">\(x_0=100,r=0.04,K=1000\)</span>
+的Logistic解析值加上列明的固定小扰动, 保留三位小数. 生成方法见
+<code>data/PracticeDataNotes.md</code>. 这些数不是野外观测.</p>
+<p>表 14-4 Logistic 参数估计的人造数据.</p>
+<div class="line-block">时刻 | 人造观测 | 用途 |</div>
+<p>|: ---: |: ---: |: ---: | | 0 | 100.000 | 拟合 | | 10 | 142.989 |
+拟合 | | 20 | 197.057 | 拟合 | | 30 | 269.987 | 拟合 | | 40 | 354.279 |
+拟合 | | 50 | 451.953 | 拟合 | | 60 | 550.121 | 拟合 | | 70 | 647.191 |
+留出 | | 80 | 730.604 | 留出 | | 90 | 803.224 | 留出 | | 100 | 857.986 |
+留出 |</p>
+<p>预先用0至60的7点拟合, 70至100的4点留出. 将初值100视为已知, 只估计
+<span class="math inline">\(r\)</span> 与 <span
+class="math inline">\(K\)</span>. 在正增长的练习范围内设 <span
+class="math inline">\(r&gt;0,K&gt;100\)</span>, 用</p>
+<p><span class="math display">\[
+x(t;r,K)=\frac{K}{1+(K/100-1)\mathrm{e}^{-rt}}
+\]</span></p>
+<p>计算各观测时刻的模型值. 参数估计写成</p>
+<p><span class="math display">\[
+\begin{aligned}
+\min_{r,K}\quad &amp;\sum\limits_{j\in\mathcal T}
+\left[x(t_j;r,K)-y_j\right]^2,\\
+\text{s.t.}\quad&amp;\left\{\begin{aligned}
+r&amp;&gt;0,\\
+K&amp;&gt;100.
+\end{aligned}\right.
+\end{aligned}
+\]</span></p>
+<p><span class="math inline">\(\mathcal T\)</span>只包含训练的7点.
+程序用 <span
+class="math inline">\(r=\mathrm{e}^{z_1},K=100+\mathrm{e}^{z_2}\)</span>
+保证约束, 将残差除以1000只是改变数值尺度, 不改变最小值位置.
+MATLAB使用基础 <code>fminsearch</code>, 不需要优化工具箱.</p>
+<p><strong>code/logistic_parameter_fit. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pathlib <span class="keyword">import</span> Path</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> minimize</span><br><span class="line"></span><br><span class="line">root = Path(__file__).resolve().parents[<span class="number">1</span>]</span><br><span class="line">data = np.loadtxt(root/<span class="string">&#x27;data/LogisticPractice.csv&#x27;</span>, delimiter=<span class="string">&#x27;,&#x27;</span>, skiprows=<span class="number">1</span>)</span><br><span class="line">t, observed = data.T</span><br><span class="line">train = t &lt;= <span class="number">60</span>; holdout = t &gt; <span class="number">60</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">curve</span>(<span class="params">z, times</span>):</span><br><span class="line">    r, K = np.exp(z[<span class="number">0</span>]), <span class="number">100.</span>+np.exp(z[<span class="number">1</span>])</span><br><span class="line">    <span class="keyword">return</span> K/(<span class="number">1</span>+(K/<span class="number">100.</span>-<span class="number">1</span>)*np.exp(-r*times))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">loss</span>(<span class="params">z</span>):</span><br><span class="line">    <span class="comment"># Only the seven training observations enter this objective.</span></span><br><span class="line">    <span class="keyword">return</span> np.<span class="built_in">sum</span>(((curve(z,t[train])-observed[train])/<span class="number">1000.</span>)**<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">fit = minimize(loss, np.log([<span class="number">.03</span>,<span class="number">700.</span>]), method=<span class="string">&#x27;Nelder-Mead&#x27;</span>,</span><br><span class="line">               options=&#123;<span class="string">&#x27;xatol&#x27;</span>:<span class="number">1e-10</span>,<span class="string">&#x27;fatol&#x27;</span>:<span class="number">1e-14</span>,<span class="string">&#x27;maxiter&#x27;</span>:<span class="number">10000</span>&#125;)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> fit.success:</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(fit.message)</span><br><span class="line">r_hat, K_hat = np.exp(fit.x[<span class="number">0</span>]), <span class="number">100.</span>+np.exp(fit.x[<span class="number">1</span>])</span><br><span class="line">prediction = curve(fit.x,t)</span><br><span class="line">train_rmse = np.sqrt(np.mean((observed[train]-prediction[train])**<span class="number">2</span>))</span><br><span class="line">test_rmse = np.sqrt(np.mean((observed[holdout]-prediction[holdout])**<span class="number">2</span>))</span><br><span class="line">baseline_rmse = np.sqrt(np.mean((observed[holdout]-observed[train][-<span class="number">1</span>])**<span class="number">2</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Artificial data: fitted r, K:&#x27;</span>, r_hat, K_hat)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Train, holdout, last-value RMSE:&#x27;</span>, train_rmse, test_rmse, baseline_rmse)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;t, observed, fitted/forecast:&#x27;</span>, np.column_stack((t,observed,prediction)))</span><br><span class="line">out = &#123;<span class="string">&#x27;data_kind&#x27;</span>:<span class="string">&#x27;artificial practice data&#x27;</span>,<span class="string">&#x27;r&#x27;</span>:<span class="built_in">float</span>(r_hat),<span class="string">&#x27;K&#x27;</span>:<span class="built_in">float</span>(K_hat),</span><br><span class="line">       <span class="string">&#x27;train_rmse&#x27;</span>:<span class="built_in">float</span>(train_rmse),<span class="string">&#x27;holdout_rmse&#x27;</span>:<span class="built_in">float</span>(test_rmse),</span><br><span class="line">       <span class="string">&#x27;baseline_rmse&#x27;</span>:<span class="built_in">float</span>(baseline_rmse),<span class="string">&#x27;prediction&#x27;</span>:prediction.tolist()&#125;</span><br><span class="line">(root/<span class="string">&#x27;results&#x27;</span>).mkdir(exist_ok=<span class="literal">True</span>)</span><br><span class="line">(root/<span class="string">&#x27;results/PracticeFit.json&#x27;</span>).write_text(json.dumps(out,indent=<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<p><strong>code/logistic_parameter_fit. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">root = fileparts(fileparts(mfilename(<span class="string">&#x27;fullpath&#x27;</span>)));</span><br><span class="line">data = readmatrix(fullfile(root,<span class="string">&#x27;data&#x27;</span>,<span class="string">&#x27;LogisticPractice.csv&#x27;</span>),<span class="string">&#x27;NumHeaderLines&#x27;</span>,<span class="number">1</span>);</span><br><span class="line">t = data(:,<span class="number">1</span>); observed = data(:,<span class="number">2</span>);</span><br><span class="line">train = t&lt;=<span class="number">60</span>; holdout = t&gt;<span class="number">60</span>;</span><br><span class="line">curve = @(z,times) (<span class="number">100</span>+<span class="built_in">exp</span>(z(<span class="number">2</span>)))./(<span class="number">1</span>+ ...</span><br><span class="line">    ((<span class="number">100</span>+<span class="built_in">exp</span>(z(<span class="number">2</span>)))/<span class="number">100</span><span class="number">-1</span>)*<span class="built_in">exp</span>(-<span class="built_in">exp</span>(z(<span class="number">1</span>))*times));</span><br><span class="line"><span class="comment">% Only the seven training observations enter this objective.</span></span><br><span class="line">loss = @(z) sum(((curve(z,t(train))-observed(train))/<span class="number">1000</span>).^<span class="number">2</span>);</span><br><span class="line">options = optimset(<span class="string">&#x27;TolX&#x27;</span>,<span class="number">1e-10</span>,<span class="string">&#x27;TolFun&#x27;</span>,<span class="number">1e-14</span>,<span class="string">&#x27;MaxIter&#x27;</span>,<span class="number">10000</span>,<span class="string">&#x27;MaxFunEvals&#x27;</span>,<span class="number">10000</span>);</span><br><span class="line">[z,~,exitflag] = fminsearch(loss,<span class="built_in">log</span>([<span class="number">.03</span>;<span class="number">700</span>]),options);</span><br><span class="line">assert(exitflag&gt;<span class="number">0</span>,<span class="string">&#x27;Parameter optimization failed.&#x27;</span>);</span><br><span class="line">rHat = <span class="built_in">exp</span>(z(<span class="number">1</span>)); KHat = <span class="number">100</span>+<span class="built_in">exp</span>(z(<span class="number">2</span>)); prediction = curve(z,t);</span><br><span class="line">trainRMSE = <span class="built_in">sqrt</span>(<span class="built_in">mean</span>((observed(train)-prediction(train)).^<span class="number">2</span>));</span><br><span class="line">testRMSE = <span class="built_in">sqrt</span>(<span class="built_in">mean</span>((observed(holdout)-prediction(holdout)).^<span class="number">2</span>));</span><br><span class="line">known = observed(train);</span><br><span class="line">baselineRMSE = <span class="built_in">sqrt</span>(<span class="built_in">mean</span>((observed(holdout)-known(<span class="keyword">end</span>)).^<span class="number">2</span>));</span><br><span class="line">fprintf(<span class="string">&#x27;Artificial data fitted r=%.10f, K=%.10f\n&#x27;</span>,rHat,KHat);</span><br><span class="line">fprintf(<span class="string">&#x27;Train=%.8f, holdout=%.8f, last-value RMSE=%.8f\n&#x27;</span>, ...</span><br><span class="line">    trainRMSE,testRMSE,baselineRMSE);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;t, observed, fitted/forecast:&#x27;</span>); <span class="built_in">disp</span>([t,observed,prediction]);</span><br></pre></td></tr></table></figure>
+<h3 id="评分用留出点-解释仍要回到数据来源">14.8.2 评分用留出点,
+解释仍要回到数据来源</h3>
+<p>本次Python计算得到 <span class="math inline">\(\hat
+r\approx0.04001027,\hat K\approx999.498602\)</span>. 训练RMSE约0.773040,
+留出RMSE约0.765618. 作为同信息边界的简单比较,
+将训练末值550.121一直沿用到后面4个时刻, 留出RMSE约224.075146.</p>
+<p><img src="/images/MechanisticModels/Mech-Calibration.png" style="width:100%"></p>
+<p>图 14-8 人造数据中的拟合与留出评分</p>
+<p>阴影区中的4点没有进入拟合目标; 右图显示观测减模型值的残差.
+数据生成机制原本就是Logistic, 因此良好结果只演示估计和评分流程,
+不能证明现实种群满足这个机制, 也不构成真实预测准确的证据.</p>
+<p>实际数据还要核实测量单位, 误差, 采样频率, 环境变化和模型适用性.
+如果全部观测都在 <span class="math inline">\(x\ll K\)</span> 的早期阶段,
+方程接近 <span class="math inline">\(x&#39;=rx\)</span>,
+不同的大容量可能给出相近轨线, <span
+class="math inline">\(K\)</span>就可能难以识别.
+有明确含义的参数也未必能由有限数据可靠估计.</p>
+<h2 id="分清四种检查-再解释模型结果">14.9 分清四种检查,
+再解释模型结果</h2>
+<p>表 14-5 机理模型的四个检查层次.</p>
+<div class="line-block">检查层次 | 要回答的问题 | 本章做了什么 |</div>
+<p>|: ---: |: ---|: ---| | 结构 | 单位, 增减项与状态边界是否一致? |
+一步收支, SI/SIS总量, 出生死亡账目 | | 数值 |
+程序是否可靠地求解给定方程? | 解析解, 步长比较, 守恒量与独立积分方法 | |
+参数 | 数据能否区分不同参数? | 人造数据估计练习及早期容量难识别的解释 |
+| 现实 | 未参与建模的实际观测是否支持机制和预测? |
+本章未完成真实数据校准与实证检验 |</p>
+<p><img src="/images/MechanisticModels/Mech-34.png" style="width:100%"></p>
+<p>图 14-9 人数收支与守恒量检查的是数值一致性</p>
+<p>左图核对SI/SIS总量, 右图核对捕食模型守恒量的漂移. 检查对象不同,
+不根据两个纵轴的大小给模型排名. 原完整推导与检查方法见<a
+href="../reading/14/MechanisticFurtherReading.md">拓展阅读F.7</a>.</p>
+<p>显著负数量需要检查方程或数值方法, 不用强制裁剪掩盖问题.
+若有已知参数突变就分段起算; 若模型存在刚性, 则考虑适合的方法.
+求解器背景另见<a href="../reading/14/ODESolverGuide.md">求解阅读</a>,
+初次学习不必先记住全部接口与方法名.</p>
+<p>本章的核心步骤可以具体执行: 先列状态与单位, 算出当前位置的增加和减少,
+用短步更新理解方程, 再求解并核对; 有观测时, 另行估计参数和评价预测.
+机理模型也可以采用代数或差分方程, 不限于本章的常微分方程.
+下一篇转向多指标决策, 首先学习怎样把成对判断整理为权重.</p>
+<h2 id="练习">14.10 练习</h2>
+<ol type="1">
+<li>取 <span class="math inline">\(x=100,r=0.04,K=1000\)</span>,
+分别计算人均净增长率, 总增长率, 长度0.5内的近似增量.
+再用步长1手算前两次Euler更新. 为什么不能一直加3.6?</li>
+<li>将Euler步长由1改为0.5, 循环次数与内部更新怎样变化?
+为什么加密完整求解器的输出网格, 不等于把Euler步长减半?
+数值误差与真实预测误差有何不同?</li>
+<li>Logistic初值为0, <span class="math inline">\(K\)</span>, 高于 <span
+class="math inline">\(K\)</span> 时分别怎样变化? 数量达到 <span
+class="math inline">\(K/2\)</span> 时,
+达到最大的是数量还是总增长速率?</li>
+<li>在捕食例子的初始状态下重算 <span
+class="math inline">\(e=0.1\)</span> 的两个变化率及一次 <span
+class="math inline">\(h=0.1\)</span> 更新. 为什么两个速率要用同一旧状态?
+完整周期平均为何不能直接换成任意100单位窗口平均?</li>
+<li>计算竞争情景A初始两种群的变化率, 说明乙为何可以先增长后下降.
+情景C共存平衡是多少? 为什么情景A不能使用带 <span
+class="math inline">\(1-\sigma_1\sigma_2\)</span> 分母的公式?</li>
+<li>对SI手算一次感染流量与状态转移, 检查总和. 在60时刻改变传播参数后,
+第二段初值应取哪里? 为什么当前模型中的传播延缓不等于消除感染?</li>
+<li>在SIS初始状态999与1下, 对 <span
+class="math inline">\(\beta=0.1,0.06,0.04\)</span>
+比较感染流入与恢复流出. 临界 <span class="math inline">\(\mathcal
+R_0=1\)</span> 时净增加率为什么仍为负, 而且长期下降很慢?</li>
+<li>用本章五状态初值和参数核对一次短步收支. 如果I下降,
+怎样依据方程判断它来自恢复还是死亡? 累计死亡能否加进当前感染分母?</li>
+<li>在人造数据练习中, 将留出点放进拟合目标会改变什么?
+为什么当前良好的留出结果不能证明现实Logistic机制? 如果观测只覆盖初期,
+哪个参数可能更难识别?</li>
+<li>选择本章一个模型, 分别列出结构检查, 数值检查,
+参数估计所需观测和现实检验所需数据. 区分已经完成与尚未完成的工作.</li>
+</ol>
+<p>提示见<a href="../reading/14/ExerciseHints.md">ExerciseHints. md</a>.
+拓展阅读另有十道练习及提示, 可在完成正文后继续使用.</p>
+<p>配套阅读与实验: <a
+href="../reading/14/Index.md">本章资料索引</a>.</p>
+<h2 id="参考资料">参考资料</h2>
+<p>[1] <a
+target="_blank" rel="noopener" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html">SciPy
+solve_ivp官方文档</a>. [2] <a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/matlab/ref/ode45.html">MathWorks
+ode45</a>, <a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/matlab/math/choose-an-ode-solver.html">选择ODE求解器</a>.
+[3] Volterra, V. (1926). <em>Fluctuations in the Abundance of a Species
+considered Mathematically</em>. Nature, 118, 558-560. <a
+target="_blank" rel="noopener" href="https://doi.org/10.1038/118558a0">论文</a>. [4] Hethcote, H. W.
+(2000). <em>The Mathematics of Infectious Diseases</em>. SIAM Review,
+42(4), 599-653. <a
+target="_blank" rel="noopener" href="https://doi.org/10.1137/S0036144500371907">论文</a>.</p>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

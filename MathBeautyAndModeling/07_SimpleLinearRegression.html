@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="第 7 章 一元线性回归: 一条直线与预测中的不确定性 第 6 章已经完成了画散点, 算残差和调用函数拟合. 本章继续使用同一组数据, 追问三个问题: 最小二乘系数为什么这样算? 一次算出的系数和预测有多大不确定性? 某条记录明显偏离时, 应怎样核查它对结果的影响? 先把系数公式变成逐条累计的计算, 再增加误差尺度和区间. 最后回到第 2 条记录, 通过残差图, 杠杆和重新拟合解释诊">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/MathBeautyAndModeling/07_SimpleLinearRegression.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="第 7 章 一元线性回归: 一条直线与预测中的不确定性 第 6 章已经完成了画散点, 算残差和调用函数拟合. 本章继续使用同一组数据, 追问三个问题: 最小二乘系数为什么这样算? 一次算出的系数和预测有多大不确定性? 某条记录明显偏离时, 应怎样核查它对结果的影响? 先把系数公式变成逐条累计的计算, 再增加误差尺度和区间. 最后回到第 2 条记录, 通过残差图, 杠杆和重新拟合解释诊">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/SimpleLinearRegression/interval_step.png">
+<meta property="og:image" content="http://example.com/images/SimpleLinearRegression/fit_and_intervals.png">
+<meta property="og:image" content="http://example.com/images/SimpleLinearRegression/diagnostics.png">
+<meta property="og:image" content="http://example.com/images/SimpleLinearRegression/influence.png">
+<meta property="og:image" content="http://example.com/images/SimpleLinearRegression/sensitivity.png">
+<meta property="og:image" content="http://example.com/images/SimpleLinearRegression/residual_case_order.png">
+<meta property="article:published_time" content="2026-11-02T02:53:08.102Z">
+<meta property="article:modified_time" content="2026-10-31T09:20:34.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/SimpleLinearRegression/interval_step.png">
+
+
+<link rel="canonical" href="http://example.com/MathBeautyAndModeling/07_SimpleLinearRegression">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/MathBeautyAndModeling/07_SimpleLinearRegression.html","path":"MathBeautyAndModeling/07_SimpleLinearRegression.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-7-%E7%AB%A0-%E4%B8%80%E5%85%83%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92-%E4%B8%80%E6%9D%A1%E7%9B%B4%E7%BA%BF%E4%B8%8E%E9%A2%84%E6%B5%8B%E4%B8%AD%E7%9A%84%E4%B8%8D%E7%A1%AE%E5%AE%9A%E6%80%A7"><span class="nav-number">1.</span> <span class="nav-text">第 7 章
+一元线性回归: 一条直线与预测中的不确定性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%B6%E7%BB%AD%E5%90%8C%E4%B8%80%E7%BB%84%E9%85%8D%E5%AF%B9%E8%AE%B0%E5%BD%95"><span class="nav-number">1.1.</span> <span class="nav-text">7.1 延续同一组配对记录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E7%B3%BB%E6%95%B0%E6%80%8E%E6%A0%B7%E4%BB%8E%E6%95%B0%E6%8D%AE%E4%B8%AD%E7%AE%97%E5%87%BA%E6%9D%A5"><span class="nav-number">1.2.</span> <span class="nav-text">7.2 两个系数怎样从数据中算出来</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E5%9B%BA%E5%AE%9A%E6%96%9C%E7%8E%87-%E4%B8%8A%E4%B8%8B%E7%A7%BB%E5%8A%A8%E7%9B%B4%E7%BA%BF"><span class="nav-number">1.2.1.</span> <span class="nav-text">7.2.1 先固定斜率, 上下移动直线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%8D%E9%80%89%E6%8B%A9%E6%96%9C%E7%8E%87"><span class="nav-number">1.2.2.</span> <span class="nav-text">7.2.2 再选择斜率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%89%E5%85%AC%E5%BC%8F%E9%80%90%E6%9D%A1%E7%B4%AF%E8%AE%A1"><span class="nav-number">1.2.3.</span> <span class="nav-text">7.2.3 按公式逐条累计</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8B%9F%E5%90%88%E4%BB%A5%E5%90%8E-%E6%80%8E%E6%A0%B7%E4%BC%B0%E8%AE%A1%E8%AF%AF%E5%B7%AE%E5%B0%BA%E5%BA%A6"><span class="nav-number">1.3.</span> <span class="nav-text">7.3 拟合以后, 怎样估计误差尺度</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83-rmse-%E4%B8%8E%E6%AE%8B%E5%B7%AE%E6%A0%87%E5%87%86%E5%B7%AE%E4%BC%B0%E8%AE%A1"><span class="nav-number">1.3.1.</span> <span class="nav-text">7.3.1 训练 RMSE
+与残差标准差估计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E6%8B%9F%E5%90%88%E8%B5%B0%E5%90%91%E5%8C%BA%E9%97%B4-%E5%A2%9E%E5%8A%A0%E4%BA%86%E5%93%AA%E4%BA%9B%E5%81%87%E8%AE%BE"><span class="nav-number">1.3.2.</span> <span class="nav-text">7.3.2 从拟合走向区间,
+增加了哪些假设</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E6%95%B0%E5%B7%B2%E7%BB%8F%E7%AE%97%E5%87%BA-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%98%E9%9C%80%E8%A6%81%E6%A0%87%E5%87%86%E8%AF%AF%E5%92%8C%E5%8C%BA%E9%97%B4"><span class="nav-number">1.4.</span> <span class="nav-text">7.4 系数已经算出,
+为什么还需要标准误和区间</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8D%A2%E4%B8%80%E6%89%B9%E8%A7%82%E6%B5%8B-%E7%B3%BB%E6%95%B0%E4%B9%9F%E4%BC%9A%E6%B3%A2%E5%8A%A8"><span class="nav-number">1.4.1.</span> <span class="nav-text">7.4.1 换一批观测, 系数也会波动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E5%8F%96%E7%B3%BB%E6%95%B0%E5%92%8C%E6%A0%87%E5%87%86%E8%AF%AF-%E5%86%8D%E4%B9%98%E4%B8%B4%E7%95%8C%E5%80%BC"><span class="nav-number">1.4.2.</span> <span class="nav-text">7.4.2 先取系数和标准误,
+再乘临界值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%9C%E7%8E%87%E6%A3%80%E9%AA%8C%E5%8F%AA%E5%9B%9E%E7%AD%94%E4%B8%80%E4%B8%AA%E9%99%90%E5%AE%9A%E9%97%AE%E9%A2%98"><span class="nav-number">1.4.3.</span> <span class="nav-text">7.4.3
+斜率检验只回答一个限定问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8C%E4%B8%80%E8%BA%AB%E9%AB%98%E7%9A%84%E4%B8%A4%E7%A7%8D%E5%8C%BA%E9%97%B4-%E6%80%8E%E6%A0%B7%E4%B8%80%E6%AD%A5%E6%AD%A5%E7%AE%97"><span class="nav-number">1.5.</span> <span class="nav-text">7.5 同一身高的两种区间,
+怎样一步步算</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E4%B8%80%E4%B8%AA%E7%82%B9%E9%A2%84%E6%B5%8B%E5%BC%80%E5%A7%8B"><span class="nav-number">1.5.1.</span> <span class="nav-text">7.5.1 从一个点预测开始</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E6%AC%A1%E8%AE%A1%E7%AE%97%E4%B8%80%E4%B8%AA%E6%96%B0%E4%BD%8D%E7%BD%AE"><span class="nav-number">1.5.2.</span> <span class="nav-text">7.5.2 一次计算一个新位置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC-2-%E6%9D%A1%E8%AE%B0%E5%BD%95%E5%81%8F%E4%BD%8E-%E5%BA%94%E6%80%8E%E6%A0%B7%E5%BC%80%E5%A7%8B%E6%A0%B8%E6%9F%A5"><span class="nav-number">1.6.</span> <span class="nav-text">7.6 第 2 条记录偏低,
+应怎样开始核查</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E6%8A%8A%E6%AE%8B%E5%B7%AE%E7%94%BB%E5%87%BA%E6%9D%A5"><span class="nav-number">1.6.1.</span> <span class="nav-text">7.6.1 先把残差画出来</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%8F%98%E9%87%8F%E4%BD%8D%E7%BD%AE%E4%B8%8E%E5%93%8D%E5%BA%94%E5%81%8F%E7%A6%BB%E5%88%86%E5%BC%80%E7%9C%8B"><span class="nav-number">1.6.2.</span> <span class="nav-text">7.6.2
+自变量位置与响应偏离分开看</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9A%82%E6%97%B6%E4%B8%8D%E4%BD%BF%E7%94%A8%E7%AC%AC-2-%E6%9D%A1-%E7%9C%8B%E9%A2%84%E6%B5%8B%E6%94%B9%E5%8F%98%E5%A4%9A%E5%B0%91"><span class="nav-number">1.7.</span> <span class="nav-text">7.7 暂时不使用第 2 条,
+看预测改变多少</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E8%AF%BB-%E7%94%A8%E5%88%A0%E9%99%A4%E5%90%8E%E7%9A%84%E6%B3%A2%E5%8A%A8%E5%B0%BA%E5%BA%A6%E7%AD%9B%E6%9F%A5%E6%AE%8B%E5%B7%AE"><span class="nav-number">1.8.</span> <span class="nav-text">7.8 选读:
+用删除后的波动尺度筛查残差</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E9%87%8D%E6%96%B0%E6%8B%9F%E5%90%88%E5%8D%81%E4%BA%94%E6%9D%A1-%E5%86%8D%E4%BC%B0%E8%AE%A1%E5%B0%BA%E5%BA%A6"><span class="nav-number">1.8.1.</span> <span class="nav-text">7.8.1 先重新拟合十五条,
+再估计尺度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%BB%E5%87%BA%E7%9A%84%E8%AF%8A%E6%96%AD%E5%8C%BA%E9%97%B4%E5%B1%9E%E4%BA%8E%E5%93%AA%E4%B8%80%E7%A7%8D"><span class="nav-number">1.8.2.</span> <span class="nav-text">7.8.2 画出的诊断区间属于哪一种</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E6%97%B6%E7%9C%8B%E5%8D%81%E5%85%AD%E6%9D%A1%E6%97%B6-%E4%B8%8D%E8%83%BD%E5%8F%AA%E7%94%A8%E5%8D%95%E6%9D%A1%E7%BB%93%E8%AE%BA"><span class="nav-number">1.8.3.</span> <span class="nav-text">7.8.3 同时看十六条时,
+不能只用单条结论</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%8E%E6%A0%B7%E6%8A%8A%E4%B8%8D%E7%A1%AE%E5%AE%9A%E6%80%A7%E5%92%8C%E8%AF%8A%E6%96%AD%E4%B8%80%E8%B5%B7%E6%8A%A5%E5%91%8A"><span class="nav-number">1.9.</span> <span class="nav-text">7.9
+怎样把不确定性和诊断一起报告</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%89%8B%E6%94%B9%E5%8F%98%E6%9D%A1%E4%BB%B6"><span class="nav-number">1.9.1.</span> <span class="nav-text">7.9.1 动手改变条件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.10.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="第-7-章-一元线性回归-一条直线与预测中的不确定性">第 7 章
+一元线性回归: 一条直线与预测中的不确定性</h1>
+<p>第 6 章已经完成了画散点, 算残差和调用函数拟合.
+本章继续使用同一组数据, 追问三个问题: 最小二乘系数为什么这样算?
+一次算出的系数和预测有多大不确定性? 某条记录明显偏离时,
+应怎样核查它对结果的影响?</p>
+<p>先把系数公式变成逐条累计的计算, 再增加误差尺度和区间. 最后回到第 2
+条记录, 通过残差图, 杠杆和重新拟合解释诊断结果.
+外部学生化残差与全体筛查放在选读部分.</p>
+<h2 id="延续同一组配对记录">7.1 延续同一组配对记录</h2>
+<p>下表给出 16 组身高 x 与腿长 y, 单位均为 cm.
+两列必须按同一观测对象配对. 数据缺少可核验的抽样来源和腿长测量端点说明,
+仅用于教学计算, 不作为一般人群身体比例的证据.</p>
+<p>表 7-1 身高与腿长的配对记录.</p>
+<div class="line-block">编号 | 身高 x | 腿长 y | 编号 | 身高 x | 腿长 y
+|<br />
+: ---: | : ---: | : ---: | : ---: | : ---: | : ---: |<br />
+1 | 143 | 88 | 9 | 155 | 96 |<br />
+2 | 145 | 85 | 10 | 156 | 98 |<br />
+3 | 146 | 88 | 11 | 157 | 97 |<br />
+4 | 147 | 91 | 12 | 158 | 96 |<br />
+5 | 149 | 92 | 13 | 159 | 98 |<br />
+6 | 150 | 93 | 14 | 160 | 99 |<br />
+7 | 153 | 93 | 15 | 162 | 100 |<br />
+8 | 154 | 95 | 16 | 164 | 102 |</div>
+<p>模型写为</p>
+<p><span class="math display">\[
+Y_i=\beta_0+\beta_1x_i+\varepsilon_i,\qquad i=1,\ldots,n.
+\]</span></p>
+<p>其中 x 是用于预测的解释变量, Y 是响应.
+若给定解释信息时误差的条件均值为零, 直线 <span
+class="math inline">\(\beta_0+\beta_1x\)</span>
+就描述给定身高时腿长的条件平均. 实际观测可分散在这一平均周围.</p>
+<p>未知真实系数用 <span class="math inline">\(\beta_0,\beta_1\)</span>
+表示; 从本批数据算出的估计用 <span
+class="math inline">\(\widehat\beta_0,\widehat\beta_1\)</span> 表示.
+拟合后可以算出残差 <span class="math inline">\(r_i=y_i-\widehat
+y_i\)</span>, 但不能直接观测真实误差 <span
+class="math inline">\(\varepsilon_i\)</span>. 本章沿用第 6 章的 <span
+class="math inline">\(r\)</span> 记残差, 用 <span
+class="math inline">\(\varepsilon\)</span> 表示模型中的真实误差.</p>
+<h2 id="两个系数怎样从数据中算出来">7.2 两个系数怎样从数据中算出来</h2>
+<h3 id="先固定斜率-上下移动直线">7.2.1 先固定斜率, 上下移动直线</h3>
+<p>用 a, b 暂记待选择的截距与斜率. 最小二乘目标为</p>
+<p><span class="math display">\[
+\min_{a,b}\ Q(a,b),\qquad
+Q(a,b)=\sum\limits_{i=1}^{n}(y_i-a-bx_i)^2.
+\]</span></p>
+<p>这里没有另加符号或上下界约束. 数据固定, 改变的是两个系数.</p>
+<p>先暂时固定 b, 只上下移动直线, 也就是只改变 a. 把 <span
+class="math inline">\(z_i=y_i-bx_i\)</span>
+记作扣除斜率部分以后剩下的量, 问题变成用一个常数 a 逼近所有 <span
+class="math inline">\(z_i\)</span>. 这个常数取样本均值时平方误差最小,
+因为</p>
+<p><span class="math display">\[
+\sum\limits_i(z_i-a)^2
+=\sum\limits_i(z_i-\overline z)^2+n(a-\overline z)^2.
+\]</span></p>
+<p>右边第一项不随 a 改变, 第二项在 <span
+class="math inline">\(a=\overline z\)</span> 时为零. 因而对每个给定的 b,
+最合适的截距都是</p>
+<p><span class="math display">\[
+a=\overline y-b\overline x.
+\]</span></p>
+<p>这说明最优直线一定经过样本均值点 <span
+class="math inline">\((\overline x,\overline y)\)</span>. 斜率尚未确定,
+但截距已可以用斜率表示.</p>
+<h3 id="再选择斜率">7.2.2 再选择斜率</h3>
+<p>代入上式后, 每条残差可以写成</p>
+<p><span class="math display">\[
+(y_i-\overline y)-b(x_i-\overline x).
+\]</span></p>
+<p>定义两个累计量:</p>
+<p><span class="math display">\[
+S_{xx}=\sum\limits_i(x_i-\overline x)^2,\qquad
+S_{xy}=\sum\limits_i(x_i-\overline x)(y_i-\overline y).
+\]</span></p>
+<p><span class="math inline">\(S_{xx}\)</span>
+累计身高相对均值的平方偏离, <span class="math inline">\(S_{xy}\)</span>
+累计身高与腿长的共同偏离. 展开平方, 再配方, 得到</p>
+<p><span class="math display">\[
+Q(\overline y-b\overline x,b)
+=S_{xx}\left(b-\frac{S_{xy}}{S_{xx}}\right)^2
++\sum\limits_i(y_i-\overline y)^2-\frac{S_{xy}^2}{S_{xx}}.
+\]</span></p>
+<p>当 <span class="math inline">\(S_{xx}&gt;0\)</span> 时, 后两项不随 b
+改变, 第一项在 <span class="math inline">\(b=S_{xy}/S_{xx}\)</span>
+时最小. 因而[1]</p>
+<p><span class="math display">\[
+\widehat\beta_1=\frac{S_{xy}}{S_{xx}},\qquad
+\widehat\beta_0=\overline y-\widehat\beta_1\overline x.
+\]</span></p>
+<p>至少两个身高不同才有 <span
+class="math inline">\(S_{xx}&gt;0\)</span>. 若所有身高相同,
+本批数据无法把截距与斜率分别确定.</p>
+<h3 id="按公式逐条累计">7.2.3 按公式逐条累计</h3>
+<p>下面先求均值, 再逐条求偏差并累计. 不需要先组织设计矩阵.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">x = [<span class="number">143</span>,<span class="number">145</span>,<span class="number">146</span>,<span class="number">147</span>,<span class="number">149</span>,<span class="number">150</span>,<span class="number">153</span>,<span class="number">154</span>,<span class="number">155</span>,<span class="number">156</span>,<span class="number">157</span>,<span class="number">158</span>,<span class="number">159</span>,<span class="number">160</span>,<span class="number">162</span>,<span class="number">164</span>]</span><br><span class="line">y = [<span class="number">88</span>,<span class="number">85</span>,<span class="number">88</span>,<span class="number">91</span>,<span class="number">92</span>,<span class="number">93</span>,<span class="number">93</span>,<span class="number">95</span>,<span class="number">96</span>,<span class="number">98</span>,<span class="number">97</span>,<span class="number">96</span>,<span class="number">98</span>,<span class="number">99</span>,<span class="number">100</span>,<span class="number">102</span>]</span><br><span class="line"></span><br><span class="line">n = <span class="built_in">len</span>(x)</span><br><span class="line">mean_x = <span class="built_in">sum</span>(x) / n</span><br><span class="line">mean_y = <span class="built_in">sum</span>(y) / n</span><br><span class="line">Sxx = <span class="number">0.0</span></span><br><span class="line">Sxy = <span class="number">0.0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">    dx = x[i] - mean_x</span><br><span class="line">    dy = y[i] - mean_y</span><br><span class="line">    Sxx = Sxx + dx**<span class="number">2</span></span><br><span class="line">    Sxy = Sxy + dx * dy</span><br><span class="line"></span><br><span class="line">slope = Sxy / Sxx</span><br><span class="line">intercept = mean_y - slope * mean_x</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;mean x, mean y =&quot;</span>, mean_x, mean_y)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Sxx, Sxy =&quot;</span>, Sxx, Sxy)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;intercept =&quot;</span>, <span class="built_in">round</span>(intercept, <span class="number">9</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;slope =&quot;</span>, <span class="built_in">round</span>(slope, <span class="number">9</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;fitted value at mean x =&quot;</span>, intercept + slope * mean_x)</span><br></pre></td></tr></table></figure>
+<p>结果为 <span class="math inline">\(\overline x=153.625\)</span>,
+<span class="math inline">\(\overline y=94.4375\)</span>, <span
+class="math inline">\(S_{xx}=609.75\)</span>, <span
+class="math inline">\(S_{xy}=438.625\)</span>, 拟合直线为</p>
+<p><span class="math display">\[
+\widehat y=-16.0729807298+0.7193521935x.
+\]</span></p>
+<p>这与第 6 章调用 <code>linregress</code> 得到的直线相同.
+现在可以说明函数所求的系数来自哪些累计量. 保留完整精度计算,
+只在显示时舍入.</p>
+<p>斜率表示本例拟合关系中, 身高每增加 1 cm, 平均腿长的拟合值增加约
+0.719352 cm. 它是条件关联, 不自动表示干预身高的因果作用.
+截距对应身高为零的位置, 不宜赋予人体测量含义.</p>
+<h2 id="拟合以后-怎样估计误差尺度">7.3 拟合以后, 怎样估计误差尺度</h2>
+<h3 id="训练-rmse-与残差标准差估计">7.3.1 训练 RMSE
+与残差标准差估计</h3>
+<p>第 2 条记录为 (145, 85). 用最小二乘直线得到 <span
+class="math inline">\(\widehat y_2=88.233087\)</span>, 残差约为
+-3.233087 cm. 第 6 章试画直线给出的残差是 -3.5 cm; 这里直线已改变,
+因而残差也改变.</p>
+<p>将全部残差平方累计, 得到 <span
+class="math inline">\(SSE=24.411644\)</span>. 训练 RMSE 为 <span
+class="math inline">\(\sqrt{SSE/n}=1.235204\)</span> cm.
+统计推断还需要估计真实误差的方差, 在本章模型下使用</p>
+<p><span class="math display">\[
+MSE=\frac{SSE}{n-2},\qquad s=\sqrt{MSE}.
+\]</span></p>
+<p>为什么减去 2? 因为截距和斜率已使用本批数据估计.
+含截距的最小二乘残差满足</p>
+<p><span class="math display">\[
+\sum\limits_i r_i=0,\qquad
+\sum\limits_i x_ir_i=0.
+\]</span></p>
+<p>两个线性条件使残差只有 n-2 个自由度. 本例残差自由度为 14,
+不是删除了两条记录. 程序仍用全部 16 条.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> math</span><br><span class="line"><span class="keyword">from</span> scipy.stats <span class="keyword">import</span> linregress</span><br><span class="line"></span><br><span class="line">x = [<span class="number">143</span>,<span class="number">145</span>,<span class="number">146</span>,<span class="number">147</span>,<span class="number">149</span>,<span class="number">150</span>,<span class="number">153</span>,<span class="number">154</span>,<span class="number">155</span>,<span class="number">156</span>,<span class="number">157</span>,<span class="number">158</span>,<span class="number">159</span>,<span class="number">160</span>,<span class="number">162</span>,<span class="number">164</span>]</span><br><span class="line">y = [<span class="number">88</span>,<span class="number">85</span>,<span class="number">88</span>,<span class="number">91</span>,<span class="number">92</span>,<span class="number">93</span>,<span class="number">93</span>,<span class="number">95</span>,<span class="number">96</span>,<span class="number">98</span>,<span class="number">97</span>,<span class="number">96</span>,<span class="number">98</span>,<span class="number">99</span>,<span class="number">100</span>,<span class="number">102</span>]</span><br><span class="line"></span><br><span class="line">n = <span class="built_in">len</span>(x)</span><br><span class="line">fit = linregress(x, y)</span><br><span class="line">SSE = <span class="number">0.0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">    prediction = fit.intercept + fit.slope * x[i]</span><br><span class="line">    residual = y[i] - prediction</span><br><span class="line">    SSE = SSE + residual**<span class="number">2</span></span><br><span class="line">    <span class="built_in">print</span>(i + <span class="number">1</span>, <span class="built_in">round</span>(prediction, <span class="number">6</span>), <span class="built_in">round</span>(residual, <span class="number">6</span>))</span><br><span class="line"></span><br><span class="line">training_rmse = math.sqrt(SSE / n)</span><br><span class="line">MSE = SSE / (n - <span class="number">2</span>)</span><br><span class="line">s = math.sqrt(MSE)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;SSE =&quot;</span>, <span class="built_in">round</span>(SSE, <span class="number">9</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;training RMSE =&quot;</span>, <span class="built_in">round</span>(training_rmse, <span class="number">9</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;MSE =&quot;</span>, <span class="built_in">round</span>(MSE, <span class="number">9</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;s =&quot;</span>, <span class="built_in">round</span>(s, <span class="number">9</span>))</span><br></pre></td></tr></table></figure>
+<p>输出 <span class="math inline">\(MSE=1.743688865\
+\mathrm{cm}^2\)</span>, <span
+class="math inline">\(s=1.320488116\)</span> cm. s 估计误差的标准差,
+不是平均绝对误差, 也不是每条残差的上限. 它与训练 RMSE 使用同一 SSE,
+但分母和用途不同.</p>
+<h3 id="从拟合走向区间-增加了哪些假设">7.3.2 从拟合走向区间,
+增加了哪些假设</h3>
+<p>计算最小二乘系数本身不要求误差正态. 本章随后使用的经典 t 区间与检验,
+则进一步假定: 给定全部解释变量后, 误差相互独立, 均值为零, 具有共同方差
+<span class="math inline">\(\sigma^2\)</span> 并服从正态分布.
+解释变量非恒定, 推断还需留有相应自由度.</p>
+<p>这是关于数据产生机制的假设, 不能由高 R² 或很小的 p 值自动确认.
+真实误差不可直接看到,
+残差图与采样过程只能帮助检查假设是否明显不合理.</p>
+<h2 id="系数已经算出-为什么还需要标准误和区间">7.4 系数已经算出,
+为什么还需要标准误和区间</h2>
+<h3 id="换一批观测-系数也会波动">7.4.1 换一批观测, 系数也会波动</h3>
+<p>0.719352 是这批数据的斜率估计, 不是已经知道真实斜率.
+标准误用于描述同一机制下重复采样时, 估计量会怎样波动. 在本章假设下,</p>
+<p><span class="math display">\[
+SE(\widehat\beta_1)=\frac{s}{\sqrt{S_{xx}}},\qquad
+SE(\widehat\beta_0)
+=s\sqrt{\frac1n+\frac{\overline x^2}{S_{xx}}}.
+\]</span></p>
+<p>对固定的误差尺度 s, 身高在均值周围分布得更开, 斜率更容易估计准确;
+但增加几个极端身高也会涉及采样和模型适用范围,
+不能只追求公式中的分母变大.</p>
+<p>用"估计值加减临界值乘标准误"构造双侧区间:</p>
+<p><span class="math display">\[
+\widehat\beta_j\pm t_{1-\alpha/2,n-2}SE(\widehat\beta_j).
+\]</span></p>
+<p>这里取 <span class="math inline">\(\alpha=0.05\)</span>, 对应 95%
+置信水平. <span class="math inline">\(t_{0.975,14}=2.144787\)</span>,
+表示自由度为 14 的 t 分布中, 左侧累计概率达到 0.975 的位置.</p>
+<h3 id="先取系数和标准误-再乘临界值">7.4.2 先取系数和标准误,
+再乘临界值</h3>
+<p><code>linregress</code> 的 <code>stderr</code> 是斜率标准误,
+<code>intercept_stderr</code> 是截距标准误[2]. 列表中每项依次放名称,
+估计值和标准误; 每轮只处理一个系数, 计算下限和上限.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> scipy.stats <span class="keyword">import</span> linregress, t</span><br><span class="line"></span><br><span class="line">x = [<span class="number">143</span>,<span class="number">145</span>,<span class="number">146</span>,<span class="number">147</span>,<span class="number">149</span>,<span class="number">150</span>,<span class="number">153</span>,<span class="number">154</span>,<span class="number">155</span>,<span class="number">156</span>,<span class="number">157</span>,<span class="number">158</span>,<span class="number">159</span>,<span class="number">160</span>,<span class="number">162</span>,<span class="number">164</span>]</span><br><span class="line">y = [<span class="number">88</span>,<span class="number">85</span>,<span class="number">88</span>,<span class="number">91</span>,<span class="number">92</span>,<span class="number">93</span>,<span class="number">93</span>,<span class="number">95</span>,<span class="number">96</span>,<span class="number">98</span>,<span class="number">97</span>,<span class="number">96</span>,<span class="number">98</span>,<span class="number">99</span>,<span class="number">100</span>,<span class="number">102</span>]</span><br><span class="line"></span><br><span class="line">alpha = <span class="number">0.05</span></span><br><span class="line">fit = linregress(x, y)</span><br><span class="line">df = <span class="built_in">len</span>(x) - <span class="number">2</span></span><br><span class="line">critical = t.ppf(<span class="number">1</span> - alpha / <span class="number">2</span>, df)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;t critical =&quot;</span>, <span class="built_in">round</span>(critical, <span class="number">6</span>))</span><br><span class="line"><span class="keyword">for</span> name, estimate, se <span class="keyword">in</span> [</span><br><span class="line">    (<span class="string">&quot;intercept&quot;</span>, fit.intercept, fit.intercept_stderr),</span><br><span class="line">    (<span class="string">&quot;slope&quot;</span>, fit.slope, fit.stderr),</span><br><span class="line">]:</span><br><span class="line">    low = estimate - critical * se</span><br><span class="line">    high = estimate + critical * se</span><br><span class="line">    <span class="built_in">print</span>(name, <span class="built_in">round</span>(estimate, <span class="number">6</span>), <span class="built_in">round</span>(se, <span class="number">6</span>),</span><br><span class="line">          <span class="built_in">round</span>(low, <span class="number">6</span>), <span class="built_in">round</span>(high, <span class="number">6</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;slope t =&quot;</span>, <span class="built_in">round</span>(fit.slope / fit.stderr, <span class="number">6</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;slope p =&quot;</span>, <span class="string">f&quot;<span class="subst">&#123;fit.pvalue:<span class="number">.6</span>g&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><code>t.ppf</code> 根据累计概率取分位数. 输入 0.975 而不是 0.95,
+是因为双侧区间把总计 0.05 的尾部概率分到两端.</p>
+<p>表 7-2 直线系数的估计与区间.</p>
+<table>
+<thead>
+<tr>
+<th>系数</th>
+<th style="text-align: right;">估计值</th>
+<th style="text-align: right;">标准误</th>
+<th>95% 置信区间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>截距</td>
+<td style="text-align: right;">-16.072981</td>
+<td style="text-align: right;">8.221875</td>
+<td>[-33.707148, 1.561186]</td>
+</tr>
+<tr>
+<td>斜率</td>
+<td style="text-align: right;">0.719352</td>
+<td style="text-align: right;">0.053476</td>
+<td>[0.604658, 0.834047]</td>
+</tr>
+</tbody>
+</table>
+<p>置信水平描述重复采样并构造区间的方法的覆盖性质.
+它不表示已固定的真实参数落入这一个已算出区间的随机概率, 也不表示 95%
+个体的腿长位于系数区间.</p>
+<h3 id="斜率检验只回答一个限定问题">7.4.3
+斜率检验只回答一个限定问题</h3>
+<p>若检验 <span class="math inline">\(H_0:\beta_1=0\)</span>, 使用</p>
+<p><span class="math display">\[
+t_1=\frac{\widehat\beta_1}{SE(\widehat\beta_1)}.
+\]</span></p>
+<p>本例为 13.451880, 双侧 p 值约为 <span
+class="math inline">\(2.131163\times10^{-9}\)</span>.
+在零斜率假设和检验条件下, p 值是得到至少这样极端的检验统计量的概率.
+它不是原假设为真的概率.</p>
+<p>在 0.05 水平拒绝零斜率, 与斜率 95% 区间不含零一致.
+截距区间含零不使整条直线无效. 检验不显著时应说"不拒绝原假设",
+不能断言变量不存在任何关系. 显著也不证明因果, 误差假设或外推可靠.</p>
+<p>本例 p 是很小的正数, 显示为 0.0000 只是舍入. 完整程序的 F 检验及
+MATLAB 五项输出留在进一步阅读, 不必先记住软件返回顺序再理解模型.</p>
+<h2 id="同一身高的两种区间-怎样一步步算">7.5 同一身高的两种区间,
+怎样一步步算</h2>
+<h3 id="从一个点预测开始">7.5.1 从一个点预测开始</h3>
+<p>对于指定身高 <span class="math inline">\(x_0\)</span>, 点预测为</p>
+<p><span class="math display">\[
+\widehat y_0=\widehat\beta_0+\widehat\beta_1x_0.
+\]</span></p>
+<p>154 cm 处得到 94.707257 cm. 若问这种身高对应的平均腿长,
+不确定性来自所估直线; 若问一个新的独立同机制个体,
+还要计入这个个体相对平均值的偏离[3–4].</p>
+<p>先计算位置量</p>
+<p><span class="math display">\[
+h_0=\frac1n+\frac{(x_0-\overline x)^2}{S_{xx}}.
+\]</span></p>
+<p>当 <span class="math inline">\(x_0\)</span> 等于样本均值时,
+第二项为零; 离均值越远, 这一项越大. 均值估计的标准误是 <span
+class="math inline">\(s\sqrt{h_0}\)</span>.</p>
+<p>新个体的预测误差还包含一项独立的新误差. 两项方差相加, 得到 <span
+class="math inline">\(s^2h_0+s^2=s^2(1+h_0)\)</span>, 因而使用的标准误是
+<span class="math inline">\(s\sqrt{1+h_0}\)</span>.
+不应把两个标准差直接相加.</p>
+<p>两种逐点区间为</p>
+<p><span class="math display">\[
+\begin{aligned}
+\text{平均响应的置信区间}:&amp;\quad
+\widehat y_0\pm t_{1-\alpha/2,n-2}s\sqrt{h_0},\\
+\text{新观测的预测区间}:&amp;\quad
+\widehat y_0\pm t_{1-\alpha/2,n-2}s\sqrt{1+h_0}.
+\end{aligned}
+\]</span></p>
+<p>154 cm 处的两项标准误约为 0.330731 和 1.361276 cm. 分别乘以 2.144787,
+得到半宽 0.709346 和 2.919646 cm.</p>
+<p><img src="/images/SimpleLinearRegression/interval_step.png" style="width:100%"></p>
+<p>图 7-1 固定在 154 cm 处比较两种区间. 两条区间的中心都是 94.707257,
+新个体区间增加个体自身波动, 因而更宽. 它们都依赖经典误差模型.</p>
+<h3 id="一次计算一个新位置">7.5.2 一次计算一个新位置</h3>
+<p>下面先从原始观测估计 s, 再对 154 和 170 两个身高分别计算. 每一轮的
+<code>prediction</code>, <code>h0</code> 和两个半宽都对应当前身高.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> math</span><br><span class="line"><span class="keyword">from</span> scipy.stats <span class="keyword">import</span> linregress, t</span><br><span class="line"></span><br><span class="line">x = [<span class="number">143</span>,<span class="number">145</span>,<span class="number">146</span>,<span class="number">147</span>,<span class="number">149</span>,<span class="number">150</span>,<span class="number">153</span>,<span class="number">154</span>,<span class="number">155</span>,<span class="number">156</span>,<span class="number">157</span>,<span class="number">158</span>,<span class="number">159</span>,<span class="number">160</span>,<span class="number">162</span>,<span class="number">164</span>]</span><br><span class="line">y = [<span class="number">88</span>,<span class="number">85</span>,<span class="number">88</span>,<span class="number">91</span>,<span class="number">92</span>,<span class="number">93</span>,<span class="number">93</span>,<span class="number">95</span>,<span class="number">96</span>,<span class="number">98</span>,<span class="number">97</span>,<span class="number">96</span>,<span class="number">98</span>,<span class="number">99</span>,<span class="number">100</span>,<span class="number">102</span>]</span><br><span class="line"></span><br><span class="line">n = <span class="built_in">len</span>(x)</span><br><span class="line">mean_x = <span class="built_in">sum</span>(x) / n</span><br><span class="line">fit = linregress(x, y)</span><br><span class="line">Sxx = <span class="number">0.0</span></span><br><span class="line">SSE = <span class="number">0.0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">    Sxx = Sxx + (x[i] - mean_x)**<span class="number">2</span></span><br><span class="line">    residual = y[i] - fit.intercept - fit.slope * x[i]</span><br><span class="line">    SSE = SSE + residual**<span class="number">2</span></span><br><span class="line"></span><br><span class="line">alpha = <span class="number">0.05</span></span><br><span class="line">s = math.sqrt(SSE / (n - <span class="number">2</span>))</span><br><span class="line">critical = t.ppf(<span class="number">1</span> - alpha / <span class="number">2</span>, n - <span class="number">2</span>)</span><br><span class="line"><span class="keyword">for</span> x_new <span class="keyword">in</span> [<span class="number">154</span>, <span class="number">170</span>]:</span><br><span class="line">    prediction = fit.intercept + fit.slope * x_new</span><br><span class="line">    h0 = <span class="number">1</span> / n + (x_new - mean_x)**<span class="number">2</span> / Sxx</span><br><span class="line">    mean_half = critical * s * math.sqrt(h0)</span><br><span class="line">    new_half = critical * s * math.sqrt(<span class="number">1</span> + h0)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;height =&quot;</span>, x_new, <span class="string">&quot;prediction =&quot;</span>, <span class="built_in">round</span>(prediction, <span class="number">6</span>))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;mean CI =&quot;</span>, <span class="built_in">round</span>(prediction - mean_half, <span class="number">6</span>),</span><br><span class="line">          <span class="built_in">round</span>(prediction + mean_half, <span class="number">6</span>))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;new PI =&quot;</span>, <span class="built_in">round</span>(prediction - new_half, <span class="number">6</span>),</span><br><span class="line">          <span class="built_in">round</span>(prediction + new_half, <span class="number">6</span>))</span><br></pre></td></tr></table></figure>
+<p>表 7-3 均值与新个体的两种区间.</p>
+<table>
+<colgroup>
+<col style="width: 28%" />
+<col style="width: 28%" />
+<col style="width: 21%" />
+<col style="width: 21%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: right;">身高(cm)</th>
+<th style="text-align: right;">点预测(cm)</th>
+<th>平均腿长的 95% 区间(cm)</th>
+<th>新个体的 95% 区间(cm)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">154</td>
+<td style="text-align: right;">94.707257</td>
+<td>[93.997911, 95.416604]</td>
+<td>[91.787611, 97.626903]</td>
+</tr>
+<tr>
+<td style="text-align: right;">170</td>
+<td style="text-align: right;">106.216892</td>
+<td>[104.209738, 108.224046]</td>
+<td>[102.745606, 109.688178]</td>
+</tr>
+</tbody>
+</table>
+<p>系数区间按参数区分, 这里的区间按新位置区分. 截距区间, 斜率区间,
+某位置的平均响应区间和新个体区间不能混用.</p>
+<p><img src="/images/SimpleLinearRegression/fit_and_intervals.png" style="width:100%"></p>
+<p>图 7-2 全样本拟合及逐点区间. 蓝色窄带为平均响应区间,
+浅色宽带为新观测区间. 红圈标记第 2 条记录; 灰色部分为 164 cm
+以上的外推范围.</p>
+<p>170 cm 超出本例 [143, 164] cm 的观测范围.
+计算出的区间未自动包含关系在范围外失效的偏差.
+图中逐点画出的区间也不是整条回归曲线的同时置信带.</p>
+<h2 id="第-2-条记录偏低-应怎样开始核查">7.6 第 2 条记录偏低,
+应怎样开始核查</h2>
+<h3 id="先把残差画出来">7.6.1 先把残差画出来</h3>
+<p>只看一条负残差, 不能判断记录是否错误. 先检查所有残差是否有明显模式:
+系统弯曲可能提示均值形式遗漏形状, 漏斗形可能提示误差尺度随位置改变.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> scipy.stats <span class="keyword">import</span> linregress</span><br><span class="line"></span><br><span class="line">x = [<span class="number">143</span>,<span class="number">145</span>,<span class="number">146</span>,<span class="number">147</span>,<span class="number">149</span>,<span class="number">150</span>,<span class="number">153</span>,<span class="number">154</span>,<span class="number">155</span>,<span class="number">156</span>,<span class="number">157</span>,<span class="number">158</span>,<span class="number">159</span>,<span class="number">160</span>,<span class="number">162</span>,<span class="number">164</span>]</span><br><span class="line">y = [<span class="number">88</span>,<span class="number">85</span>,<span class="number">88</span>,<span class="number">91</span>,<span class="number">92</span>,<span class="number">93</span>,<span class="number">93</span>,<span class="number">95</span>,<span class="number">96</span>,<span class="number">98</span>,<span class="number">97</span>,<span class="number">96</span>,<span class="number">98</span>,<span class="number">99</span>,<span class="number">100</span>,<span class="number">102</span>]</span><br><span class="line"></span><br><span class="line">fit = linregress(x, y)</span><br><span class="line">fitted_values = []</span><br><span class="line">residuals = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(x)):</span><br><span class="line">    prediction = fit.intercept + fit.slope * x[i]</span><br><span class="line">    fitted_values.append(prediction)</span><br><span class="line">    residuals.append(y[i] - prediction)</span><br><span class="line"></span><br><span class="line">fig, ax = plt.subplots(figsize=(<span class="number">7.4</span>, <span class="number">4</span>))</span><br><span class="line">ax.scatter(fitted_values, residuals)</span><br><span class="line">ax.scatter(fitted_values[<span class="number">1</span>], residuals[<span class="number">1</span>], color=<span class="string">&quot;red&quot;</span>)</span><br><span class="line">ax.axhline(<span class="number">0</span>, color=<span class="string">&quot;black&quot;</span>, linestyle=<span class="string">&quot;--&quot;</span>)</span><br><span class="line">ax.set_xlabel(<span class="string">&quot;Fitted leg length (cm)&quot;</span>)</span><br><span class="line">ax.set_ylabel(<span class="string">&quot;Residual (cm)&quot;</span>)</span><br><span class="line">fig.savefig(<span class="string">&quot;Height-Residuals.png&quot;</span>, dpi=<span class="number">300</span>, bbox_inches=<span class="string">&quot;tight&quot;</span>)</span><br><span class="line">plt.close(fig)</span><br></pre></td></tr></table></figure>
+<p>程序在当前工作目录保存 <code>Height-Residuals.png</code>, 红点对应第
+2 条记录. 它只是标记, 没有改变该记录或重算一份删点模型.</p>
+<p><img src="/images/SimpleLinearRegression/diagnostics.png" style="width:100%"></p>
+<p>图 7-3 残差图与正态 Q-Q 图. 左图与上面实验对应.
+右图比较排序残差与正态理论分位数, 红点仍表示第 2 条记录.
+两图都是诊断线索.</p>
+<p>Q-Q 图若明显弯曲或尾部偏离, 值得进一步检查;
+图形接近直线不能证明正态性. 即使真实误差独立且同方差,
+从同一批数据算出的残差通常也相互相关,
+不能把它们当作一组独立真实误差.</p>
+<h3 id="自变量位置与响应偏离分开看">7.6.2
+自变量位置与响应偏离分开看</h3>
+<p>第 1 条身高为 143 cm, 比第 2 条的 145 cm 离样本均值更远.
+这种位置作用用杠杆表示:</p>
+<p><span class="math display">\[
+h_{ii}=\frac1n+\frac{(x_i-\overline x)^2}{S_{xx}}.
+\]</span></p>
+<p>它与新位置量 <span class="math inline">\(h_0\)</span> 形式相同,
+这里代入的是某个训练点的位置. 杠杆只用 x, 没有用这条记录的腿长.
+大杠杆表示潜在影响较大, 不等于残差很大或记录有错.</p>
+<p>Cook 距离进一步同时考虑残差与杠杆.
+它衡量暂不使用某条记录并重新拟合后,
+原全部样本位置上的拟合值总体改变多少. 本例有两个系数, 公式为</p>
+<p><span class="math display">\[
+D_i=\frac{r_i^2}{2MSE}\frac{h_{ii}}{(1-h_{ii})^2}.
+\]</span></p>
+<p>分母中的 2 是参数数目, MSE 是全样本误差方差估计.
+完整诊断程序保留在进一步阅读, 下面先比较同一批数据中的不同记录.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> scipy.stats <span class="keyword">import</span> linregress</span><br><span class="line"></span><br><span class="line">x = [<span class="number">143</span>,<span class="number">145</span>,<span class="number">146</span>,<span class="number">147</span>,<span class="number">149</span>,<span class="number">150</span>,<span class="number">153</span>,<span class="number">154</span>,<span class="number">155</span>,<span class="number">156</span>,<span class="number">157</span>,<span class="number">158</span>,<span class="number">159</span>,<span class="number">160</span>,<span class="number">162</span>,<span class="number">164</span>]</span><br><span class="line">y = [<span class="number">88</span>,<span class="number">85</span>,<span class="number">88</span>,<span class="number">91</span>,<span class="number">92</span>,<span class="number">93</span>,<span class="number">93</span>,<span class="number">95</span>,<span class="number">96</span>,<span class="number">98</span>,<span class="number">97</span>,<span class="number">96</span>,<span class="number">98</span>,<span class="number">99</span>,<span class="number">100</span>,<span class="number">102</span>]</span><br><span class="line"></span><br><span class="line">n = <span class="built_in">len</span>(x)</span><br><span class="line">mean_x = <span class="built_in">sum</span>(x) / n</span><br><span class="line">fit = linregress(x, y)</span><br><span class="line">SSE = <span class="number">0.0</span></span><br><span class="line">Sxx = <span class="number">0.0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">    residual = y[i] - fit.intercept - fit.slope * x[i]</span><br><span class="line">    SSE = SSE + residual**<span class="number">2</span></span><br><span class="line">    Sxx = Sxx + (x[i] - mean_x)**<span class="number">2</span></span><br><span class="line">MSE = SSE / (n - <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">leverages = []</span><br><span class="line">cooks = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">    residual = y[i] - fit.intercept - fit.slope * x[i]</span><br><span class="line">    h = <span class="number">1</span> / n + (x[i] - mean_x)**<span class="number">2</span> / Sxx</span><br><span class="line">    cook = residual**<span class="number">2</span> / (<span class="number">2</span> * MSE) * h / (<span class="number">1</span> - h)**<span class="number">2</span></span><br><span class="line">    leverages.append(h)</span><br><span class="line">    cooks.append(cook)</span><br><span class="line">    <span class="built_in">print</span>(i + <span class="number">1</span>, <span class="built_in">round</span>(residual, <span class="number">6</span>), <span class="built_in">round</span>(h, <span class="number">6</span>), <span class="built_in">round</span>(cook, <span class="number">6</span>))</span><br></pre></td></tr></table></figure>
+<p>表 7-4 残差与影响诊断.</p>
+<table>
+<thead>
+<tr>
+<th>记录</th>
+<th style="text-align: right;">残差(cm)</th>
+<th style="text-align: right;">杠杆</th>
+<th style="text-align: right;">Cook 距离</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>第 1 条</td>
+<td style="text-align: right;">1.205617</td>
+<td style="text-align: right;">0.247642</td>
+<td style="text-align: right;">0.182346</td>
+</tr>
+<tr>
+<td>第 2 条</td>
+<td style="text-align: right;">-3.233087</td>
+<td style="text-align: right;">0.184502</td>
+<td style="text-align: right;">0.831554</td>
+</tr>
+</tbody>
+</table>
+<p>第 1 条杠杆最大, 第 2 条 Cook 距离最大. 一个反映解释变量的位置,
+一个结合响应偏离衡量实际影响, 不能直接互换.</p>
+<p><img src="/images/SimpleLinearRegression/influence.png" style="width:100%"></p>
+<p>图 7-4 杠杆与 Cook 距离的对照. 绿色标记第 1 条, 红色标记第 2 条.
+高杠杆与高影响在本例中来自不同记录.</p>
+<p>经验阈值只能提供提醒. 高影响记录既可能有录入错误,
+也可能是真实且重要的边缘样本; 不能仅为提高 R² 删除它.</p>
+<h2 id="暂时不使用第-2-条-看预测改变多少">7.7 暂时不使用第 2 条,
+看预测改变多少</h2>
+<p>保留全样本为主分析. 另作一次敏感性比较: 只在第二次拟合时不使用第 2
+对记录, 其余规则和预测位置都相同.</p>
+<p>下面的训练列表与第 6 章留一程序使用同样的排除动作. Python 下标从 0
+开始, 编号 2 对应下标 1.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> scipy.stats <span class="keyword">import</span> linregress</span><br><span class="line"></span><br><span class="line">x = [<span class="number">143</span>,<span class="number">145</span>,<span class="number">146</span>,<span class="number">147</span>,<span class="number">149</span>,<span class="number">150</span>,<span class="number">153</span>,<span class="number">154</span>,<span class="number">155</span>,<span class="number">156</span>,<span class="number">157</span>,<span class="number">158</span>,<span class="number">159</span>,<span class="number">160</span>,<span class="number">162</span>,<span class="number">164</span>]</span><br><span class="line">y = [<span class="number">88</span>,<span class="number">85</span>,<span class="number">88</span>,<span class="number">91</span>,<span class="number">92</span>,<span class="number">93</span>,<span class="number">93</span>,<span class="number">95</span>,<span class="number">96</span>,<span class="number">98</span>,<span class="number">97</span>,<span class="number">96</span>,<span class="number">98</span>,<span class="number">99</span>,<span class="number">100</span>,<span class="number">102</span>]</span><br><span class="line"></span><br><span class="line">full = linregress(x, y)</span><br><span class="line">train_x = []</span><br><span class="line">train_y = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(x)):</span><br><span class="line">    <span class="keyword">if</span> i != <span class="number">1</span>:</span><br><span class="line">        train_x.append(x[i])</span><br><span class="line">        train_y.append(y[i])</span><br><span class="line">without2 = linregress(train_x, train_y)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;full coefficients =&quot;</span>, full.intercept, full.slope)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;comparison coefficients =&quot;</span>, without2.intercept, without2.slope)</span><br><span class="line"><span class="keyword">for</span> x_new <span class="keyword">in</span> [<span class="number">154</span>, <span class="number">170</span>]:</span><br><span class="line">    full_prediction = full.intercept + full.slope * x_new</span><br><span class="line">    comparison = without2.intercept + without2.slope * x_new</span><br><span class="line">    <span class="built_in">print</span>(x_new, <span class="built_in">round</span>(full_prediction, <span class="number">6</span>), <span class="built_in">round</span>(comparison, <span class="number">6</span>),</span><br><span class="line">          <span class="built_in">round</span>(full_prediction - comparison, <span class="number">6</span>))</span><br></pre></td></tr></table></figure>
+<p>第二条直线为</p>
+<p><span class="math display">\[
+\widehat y_{(-2)}=-7.210030166+0.663273002x.
+\]</span></p>
+<p>表 7-5 暂不使用第 2 条记录的敏感性比较.</p>
+<table>
+<thead>
+<tr>
+<th>比较对象</th>
+<th style="text-align: right;">全部 16 条</th>
+<th style="text-align: right;">暂不使用第 2 条</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>斜率</td>
+<td style="text-align: right;">0.719352</td>
+<td style="text-align: right;">0.663273</td>
+</tr>
+<tr>
+<td>154 cm 点预测(cm)</td>
+<td style="text-align: right;">94.707257</td>
+<td style="text-align: right;">94.934012</td>
+</tr>
+<tr>
+<td>170 cm 点预测(cm)</td>
+<td style="text-align: right;">106.216892</td>
+<td style="text-align: right;">105.546380</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/images/SimpleLinearRegression/sensitivity.png" style="width:100%"></p>
+<p>图 7-5 两次拟合的敏感性比较. 原记录仍在图中, 全样本仍为主分析.
+斜率和截距都改变, 因而不同位置上的预测差异也不同.</p>
+<p>154 cm 处第二次预测略升, 170 cm 处反而降低约 0.670512 cm.
+所以不能只用"斜率变小"概括所有预测变化. 170 cm 仍属于外推,
+两种拟合都没有获得该处的独立观测支持.</p>
+<p>若核查发现测量或记录错误, 应按明确依据修正并保留处理记录.
+若是真实但少见的观测, 则需判断研究对象和模型是否合适.
+敏感性比较展示处理的影响, 本身不构成删除依据.</p>
+<h2 id="选读-用删除后的波动尺度筛查残差">7.8 选读:
+用删除后的波动尺度筛查残差</h2>
+<h3 id="先重新拟合十五条-再估计尺度">7.8.1 先重新拟合十五条,
+再估计尺度</h3>
+<p>残差 -3.233087 cm 是否明显, 还要相对于模型允许的波动判断.
+在经典模型下,</p>
+<p><span class="math display">\[
+\operatorname{Var}(r_i\mid x_1,\ldots,x_n)=\sigma^2(1-h_{ii}).
+\]</span></p>
+<p>因此不同位置的残差方差不同, 不能只与同一固定长度比较.
+还可以暂时不用被检查记录的响应来估计误差尺度,
+避免它同时拉大自己的比较基准.</p>
+<p>沿用上一节的十五条拟合, 将这十五条的残差平方和除以 <span
+class="math inline">\(15-2=13\)</span>, 得到 <span
+class="math inline">\(s_{(2)}^2=0.891837800\)</span>.
+这里扣除的两个参数仍是截距与斜率.</p>
+<p>用全样本第 2 条残差作分子, 得到外部学生化残差:</p>
+<p><span class="math display">\[
+T_i=\frac{r_i}{s_{(i)}\sqrt{1-h_{ii}}}.
+\]</span></p>
+<p>在经典正态模型下, 对事先指定的一条记录, <span
+class="math inline">\(T_i\)</span> 服从自由度 n-3 的 t 分布.
+注意这里的分子是全样本残差, 不是留一预测误差;
+删除后的拟合用于估计分母中的方差.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> math</span><br><span class="line"><span class="keyword">from</span> scipy.stats <span class="keyword">import</span> linregress, t</span><br><span class="line"></span><br><span class="line">x = [<span class="number">143</span>,<span class="number">145</span>,<span class="number">146</span>,<span class="number">147</span>,<span class="number">149</span>,<span class="number">150</span>,<span class="number">153</span>,<span class="number">154</span>,<span class="number">155</span>,<span class="number">156</span>,<span class="number">157</span>,<span class="number">158</span>,<span class="number">159</span>,<span class="number">160</span>,<span class="number">162</span>,<span class="number">164</span>]</span><br><span class="line">y = [<span class="number">88</span>,<span class="number">85</span>,<span class="number">88</span>,<span class="number">91</span>,<span class="number">92</span>,<span class="number">93</span>,<span class="number">93</span>,<span class="number">95</span>,<span class="number">96</span>,<span class="number">98</span>,<span class="number">97</span>,<span class="number">96</span>,<span class="number">98</span>,<span class="number">99</span>,<span class="number">100</span>,<span class="number">102</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">case</span> = <span class="number">1</span></span><br><span class="line">alpha = <span class="number">0.05</span></span><br><span class="line">n = <span class="built_in">len</span>(x)</span><br><span class="line">full = linregress(x, y)</span><br><span class="line">residual = y[<span class="keyword">case</span>] - full.intercept - full.slope * x[<span class="keyword">case</span>]</span><br><span class="line">mean_x = <span class="built_in">sum</span>(x) / n</span><br><span class="line">Sxx = <span class="number">0.0</span></span><br><span class="line">train_x = []</span><br><span class="line">train_y = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">    Sxx = Sxx + (x[i] - mean_x)**<span class="number">2</span></span><br><span class="line">    <span class="keyword">if</span> i != <span class="keyword">case</span>:</span><br><span class="line">        train_x.append(x[i])</span><br><span class="line">        train_y.append(y[i])</span><br><span class="line"></span><br><span class="line">deleted = linregress(train_x, train_y)</span><br><span class="line">deleted_SSE = <span class="number">0.0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(train_x)):</span><br><span class="line">    error = train_y[i] - deleted.intercept - deleted.slope * train_x[i]</span><br><span class="line">    deleted_SSE = deleted_SSE + error**<span class="number">2</span></span><br><span class="line">deleted_df = <span class="built_in">len</span>(train_x) - <span class="number">2</span></span><br><span class="line">deleted_variance = deleted_SSE / deleted_df</span><br><span class="line">h = <span class="number">1</span> / n + (x[<span class="keyword">case</span>] - mean_x)**<span class="number">2</span> / Sxx</span><br><span class="line">scale = math.sqrt(deleted_variance * (<span class="number">1</span> - h))</span><br><span class="line">external_t = residual / scale</span><br><span class="line">critical = t.ppf(<span class="number">1</span> - alpha / <span class="number">2</span>, deleted_df)</span><br><span class="line">low = residual - critical * scale</span><br><span class="line">high = residual + critical * scale</span><br><span class="line">raw_p = <span class="number">2</span> * t.sf(<span class="built_in">abs</span>(external_t), deleted_df)</span><br><span class="line">adjusted_p = <span class="built_in">min</span>(n * raw_p, <span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;external t =&quot;</span>, <span class="built_in">round</span>(external_t, <span class="number">6</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;diagnostic interval =&quot;</span>, <span class="built_in">round</span>(low, <span class="number">6</span>), <span class="built_in">round</span>(high, <span class="number">6</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;raw p =&quot;</span>, <span class="built_in">round</span>(raw_p, <span class="number">6</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Bonferroni p =&quot;</span>, <span class="built_in">round</span>(adjusted_p, <span class="number">6</span>))</span><br></pre></td></tr></table></figure>
+<p>本例得到 <span class="math inline">\(T_2=-3.791081\)</span>, 双侧 p
+值约为 0.002245. <code>t.sf</code> 返回右尾概率, 对绝对值取右尾再乘 2,
+得到双侧值.</p>
+<h3 id="画出的诊断区间属于哪一种">7.8.2 画出的诊断区间属于哪一种</h3>
+<p>为了直观看出是否超过双侧临界值, 可画</p>
+<p><span class="math display">\[
+I_i=\left[
+r_i-t_{1-\alpha/2,n-3}s_{(i)}\sqrt{1-h_{ii}},\
+r_i+t_{1-\alpha/2,n-3}s_{(i)}\sqrt{1-h_{ii}}
+\right].
+\]</span></p>
+<p>这是显式残差诊断区间. 不含零等价于 <span
+class="math inline">\(|T_i|\)</span> 超过临界值, 用来提示核查,
+不作为新腿长的预测区间. 第 2 条为 [-5.075480, -1.390694] cm.</p>
+<p><img src="/images/SimpleLinearRegression/residual_case_order.png" style="width:100%"></p>
+<p>图 7-6 按编号排列的残差诊断区间. 区间按外部学生化定义, 只有第 2
+条的逐点区间不含零. 红色提示核查, 不判定测量错误.</p>
+<p>MATLAB <code>regress</code> 的原生残差区间在进一步阅读中命名为
+<code>rint_library</code>; 显式公式的区间另行命名[5].
+不能仅因都叫残差区间就假定目标版本中的端点完全相同.</p>
+<h3 id="同时看十六条时-不能只用单条结论">7.8.3 同时看十六条时,
+不能只用单条结论</h3>
+<p>观察全体记录后才选出最明显的一条, 与事先只检查第 2 条不同. 十六个逐点
+95% 区间不能理解为全体同时达到 95% 覆盖率.</p>
+<p>一种保守的全体筛查方法是 Bonferroni 校正:</p>
+<p><span class="math display">\[
+p_i^{\mathrm{adj}}=\min(np_i,1).
+\]</span></p>
+<p>第 2 条校正 p 值约为 0.035921, 在 0.05 水平仍有提示, 在 0.01
+水平不显著. 单条 p 值则在 0.01 水平仍显著. 两者采用不同筛查标准, 不矛盾;
+显著性水平应事先选定.</p>
+<p>若将异常筛选作为预测流程的一部分,
+再做交叉验证时应在每个训练折内执行筛选.
+先根据全体响应删点再验证剩余数据, 已经让筛选使用了验证信息.
+留一法也不能检验未观测的 170 cm 外推关系.</p>
+<h2 id="怎样把不确定性和诊断一起报告">7.9
+怎样把不确定性和诊断一起报告</h2>
+<p>可以这样写: 本例 16 组配对数据的斜率估计为 0.719352, 95% 区间为
+[0.604658, 0.834047]. 154 cm 处点预测为 94.707257 cm, 新个体 95%
+预测区间为 [91.787611, 97.626903]. 留一法 RMSE 为 1.449757 cm. 第 2
+条记录值得核查, 主分析仍保留它; 敏感性结果另行报告.
+数据来源与测量说明不完整, 结果只用于计算示例.</p>
+<p>系数区间, 新位置区间, 残差诊断与预测验证各回答不同问题.
+下一章增加解释变量后, 仍需说明这些对象;
+变化的是如何同时组织和解释多列信息.</p>
+<h3 id="动手改变条件">7.9.1 动手改变条件</h3>
+<ol type="1">
+<li>按公式计算均值, <span class="math inline">\(S_{xx},S_{xy}\)</span>
+与系数, 再检查直线经过均值点, 残差和在计算精度内为零.
+这些代数性质能否证明误差独立或因果关系?</li>
+<li>用同一 SSE 分别计算训练 RMSE 与 s, 说明分母为何不同. 16
+条记录中是否有两条被排除?</li>
+<li>将新位置改为 150 和 160 cm, 比较两种 95% 区间.
+改预测位置是否需要重新拟合? 它们与斜率区间有何不同?</li>
+<li>比较第 1 条与第 2 条的残差, 杠杆和 Cook 距离.
+为什么不能把最大杠杆直接当成删除依据?</li>
+<li>将敏感性比较的位置改为 150 和 160 cm. 两次预测差是否同号?
+两条直线约在什么身高相交?</li>
+<li>(选做) 事先改取 <span class="math inline">\(\alpha=0.01\)</span>,
+比较系数区间, 第 2 条逐点筛查与 Bonferroni 校正. 哪些量改变,
+哪些系数与点预测保持不变?</li>
+<li>(选做) 分别将身高全部设为同一值, 将腿长全部设为同一值.
+解释系数唯一性, R² 定义和非退化推断会遇到什么问题.
+区分最小二乘本身与完整诊断程序的输入限制.</li>
+</ol>
+<p>配套阅读与实验: <a
+href="../reading/07/Index.md">本章资料索引</a>.</p>
+<h2 id="参考资料">参考资料</h2>
+<p>[1] NIST/SEMATECH. <a
+target="_blank" rel="noopener" href="https://www.itl.nist.gov/div898/handbook/pmd/section4/pmd431.htm">Least
+Squares</a>.</p>
+<p>[2] SciPy Developers. <a
+target="_blank" rel="noopener" href="https://docs.scipy.org/doc/scipy-1.17.0/reference/generated/scipy.stats.linregress.html">linregress</a>.</p>
+<p>[3] NIST/SEMATECH. <a
+target="_blank" rel="noopener" href="https://www.itl.nist.gov/div898/handbook/pmd/section5/pmd511.htm">Estimating
+an Average Response</a>.</p>
+<p>[4] NIST/SEMATECH. <a
+target="_blank" rel="noopener" href="https://www.itl.nist.gov/div898/handbook/pmd/section5/pmd512.htm">Predicting
+a Single Response</a>.</p>
+<p>[5] MathWorks. <a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/stats/regress.html">regress</a>.</p>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="第 27 章 最小最大与最大最小规划: 面向最不利情形的决策 应急物资中心服务十个需求点. 选一个中心后, 先算十个距离, 再找出最大的一个. 如果希望最远的点也能得到较近的服务, 就应在允许范围内寻找使这个最大距离尽量小的中心. 本章先亲手完成这两层比较, 再把最坏指标转成约束. 距离, 平方损失等越小越好, 我们压低其中最大的一个; 净成效等越大越好, 我们提高其中最小的一个.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/MathBeautyAndModeling/27_MinimaxAndMaximinProgramming.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="第 27 章 最小最大与最大最小规划: 面向最不利情形的决策 应急物资中心服务十个需求点. 选一个中心后, 先算十个距离, 再找出最大的一个. 如果希望最远的点也能得到较近的服务, 就应在允许范围内寻找使这个最大距离尽量小的中心. 本章先亲手完成这两层比较, 再把最坏指标转成约束. 距离, 平方损失等越小越好, 我们压低其中最大的一个; 净成效等越大越好, 我们提高其中最小的一个.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/MinimaxAndMaximinProgramming/MM-1.png">
+<meta property="og:image" content="http://example.com/images/MinimaxAndMaximinProgramming/MM-2.png">
+<meta property="og:image" content="http://example.com/images/MinimaxAndMaximinProgramming/MM-5.png">
+<meta property="og:image" content="http://example.com/images/MinimaxAndMaximinProgramming/MM-3.png">
+<meta property="og:image" content="http://example.com/images/MinimaxAndMaximinProgramming/MM-4.png">
+<meta property="og:image" content="http://example.com/images/MinimaxAndMaximinProgramming/MM-6.png">
+<meta property="article:published_time" content="2026-11-02T02:53:09.233Z">
+<meta property="article:modified_time" content="2026-10-31T09:20:36.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/MinimaxAndMaximinProgramming/MM-1.png">
+
+
+<link rel="canonical" href="http://example.com/MathBeautyAndModeling/27_MinimaxAndMaximinProgramming">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/MathBeautyAndModeling/27_MinimaxAndMaximinProgramming.html","path":"MathBeautyAndModeling/27_MinimaxAndMaximinProgramming.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-27-%E7%AB%A0-%E6%9C%80%E5%B0%8F%E6%9C%80%E5%A4%A7%E4%B8%8E%E6%9C%80%E5%A4%A7%E6%9C%80%E5%B0%8F%E8%A7%84%E5%88%92-%E9%9D%A2%E5%90%91%E6%9C%80%E4%B8%8D%E5%88%A9%E6%83%85%E5%BD%A2%E7%9A%84%E5%86%B3%E7%AD%96"><span class="nav-number">1.</span> <span class="nav-text">第 27 章
+最小最大与最大最小规划: 面向最不利情形的决策</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BA%E5%AE%9A%E4%B8%80%E4%B8%AA%E4%B8%AD%E5%BF%83-%E5%85%88%E7%AE%97%E8%B7%9D%E7%A6%BB-%E5%86%8D%E5%8F%96%E6%9C%80%E5%A4%A7%E5%80%BC"><span class="nav-number">1.1.</span> <span class="nav-text">27.1 固定一个中心: 先算距离,
+再取最大值</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E4%B8%80%E4%B8%AA%E7%82%B9%E7%AE%97%E8%B5%B7"><span class="nav-number">1.1.1.</span> <span class="nav-text">27.1.1 从一个点算起</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%95%B0%E7%BB%84%E6%AF%94%E8%BE%83%E4%B8%89%E4%B8%AA%E5%80%99%E9%80%89%E4%B8%AD%E5%BF%83"><span class="nav-number">1.1.2.</span> <span class="nav-text">27.1.2 用数组比较三个候选中心</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BA%E5%AE%9A%E4%B8%AD%E5%BF%83%E5%90%8E-%E8%BE%85%E5%8A%A9%E5%8F%98%E9%87%8F%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E9%A1%B6%E4%BD%8F%E6%9C%80%E5%A4%A7%E8%B7%9D%E7%A6%BB"><span class="nav-number">1.2.</span> <span class="nav-text">27.2 固定中心后,
+辅助变量为什么会顶住最大距离</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E4%B8%80%E4%B8%AA%E7%BB%9D%E5%AF%B9%E5%80%BC%E6%81%92%E7%AD%89%E5%BC%8F-%E8%B5%B0%E5%88%B0%E5%AE%8C%E6%95%B4%E7%BA%BF%E6%80%A7%E8%A7%84%E5%88%92"><span class="nav-number">1.3.</span> <span class="nav-text">27.3 从一个绝对值恒等式,
+走到完整线性规划</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E9%AA%8C%E8%AF%81%E5%9B%9B%E7%A7%8D%E6%AD%A3%E8%B4%9F%E5%8F%B7"><span class="nav-number">1.3.1.</span> <span class="nav-text">27.3.1 先验证四种正负号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E5%8D%81%E4%B8%AA%E7%82%B9%E7%9A%84%E5%9B%9B%E5%8D%81%E6%9D%A1%E9%99%90%E5%88%B6%E6%94%BE%E5%9C%A8%E4%B8%80%E8%B5%B7"><span class="nav-number">1.3.2.</span> <span class="nav-text">27.3.2
+把十个点的四十条限制放在一起</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E5%87%BA%E4%B8%80%E4%B8%AA%E7%82%B9%E4%BB%A5%E5%90%8E-%E6%80%8E%E6%A0%B7%E8%AF%B4%E6%98%8E%E5%AE%83%E7%A1%AE%E5%AE%9E%E6%9C%80%E4%BC%98"><span class="nav-number">1.3.3.</span> <span class="nav-text">27.3.3 算出一个点以后,
+怎样说明它确实最优</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BA%E5%AE%9A%E4%B8%80%E4%BB%BD%E8%B5%84%E6%BA%90%E6%AF%94%E4%BE%8B-%E5%85%88%E7%AE%97%E4%B8%89%E7%A7%8D%E6%83%85%E6%99%AF-%E5%86%8D%E6%89%BE%E6%9C%80%E4%BD%8E%E6%88%90%E6%95%88"><span class="nav-number">1.4.</span> <span class="nav-text">27.4
+固定一份资源比例: 先算三种情景, 再找最低成效</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E7%9C%8B%E7%9F%A9%E9%98%B5%E7%9A%84%E8%A1%8C%E4%B8%8E%E5%88%97"><span class="nav-number">1.4.1.</span> <span class="nav-text">27.4.1 先看矩阵的行与列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A9%E8%BE%85%E5%8A%A9%E5%8F%98%E9%87%8F%E6%88%90%E4%B8%BA%E5%85%B1%E5%90%8C%E4%B8%8B%E7%95%8C"><span class="nav-number">1.4.2.</span> <span class="nav-text">27.4.2 让辅助变量成为共同下界</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8A%E7%95%8C%E5%BE%80%E4%B8%8B%E5%8E%8B-%E4%B8%8B%E7%95%8C%E5%BE%80%E4%B8%8A%E6%8A%AC-%E6%96%B9%E5%90%91%E4%B8%8E%E8%BE%B9%E7%95%8C%E8%A6%81%E4%B8%80%E8%B5%B7%E6%A3%80%E6%9F%A5"><span class="nav-number">1.5.</span> <span class="nav-text">27.5 上界往下压,
+下界往上抬: 方向与边界要一起检查</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E6%9D%A5%E7%9A%84%E9%99%90%E5%88%B6%E4%B8%8D%E8%83%BD%E4%B8%A2-%E7%BB%99%E7%9F%A9%E9%98%B5%E8%A1%A5%E4%B8%8A%E6%AD%A3%E7%A1%AE%E7%9A%84%E4%B8%80%E5%88%97"><span class="nav-number">1.6.</span> <span class="nav-text">27.6 原来的限制不能丢:
+给矩阵补上正确的一列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E5%B9%B3%E6%96%B9%E6%8D%9F%E5%A4%B1-%E5%88%86%E9%87%8F%E5%85%89%E6%BB%91-%E6%9C%80%E5%A4%A7%E5%80%BC%E4%BB%8D%E5%8F%AF%E8%83%BD%E6%9C%89%E6%8A%98%E7%82%B9"><span class="nav-number">1.7.</span> <span class="nav-text">27.7 两个平方损失:
+分量光滑, 最大值仍可能有折点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E7%AE%97%E4%B8%89%E4%B8%AA%E4%BD%8D%E7%BD%AE%E7%9A%84%E6%8D%9F%E5%A4%B1"><span class="nav-number">1.7.1.</span> <span class="nav-text">27.7.1 先算三个位置的损失</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E6%8A%98%E7%82%B9%E7%9B%AE%E6%A0%87%E6%94%B9%E6%88%90%E4%B8%A4%E6%9D%A1%E5%85%89%E6%BB%91%E7%BA%A6%E6%9D%9F"><span class="nav-number">1.7.2.</span> <span class="nav-text">27.7.2
+把折点目标改成两条光滑约束</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A6%86%E7%9B%96%E5%8D%8A%E5%BE%84-%E5%B9%B3%E6%96%B9%E5%8F%AF%E4%BB%A5%E5%8E%BB%E6%8E%89%E6%A0%B9%E5%8F%B7-%E4%B8%8D%E8%83%BD%E6%8A%8A%E6%9C%80%E5%A4%A7%E5%80%BC%E6%8D%A2%E6%88%90%E6%80%BB%E5%92%8C"><span class="nav-number">1.8.</span> <span class="nav-text">27.8 覆盖半径:
+平方可以去掉根号, 不能把最大值换成总和</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E6%B1%82%E6%9C%80%E5%A4%A7%E8%BF%98%E6%98%AF%E5%85%88%E6%B1%82%E6%9C%80%E5%B0%8F-%E4%B8%80%E8%88%AC%E4%B8%8D%E8%83%BD%E4%BA%A4%E6%8D%A2"><span class="nav-number">1.9.</span> <span class="nav-text">27.9 先求最大还是先求最小,
+一般不能交换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%90%E8%A1%8C%E5%8F%96%E6%9C%80%E5%B0%8F%E4%B8%8E%E9%80%90%E5%88%97%E5%8F%96%E6%9C%80%E5%A4%A7"><span class="nav-number">1.9.1.</span> <span class="nav-text">27.9.1 逐行取最小与逐列取最大</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%81%E8%AE%B8%E6%A6%82%E7%8E%87%E7%BB%84%E5%90%88%E5%90%8E-%E6%A3%80%E6%9F%A5%E4%B8%80%E5%AF%B9%E5%85%B1%E5%90%8C%E8%AF%81%E6%8D%AE"><span class="nav-number">1.9.2.</span> <span class="nav-text">27.9.2 允许概率组合后,
+检查一对共同证据</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E5%85%A5%E6%83%85%E6%99%AF%E4%BB%A5%E5%90%8E-%E6%80%8E%E6%A0%B7%E8%A7%A3%E9%87%8A%E4%BF%9D%E9%9A%9C%E8%8C%83%E5%9B%B4"><span class="nav-number">1.10.</span> <span class="nav-text">27.10 加入情景以后,
+怎样解释保障范围</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E4%B8%80%E4%B8%AA%E5%8F%AF%E8%A1%8C%E5%9F%9F-%E4%B8%8D%E5%90%8C%E7%9A%84%E6%83%85%E6%99%AF%E9%9B%86%E5%90%88"><span class="nav-number">1.10.1.</span> <span class="nav-text">27.10.1 同一个可行域,
+不同的情景集合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E7%AE%97%E4%BE%8B%E6%8F%90%E7%82%BC%E4%B8%80%E8%88%AC%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.10.2.</span> <span class="nav-text">27.10.2 从算例提炼一般模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%9C%E6%A3%80%E6%9F%A5%E4%B8%8E%E5%90%8E%E7%BB%AD%E9%98%85%E8%AF%BB"><span class="nav-number">1.10.3.</span> <span class="nav-text">27.10.3 结果检查与后续阅读</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%AD%A5%E7%BB%83%E4%B9%A0"><span class="nav-number">1.10.4.</span> <span class="nav-text">27.10.4 分步练习</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.11.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="第-27-章-最小最大与最大最小规划-面向最不利情形的决策">第 27 章
+最小最大与最大最小规划: 面向最不利情形的决策</h1>
+<p>应急物资中心服务十个需求点. 选一个中心后, 先算十个距离,
+再找出最大的一个. 如果希望最远的点也能得到较近的服务,
+就应在允许范围内寻找使这个最大距离尽量小的中心.</p>
+<p>本章先亲手完成这两层比较, 再把最坏指标转成约束. 距离,
+平方损失等越小越好, 我们压低其中最大的一个; 净成效等越大越好,
+我们提高其中最小的一个. 在前章讨论的多个目标需要共同衡量时,
+本章提供了一种明确关注最不利分量的选择原则. 取最大或最小前,
+各分量必须具有可比较的含义和尺度.</p>
+<h2 id="固定一个中心-先算距离-再取最大值">27.1 固定一个中心: 先算距离,
+再取最大值</h2>
+<h3 id="从一个点算起">27.1.1 从一个点算起</h3>
+<p>十个需求点的坐标如下. 中心允许位于矩形 <span
+class="math inline">\([3,8]\times[4,10]\)</span> 内,
+坐标采用同一长度单位.</p>
+<p>表 27-1 十个需求点的固定坐标.</p>
+<table>
+<thead>
+<tr>
+<th>需求点</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+<th>8</th>
+<th>9</th>
+<th>10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>横坐标</td>
+<td>1</td>
+<td>4</td>
+<td>3</td>
+<td>5</td>
+<td>9</td>
+<td>12</td>
+<td>6</td>
+<td>20</td>
+<td>17</td>
+<td>8</td>
+</tr>
+<tr>
+<td>纵坐标</td>
+<td>2</td>
+<td>10</td>
+<td>8</td>
+<td>18</td>
+<td>1</td>
+<td>4</td>
+<td>5</td>
+<td>10</td>
+<td>8</td>
+<td>9</td>
+</tr>
+</tbody>
+</table>
+<p>假设任意中心与需求点之间都有不受阻碍的最短正交道路,
+路长恰好等于水平位移和竖直位移的绝对值之和. 暂不考虑单行,
+绕行和不同路段速度. 到点 <span class="math inline">\((a_i,b_i)\)</span>
+的曼哈顿距离为</p>
+<p><span class="math display">\[
+d_i(x,y)=|x-a_i|+|y-b_i|.
+\]</span></p>
+<p>把中心暂定在 <span class="math inline">\((8,8.5)\)</span>,
+到第一个需求点 <span class="math inline">\((1,2)\)</span> 的距离是 <span
+class="math inline">\(|8-1|+|8.5-2|=13.5\)</span>. 这里依次做了减法,
+取绝对值和求和. 对十个点重复同样的计算, 得到</p>
+<p><span class="math display">\[
+(13.5,5.5,5.5,12.5,8.5,8.5,5.5,13.5,9.5,0.5)^{\mathsf T}.
+\]</span></p>
+<p>再对这十个数取最大值, 结果为 13.5. 这是这个中心的最坏服务距离.</p>
+<h3 id="用数组比较三个候选中心">27.1.2 用数组比较三个候选中心</h3>
+<p>下面的程序只比较三个已给出的中心, 还没有在整个矩形内搜索.
+先阅读循环中计算 <code>distances</code> 的一行, 再阅读取
+<code>max</code> 的一行.</p>
+<p><strong>Python ·
+<code>step01_candidate_centers.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">points = np.array([[<span class="number">1</span>,<span class="number">2</span>],[<span class="number">4</span>,<span class="number">10</span>],[<span class="number">3</span>,<span class="number">8</span>],[<span class="number">5</span>,<span class="number">18</span>],[<span class="number">9</span>,<span class="number">1</span>],</span><br><span class="line">                   [<span class="number">12</span>,<span class="number">4</span>],[<span class="number">6</span>,<span class="number">5</span>],[<span class="number">20</span>,<span class="number">10</span>],[<span class="number">17</span>,<span class="number">8</span>],[<span class="number">8</span>,<span class="number">9</span>]], dtype=<span class="built_in">float</span>)</span><br><span class="line">centers = np.array([[<span class="number">3.</span>,<span class="number">4.</span>],[<span class="number">7.</span>,<span class="number">9.5</span>],[<span class="number">8.</span>,<span class="number">8.5</span>]])</span><br><span class="line">worst_values = []</span><br><span class="line"><span class="keyword">for</span> center <span class="keyword">in</span> centers:</span><br><span class="line">    distances = np.<span class="built_in">abs</span>(points-center).<span class="built_in">sum</span>(axis=<span class="number">1</span>)</span><br><span class="line">    worst = distances.<span class="built_in">max</span>()</span><br><span class="line">    worst_values.append(worst)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;center:&quot;</span>, center, <span class="string">&quot;distances:&quot;</span>, distances, <span class="string">&quot;worst:&quot;</span>, worst)</span><br><span class="line">best_index = <span class="built_in">int</span>(np.argmin(worst_values))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;first best candidate:&quot;</span>, centers[best_index])</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB · <code>step01_candidate_centers.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">points = [<span class="number">1</span>,<span class="number">2</span>;<span class="number">4</span>,<span class="number">10</span>;<span class="number">3</span>,<span class="number">8</span>;<span class="number">5</span>,<span class="number">18</span>;<span class="number">9</span>,<span class="number">1</span>;<span class="number">12</span>,<span class="number">4</span>;<span class="number">6</span>,<span class="number">5</span>;<span class="number">20</span>,<span class="number">10</span>;<span class="number">17</span>,<span class="number">8</span>;<span class="number">8</span>,<span class="number">9</span>];</span><br><span class="line">centers = [<span class="number">3</span>,<span class="number">4</span>;<span class="number">7</span>,<span class="number">9.5</span>;<span class="number">8</span>,<span class="number">8.5</span>];</span><br><span class="line">worst_values = <span class="built_in">zeros</span>(<span class="built_in">size</span>(centers,<span class="number">1</span>),<span class="number">1</span>);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">size</span>(centers,<span class="number">1</span>)</span><br><span class="line">    distances = sum(<span class="built_in">abs</span>(points-centers(k,:)),<span class="number">2</span>);</span><br><span class="line">    worst_values(k) = <span class="built_in">max</span>(distances);</span><br><span class="line">    fprintf(<span class="string">&#x27;center: (%.1f, %.1f), worst: %.1f\n&#x27;</span>, ...</span><br><span class="line">        centers(k,<span class="number">1</span>),centers(k,<span class="number">2</span>),worst_values(k));</span><br><span class="line">    <span class="built_in">disp</span>(distances.&#x27;);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">[~,best_index] = <span class="built_in">min</span>(worst_values);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;first best candidate:&#x27;</span>); <span class="built_in">disp</span>(centers(best_index,:));</span><br></pre></td></tr></table></figure>
+<p>Python 中 <code>points</code> 的每一行是一个需求点.
+<code>points-center</code> 对每一行减去同一个中心, <code>axis=1</code>
+表示把同一行的横向和纵向距离相加. MATLAB 对应使用
+<code>sum(...,2)</code>. 外层循环才负责更换中心.</p>
+<p>表 27-2 三个候选中心的最坏距离.</p>
+<table>
+<thead>
+<tr>
+<th>中心</th>
+<th>最坏距离</th>
+<th>是否在允许矩形内</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="math inline">\((3,4)\)</span></td>
+<td>23</td>
+<td>是</td>
+</tr>
+<tr>
+<td><span class="math inline">\((7,9.5)\)</span></td>
+<td>13.5</td>
+<td>是</td>
+</tr>
+<tr>
+<td><span class="math inline">\((8,8.5)\)</span></td>
+<td>13.5</td>
+<td>是</td>
+</tr>
+</tbody>
+</table>
+<p>所以, 两个后续候选都优于第一个. 程序中的 <code>argmin</code> 或
+<code>min</code> 返回第一个并列最优候选的下标, 没有证明其他候选不存在.
+同样, 只比较有限个点, 也没有证明整个矩形内的最优值就是 13.5.
+这一点要在求解之后另行说明.</p>
+<h2 id="固定中心后-辅助变量为什么会顶住最大距离">27.2 固定中心后,
+辅助变量为什么会顶住最大距离</h2>
+<p>令 <span class="math inline">\(t\)</span> 表示一个共同距离上界.
+对上面的中心, 试着填写以下表格.</p>
+<p>表 27-3 共同距离上界的可行性.</p>
+<table>
+<thead>
+<tr>
+<th>试取的 <span class="math inline">\(t\)</span></th>
+<th>十个距离是否全部不超过 <span class="math inline">\(t\)</span></th>
+<th>最小剩余量 <span class="math inline">\(\min_i(t-d_i)\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>12</td>
+<td>否</td>
+<td>-1.5</td>
+</tr>
+<tr>
+<td>13.5</td>
+<td>是</td>
+<td>0</td>
+</tr>
+<tr>
+<td>15</td>
+<td>是</td>
+<td>1.5</td>
+</tr>
+</tbody>
+</table>
+<p>对应的逐项检查如下.</p>
+<p><strong>Python · <code>step02_upper_bound.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">points = np.array([[<span class="number">1</span>,<span class="number">2</span>],[<span class="number">4</span>,<span class="number">10</span>],[<span class="number">3</span>,<span class="number">8</span>],[<span class="number">5</span>,<span class="number">18</span>],[<span class="number">9</span>,<span class="number">1</span>],</span><br><span class="line">                   [<span class="number">12</span>,<span class="number">4</span>],[<span class="number">6</span>,<span class="number">5</span>],[<span class="number">20</span>,<span class="number">10</span>],[<span class="number">17</span>,<span class="number">8</span>],[<span class="number">8</span>,<span class="number">9</span>]], dtype=<span class="built_in">float</span>)</span><br><span class="line">center = np.array([<span class="number">8.</span>,<span class="number">8.5</span>])</span><br><span class="line">distances = np.<span class="built_in">abs</span>(points-center).<span class="built_in">sum</span>(axis=<span class="number">1</span>)</span><br><span class="line">trial_t = np.array([<span class="number">12.</span>,<span class="number">13.5</span>,<span class="number">15.</span>])</span><br><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> trial_t:</span><br><span class="line">    residuals = t-distances</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;t:&quot;</span>, t, <span class="string">&quot;smallest slack:&quot;</span>, residuals.<span class="built_in">min</span>(),</span><br><span class="line">          <span class="string">&quot;feasible:&quot;</span>, np.<span class="built_in">all</span>(residuals &gt;= <span class="number">0</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;tight upper bound:&quot;</span>, distances.<span class="built_in">max</span>())</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB · <code>step02_upper_bound.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">points = [<span class="number">1</span>,<span class="number">2</span>;<span class="number">4</span>,<span class="number">10</span>;<span class="number">3</span>,<span class="number">8</span>;<span class="number">5</span>,<span class="number">18</span>;<span class="number">9</span>,<span class="number">1</span>;<span class="number">12</span>,<span class="number">4</span>;<span class="number">6</span>,<span class="number">5</span>;<span class="number">20</span>,<span class="number">10</span>;<span class="number">17</span>,<span class="number">8</span>;<span class="number">8</span>,<span class="number">9</span>];</span><br><span class="line">center = [<span class="number">8</span>,<span class="number">8.5</span>];</span><br><span class="line">distances = sum(<span class="built_in">abs</span>(points-center),<span class="number">2</span>);</span><br><span class="line">trial_t = [<span class="number">12</span>,<span class="number">13.5</span>,<span class="number">15</span>];</span><br><span class="line"><span class="keyword">for</span> t = trial_t</span><br><span class="line">    residuals = t-distances;</span><br><span class="line">    fprintf(<span class="string">&#x27;t: %.1f, smallest slack: %.1f, feasible: %d\n&#x27;</span>, ...</span><br><span class="line">        t,<span class="built_in">min</span>(residuals),all(residuals &gt;= <span class="number">0</span>));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">fprintf(<span class="string">&#x27;tight upper bound: %.1f\n&#x27;</span>,<span class="built_in">max</span>(distances));</span><br></pre></td></tr></table></figure>
+<p>要求每个点都被照顾到, 就必须同时满足 <span
+class="math inline">\(d_i\leqslant t\)</span>,
+不能只检查最近的点或平均距离. <span class="math inline">\(t=15\)</span>
+虽然可行, 还可以继续下降. 当中心固定时, 满足全部限制的最小 <span
+class="math inline">\(t\)</span> 恰好是最大距离 13.5.</p>
+<p>这解释了最小最大模型的两层操作: 内层给当前中心算最坏距离,
+外层通过改变中心压低这个数. 辅助变量把内层的最大值写成十条约束,
+没有改变原来的决策目标.</p>
+<p>在最优解处, 至少一条距离约束应当取等号. 如果全部严格小于 <span
+class="math inline">\(t\)</span>, 就还能稍微降低 <span
+class="math inline">\(t\)</span>. 这并不要求十个距离都等于 <span
+class="math inline">\(t\)</span>: 本例只有最远的点顶住共同上界.</p>
+<h2 id="从一个绝对值恒等式-走到完整线性规划">27.3 从一个绝对值恒等式,
+走到完整线性规划</h2>
+<h3 id="先验证四种正负号">27.3.1 先验证四种正负号</h3>
+<p>距离里有绝对值, 引入 <span class="math inline">\(t\)</span>
+后还不能直接声称模型已经线性. 先观察一个数值事实: 对点 1 和中心 <span
+class="math inline">\((8,8.5)\)</span>, 两个位移为 7 与 6.5,
+四种带符号的和是</p>
+<p><span class="math display">\[
+7+6.5=13.5,\quad7-6.5=0.5,\quad-7+6.5=-0.5,\quad-7-6.5=-13.5.
+\]</span></p>
+<p>其中最大值就是 <span class="math inline">\(|7|+|6.5|\)</span>.
+一般地, 对任意实数 <span class="math inline">\(u,v\)</span> 都有</p>
+<p><span class="math display">\[
+|u|+|v|=\max\{u+v,u-v,-u+v,-u-v\}.
+\]</span></p>
+<p>原因是四种组合中包含了与 <span class="math inline">\(u,v\)</span>
+各自符号相配的那一种, 它能得到绝对值之和; 其他组合不会超过这个数.
+因而要求绝对值之和不超过 <span class="math inline">\(t\)</span>,
+等价于要求四种和都不超过 <span class="math inline">\(t\)</span>.</p>
+<p><strong>Python · <code>step03_four_signs.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">center = np.array([<span class="number">8.</span>,<span class="number">8.5</span>])</span><br><span class="line">point = np.array([<span class="number">1.</span>,<span class="number">2.</span>])</span><br><span class="line">signs = np.array([[<span class="number">1</span>,<span class="number">1</span>],[<span class="number">1</span>,-<span class="number">1</span>],[-<span class="number">1</span>,<span class="number">1</span>],[-<span class="number">1</span>,-<span class="number">1</span>]])</span><br><span class="line">signed_values = signs@(center-point)</span><br><span class="line">A = np.column_stack([signs,-np.ones(<span class="number">4</span>)])</span><br><span class="line">b = signs@point</span><br><span class="line">w = np.r_[center,<span class="number">13.5</span>]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;four signed values:&quot;</span>, signed_values)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;L1 distance:&quot;</span>, np.<span class="built_in">abs</span>(center-point).<span class="built_in">sum</span>())</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;coefficient matrix:&quot;</span>, A)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;right-hand side:&quot;</span>, b)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;four slacks:&quot;</span>, b-A@w)</span><br><span class="line"><span class="keyword">assert</span> np.isclose(signed_values.<span class="built_in">max</span>(), np.<span class="built_in">abs</span>(center-point).<span class="built_in">sum</span>())</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB · <code>step03_four_signs.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">center = [<span class="number">8</span>,<span class="number">8.5</span>].&#x27;; point = [<span class="number">1</span>,<span class="number">2</span>].&#x27;;</span><br><span class="line">signs = [<span class="number">1</span>,<span class="number">1</span>;<span class="number">1</span>,<span class="number">-1</span>;<span class="number">-1</span>,<span class="number">1</span>;<span class="number">-1</span>,<span class="number">-1</span>];</span><br><span class="line">signed_values = signs*(center-point);</span><br><span class="line">A = [signs,-<span class="built_in">ones</span>(<span class="number">4</span>,<span class="number">1</span>)]; b = signs*point;</span><br><span class="line">w = [center;<span class="number">13.5</span>];</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;four signed values:&#x27;</span>); <span class="built_in">disp</span>(signed_values.&#x27;);</span><br><span class="line">fprintf(<span class="string">&#x27;L1 distance: %.1f\n&#x27;</span>,sum(<span class="built_in">abs</span>(center-point)));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;coefficient matrix:&#x27;</span>); <span class="built_in">disp</span>(A);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;right-hand side:&#x27;</span>); <span class="built_in">disp</span>(b.&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;four slacks:&#x27;</span>); <span class="built_in">disp</span>((b-A*w).&#x27;);</span><br><span class="line">assert(<span class="built_in">abs</span>(<span class="built_in">max</span>(signed_values)-sum(<span class="built_in">abs</span>(center-point))) &lt; <span class="number">1e-12</span>);</span><br></pre></td></tr></table></figure>
+<p>按 <span class="math inline">\(w=(x,y,t)^{\mathsf T}\)</span>
+排列变量, 第一个点给出的第一行是 <span
+class="math inline">\(x+y-t\leqslant3\)</span>, 系数行为 <span
+class="math inline">\((1,1,-1)\)</span>. 其余三行由另外三种正负号得到.
+程序打印出的矩阵有 4 行 3 列, 每一行只表达一条不等式.</p>
+<h3 id="把十个点的四十条限制放在一起">27.3.2
+把十个点的四十条限制放在一起</h3>
+<p>原来的选址任务是</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\min_{x,y}\quad\max_{1\leqslant i\leqslant10}d_i(x,y),\\
+&amp;\mathrm{s.t.}\quad\begin{cases}
+3\leqslant x\leqslant8,\\
+4\leqslant y\leqslant10.
+\end{cases}
+\end{aligned}
+\]</span></p>
+<p>引入上界并展开绝对值后, 得到精确等价的线性规划:</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\min_{x,y,t}\quad t,\\
+&amp;\mathrm{s.t.}\quad\begin{cases}
+x+y-t\leqslant a_i+b_i,\quad i=1,\ldots,10,\\
+x-y-t\leqslant a_i-b_i,\quad i=1,\ldots,10,\\
+-x+y-t\leqslant-a_i+b_i,\quad i=1,\ldots,10,\\
+-x-y-t\leqslant-a_i-b_i,\quad i=1,\ldots,10,\\
+3\leqslant x\leqslant8,\\
+4\leqslant y\leqslant10,\\
+t\geqslant0.
+\end{cases}
+\end{aligned}
+\]</span></p>
+<p>这里可以要求 <span class="math inline">\(t\)</span> 非负,
+因为距离本身非负. <code>linprog</code> 最小化线性目标, 所以目标系数是
+<span class="math inline">\((0,0,1)^{\mathsf T}\)</span>; 约束矩阵有 40
+行 3 列. 下列程序对每个需求点依次添加四行. [2]</p>
+<p><strong>Python · <code>manhattan_location.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linprog</span><br><span class="line"></span><br><span class="line">points = np.array([[<span class="number">1</span>,<span class="number">2</span>],[<span class="number">4</span>,<span class="number">10</span>],[<span class="number">3</span>,<span class="number">8</span>],[<span class="number">5</span>,<span class="number">18</span>],[<span class="number">9</span>,<span class="number">1</span>],</span><br><span class="line">                   [<span class="number">12</span>,<span class="number">4</span>],[<span class="number">6</span>,<span class="number">5</span>],[<span class="number">20</span>,<span class="number">10</span>],[<span class="number">17</span>,<span class="number">8</span>],[<span class="number">8</span>,<span class="number">9</span>]],dtype=<span class="built_in">float</span>)</span><br><span class="line">signs = np.array([[<span class="number">1</span>,<span class="number">1</span>],[<span class="number">1</span>,-<span class="number">1</span>],[-<span class="number">1</span>,<span class="number">1</span>],[-<span class="number">1</span>,-<span class="number">1</span>]],dtype=<span class="built_in">float</span>)</span><br><span class="line">A = np.array([[sx,sy,-<span class="number">1.</span>] <span class="keyword">for</span> a,b <span class="keyword">in</span> points <span class="keyword">for</span> sx,sy <span class="keyword">in</span> signs])</span><br><span class="line">rhs = np.array([sx*a+sy*b <span class="keyword">for</span> a,b <span class="keyword">in</span> points <span class="keyword">for</span> sx,sy <span class="keyword">in</span> signs])</span><br><span class="line">result = linprog([<span class="number">0.</span>,<span class="number">0.</span>,<span class="number">1.</span>],A_ub=A,b_ub=rhs,</span><br><span class="line">                  bounds=[(<span class="number">3.</span>,<span class="number">8.</span>),(<span class="number">4.</span>,<span class="number">10.</span>),(<span class="number">0.</span>,<span class="literal">None</span>)],method=<span class="string">&quot;highs&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> result.success:</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(result.message)</span><br><span class="line">center,t = result.x[:<span class="number">2</span>],<span class="built_in">float</span>(result.x[<span class="number">2</span>])</span><br><span class="line">distances = np.<span class="built_in">abs</span>(points-center).<span class="built_in">sum</span>(axis=<span class="number">1</span>)</span><br><span class="line"><span class="keyword">if</span> (np.<span class="built_in">any</span>(A@result.x&gt;rhs+<span class="number">1e-7</span>) <span class="keyword">or</span> np.<span class="built_in">any</span>(center&lt;np.array([<span class="number">3.</span>,<span class="number">4.</span>])-<span class="number">1e-7</span>)</span><br><span class="line">        <span class="keyword">or</span> np.<span class="built_in">any</span>(center&gt;np.array([<span class="number">8.</span>,<span class="number">10.</span>])+<span class="number">1e-7</span>)):</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(<span class="string">&quot;LP 结果未通过约束检查&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> np.isclose(distances.<span class="built_in">max</span>(),t,atol=<span class="number">1e-7</span>,rtol=<span class="number">0</span>):</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(<span class="string">&quot;真实最大距离与辅助变量不一致&quot;</span>)</span><br><span class="line">pair_lower = np.<span class="built_in">abs</span>(points[<span class="number">0</span>]-points[<span class="number">7</span>]).<span class="built_in">sum</span>()/<span class="number">2</span></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> np.isclose(t,pair_lower,atol=<span class="number">1e-7</span>,rtol=<span class="number">0</span>):</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(<span class="string">&quot;可行值未达到解析下界&quot;</span>)</span><br><span class="line">segment = np.column_stack([np.linspace(<span class="number">6.5</span>,<span class="number">8.</span>,<span class="number">101</span>),</span><br><span class="line">                           <span class="number">16.5</span>-np.linspace(<span class="number">6.5</span>,<span class="number">8.</span>,<span class="number">101</span>)])</span><br><span class="line">segment_values = np.<span class="built_in">abs</span>(segment[:,<span class="literal">None</span>,:]-points).<span class="built_in">sum</span>(axis=<span class="number">2</span>).<span class="built_in">max</span>(axis=<span class="number">1</span>)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> np.allclose(segment_values,<span class="number">13.5</span>,atol=<span class="number">1e-10</span>,rtol=<span class="number">0</span>):</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(<span class="string">&quot;最优线段回代失败&quot;</span>)</span><br><span class="line">example_center = np.array([<span class="number">8.</span>,<span class="number">8.5</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;LP 返回的一个最优中心: &quot;</span>,center)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最优最大距离: &quot;</span>,t,<span class="string">&quot;解析下界: &quot;</span>,pair_lower)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;中心(8,8.5)的十个距离: &quot;</span>,np.<span class="built_in">abs</span>(points-example_center).<span class="built_in">sum</span>(axis=<span class="number">1</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;全部最优中心: x+y=16.5, 6.5&lt;=x&lt;=8&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB · <code>manhattan_location.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">points = [<span class="number">1</span>,<span class="number">2</span>;<span class="number">4</span>,<span class="number">10</span>;<span class="number">3</span>,<span class="number">8</span>;<span class="number">5</span>,<span class="number">18</span>;<span class="number">9</span>,<span class="number">1</span>;<span class="number">12</span>,<span class="number">4</span>;<span class="number">6</span>,<span class="number">5</span>;<span class="number">20</span>,<span class="number">10</span>;<span class="number">17</span>,<span class="number">8</span>;<span class="number">8</span>,<span class="number">9</span>];</span><br><span class="line">signs = [<span class="number">1</span>,<span class="number">1</span>;<span class="number">1</span>,<span class="number">-1</span>;<span class="number">-1</span>,<span class="number">1</span>;<span class="number">-1</span>,<span class="number">-1</span>];</span><br><span class="line">A = <span class="built_in">zeros</span>(<span class="number">40</span>,<span class="number">3</span>);</span><br><span class="line">b = <span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">40</span>).&#x27;;</span><br><span class="line">k = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="built_in">size</span>(points,<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="number">4</span></span><br><span class="line">        k = k+<span class="number">1</span>;</span><br><span class="line">        A(k,:) = [signs(<span class="built_in">j</span>,:),<span class="number">-1</span>];</span><br><span class="line">        b(k) = signs(<span class="built_in">j</span>,:)*points(<span class="built_in">i</span>,:).&#x27;;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">f = [<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>].&#x27;;</span><br><span class="line">lb = [<span class="number">3</span>,<span class="number">4</span>,<span class="number">0</span>].&#x27;;</span><br><span class="line">ub = [<span class="number">8</span>,<span class="number">10</span>,Inf].&#x27;;</span><br><span class="line">options = optimoptions(<span class="string">&#x27;linprog&#x27;</span>,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;none&#x27;</span>);</span><br><span class="line">[w,fval,exitflag,output] = linprog(f,A,b,[],[],lb,ub,options);</span><br><span class="line"><span class="keyword">if</span> exitflag ~= <span class="number">1</span></span><br><span class="line">    error(<span class="string">&#x27;未确认最优解: %s&#x27;</span>,output.message);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">center = w(<span class="number">1</span>:<span class="number">2</span>);</span><br><span class="line">t = w(<span class="number">3</span>);</span><br><span class="line">distances = sum(<span class="built_in">abs</span>(points-center.&#x27;),<span class="number">2</span>);</span><br><span class="line">assert(all(A*w &lt;= b+<span class="number">1e-7</span>));</span><br><span class="line">assert(all(w &gt;= lb<span class="number">-1e-7</span>) &amp;&amp; all(w &lt;= ub+<span class="number">1e-7</span>));</span><br><span class="line">assert(<span class="built_in">abs</span>(<span class="built_in">max</span>(distances)-t) &lt; <span class="number">1e-7</span> &amp;&amp; <span class="built_in">abs</span>(fval-t) &lt; <span class="number">1e-7</span>);</span><br><span class="line">assert(<span class="built_in">abs</span>(t<span class="number">-13.5</span>) &lt; <span class="number">1e-7</span>);</span><br><span class="line">fprintf(<span class="string">&#x27;一个最优中心: (%.6f, %.6f)\n&#x27;</span>,center(<span class="number">1</span>),center(<span class="number">2</span>));</span><br><span class="line">fprintf(<span class="string">&#x27;最优最大距离: %.6f\n&#x27;</span>,t);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;全部最优中心: x+y=16.5, 6.5&lt;=x&lt;=8&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="算出一个点以后-怎样说明它确实最优">27.3.3 算出一个点以后,
+怎样说明它确实最优</h3>
+<p>求解器会返回一个最大距离为 13.5 的中心.
+我们再用一个不依赖求解器的界确认结果: 需求点 1 与点 8 相距 27.
+经过任何中心的两段距离之和都不可能短于两点间的直接曼哈顿距离,
+所以这两段中至少一段不小于 13.5. 所有中心的最坏距离因而都不小于
+13.5.</p>
+<p>中心 <span class="math inline">\((8,8.5)\)</span> 可行,
+又恰好达到这个下界. 可行方案与全局下界相合, 才确认最优最大距离为 13.5.
+完整最优中心集合为</p>
+<p><span class="math display">\[
+x+y=16.5,\qquad6.5\leqslant x\leqslant8.
+\]</span></p>
+<p>因此求解器返回 <span class="math inline">\((7,9.5)\)</span> 或 <span
+class="math inline">\((8,8.5)\)</span> 都可能正确.
+完整线段的推导见进阶阅读 F.1.5; 在很多点上抽样回代,
+只能验证被抽到的点.</p>
+<p><img src="/images/MinimaxAndMaximinProgramming/MM-1.png" style="width:100%"></p>
+<p>图 27-1 曼哈顿距离下的需求点, 选址矩形和最优线段. 等距离边界为菱形.
+中心在矩形边界上, 本身不能说明矩形限制提高了最优值.</p>
+<p>这个模型压低的是空间距离. 如果实际目标是到达时间,
+应用道路最短时间和调度条件重新定义指标; 如果最短正交路径被阻断,
+也不能继续直接使用上述距离公式.</p>
+<h2 id="固定一份资源比例-先算三种情景-再找最低成效">27.4
+固定一份资源比例: 先算三种情景, 再找最低成效</h2>
+<h3 id="先看矩阵的行与列">27.4.1 先看矩阵的行与列</h3>
+<p>社区科普服务采用 A 驻点讲解, B 巡回服务, C 资料配送三种方式.
+用一个教学模型表示各方式在不同情景下相对于统一基准的净成效:</p>
+<p>表 27-4 三种服务方式在三种情景下的成效.</p>
+<table>
+<thead>
+<tr>
+<th>服务方式</th>
+<th>常态</th>
+<th>压力较大</th>
+<th>严重压力</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>0.15</td>
+<td>0.08</td>
+<td>-0.05</td>
+</tr>
+<tr>
+<td>B</td>
+<td>0.10</td>
+<td>0.06</td>
+<td>0.02</td>
+</tr>
+<tr>
+<td>C</td>
+<td>0.05</td>
+<td>0.04</td>
+<td>0.03</td>
+</tr>
+</tbody>
+</table>
+<p>指标无量纲, 负值表示低于共同基准. 假设成效随资源比例线性变化,
+不同方式的成效可相加. 令 <span
+class="math inline">\(u=(u_1,u_2,u_3)^{\mathsf T}\)</span> 为分配比例,
+分量非负且和为 1. 表格构成矩阵 <span class="math inline">\(R\)</span>,
+行是方式, 列是情景.</p>
+<p>先固定 <span class="math inline">\(u=(0,0.5,0.5)^{\mathsf
+T}\)</span>. 常态成效为 <span
+class="math inline">\(0.10\times0.5+0.05\times0.5=0.075\)</span>,
+类似地得到另外两个情景成效 0.05 与 0.025. 三个数中的最小值是 0.025,
+这就是这份方案的保障值.</p>
+<p>一次算出三个情景成效, 对应矩阵乘法 <span
+class="math inline">\(R^{\mathsf T}u\)</span>. Python 中转置写为
+<code>R.T</code>, MATLAB 中实数矩阵的转置写为 <code>R.'</code>.
+先核对行列含义, 再写乘法.</p>
+<p><strong>Python ·
+<code>step04_candidate_allocations.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">R = np.array([[<span class="number">.15</span>,<span class="number">.08</span>,-<span class="number">.05</span>],[<span class="number">.10</span>,<span class="number">.06</span>,<span class="number">.02</span>],[<span class="number">.05</span>,<span class="number">.04</span>,<span class="number">.03</span>]])</span><br><span class="line">allocations = np.array([[<span class="number">1.</span>,<span class="number">0.</span>,<span class="number">0.</span>],[<span class="number">0.</span>,<span class="number">1.</span>,<span class="number">0.</span>],[<span class="number">0.</span>,<span class="number">0.</span>,<span class="number">1.</span>],</span><br><span class="line">                        [<span class="number">1</span>/<span class="number">3</span>,<span class="number">1</span>/<span class="number">3</span>,<span class="number">1</span>/<span class="number">3</span>],[<span class="number">0.</span>,<span class="number">.5</span>,<span class="number">.5</span>]])</span><br><span class="line"><span class="keyword">for</span> u <span class="keyword">in</span> allocations:</span><br><span class="line">    effects = R.T@u</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;allocation:&quot;</span>, u, <span class="string">&quot;scenario effects:&quot;</span>, effects,</span><br><span class="line">          <span class="string">&quot;worst:&quot;</span>, effects.<span class="built_in">min</span>(), <span class="string">&quot;equal-weight mean:&quot;</span>, effects.mean())</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB ·
+<code>step04_candidate_allocations.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">R = [<span class="number">.15</span>,<span class="number">.08</span>,<span class="number">-.05</span>;<span class="number">.10</span>,<span class="number">.06</span>,<span class="number">.02</span>;<span class="number">.05</span>,<span class="number">.04</span>,<span class="number">.03</span>];</span><br><span class="line">allocations = [<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>;<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>;<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>;<span class="number">1</span>/<span class="number">3</span>,<span class="number">1</span>/<span class="number">3</span>,<span class="number">1</span>/<span class="number">3</span>;<span class="number">0</span>,<span class="number">.5</span>,<span class="number">.5</span>];</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">size</span>(allocations,<span class="number">1</span>)</span><br><span class="line">    u = allocations(k,:).&#x27;;</span><br><span class="line">    effects = R.&#x27;*u;</span><br><span class="line">    <span class="built_in">disp</span>(<span class="string">&#x27;allocation and scenario effects:&#x27;</span>); <span class="built_in">disp</span>(u.&#x27;); <span class="built_in">disp</span>(effects.&#x27;);</span><br><span class="line">    fprintf(<span class="string">&#x27;worst: %.6f, equal-weight mean: %.6f\n&#x27;</span>, ...</span><br><span class="line">        <span class="built_in">min</span>(effects),<span class="built_in">mean</span>(effects));</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>表 27-5 资源比例的最低与平均成效.</p>
+<table>
+<thead>
+<tr>
+<th>资源比例 <span class="math inline">\((u_1,u_2,u_3)\)</span></th>
+<th>三个情景的成效</th>
+<th>最低成效</th>
+<th>等权平均成效</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="math inline">\((1,0,0)\)</span></td>
+<td><span class="math inline">\((0.15,0.08,-0.05)\)</span></td>
+<td>-0.05</td>
+<td>0.06</td>
+</tr>
+<tr>
+<td><span class="math inline">\((0,1,0)\)</span></td>
+<td><span class="math inline">\((0.10,0.06,0.02)\)</span></td>
+<td>0.02</td>
+<td>0.06</td>
+</tr>
+<tr>
+<td><span class="math inline">\((0,0,1)\)</span></td>
+<td><span class="math inline">\((0.05,0.04,0.03)\)</span></td>
+<td>0.03</td>
+<td>0.04</td>
+</tr>
+<tr>
+<td><span class="math inline">\((1/3,1/3,1/3)\)</span></td>
+<td><span class="math inline">\((0.10,0.06,0)\)</span></td>
+<td>0</td>
+<td>约 0.053333</td>
+</tr>
+<tr>
+<td><span class="math inline">\((0,0.5,0.5)\)</span></td>
+<td><span class="math inline">\((0.075,0.05,0.025)\)</span></td>
+<td>0.025</td>
+<td>0.05</td>
+</tr>
+</tbody>
+</table>
+<p>这一次, 我们希望把最后可能得到的最低成效往上提高. 平均成效较高的 A
+并没有最好的保障值. 表中的等权平均只是另一种比较,
+没有假定三种情景等概率.</p>
+<h3 id="让辅助变量成为共同下界">27.4.2 让辅助变量成为共同下界</h3>
+<p>要求每个情景成效都不低于 <span class="math inline">\(t\)</span>,
+再最大化 <span class="math inline">\(t\)</span>:</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\max_{u,t}\quad t,\\
+&amp;\mathrm{s.t.}\quad\begin{cases}
+\sum\limits_{i=1}^{3}R_{ij}u_i\geqslant t,\quad j=1,2,3,\\
+\sum\limits_{i=1}^{3}u_i=1,\\
+u_i\geqslant0,\quad i=1,2,3,\\
+t\in\mathbb R.
+\end{cases}
+\end{aligned}
+\]</span></p>
+<p>这称为最大最小规划, 也称极大极小规划, 英文为 maximin.
+最小最大规划也称极小极大规划, 英文为 minimax.
+两个名称都按外层到内层来读, 实际计算则先对固定方案求内层值.</p>
+<p>两个 <code>linprog</code> 接口都求最小值. 因而目标改为 <span
+class="math inline">\(-t\)</span>, 保障约束改写为 <span
+class="math inline">\(-R^{\mathsf T}u+t\boldsymbol1\leqslant0\)</span>.
+变量按 <span class="math inline">\((u_1,u_2,u_3,t)^{\mathsf T}\)</span>
+排列, 等式行是 <span class="math inline">\((1,1,1,0)\)</span>.</p>
+<p><strong>Python · <code>scenario_allocation.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linprog</span><br><span class="line"></span><br><span class="line">R = np.array([[<span class="number">.15</span>,<span class="number">.08</span>,-<span class="number">.05</span>],[<span class="number">.10</span>,<span class="number">.06</span>,<span class="number">.02</span>],[<span class="number">.05</span>,<span class="number">.04</span>,<span class="number">.03</span>]])</span><br><span class="line">n,m = R.shape</span><br><span class="line">A = np.column_stack([-R.T,np.ones(m)])</span><br><span class="line">result = linprog(</span><br><span class="line">    np.r_[np.zeros(n),-<span class="number">1.</span>],A_ub=A,b_ub=np.zeros(m),</span><br><span class="line">    A_eq=[np.r_[np.ones(n),<span class="number">0.</span>]],b_eq=[<span class="number">1.</span>],</span><br><span class="line">    bounds=[(<span class="number">0.</span>,<span class="number">1.</span>)]*n+[(<span class="literal">None</span>,<span class="literal">None</span>)],method=<span class="string">&quot;highs&quot;</span>,</span><br><span class="line">)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> result.success:</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(result.message)</span><br><span class="line">u,t = result.x[:-<span class="number">1</span>],<span class="built_in">float</span>(result.x[-<span class="number">1</span>])</span><br><span class="line">effects = R.T@u</span><br><span class="line"><span class="keyword">if</span> (np.<span class="built_in">any</span>(u &lt; -<span class="number">1e-7</span>) <span class="keyword">or</span> np.<span class="built_in">any</span>(u&gt;<span class="number">1</span>+<span class="number">1e-7</span>)</span><br><span class="line">        <span class="keyword">or</span> <span class="built_in">abs</span>(u.<span class="built_in">sum</span>()-<span class="number">1</span>)&gt;<span class="number">1e-7</span> <span class="keyword">or</span> np.<span class="built_in">min</span>(effects-t)&lt;-<span class="number">1e-7</span></span><br><span class="line">        <span class="keyword">or</span> <span class="keyword">not</span> np.isclose(effects.<span class="built_in">min</span>(),t,atol=<span class="number">1e-7</span>,rtol=<span class="number">0</span>)):</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(<span class="string">&quot;资源比例或最坏成效回代失败&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> np.isclose(t,<span class="number">.03</span>,atol=<span class="number">1e-7</span>,rtol=<span class="number">0</span>):</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(<span class="string">&quot;未达到解析上界&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;资源比例: &quot;</span>,u,<span class="string">&quot;各情景成效: &quot;</span>,effects)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最优底线: &quot;</span>,t)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB · <code>scenario_allocation.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">R = [<span class="number">.15</span>,<span class="number">.08</span>,<span class="number">-.05</span>;<span class="number">.10</span>,<span class="number">.06</span>,<span class="number">.02</span>;<span class="number">.05</span>,<span class="number">.04</span>,<span class="number">.03</span>];</span><br><span class="line">[n,m] = <span class="built_in">size</span>(R);</span><br><span class="line">f = [<span class="built_in">zeros</span>(<span class="number">1</span>,n),<span class="number">-1</span>].&#x27;;</span><br><span class="line">A = [-R.&#x27;,<span class="built_in">ones</span>(<span class="number">1</span>,m).&#x27;];</span><br><span class="line">b = <span class="built_in">zeros</span>(<span class="number">1</span>,m).&#x27;;</span><br><span class="line">Aeq = [<span class="built_in">ones</span>(<span class="number">1</span>,n),<span class="number">0</span>];</span><br><span class="line">lb = [<span class="built_in">zeros</span>(<span class="number">1</span>,n),-Inf].&#x27;;</span><br><span class="line">ub = [<span class="built_in">ones</span>(<span class="number">1</span>,n),Inf].&#x27;;</span><br><span class="line">options = optimoptions(<span class="string">&#x27;linprog&#x27;</span>,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;none&#x27;</span>);</span><br><span class="line">[w,fval,exitflag,output] = linprog(f,A,b,Aeq,<span class="number">1</span>,lb,ub,options);</span><br><span class="line"><span class="keyword">if</span> exitflag ~= <span class="number">1</span></span><br><span class="line">    error(<span class="string">&#x27;未确认最优解: %s&#x27;</span>,output.message);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">u = w(<span class="number">1</span>:n); t = w(<span class="keyword">end</span>);</span><br><span class="line">effects = R.&#x27;*u;</span><br><span class="line">assert(all(u &gt;= <span class="number">-1e-7</span>) &amp;&amp; all(u &lt;= <span class="number">1</span>+<span class="number">1e-7</span>));</span><br><span class="line">assert(<span class="built_in">abs</span>(sum(u)<span class="number">-1</span>) &lt; <span class="number">1e-7</span> &amp;&amp; all(effects &gt;= t<span class="number">-1e-7</span>));</span><br><span class="line">assert(<span class="built_in">abs</span>(<span class="built_in">min</span>(effects)-t) &lt; <span class="number">1e-7</span> &amp;&amp; <span class="built_in">abs</span>(fval+t) &lt; <span class="number">1e-7</span>);</span><br><span class="line">assert(<span class="built_in">abs</span>(t<span class="number">-.03</span>) &lt; <span class="number">1e-7</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;资源比例: &#x27;</span>); <span class="built_in">disp</span>(u.&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;各情景成效: &#x27;</span>); <span class="built_in">disp</span>(effects.&#x27;);</span><br><span class="line">fprintf(<span class="string">&#x27;最优保障值: %.6f\n&#x27;</span>,t);</span><br></pre></td></tr></table></figure>
+<p>所得比例是 <span class="math inline">\((0,0,1)^{\mathsf T}\)</span>,
+保障值为 0.03. 严重压力这一列的所有系数都不超过 0.03, 所以任何非负且和为
+1 的比例组合, 在这个情景下都不可能超过 0.03. 全部配置给 C 达到上界,
+因而全局最优. A 与 B 的严重压力系数严格小于 0.03,
+也说明达到此界时两者比例只能为 0.</p>
+<p><img src="/images/MinimaxAndMaximinProgramming/MM-2.png" style="width:100%"></p>
+<p>图 27-2 最低净成效与等权平均净成效的比较. 二者对应不同选择原则,
+不能把平均值当成保障值.</p>
+<h2 id="上界往下压-下界往上抬-方向与边界要一起检查">27.5 上界往下压,
+下界往上抬: 方向与边界要一起检查</h2>
+<p>把 C 方案的三个成效 <span
+class="math inline">\(0.05,0.04,0.03\)</span> 固定住, 试取 <span
+class="math inline">\(t=0,0.03,0.04\)</span>. 前两个都是共同下界,
+第三个已经超过最小成效, 不再可行. 最大化 <span
+class="math inline">\(t\)</span> 会把它抬到 0.03.</p>
+<p>再把成效换成恒定的 <span class="math inline">\(-2,-3\)</span>.
+共同下界最高只能是 <span class="math inline">\(-3\)</span>.
+程序同时检查这两个例子.</p>
+<p><strong>Python · <code>step05_lower_bound.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">cases = [(np.array([<span class="number">.05</span>,<span class="number">.04</span>,<span class="number">.03</span>]), [<span class="number">0.</span>,<span class="number">.03</span>,<span class="number">.04</span>]),</span><br><span class="line">         (np.array([-<span class="number">2.</span>,-<span class="number">3.</span>]), [-<span class="number">4.</span>,-<span class="number">3.</span>,<span class="number">0.</span>])]</span><br><span class="line"><span class="keyword">for</span> effects, trial_values <span class="keyword">in</span> cases:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;effects:&quot;</span>, effects)</span><br><span class="line">    <span class="keyword">for</span> t <span class="keyword">in</span> trial_values:</span><br><span class="line">        residuals = effects-t</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;t:&quot;</span>, t, <span class="string">&quot;smallest slack:&quot;</span>, residuals.<span class="built_in">min</span>(),</span><br><span class="line">              <span class="string">&quot;feasible:&quot;</span>, np.<span class="built_in">all</span>(residuals &gt;= -<span class="number">1e-12</span>))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;highest lower bound:&quot;</span>, effects.<span class="built_in">min</span>())</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB · <code>step05_lower_bound.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">effect_sets = &#123;[<span class="number">.05</span>,<span class="number">.04</span>,<span class="number">.03</span>],[<span class="number">-2</span>,<span class="number">-3</span>]&#125;;</span><br><span class="line">trial_sets = &#123;[<span class="number">0</span>,<span class="number">.03</span>,<span class="number">.04</span>],[<span class="number">-4</span>,<span class="number">-3</span>,<span class="number">0</span>]&#125;;</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">numel</span>(effect_sets)</span><br><span class="line">    effects = effect_sets&#123;k&#125;;</span><br><span class="line">    <span class="built_in">disp</span>(<span class="string">&#x27;effects:&#x27;</span>); <span class="built_in">disp</span>(effects);</span><br><span class="line">    <span class="keyword">for</span> t = trial_sets&#123;k&#125;</span><br><span class="line">        residuals = effects-t;</span><br><span class="line">        fprintf(<span class="string">&#x27;t: %.3f, smallest slack: %.3f, feasible: %d\n&#x27;</span>, ...</span><br><span class="line">            t,<span class="built_in">min</span>(residuals),all(residuals &gt;= <span class="number">-1e-12</span>));</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    fprintf(<span class="string">&#x27;highest lower bound: %.3f\n&#x27;</span>,<span class="built_in">min</span>(effects));</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>如果给第二个例子强加 <span
+class="math inline">\(t\geqslant0\)</span>, 就同时要求 <span
+class="math inline">\(0\leqslant t\leqslant-3\)</span>,
+错误地产生不可行模型. Python <code>linprog</code> 的默认变量下界为 0,
+所以可能为负的保障值必须显式写成 <code>(None,None)</code>; MATLAB
+对应使用 <code>-Inf</code> 和 <code>Inf</code>. [2] 完整负值求解程序为
+<code>negative_guarantee.py</code> 与 <code>negative_guarantee.m</code>,
+也收入辅助变量求解器阅读材料.</p>
+<p>表 27-6 最小最大与最大最小的辅助变量方向.</p>
+<table>
+<thead>
+<tr>
+<th>任务</th>
+<th>固定方案后先算</th>
+<th>辅助约束</th>
+<th>最小化接口目标</th>
+<th>回代取值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>压低最坏损失</td>
+<td>最大损失</td>
+<td><span class="math inline">\(f_i(x)\leqslant t\)</span></td>
+<td><span class="math inline">\(t\)</span></td>
+<td><code>max</code></td>
+</tr>
+<tr>
+<td>提高最低成效</td>
+<td>最小成效</td>
+<td><span class="math inline">\(g_i(x)\geqslant t\)</span></td>
+<td><span class="math inline">\(-t\)</span></td>
+<td><code>min</code></td>
+</tr>
+</tbody>
+</table>
+<p><img src="/images/MinimaxAndMaximinProgramming/MM-5.png" style="width:100%"></p>
+<p>图 27-3 共同上界与共同下界. 左图中距离必须全部位于上界以内,
+右图中成效必须全部不低于下界. 两边均只需部分分量顶住界线.</p>
+<h2 id="原来的限制不能丢-给矩阵补上正确的一列">27.6 原来的限制不能丢:
+给矩阵补上正确的一列</h2>
+<p>假设社区服务必须拿出至少 20% 的资源用于驻点讲解, 即 <span
+class="math inline">\(u_1\geqslant0.2\)</span>. 刚才把全部资源给 C
+的方案已经不符合要求. 要重新求解的完整模型为</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\max_{u,t}\quad t,\\
+&amp;\mathrm{s.t.}\quad\begin{cases}
+R^{\mathsf T}u\geqslant t\boldsymbol1,\\
+u_1+u_2+u_3=1,\\
+u_1\geqslant0.2,\\
+u_i\geqslant0,\quad i=1,2,3,\\
+t\in\mathbb R.
+\end{cases}
+\end{aligned}
+\]</span></p>
+<p>在四变量矩阵中, 新限制为 <span
+class="math inline">\((-1,0,0,0)w\leqslant-0.2\)</span>, 最后一项必须是
+0. 这是关于原资源比例的限制, 辅助变量不占资源. 保障约束的最后一列则是 1,
+因为其中确实出现了 <span class="math inline">\(t\)</span>.</p>
+<p><strong>Python ·
+<code>step06_original_constraints.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linprog</span><br><span class="line">R = np.array([[<span class="number">.15</span>,<span class="number">.08</span>,-<span class="number">.05</span>],[<span class="number">.10</span>,<span class="number">.06</span>,<span class="number">.02</span>],[<span class="number">.05</span>,<span class="number">.04</span>,<span class="number">.03</span>]])</span><br><span class="line">A = np.vstack([np.column_stack([-R.T,np.ones(<span class="number">3</span>)]),</span><br><span class="line">               [-<span class="number">1.</span>,<span class="number">0.</span>,<span class="number">0.</span>,<span class="number">0.</span>]])</span><br><span class="line">b = np.r_[np.zeros(<span class="number">3</span>),-<span class="number">.2</span>]</span><br><span class="line">result = linprog([<span class="number">0.</span>,<span class="number">0.</span>,<span class="number">0.</span>,-<span class="number">1.</span>], A_ub=A, b_ub=b,</span><br><span class="line">                 A_eq=[[<span class="number">1.</span>,<span class="number">1.</span>,<span class="number">1.</span>,<span class="number">0.</span>]], b_eq=[<span class="number">1.</span>],</span><br><span class="line">                 bounds=[(<span class="number">0.</span>,<span class="number">1.</span>)]*<span class="number">3</span>+[(<span class="literal">None</span>,<span class="literal">None</span>)], method=<span class="string">&quot;highs&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> result.success:</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(result.message)</span><br><span class="line">u, t = result.x[:<span class="number">3</span>], <span class="built_in">float</span>(result.x[<span class="number">3</span>])</span><br><span class="line">effects = R.T@u</span><br><span class="line"><span class="keyword">assert</span> np.<span class="built_in">all</span>(A@result.x &lt;= b+<span class="number">1e-8</span>) <span class="keyword">and</span> <span class="built_in">abs</span>(u.<span class="built_in">sum</span>()-<span class="number">1</span>) &lt; <span class="number">1e-8</span></span><br><span class="line"><span class="keyword">assert</span> np.isclose(t, effects.<span class="built_in">min</span>(), atol=<span class="number">1e-8</span>, rtol=<span class="number">0</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;allocation:&quot;</span>, u, <span class="string">&quot;effects:&quot;</span>, effects, <span class="string">&quot;guarantee:&quot;</span>, t)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB ·
+<code>step06_original_constraints.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">R = [<span class="number">.15</span>,<span class="number">.08</span>,<span class="number">-.05</span>;<span class="number">.10</span>,<span class="number">.06</span>,<span class="number">.02</span>;<span class="number">.05</span>,<span class="number">.04</span>,<span class="number">.03</span>];</span><br><span class="line">A = [-R.&#x27;,<span class="built_in">ones</span>(<span class="number">3</span>,<span class="number">1</span>);<span class="number">-1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>];</span><br><span class="line">b = [<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">-.2</span>].&#x27;;</span><br><span class="line">options = optimoptions(<span class="string">&#x27;linprog&#x27;</span>,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;none&#x27;</span>);</span><br><span class="line">[w,~,flag,out] = linprog([<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">-1</span>].&#x27;,A,b,[<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>],<span class="number">1</span>, ...</span><br><span class="line">    [<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,-Inf].&#x27;,[<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,Inf].&#x27;,options);</span><br><span class="line"><span class="keyword">if</span> flag ~= <span class="number">1</span>, error(<span class="string">&#x27;Solve failed: %s&#x27;</span>,out.message); <span class="keyword">end</span></span><br><span class="line">u = w(<span class="number">1</span>:<span class="number">3</span>); t = w(<span class="number">4</span>); effects = R.&#x27;*u;</span><br><span class="line">assert(all(A*w &lt;= b+<span class="number">1e-8</span>) &amp;&amp; <span class="built_in">abs</span>(sum(u)<span class="number">-1</span>) &lt; <span class="number">1e-8</span>);</span><br><span class="line">assert(<span class="built_in">abs</span>(t-<span class="built_in">min</span>(effects)) &lt; <span class="number">1e-8</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;allocation:&#x27;</span>); <span class="built_in">disp</span>(u.&#x27;); <span class="built_in">disp</span>(<span class="string">&#x27;effects:&#x27;</span>); <span class="built_in">disp</span>(effects.&#x27;);</span><br><span class="line">fprintf(<span class="string">&#x27;guarantee: %.6f\n&#x27;</span>,t);</span><br></pre></td></tr></table></figure>
+<p>新结果为 <span class="math inline">\(u=(0.2,0,0.8)^{\mathsf
+T}\)</span>, 三个成效为 <span
+class="math inline">\((0.07,0.048,0.014)^{\mathsf T}\)</span>,
+保障值降为 0.014. 严重压力下的成效可写成 <span
+class="math inline">\(0.03-0.08u_1-0.01u_2\)</span>,
+所以在新限制下不超过 <span
+class="math inline">\(0.03-0.08\times0.2=0.014\)</span>.
+新方案恰好达到此界.</p>
+<p>对其他原约束也一样处理: 线性矩阵末尾补 0; Python 原约束回调只读取
+<code>w[:-1]</code>, MATLAB 只读取 <code>w(1:end-1)</code>. 比如 <span
+class="math inline">\(x_1+x_2+x_3\leqslant10\)</span> 的系数行应扩为
+<span class="math inline">\((1,1,1,0)\)</span>.</p>
+<h2 id="两个平方损失-分量光滑-最大值仍可能有折点">27.7 两个平方损失:
+分量光滑, 最大值仍可能有折点</h2>
+<h3 id="先算三个位置的损失">27.7.1 先算三个位置的损失</h3>
+<p>设两个平方损失为 <span class="math inline">\(f_1(x)=(x-1)^2\)</span>,
+<span class="math inline">\(f_2(x)=(x+1)^2\)</span>. 在 <span
+class="math inline">\(x=-0.5,0,0.5\)</span>
+处分别计算两项再取最大值.</p>
+<p><strong>Python · <code>step07_squared_losses.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">xs = np.array([-<span class="number">.5</span>,<span class="number">0.</span>,<span class="number">.5</span>])</span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> xs:</span><br><span class="line">    losses = np.array([(x-<span class="number">1</span>)**<span class="number">2</span>,(x+<span class="number">1</span>)**<span class="number">2</span>])</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;x:&quot;</span>, x, <span class="string">&quot;losses:&quot;</span>, losses, <span class="string">&quot;worst:&quot;</span>, losses.<span class="built_in">max</span>())</span><br><span class="line">h = <span class="number">1e-5</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">worst</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">max</span>((x-<span class="number">1</span>)**<span class="number">2</span>,(x+<span class="number">1</span>)**<span class="number">2</span>)</span><br><span class="line">left_slope = (worst(<span class="number">0.</span>)-worst(-h))/h</span><br><span class="line">right_slope = (worst(h)-worst(<span class="number">0.</span>))/h</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;approximate left and right slopes:&quot;</span>, left_slope, right_slope)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB · <code>step07_squared_losses.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">xs = [<span class="number">-.5</span>,<span class="number">0</span>,<span class="number">.5</span>];</span><br><span class="line"><span class="keyword">for</span> x = xs</span><br><span class="line">    losses = [(x<span class="number">-1</span>)^<span class="number">2</span>,(x+<span class="number">1</span>)^<span class="number">2</span>];</span><br><span class="line">    fprintf(<span class="string">&#x27;x: %.1f, worst: %.2f\n&#x27;</span>,x,<span class="built_in">max</span>(losses)); <span class="built_in">disp</span>(losses);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">h = <span class="number">1e-5</span>;</span><br><span class="line">worst = @(x) <span class="built_in">max</span>([(x<span class="number">-1</span>)^<span class="number">2</span>,(x+<span class="number">1</span>)^<span class="number">2</span>]);</span><br><span class="line">left_slope = (worst(<span class="number">0</span>)-worst(-h))/h;</span><br><span class="line">right_slope = (worst(h)-worst(<span class="number">0</span>))/h;</span><br><span class="line">fprintf(<span class="string">&#x27;approximate left and right slopes: %.5f, %.5f\n&#x27;</span>, ...</span><br><span class="line">    left_slope,right_slope);</span><br></pre></td></tr></table></figure>
+<p>两个侧点的最坏损失都是 2.25, 中点为 1. 当 <span
+class="math inline">\(x&lt;0\)</span> 时, 较大的是 <span
+class="math inline">\((x-1)^2\)</span>; 当 <span
+class="math inline">\(x&gt;0\)</span> 时, 较大的是 <span
+class="math inline">\((x+1)^2\)</span>. 所以最大值的左导数在 0 处为 -2,
+右导数为 2, 出现了折点. 程序中的差商近似只是帮助观察,
+两侧解析表达式给出了导数不同的原因.</p>
+<p><img src="/images/MinimaxAndMaximinProgramming/MM-3.png" style="width:100%"></p>
+<p>图 27-4 两个平方损失及其最大值. 最大值取上包络, 交会点处出现折点,
+两个分量各自仍然光滑.</p>
+<h3 id="把折点目标改成两条光滑约束">27.7.2
+把折点目标改成两条光滑约束</h3>
+<p>辅助变量模型为</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\min_{x,t}\quad t,\\
+&amp;\mathrm{s.t.}\quad\begin{cases}
+(x-1)^2\leqslant t,\\
+(x+1)^2\leqslant t,\\
+x\in\mathbb R,\quad t\geqslant0.
+\end{cases}
+\end{aligned}
+\]</span></p>
+<p>目标现在是线性的, 约束仍含平方, 因此这不是线性规划. 分量光滑时,
+辅助变量可把 <code>max</code> 引出的折点移到多条光滑约束中. [3] Python
+的 SLSQP 字典不等式采用非负残差, 所以返回 <code>t-losses</code>; MATLAB
+<code>fmincon</code> 非线性不等式采用非正残差, 两者符号不同. MATLAB
+<code>fminimax</code> 还可以直接接收分量向量, 使用原变量初值. [1][5]</p>
+<p><strong>Python · <code>squared_losses.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> minimize</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">losses</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> np.array([(x[<span class="number">0</span>]-<span class="number">1</span>)**<span class="number">2</span>, (x[<span class="number">0</span>]+<span class="number">1</span>)**<span class="number">2</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">residual</span>(<span class="params">w</span>):</span><br><span class="line">    <span class="keyword">return</span> w[<span class="number">1</span>]-losses(w[:<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">result = minimize(<span class="keyword">lambda</span> w: w[<span class="number">1</span>], [<span class="number">0.3</span>, <span class="number">1.69</span>],</span><br><span class="line">                  method=<span class="string">&quot;SLSQP&quot;</span>, bounds=[(<span class="literal">None</span>, <span class="literal">None</span>), (<span class="number">0</span>, <span class="literal">None</span>)],</span><br><span class="line">                  constraints=[&#123;<span class="string">&quot;type&quot;</span>: <span class="string">&quot;ineq&quot;</span>, <span class="string">&quot;fun&quot;</span>: residual&#125;],</span><br><span class="line">                  options=&#123;<span class="string">&quot;ftol&quot;</span>: <span class="number">1e-11</span>, <span class="string">&quot;maxiter&quot;</span>: <span class="number">500</span>&#125;)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> result.success:</span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(result.message)</span><br><span class="line">x, t = result.x</span><br><span class="line"><span class="keyword">assert</span> residual(result.x).<span class="built_in">min</span>() &gt;= -<span class="number">1e-7</span></span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">abs</span>(x) &lt; <span class="number">1e-6</span> <span class="keyword">and</span> <span class="built_in">abs</span>(t-<span class="number">1</span>) &lt; <span class="number">1e-7</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;最优点: &quot;</span>, x, <span class="string">&quot;最坏平方损失: &quot;</span>, t)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB 分量函数 ·
+<code>squared_loss_vector.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span> = <span class="title">squared_loss_vector</span><span class="params">(x)</span></span></span><br><span class="line">    f = [(x(<span class="number">1</span>)<span class="number">-1</span>)^<span class="number">2</span>,(x(<span class="number">1</span>)+<span class="number">1</span>)^<span class="number">2</span>].&#x27;;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB 求解程序 · <code>squared_losses.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">x0 = <span class="number">0.3</span>;</span><br><span class="line">options = optimoptions(<span class="string">&#x27;fminimax&#x27;</span>,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;none&#x27;</span>);</span><br><span class="line">[x,fval,maxfval,exitflag,output] = fminimax( ...</span><br><span class="line">    @squared_loss_vector,x0,[],[],[],[],[],[],[],options);</span><br><span class="line"><span class="keyword">if</span> exitflag &lt;= <span class="number">0</span></span><br><span class="line">    error(<span class="string">&#x27;迭代未通过终止检查: %s&#x27;</span>,output.message);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">actual = squared_loss_vector(x);</span><br><span class="line">assert(<span class="built_in">max</span>(<span class="built_in">abs</span>(actual(:)-fval(:))) &lt; <span class="number">1e-6</span>);</span><br><span class="line">assert(<span class="built_in">abs</span>(<span class="built_in">max</span>(actual)-maxfval) &lt; <span class="number">1e-6</span>);</span><br><span class="line">assert(<span class="built_in">abs</span>(x) &lt; <span class="number">1e-5</span> &amp;&amp; <span class="built_in">abs</span>(maxfval<span class="number">-1</span>) &lt; <span class="number">1e-5</span>);</span><br><span class="line">fprintf(<span class="string">&#x27;最优点: %.6f, 最坏平方损失: %.6f\n&#x27;</span>,x,maxfval);</span><br></pre></td></tr></table></figure>
+<p>Python 程序的扩展向量是 <span class="math inline">\((x,t)^{\mathsf
+T}\)</span>, <code>w[:1]</code> 只取原变量. MATLAB 先保存函数
+<code>squared_loss_vector.m</code>, 再运行
+<code>squared_losses.m</code>; 前者返回两个分量, 后者调用
+<code>fminimax</code>. 其中 <code>fval</code> 为分量向量, 第三个输出
+<code>maxfval</code> 才是最大分量. [5]</p>
+<p>最优值并非只靠这三个试算位置判断. 对任意 <span
+class="math inline">\(x\)</span>, 最大数不小于平均数, 所以</p>
+<p><span class="math display">\[
+\max\{(x-1)^2,(x+1)^2\}
+\geqslant\frac{(x-1)^2+(x+1)^2}{2}=x^2+1\geqslant1.
+\]</span></p>
+<p>只有 <span class="math inline">\(x=0\)</span> 能达到最后一个等号,
+且此时两项均为 1. 因而唯一最优点为 0, 最优最大损失为 1.
+一般非凸模型没有这样的证据时,
+局部算法的停止标志不能单独证明全局最优.</p>
+<h2 id="覆盖半径-平方可以去掉根号-不能把最大值换成总和">27.8 覆盖半径:
+平方可以去掉根号, 不能把最大值换成总和</h2>
+<p>现有五个服务点 <span class="math inline">\((2,8)\)</span>, <span
+class="math inline">\((6,4)\)</span>, <span
+class="math inline">\((8,7)\)</span>, <span
+class="math inline">\((1,2)\)</span>, <span
+class="math inline">\((9,1)\)</span>. 这次假设直线距离适合作为覆盖指标,
+中心仍须在 <span class="math inline">\([0,10]^2\)</span> 内.
+为覆盖全部点, 半径至少要达到最大的欧氏距离.</p>
+<p>记 <span class="math inline">\(P_i=(a_i,b_i)^{\mathsf T}\)</span>,
+中心 <span class="math inline">\(z=(x,y)^{\mathsf T}\)</span>.
+引入平方半径 <span class="math inline">\(\rho\)</span>, 可写成</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\min_{x,y,\rho}\quad\rho,\\
+&amp;\mathrm{s.t.}\quad\begin{cases}
+(x-a_i)^2+(y-b_i)^2\leqslant\rho,\quad i=1,\ldots,5,\\
+0\leqslant x\leqslant10,\\
+0\leqslant y\leqslant10,\\
+\rho\geqslant0.
+\end{cases}
+\end{aligned}
+\]</span></p>
+<p>平方在非负距离上严格递增,
+因而最小化最大距离的平方与最小化最大距离具有相同最优中心. <span
+class="math inline">\(\rho\)</span> 的单位为长度平方,
+输出半径必须再开平方. 完整求解与残差 Jacobian 见进阶阅读 F.4.2,
+下面先做原指标回代.</p>
+<p><strong>Python · <code>step08_squared_radius.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">points = np.array([[<span class="number">2.</span>,<span class="number">8.</span>],[<span class="number">6.</span>,<span class="number">4.</span>],[<span class="number">8.</span>,<span class="number">7.</span>],[<span class="number">1.</span>,<span class="number">2.</span>],[<span class="number">9.</span>,<span class="number">1.</span>]])</span><br><span class="line">center = np.array([<span class="number">75</span>/<span class="number">14</span>,<span class="number">61</span>/<span class="number">14</span>])</span><br><span class="line">squared_distances = np.<span class="built_in">sum</span>((points-center)**<span class="number">2</span>,axis=<span class="number">1</span>)</span><br><span class="line">rho = squared_distances.<span class="built_in">max</span>()</span><br><span class="line">radius = np.sqrt(rho)</span><br><span class="line">centroid = points.mean(axis=<span class="number">0</span>)</span><br><span class="line">centroid_radius = np.linalg.norm(points-centroid,axis=<span class="number">1</span>).<span class="built_in">max</span>()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;squared distances:&quot;</span>, squared_distances)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;squared radius:&quot;</span>, rho, <span class="string">&quot;radius:&quot;</span>, radius)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;points on the boundary:&quot;</span>, np.flatnonzero(np.isclose(squared_distances,rho))+<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;centroid:&quot;</span>, centroid, <span class="string">&quot;its worst distance:&quot;</span>, centroid_radius)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB · <code>step08_squared_radius.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">points = [<span class="number">2</span>,<span class="number">8</span>;<span class="number">6</span>,<span class="number">4</span>;<span class="number">8</span>,<span class="number">7</span>;<span class="number">1</span>,<span class="number">2</span>;<span class="number">9</span>,<span class="number">1</span>];</span><br><span class="line">center = [<span class="number">75</span>/<span class="number">14</span>,<span class="number">61</span>/<span class="number">14</span>];</span><br><span class="line">squared_distances = sum((points-center).^<span class="number">2</span>,<span class="number">2</span>);</span><br><span class="line">rho = <span class="built_in">max</span>(squared_distances); radius = <span class="built_in">sqrt</span>(rho);</span><br><span class="line">centroid = <span class="built_in">mean</span>(points,<span class="number">1</span>);</span><br><span class="line">centroid_radius = <span class="built_in">max</span>(<span class="built_in">sqrt</span>(sum((points-centroid).^<span class="number">2</span>,<span class="number">2</span>)));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;squared distances:&#x27;</span>); <span class="built_in">disp</span>(squared_distances.&#x27;);</span><br><span class="line">fprintf(<span class="string">&#x27;squared radius: %.6f, radius: %.6f\n&#x27;</span>,rho,radius);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;points on the boundary:&#x27;</span>); <span class="built_in">disp</span>(<span class="built_in">find</span>(<span class="built_in">abs</span>(squared_distances-rho) &lt; <span class="number">1e-8</span>).&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;centroid:&#x27;</span>); <span class="built_in">disp</span>(centroid);</span><br><span class="line">fprintf(<span class="string">&#x27;its worst distance: %.6f\n&#x27;</span>,centroid_radius);</span><br></pre></td></tr></table></figure>
+<p>这里给出的中心是 <span
+class="math inline">\(z^*=(75/14,61/14)^{\mathsf T}\)</span>, 平方半径为
+<span class="math inline">\(4810/196\)</span>, 半径约 4.953869.
+程序先算五个平方距离, 取最大值, 再开方; 点 1, 4, 5 位于边界.
+这一步检查了给定中心的覆盖情况, 其全局最优性由进阶阅读 F.4.4
+的加权平方距离下界证明.</p>
+<p>如果把目标换成所有平方距离之和, 得到的是点坐标的平均值 <span
+class="math inline">\((5.2,4.4)^{\mathsf T}\)</span>.
+这个中心的最大距离约为 5.099020, 大于最小覆盖半径. 因此,
+去根号的平方转换与改变聚合方式是两件事.</p>
+<p><img src="/images/MinimaxAndMaximinProgramming/MM-4.png" style="width:100%"></p>
+<p>图 27-5 最小欧氏覆盖圆. 中心的允许区域限制中心坐标,
+并没有要求整个覆盖圆都落在方形内. 本例最优圆的一部分位于方形之外.</p>
+<h2 id="先求最大还是先求最小-一般不能交换">27.9 先求最大还是先求最小,
+一般不能交换</h2>
+<h3 id="逐行取最小与逐列取最大">27.9.1 逐行取最小与逐列取最大</h3>
+<p>用一个三行三列的数学矩阵说明极值顺序. 行方希望矩阵中的收益高,
+列方希望行方收益低, 双方收益相加为 0. 这是有限两人零和矩阵博弈,
+下面只研究它的数学结构.</p>
+<p><span class="math display">\[
+M=\begin{pmatrix}
+3&amp;-2&amp;1\\
+0&amp;2&amp;-1\\
+-1&amp;1&amp;3
+\end{pmatrix}.
+\]</span></p>
+<p>只许各选一行或一列, 称为纯策略. 行方逐行取最小值, 得到 <span
+class="math inline">\((-2,-1,-1)^{\mathsf T}\)</span>, 再取最大值得到
+-1. 列方逐列取最大值, 得到 <span class="math inline">\((3,2,3)\)</span>,
+再取最小值得到 2. 结果不同, 因而不能把最大与最小任意交换.</p>
+<h3 id="允许概率组合后-检查一对共同证据">27.9.2 允许概率组合后,
+检查一对共同证据</h3>
+<p>混合策略用非负且分量和为 1 的概率向量 <span
+class="math inline">\(p,q\)</span> 表示, 期望收益为 <span
+class="math inline">\(p^{\mathsf T}Mq\)</span>.
+先拿给定的两份概率方案回算:</p>
+<p><strong>Python · <code>step09_pure_and_mixed.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">M = np.array([[<span class="number">3.</span>,-<span class="number">2.</span>,<span class="number">1.</span>],[<span class="number">0.</span>,<span class="number">2.</span>,-<span class="number">1.</span>],[-<span class="number">1.</span>,<span class="number">1.</span>,<span class="number">3.</span>]])</span><br><span class="line">row_minima = M.<span class="built_in">min</span>(axis=<span class="number">1</span>)</span><br><span class="line">column_maxima = M.<span class="built_in">max</span>(axis=<span class="number">0</span>)</span><br><span class="line">p = np.array([<span class="number">2</span>/<span class="number">7</span>,<span class="number">16</span>/<span class="number">35</span>,<span class="number">9</span>/<span class="number">35</span>])</span><br><span class="line">q = np.array([<span class="number">2</span>/<span class="number">5</span>,<span class="number">2</span>/<span class="number">5</span>,<span class="number">1</span>/<span class="number">5</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;row minima:&quot;</span>, row_minima, <span class="string">&quot;pure maximin:&quot;</span>, row_minima.<span class="built_in">max</span>())</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;column maxima:&quot;</span>, column_maxima, <span class="string">&quot;pure minimax:&quot;</span>, column_maxima.<span class="built_in">min</span>())</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;row guarantee against pure columns:&quot;</span>, M.T@p)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;column bound against pure rows:&quot;</span>, M@q)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;expected payoff:&quot;</span>, p@M@q)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB · <code>step09_pure_and_mixed.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">M = [<span class="number">3</span>,<span class="number">-2</span>,<span class="number">1</span>;<span class="number">0</span>,<span class="number">2</span>,<span class="number">-1</span>;<span class="number">-1</span>,<span class="number">1</span>,<span class="number">3</span>];</span><br><span class="line">row_minima = <span class="built_in">min</span>(M,[],<span class="number">2</span>); column_maxima = <span class="built_in">max</span>(M,[],<span class="number">1</span>);</span><br><span class="line">p = [<span class="number">2</span>/<span class="number">7</span>,<span class="number">16</span>/<span class="number">35</span>,<span class="number">9</span>/<span class="number">35</span>].&#x27;; q = [<span class="number">2</span>/<span class="number">5</span>,<span class="number">2</span>/<span class="number">5</span>,<span class="number">1</span>/<span class="number">5</span>].&#x27;;</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;row minima:&#x27;</span>); <span class="built_in">disp</span>(row_minima.&#x27;);</span><br><span class="line">fprintf(<span class="string">&#x27;pure maximin: %.1f\n&#x27;</span>,<span class="built_in">max</span>(row_minima));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;column maxima:&#x27;</span>); <span class="built_in">disp</span>(column_maxima);</span><br><span class="line">fprintf(<span class="string">&#x27;pure minimax: %.1f\n&#x27;</span>,<span class="built_in">min</span>(column_maxima));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;row guarantee against pure columns:&#x27;</span>); <span class="built_in">disp</span>((M.&#x27;*p).&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;column bound against pure rows:&#x27;</span>); <span class="built_in">disp</span>((M*q).&#x27;);</span><br><span class="line">fprintf(<span class="string">&#x27;expected payoff: %.6f\n&#x27;</span>,p.&#x27;*M*q);</span><br></pre></td></tr></table></figure>
+<p>程序使用 <span class="math inline">\(p=(2/7,16/35,9/35)^{\mathsf
+T}\)</span> 和 <span class="math inline">\(q=(2/5,2/5,1/5)^{\mathsf
+T}\)</span>. 计算可见 <span class="math inline">\(M^{\mathsf
+T}p\)</span> 和 <span class="math inline">\(Mq\)</span> 的全部分量均为
+0.6.</p>
+<p>前一个等式说明, 行方采用这份 <span class="math inline">\(p\)</span>
+时, 对任意纯列策略的期望收益都为 0.6, 对列策略的任何概率组合也一样.
+后一个等式说明, 列方采用这份 <span class="math inline">\(q\)</span> 时,
+对任意行策略都把期望收益控制在 0.6.
+两份证据把混合策略下的最优值夹在同一个数上.</p>
+<p><img src="/images/MinimaxAndMaximinProgramming/MM-6.png" style="width:100%"></p>
+<p>图 27-6 纯策略下的逐行与逐列比较,
+以及给定混合策略对各个对方纯策略的期望收益. 图中 0.6 是期望值,
+不表示单次选取的矩阵元素都等于 0.6.</p>
+<p>有限两人零和模型允许双方采用混合策略时,
+极小极大定理保证两个方向的值相等. 本例的纯策略结果并不相等,
+也不能把该定理推广到任意优化问题.
+求出两份概率方案的完整线性规划和双语言程序见进阶阅读 F.6. 对一般函数,
+在有关极值存在时只能直接保证最大最小值不超过最小最大值.</p>
+<h2 id="加入情景以后-怎样解释保障范围">27.10 加入情景以后,
+怎样解释保障范围</h2>
+<h3 id="同一个可行域-不同的情景集合">27.10.1 同一个可行域,
+不同的情景集合</h3>
+<p>回到社区资源例题. 先只列常态与压力较大两个情景, 再加入严重压力情景,
+资源比例限制保持不变.</p>
+<p><strong>Python ·
+<code>step10_expanded_scenarios.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linprog</span><br><span class="line">R = np.array([[<span class="number">.15</span>,<span class="number">.08</span>,-<span class="number">.05</span>],[<span class="number">.10</span>,<span class="number">.06</span>,<span class="number">.02</span>],[<span class="number">.05</span>,<span class="number">.04</span>,<span class="number">.03</span>]])</span><br><span class="line">guarantees = []</span><br><span class="line"><span class="keyword">for</span> count <span class="keyword">in</span> [<span class="number">2</span>,<span class="number">3</span>]:</span><br><span class="line">    coefficients = R[:,:count]</span><br><span class="line">    result = linprog([<span class="number">0.</span>,<span class="number">0.</span>,<span class="number">0.</span>,-<span class="number">1.</span>],</span><br><span class="line">        A_ub=np.column_stack([-coefficients.T,np.ones(count)]),</span><br><span class="line">        b_ub=np.zeros(count), A_eq=[[<span class="number">1.</span>,<span class="number">1.</span>,<span class="number">1.</span>,<span class="number">0.</span>]], b_eq=[<span class="number">1.</span>],</span><br><span class="line">        bounds=[(<span class="number">0.</span>,<span class="number">1.</span>)]*<span class="number">3</span>+[(<span class="literal">None</span>,<span class="literal">None</span>)], method=<span class="string">&quot;highs&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> result.success:</span><br><span class="line">        <span class="keyword">raise</span> RuntimeError(result.message)</span><br><span class="line">    u, t = result.x[:<span class="number">3</span>], <span class="built_in">float</span>(result.x[<span class="number">3</span>])</span><br><span class="line">    <span class="keyword">assert</span> np.isclose((coefficients.T@u).<span class="built_in">min</span>(),t,atol=<span class="number">1e-8</span>,rtol=<span class="number">0</span>)</span><br><span class="line">    guarantees.append(t)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;scenario count:&quot;</span>, count, <span class="string">&quot;allocation:&quot;</span>, u, <span class="string">&quot;guarantee:&quot;</span>, t)</span><br><span class="line"><span class="keyword">assert</span> guarantees[<span class="number">1</span>] &lt;= guarantees[<span class="number">0</span>]+<span class="number">1e-8</span></span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB ·
+<code>step10_expanded_scenarios.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">R = [<span class="number">.15</span>,<span class="number">.08</span>,<span class="number">-.05</span>;<span class="number">.10</span>,<span class="number">.06</span>,<span class="number">.02</span>;<span class="number">.05</span>,<span class="number">.04</span>,<span class="number">.03</span>];</span><br><span class="line">guarantees = <span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">2</span>); counts = [<span class="number">2</span>,<span class="number">3</span>];</span><br><span class="line">options = optimoptions(<span class="string">&#x27;linprog&#x27;</span>,<span class="string">&#x27;Display&#x27;</span>,<span class="string">&#x27;none&#x27;</span>);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">numel</span>(counts)</span><br><span class="line">    count = counts(k); coefficients = R(:,<span class="number">1</span>:count);</span><br><span class="line">    A = [-coefficients.&#x27;,<span class="built_in">ones</span>(count,<span class="number">1</span>)];</span><br><span class="line">    [w,~,flag,out] = linprog([<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">-1</span>].&#x27;,A,<span class="built_in">zeros</span>(count,<span class="number">1</span>), ...</span><br><span class="line">        [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>],<span class="number">1</span>,[<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,-Inf].&#x27;,[<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,Inf].&#x27;,options);</span><br><span class="line">    <span class="keyword">if</span> flag ~= <span class="number">1</span>, error(<span class="string">&#x27;Solve failed: %s&#x27;</span>,out.message); <span class="keyword">end</span></span><br><span class="line">    u = w(<span class="number">1</span>:<span class="number">3</span>); t = w(<span class="number">4</span>);</span><br><span class="line">    assert(<span class="built_in">abs</span>(<span class="built_in">min</span>(coefficients.&#x27;*u)-t) &lt; <span class="number">1e-8</span>);</span><br><span class="line">    guarantees(k) = t;</span><br><span class="line">    fprintf(<span class="string">&#x27;scenario count: %d, guarantee: %.6f\n&#x27;</span>,count,t); <span class="built_in">disp</span>(u.&#x27;);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">assert(guarantees(<span class="number">2</span>) &lt;= guarantees(<span class="number">1</span>)+<span class="number">1e-8</span>);</span><br></pre></td></tr></table></figure>
+<p>表 27-7 情景集合变化后的保障值.</p>
+<table>
+<thead>
+<tr>
+<th>模型覆盖的情景</th>
+<th>最优比例</th>
+<th>保障值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>前两个情景</td>
+<td><span class="math inline">\((1,0,0)\)</span></td>
+<td>0.08</td>
+</tr>
+<tr>
+<td>全部三个情景</td>
+<td><span class="math inline">\((0,0,1)\)</span></td>
+<td>0.03</td>
+</tr>
+</tbody>
+</table>
+<p>第一份保障承诺只覆盖前两个情景. 当严重压力进入考察范围, 原来的 A
+方案会得到 -0.05, 于是最优选择改变. 这里不需要给情景指定发生概率,
+但必须说明列入了哪些情景.</p>
+<p>在原决策可行域相同的前提下,
+增加损失分量会使每个固定方案的最大损失不减, 因此最小最大最优值不减;
+增加成效情景会使每个固定方案的最低成效不增, 因此最大最小最优值不增.
+如果同时改变资源范围或系数, 就不能只依据这一条规律判断.</p>
+<h3 id="从算例提炼一般模型">27.10.2 从算例提炼一般模型</h3>
+<p>令 <span class="math inline">\(x=(x_1,\ldots,x_n)^{\mathsf
+T}\)</span>, <span class="math inline">\(\mathcal F\)</span> 为原可行域.
+对可比较的损失 <span class="math inline">\(f_i\)</span>,
+最小最大问题的辅助变量形式为</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\min_{x,t}\quad t,\\
+&amp;\mathrm{s.t.}\quad\begin{cases}
+f_i(x)\leqslant t,\quad i=1,\ldots,m,\\
+x\in\mathcal F.
+\end{cases}
+\end{aligned}
+\]</span></p>
+<p>对可比较的成效 <span class="math inline">\(g_i\)</span>,
+最大最小问题的辅助变量形式为</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\max_{x,t}\quad t,\\
+&amp;\mathrm{s.t.}\quad\begin{cases}
+g_i(x)\geqslant t,\quad i=1,\ldots,m,\\
+x\in\mathcal F.
+\end{cases}
+\end{aligned}
+\]</span></p>
+<p>指标单位或量级不同时, 应依据服务标准,
+允许误差或参考规模作有解释的处理. 使用共同上界或下界,
+不能自动消除尺度差异.</p>
+<p>如果分量及原约束都是线性的, 转换后可用线性规划.
+如果损失分量凸且可行域凸, 最小最大模型具有凸优化结构;
+如果成效分量凹且可行域凸, 最大最小模型也可转为凸优化问题. [4]
+分量含绝对值时需要继续处理, 分量非凸时不能由辅助变量转换推断全局最优.
+详细条件和光滑接口见进阶阅读 F.3.</p>
+<p>当原最优值存在时, minimax 可行方案给出最优值的上界, maximin
+可行方案给出最优值的下界. 想确认全局最优,
+还需要相反方向的界或其他有效证据. 本章分别使用两点距离下界,
+严重压力成效上界, 平方损失平均值下界以及矩阵双方策略证据.</p>
+<h3 id="结果检查与后续阅读">27.10.3 结果检查与后续阅读</h3>
+<p>回到任何一个新模型时, 依次完成以下检查:</p>
+<ol type="1">
+<li>固定一个可行方案, 手算一两个分量, 核对单位和矩阵行列含义.</li>
+<li>判断指标方向, 对当前方案取最大损失或最低成效.</li>
+<li>检查辅助约束方向, 辅助变量边界及所有原约束的扩展.</li>
+<li>检查求解状态, 回代全部原函数和约束, 比较真实最坏指标与辅助变量.</li>
+<li>区分当前可行值与全局最优值, 再判断最优方案是否唯一.</li>
+<li>说明保障覆盖的情景, 距离假设和实际服务要求.</li>
+</ol>
+<p>表 27-8 最不利情形决策的配套阅读.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>想进一步理解的问题</th>
+<th>配套位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全部最优中心与选址限制的影响</td>
+<td>进阶阅读 F.1.5, 拓展练习 3 与 4</td>
+</tr>
+<tr>
+<td>凸性, 取负关系, SLSQP 与 MATLAB 接口</td>
+<td>进阶阅读 F.3</td>
+</tr>
+<tr>
+<td>欧氏覆盖的 Jacobian 与全局下界</td>
+<td>进阶阅读 F.4</td>
+</tr>
+<tr>
+<td>多条线性成效的均衡与唯一性证明</td>
+<td>进阶阅读 F.5</td>
+</tr>
+<tr>
+<td>博弈双方的 LP 和极小极大定理</td>
+<td>进阶阅读 F.6</td>
+</tr>
+<tr>
+<td>原约束, 等式, 向量残差与 Jacobian 的封装</td>
+<td><code>AuxiliaryVariableSolver.md</code></td>
+</tr>
+</tbody>
+</table>
+<p>下一章研究动态规划. 本章的一份方案要面对多个情景,
+下一章的一份方案还包含前后相接的决策阶段,
+需要把当前选择与后续最优结果联系起来.</p>
+<h3 id="分步练习">27.10.4 分步练习</h3>
+<ol type="1">
+<li>用中心 <span class="math inline">\((8,8.5)\)</span> 手算到需求点 4
+的距离, 再解释 Python 中 <code>sum(axis=1)</code> 的含义.</li>
+<li>对这个中心试取 <span class="math inline">\(t=13\)</span>,
+指出哪几个需求点不满足共同上界约束.</li>
+<li>若位移为 <span class="math inline">\(u=-2,v=3\)</span>,
+列出四个带符号的和, 验证绝对值恒等式.</li>
+<li>手算资源比例 <span class="math inline">\((0,0.5,0.5)^{\mathsf
+T}\)</span> 的三个情景成效, 说明平均值与保障值的差别.</li>
+<li>两个成效恒为 <span class="math inline">\(-2,-3\)</span> 时, 哪些
+<span class="math inline">\(t\)</span> 可行?
+为什么不能使用默认非负边界?</li>
+<li>新增 <span class="math inline">\(u_2\geqslant0.2\)</span>,
+其他条件仍使用三个情景的原模型. 写出新增矩阵行,
+求最优比例并构造保障值上界.</li>
+<li>对平方损失模型取 <span class="math inline">\(x=0.5,t=2\)</span>,
+哪条约束不满足? 把 <span class="math inline">\(t\)</span> 改成 2.25
+后是否可行?</li>
+<li>为什么覆盖例题使用平方半径仍保留最优中心,
+改成距离平方和却可能改变中心?</li>
+<li>从给定矩阵逐行和逐列计算纯策略的两种值. 两个值不同说明了什么?</li>
+<li>只列前两个情景的资源模型, 能否声称对严重压力也保障 0.08?
+解释增加情景时保障值不增所需的前提.</li>
+</ol>
+<p>进阶阅读 F.8.3 另有八道完整练习, 练习提示统一列在
+<code>ExerciseHints.md</code>.</p>
+<p>配套阅读与实验: <a
+href="../reading/27/Index.md">本章资料索引</a>.</p>
+<h2 id="参考资料">参考资料</h2>
+<p>[1] SciPy. minimize, SLSQP.
+https://docs.scipy.org/doc/scipy/reference/optimize.minimize-slsqp.html.</p>
+<p>[2] SciPy. linprog.
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.linprog.html.</p>
+<p>[3] MathWorks. Smooth Formulations of Nonsmooth Functions.
+https://www.mathworks.com/help/optim/ug/smooth-formulation-using-auxiliary-variables.html.</p>
+<p>[4] Boyd S, Vandenberghe L. Convex Optimization.
+https://web.stanford.edu/~boyd/cvxbook/.</p>
+<p>[5] MathWorks. fminimax.
+https://www.mathworks.com/help/optim/ug/fminimax.html.</p>
+<p>[6] MathWorks. fmincon.
+https://www.mathworks.com/help/optim/ug/fmincon.html.</p>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

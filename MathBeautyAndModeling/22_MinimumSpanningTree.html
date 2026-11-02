@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="第 22 章 最小生成树: 用最小总代价连接全部顶点 六座城市需要建设一张基础通信网络. 只要能够通过其他城市中转通信, 就不必给每对城市都铺一条直连线路. 怎样从候选线路中选出一部分, 连接全部城市并使建设总代价最小? 第 21 章优化两点之间的一条路线, 本章优化覆盖全部顶点的一组建设边. 先手算几套方案是否连通, 再用分量标签理解Kruskal的合并, 用跨割边理解Prim的扩">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/MathBeautyAndModeling/22_MinimumSpanningTree.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="第 22 章 最小生成树: 用最小总代价连接全部顶点 六座城市需要建设一张基础通信网络. 只要能够通过其他城市中转通信, 就不必给每对城市都铺一条直连线路. 怎样从候选线路中选出一部分, 连接全部城市并使建设总代价最小? 第 21 章优化两点之间的一条路线, 本章优化覆盖全部顶点的一组建设边. 先手算几套方案是否连通, 再用分量标签理解Kruskal的合并, 用跨割边理解Prim的扩">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/MinimumSpanningTree/candidate_network.png">
+<meta property="og:image" content="http://example.com/images/MinimumSpanningTree/tree_comparison.png">
+<meta property="og:image" content="http://example.com/images/MinimumSpanningTree/kruskal_steps.png">
+<meta property="og:image" content="http://example.com/images/MinimumSpanningTree/prim_cut_step.png">
+<meta property="og:image" content="http://example.com/images/MinimumSpanningTree/prim_steps.png">
+<meta property="og:image" content="http://example.com/images/MinimumSpanningTree/cost_sensitivity.png">
+<meta property="article:published_time" content="2026-11-02T02:53:08.936Z">
+<meta property="article:modified_time" content="2026-10-31T09:20:36.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/MinimumSpanningTree/candidate_network.png">
+
+
+<link rel="canonical" href="http://example.com/MathBeautyAndModeling/22_MinimumSpanningTree">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/MathBeautyAndModeling/22_MinimumSpanningTree.html","path":"MathBeautyAndModeling/22_MinimumSpanningTree.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-22-%E7%AB%A0-%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91-%E7%94%A8%E6%9C%80%E5%B0%8F%E6%80%BB%E4%BB%A3%E4%BB%B7%E8%BF%9E%E6%8E%A5%E5%85%A8%E9%83%A8%E9%A1%B6%E7%82%B9"><span class="nav-number">1.</span> <span class="nav-text">第 22 章
+最小生成树: 用最小总代价连接全部顶点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E6%8A%8A%E5%80%99%E9%80%89%E7%BA%BF%E8%B7%AF%E5%92%8C%E5%BB%BA%E8%AE%BE%E7%9B%AE%E6%A0%87%E5%86%99%E6%B8%85%E6%A5%9A"><span class="nav-number">1.1.</span> <span class="nav-text">22.1
+先把候选线路和建设目标写清楚</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E5%9F%8E%E5%B8%82-%E5%8D%81%E6%9D%A1%E5%80%99%E9%80%89%E7%BA%BF%E8%B7%AF"><span class="nav-number">1.1.1.</span> <span class="nav-text">22.1.1 六城市, 十条候选线路</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E7%A1%AE%E8%AE%A4%E4%B8%80%E6%A3%B5%E7%94%9F%E6%88%90%E6%A0%91-%E5%86%8D%E6%AF%94%E8%BE%83%E8%B4%B9%E7%94%A8"><span class="nav-number">1.2.</span> <span class="nav-text">22.2 先确认一棵生成树,
+再比较费用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E9%80%9A%E5%8A%A0%E4%B8%8A%E4%BA%94%E6%9D%A1%E8%BE%B9-%E6%89%8D%E8%83%BD%E5%BE%97%E5%88%B0%E6%9C%AC%E4%BE%8B%E7%9A%84%E6%A0%91"><span class="nav-number">1.2.1.</span> <span class="nav-text">22.2.1 连通加上五条边,
+才能得到本例的树</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kruskal-%E5%85%88%E6%8E%92%E5%BA%8F-%E5%86%8D%E5%90%88%E5%B9%B6%E4%B8%8D%E5%90%8C%E5%88%86%E9%87%8F"><span class="nav-number">1.3.</span> <span class="nav-text">22.3 Kruskal: 先排序,
+再合并不同分量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E4%B8%80%E4%B8%AA%E6%A0%87%E7%AD%BE-%E8%A1%A8%E7%A4%BA%E5%B7%B2%E7%BB%8F%E9%80%9A%E8%BF%87%E5%B7%B2%E9%80%89%E8%BE%B9%E8%BF%9E%E9%80%9A"><span class="nav-number">1.3.1.</span> <span class="nav-text">22.3.1 同一个标签,
+表示已经通过已选边连通</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E5%85%A8%E9%83%A8%E5%80%99%E9%80%89%E6%8C%89%E6%9D%83%E9%87%8D%E6%8E%92%E5%BA%8F"><span class="nav-number">1.3.2.</span> <span class="nav-text">22.3.2 把全部候选按权重排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%86%E6%8E%92%E5%BA%8F%E4%B8%8E%E5%88%86%E9%87%8F%E5%90%88%E5%B9%B6%E6%94%BE%E5%85%A5%E5%BE%AA%E7%8E%AF"><span class="nav-number">1.3.3.</span> <span class="nav-text">22.3.3 将排序与分量合并放入循环</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#prim%E7%9A%84%E5%80%99%E9%80%89%E8%8C%83%E5%9B%B4%E6%98%AF%E6%95%B4%E4%B8%AA%E5%B7%B2%E8%BF%9E%E6%8E%A5%E9%9B%86%E5%90%88"><span class="nav-number">1.4.</span> <span class="nav-text">22.4
+Prim的候选范围是整个已连接集合</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E5%8F%AB%E8%B7%A8%E5%89%B2%E8%BE%B9"><span class="nav-number">1.4.1.</span> <span class="nav-text">22.4.1 什么叫跨割边</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E5%8F%AA%E7%9C%8B%E5%88%9A%E5%8A%A0%E5%85%A5%E7%9A%84%E5%9F%8E%E5%B8%82"><span class="nav-number">1.4.2.</span> <span class="nav-text">22.4.2
+为什么不能只看刚加入的城市</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8key%E4%BF%9D%E5%AD%98%E6%9C%80%E8%BD%BB%E6%8E%A5%E5%85%A5%E8%BE%B9-%E5%AE%8C%E6%88%90prim%E5%BE%AA%E7%8E%AF"><span class="nav-number">1.5.</span> <span class="nav-text">22.5 用key保存最轻接入边,
+完成Prim循环</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#key%E4%B8%8E%E6%9C%80%E7%9F%AD%E8%B7%9D%E7%A6%BB%E7%9A%84%E6%9B%B4%E6%96%B0%E4%B8%8D%E5%90%8C"><span class="nav-number">1.5.1.</span> <span class="nav-text">22.5.1 key与最短距离的更新不同</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E9%80%89%E6%8B%A9-%E5%8A%A0%E5%85%A5%E4%B8%8E%E6%9B%B4%E6%96%B0%E6%8E%A5%E8%B5%B7%E6%9D%A5"><span class="nav-number">1.5.2.</span> <span class="nav-text">22.5.2 把选择, 加入与更新接起来</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E8%BE%B9%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AE%89%E5%85%A8-%E6%9C%AC%E4%BE%8B%E4%B8%BA%E4%BB%80%E4%B9%88%E5%94%AF%E4%B8%80"><span class="nav-number">1.6.</span> <span class="nav-text">22.6 选边为什么安全,
+本例为什么唯一?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E8%BD%BB%E8%B7%A8%E5%89%B2%E8%BE%B9%E7%9A%84%E4%BA%A4%E6%8D%A2%E8%AE%BA%E8%AF%81"><span class="nav-number">1.6.1.</span> <span class="nav-text">22.6.1 最轻跨割边的交换论证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E5%A4%8D%E6%9D%83%E9%87%8D%E4%B8%8D%E8%87%AA%E5%8A%A8%E6%84%8F%E5%91%B3%E7%9D%80%E5%A4%9A%E4%B8%AA%E6%9C%80%E4%BC%98%E6%96%B9%E6%A1%88"><span class="nav-number">1.6.2.</span> <span class="nav-text">22.6.2
+重复权重不自动意味着多个最优方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E5%B0%8F%E5%9B%BE%E6%9E%9A%E4%B8%BE%E5%85%A8%E9%83%A8%E5%80%99%E9%80%89%E4%BD%9C%E7%8B%AC%E7%AB%8B%E6%A0%B8%E9%AA%8C"><span class="nav-number">1.6.3.</span> <span class="nav-text">22.6.3
+对小图枚举全部候选作独立核验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%86%E7%9B%AE%E6%A0%87%E4%B8%8E%E7%BA%A6%E6%9D%9F%E5%86%99%E6%88%90%E5%BC%8F%E5%AD%90%E9%80%89%E8%AF%BB"><span class="nav-number">1.6.4.</span> <span class="nav-text">22.6.4 将目标与约束写成式子(选读)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E5%B0%8F%E5%BB%BA%E8%AE%BE%E8%BE%B9%E9%9B%86-%E4%B8%8E%E4%B8%A4%E7%82%B9%E6%9C%80%E7%9F%AD%E8%B7%AF%E7%BA%BF%E5%88%86%E5%88%AB%E8%AE%A1%E7%AE%97"><span class="nav-number">1.7.</span> <span class="nav-text">22.7 最小建设边集,
+与两点最短路线分别计算</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E7%A7%8D%E9%97%AE%E9%A2%98%E7%9A%84%E4%BC%98%E5%8C%96%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.7.1.</span> <span class="nav-text">22.7.1 两种问题的优化对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%90%86%E8%A7%A3%E9%80%89%E8%BE%B9%E5%90%8E%E7%94%A8%E6%88%90%E7%86%9F%E6%8E%A5%E5%8F%A3%E5%A4%8D%E6%A0%B8"><span class="nav-number">1.7.2.</span> <span class="nav-text">22.7.2 理解选边后用成熟接口复核</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E8%B7%AF%E6%8A%A5%E4%BB%B7%E6%94%B9%E5%8F%98%E6%97%B6-%E6%9C%80%E4%BC%98%E6%96%B9%E6%A1%88%E6%80%8E%E6%A0%B7%E8%B0%83%E6%95%B4"><span class="nav-number">1.8.</span> <span class="nav-text">22.8 线路报价改变时,
+最优方案怎样调整?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E7%9C%8B%E5%93%AA%E9%83%A8%E5%88%86%E4%BF%9D%E6%8C%81-%E5%93%AA%E9%83%A8%E5%88%86%E9%9C%80%E8%A6%81%E6%9B%BF%E6%8D%A2"><span class="nav-number">1.8.1.</span> <span class="nav-text">22.8.1 先看哪部分保持,
+哪部分需要替换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E8%BF%9E%E9%80%9A-%E9%9B%B6%E6%9D%83%E4%B8%8E%E8%B4%9F%E6%9D%83%E9%9C%80%E8%A6%81%E6%80%8E%E6%A0%B7%E5%A4%84%E7%90%86"><span class="nav-number">1.9.</span> <span class="nav-text">22.9 不连通,
+零权与负权需要怎样处理?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E7%94%9F%E6%88%90%E6%A0%91%E4%B8%8E%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A3%AE%E6%9E%97"><span class="nav-number">1.9.1.</span> <span class="nav-text">22.9.1 完整生成树与最小生成森林</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%B6%E6%9D%83%E4%B8%8E%E8%B4%9F%E6%9D%83%E6%98%AF%E5%90%88%E6%B3%95%E7%9A%84%E6%A0%91%E6%9D%83%E9%87%8D"><span class="nav-number">1.9.2.</span> <span class="nav-text">22.9.2 零权与负权是合法的树权重</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%93%E6%8E%A5%E5%8F%A3%E7%9A%84%E8%A6%86%E7%9B%96%E8%8C%83%E5%9B%B4%E9%9C%80%E8%A6%81%E6%98%8E%E7%A1%AE"><span class="nav-number">1.9.3.</span> <span class="nav-text">22.9.3 库接口的覆盖范围需要明确</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B9%E6%8D%AE%E8%A7%84%E6%A8%A1%E9%80%89%E6%8B%A9%E5%AE%9E%E7%8E%B0-%E6%A0%B9%E6%8D%AE%E9%9C%80%E6%B1%82%E6%A3%80%E6%9F%A5%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.10.</span> <span class="nav-text">22.10 根据规模选择实现,
+根据需求检查模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E8%BF%90%E7%AE%97%E4%B8%8E%E6%95%99%E5%AD%A6%E8%AE%B0%E5%BD%95%E7%9A%84%E5%BC%80%E9%94%80%E5%88%86%E5%BC%80%E8%AF%B4%E6%98%8E"><span class="nav-number">1.10.1.</span> <span class="nav-text">22.10.1
+核心运算与教学记录的开销分开说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E7%A8%8B%E8%A6%81%E6%B1%82%E8%B6%85%E5%87%BA%E6%A0%91%E6%A8%A1%E5%9E%8B%E6%97%B6"><span class="nav-number">1.10.2.</span> <span class="nav-text">22.10.2 工程要求超出树模型时</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.10.3.</span> <span class="nav-text">22.10.3 练习</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.11.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="第-22-章-最小生成树-用最小总代价连接全部顶点">第 22 章
+最小生成树: 用最小总代价连接全部顶点</h1>
+<p>六座城市需要建设一张基础通信网络. 只要能够通过其他城市中转通信,
+就不必给每对城市都铺一条直连线路. 怎样从候选线路中选出一部分,
+连接全部城市并使建设总代价最小?</p>
+<p>第 21 章优化两点之间的一条路线, 本章优化覆盖全部顶点的一组建设边.
+先手算几套方案是否连通, 再用分量标签理解Kruskal的合并,
+用跨割边理解Prim的扩展, 最后说明选择为什么安全,
+以及报价变化后如何重算.</p>
+<h2 id="先把候选线路和建设目标写清楚">22.1
+先把候选线路和建设目标写清楚</h2>
+<h3 id="六城市-十条候选线路">22.1.1 六城市, 十条候选线路</h3>
+<p>用顶点1至6表示六座城市, 无向边表示允许施工的双向线路,
+边权表示可相加的建设代价. 权重采用统一的教学代价单位, 数据为模拟网络,
+不对应实际城市报价. 若把权重解释为线路长度, 还需要单位长度造价相同,
+才能用最小总长度代表最小总费用.</p>
+<p>表 22-1 六城市的十条候选线路.</p>
+<div class="line-block">输入行号 | 候选线路 | 权重 |<br />
+: ---: | : ---: | : ---: |<br />
+1 | 1—2 | 14 |<br />
+2 | 1—3 | 18 |<br />
+3 | 2—3 | 13 |<br />
+4 | 2—4 | 18 |<br />
+5 | 2—5 | 16 |<br />
+6 | 3—4 | 12 |<br />
+7 | 3—5 | 16 |<br />
+8 | 4—5 | 14 |<br />
+9 | 4—6 | 19 |<br />
+10 | 5—6 | 10 |</div>
+<p>每条无向边只计一次. 1—2与2—1表示同一条线路. 只能选择候选表中的边;
+图中线条相交但未标出顶点, 不表示新增了一个接线城市.</p>
+<p><img src="/images/MinimumSpanningTree/candidate_network.png" style="width:100%"></p>
+<p>图 22-1 六城市候选网络. 数字是输入权重, 顶点位置与线长用于示意,
+不参与计算.</p>
+<p>Python用 <code>mst_data.py</code> 保存数据, MATLAB用
+<code>mst_data.m</code> 返回同一张表.
+后面的程序与这两个文件放在同一目录, 每个程序显式读取所需输入.
+城市编号均为1至6.</p>
+<p><strong>Python: <code>mst_data.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">N = <span class="number">6</span></span><br><span class="line">EDGES = [</span><br><span class="line">    (<span class="number">1</span>, <span class="number">2</span>, <span class="number">14</span>),</span><br><span class="line">    (<span class="number">1</span>, <span class="number">3</span>, <span class="number">18</span>),</span><br><span class="line">    (<span class="number">2</span>, <span class="number">3</span>, <span class="number">13</span>),</span><br><span class="line">    (<span class="number">2</span>, <span class="number">4</span>, <span class="number">18</span>),</span><br><span class="line">    (<span class="number">2</span>, <span class="number">5</span>, <span class="number">16</span>),</span><br><span class="line">    (<span class="number">3</span>, <span class="number">4</span>, <span class="number">12</span>),</span><br><span class="line">    (<span class="number">3</span>, <span class="number">5</span>, <span class="number">16</span>),</span><br><span class="line">    (<span class="number">4</span>, <span class="number">5</span>, <span class="number">14</span>),</span><br><span class="line">    (<span class="number">4</span>, <span class="number">6</span>, <span class="number">19</span>),</span><br><span class="line">    (<span class="number">5</span>, <span class="number">6</span>, <span class="number">10</span>),</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>mst_data.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">E</span> = <span class="title">mst_data</span><span class="params">()</span></span></span><br><span class="line">E = [<span class="number">1</span> <span class="number">2</span> <span class="number">14</span>;</span><br><span class="line">     <span class="number">1</span> <span class="number">3</span> <span class="number">18</span>;</span><br><span class="line">     <span class="number">2</span> <span class="number">3</span> <span class="number">13</span>;</span><br><span class="line">     <span class="number">2</span> <span class="number">4</span> <span class="number">18</span>;</span><br><span class="line">     <span class="number">2</span> <span class="number">5</span> <span class="number">16</span>;</span><br><span class="line">     <span class="number">3</span> <span class="number">4</span> <span class="number">12</span>;</span><br><span class="line">     <span class="number">3</span> <span class="number">5</span> <span class="number">16</span>;</span><br><span class="line">     <span class="number">4</span> <span class="number">5</span> <span class="number">14</span>;</span><br><span class="line">     <span class="number">4</span> <span class="number">6</span> <span class="number">19</span>;</span><br><span class="line">     <span class="number">5</span> <span class="number">6</span> <span class="number">10</span>];</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>建设任务要求全部给定城市互相连通. 本例边权严格为正,
+如果某个连通方案含圈, 删除圈上一条边仍连通且费用降低. 反复删除,
+就得到一棵树. 因而在当前没有容量与可靠性附加要求的情形下,
+可在生成树中寻找最低建设代价.</p>
+<h2 id="先确认一棵生成树-再比较费用">22.2 先确认一棵生成树,
+再比较费用</h2>
+<h3 id="连通加上五条边-才能得到本例的树">22.2.1 连通加上五条边,
+才能得到本例的树</h3>
+<p>树是连通且无圈的无向图. 生成树包含原图全部顶点, 只选择原图部分边. 有
+<span class="math inline">\(n\geqslant1\)</span> 个顶点的树恰有 <span
+class="math inline">\(n-1\)</span> 条边, 所以六城市生成树有五条边.
+若已知连通, 五条边就能保证无圈; 仅数出五条边,
+还需要检查顶点覆盖与连通性.</p>
+<p>先看三套可行方案, 再看两种容易误判的边集. 行号对应22.1节完整边表,
+输入顺序不等于算法选边顺序.</p>
+<p>表 22-2 候选边集的结构与总权重.</p>
+<div class="line-block">选择的输入行号 | 结构 | 总权重 |<br />
+: --- | : --- | : ---: |<br />
+1, 3, 6, 8, 10 | 连通六点, 五条边, 是生成树 | 63 |<br />
+1, 2, 6, 8, 10 | 是另一棵生成树 | 68 |<br />
+1, 4, 9, 2, 7 | 是另一棵生成树 | 85 |<br />
+1, 2, 3, 6, 8 | 六点中城市6孤立, 其余部分含圈 | 71 |<br />
+全部十条边 | 连通, 但含圈 | 150 |</div>
+<p><strong>Python:
+<code>candidate_tree_check_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mst_data <span class="keyword">import</span> N, EDGES</span><br><span class="line"></span><br><span class="line">candidates = [[<span class="number">1</span>, <span class="number">3</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">10</span>], [<span class="number">1</span>, <span class="number">2</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">10</span>], [<span class="number">1</span>, <span class="number">4</span>, <span class="number">9</span>, <span class="number">2</span>, <span class="number">7</span>],</span><br><span class="line">              [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">6</span>, <span class="number">8</span>], <span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">1</span>, <span class="number">11</span>))]</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> ids <span class="keyword">in</span> candidates:</span><br><span class="line">    chosen = [EDGES[k - <span class="number">1</span>] <span class="keyword">for</span> k <span class="keyword">in</span> ids]</span><br><span class="line">    reached = &#123;<span class="number">1</span>&#125;</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(N - <span class="number">1</span>):</span><br><span class="line">        <span class="keyword">for</span> u, v, weight <span class="keyword">in</span> chosen:</span><br><span class="line">            <span class="keyword">if</span> u <span class="keyword">in</span> reached <span class="keyword">or</span> v <span class="keyword">in</span> reached:</span><br><span class="line">                reached.update((u, v))</span><br><span class="line">    connected = <span class="built_in">len</span>(reached) == N</span><br><span class="line">    is_tree = connected <span class="keyword">and</span> <span class="built_in">len</span>(chosen) == N - <span class="number">1</span></span><br><span class="line">    cost = <span class="built_in">sum</span>(w <span class="keyword">for</span> u, v, w <span class="keyword">in</span> chosen)</span><br><span class="line">    records.append(<span class="built_in">dict</span>(ids=ids, connected=connected, is_tree=is_tree, cost=cost))</span><br><span class="line">    <span class="built_in">print</span>(records[-<span class="number">1</span>])</span><br><span class="line"><span class="keyword">assert</span> [r[<span class="string">&quot;cost&quot;</span>] <span class="keyword">for</span> r <span class="keyword">in</span> records] == [<span class="number">63</span>, <span class="number">68</span>, <span class="number">85</span>, <span class="number">71</span>, <span class="number">150</span>]</span><br><span class="line"><span class="keyword">assert</span> [r[<span class="string">&quot;is_tree&quot;</span>] <span class="keyword">for</span> r <span class="keyword">in</span> records] == [<span class="literal">True</span>, <span class="literal">True</span>, <span class="literal">True</span>, <span class="literal">False</span>, <span class="literal">False</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>candidate_tree_check_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">E = mst_data(); n = <span class="number">6</span>;</span><br><span class="line">candidates = &#123;[<span class="number">1</span> <span class="number">3</span> <span class="number">6</span> <span class="number">8</span> <span class="number">10</span>],[<span class="number">1</span> <span class="number">2</span> <span class="number">6</span> <span class="number">8</span> <span class="number">10</span>],[<span class="number">1</span> <span class="number">4</span> <span class="number">9</span> <span class="number">2</span> <span class="number">7</span>],[<span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">6</span> <span class="number">8</span>],<span class="number">1</span>:<span class="number">10</span>&#125;;</span><br><span class="line">connected = <span class="built_in">false</span>(<span class="number">1</span>,<span class="number">5</span>); is_tree = <span class="built_in">false</span>(<span class="number">1</span>,<span class="number">5</span>); costs = <span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">5</span>);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">numel</span>(candidates)</span><br><span class="line">    chosen = E(candidates&#123;k&#125;,:);</span><br><span class="line">    reached = <span class="built_in">false</span>(<span class="number">1</span>,n); reached(<span class="number">1</span>) = <span class="built_in">true</span>;</span><br><span class="line">    <span class="keyword">for</span> pass = <span class="number">1</span>:n<span class="number">-1</span></span><br><span class="line">        <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="built_in">size</span>(chosen,<span class="number">1</span>)</span><br><span class="line">            u = chosen(<span class="built_in">j</span>,<span class="number">1</span>); v = chosen(<span class="built_in">j</span>,<span class="number">2</span>);</span><br><span class="line">            <span class="keyword">if</span> reached(u) || reached(v), reached([u,v]) = <span class="built_in">true</span>; <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    connected(k) = all(reached);</span><br><span class="line">    is_tree(k) = connected(k) &amp;&amp; <span class="built_in">size</span>(chosen,<span class="number">1</span>)==n<span class="number">-1</span>;</span><br><span class="line">    costs(k) = sum(chosen(:,<span class="number">3</span>));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(connected); <span class="built_in">disp</span>(is_tree); <span class="built_in">disp</span>(costs);</span><br><span class="line">assert(<span class="built_in">isequal</span>(costs,[<span class="number">63</span> <span class="number">68</span> <span class="number">85</span> <span class="number">71</span> <span class="number">150</span>]));</span><br><span class="line">assert(<span class="built_in">isequal</span>(is_tree,logical([<span class="number">1</span> <span class="number">1</span> <span class="number">1</span> <span class="number">0</span> <span class="number">0</span>])));</span><br></pre></td></tr></table></figure>
+<p>程序逐步扩展从城市1可达的集合, 核对全部城市后,
+再把连通与边数条件合用. 即使某个顶点没有出现在选中边端,
+它仍属于给定顶点集, 不能擅自删去.</p>
+<p><img src="/images/MinimumSpanningTree/tree_comparison.png" style="width:100%"></p>
+<p>图 22-2 同一候选网络中的三棵生成树. 结构都可行, 总权重分别为63, 68,
+85. 仅比较这三棵, 还不足以排除其他所有生成树;
+后面用安全选边与枚举说明最优性.</p>
+<p>最小生成树就是全部生成树中边权和最小的一棵, 记总权重为</p>
+<p><span class="math display">\[
+L(T)=\sum\limits_{e\in E_T}w(e).
+\]</span></p>
+<p>不同边集可能具有相同的最小总权重. 因此, 可行性,
+最优性和唯一性是需要分别说明的三件事.</p>
+<h2 id="kruskal-先排序-再合并不同分量">22.3 Kruskal: 先排序,
+再合并不同分量</h2>
+<h3 id="同一个标签-表示已经通过已选边连通">22.3.1 同一个标签,
+表示已经通过已选边连通</h3>
+<p>开始没有选边, 每座城市独自构成一个分量. 加入一条连接不同分量的边,
+就把两个分量合并; 若两端已在同一分量, 新边会与已有路径组成圈,
+应跳过.</p>
+<p>先用直观标签理解这件事. 假设已选2—3, 3—4和5—6, 当前分量为</p>
+<p><span class="math display">\[
+\{1\},\qquad\{2,3,4\},\qquad\{5,6\}.
+\]</span></p>
+<p>按城市顺序记标签为 <span
+class="math inline">\((1,2,2,2,5,5)\)</span>. 标签只表示属于同一组,
+不表示城市之间的行走路线. 接下来考察1—2, 4—5, 2—5: 前两条各合并两个分量;
+最后一条的两端已经连通, 加入就成圈.</p>
+<p><strong>Python: <code>component_merge_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Initially selected edges: 2-3, 3-4, 5-6.</span></span><br><span class="line">labels = &#123;<span class="number">1</span>: <span class="number">1</span>, <span class="number">2</span>: <span class="number">2</span>, <span class="number">3</span>: <span class="number">2</span>, <span class="number">4</span>: <span class="number">2</span>, <span class="number">5</span>: <span class="number">5</span>, <span class="number">6</span>: <span class="number">5</span>&#125;</span><br><span class="line">incoming = [(<span class="number">1</span>, <span class="number">2</span>, <span class="number">14</span>), (<span class="number">4</span>, <span class="number">5</span>, <span class="number">14</span>), (<span class="number">2</span>, <span class="number">5</span>, <span class="number">16</span>)]</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> u, v, weight <span class="keyword">in</span> incoming:</span><br><span class="line">    before = labels.copy()</span><br><span class="line">    old_u, old_v = labels[u], labels[v]</span><br><span class="line">    accepted = old_u != old_v</span><br><span class="line">    <span class="keyword">if</span> accepted:</span><br><span class="line">        <span class="keyword">for</span> vertex <span class="keyword">in</span> labels:</span><br><span class="line">            <span class="keyword">if</span> labels[vertex] == old_v:</span><br><span class="line">                labels[vertex] = old_u</span><br><span class="line">    records.append(<span class="built_in">dict</span>(edge=(u, v, weight), before=before,</span><br><span class="line">                        after=labels.copy(), accepted=accepted))</span><br><span class="line">    <span class="built_in">print</span>((u, v), <span class="string">&quot;是否加入:&quot;</span>, accepted, <span class="string">&quot;分量标签:&quot;</span>, <span class="built_in">list</span>(labels.values()))</span><br><span class="line"><span class="keyword">assert</span> [r[<span class="string">&quot;accepted&quot;</span>] <span class="keyword">for</span> r <span class="keyword">in</span> records] == [<span class="literal">True</span>, <span class="literal">True</span>, <span class="literal">False</span>]</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">len</span>(<span class="built_in">set</span>(labels.values())) == <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>component_merge_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">labels = [<span class="number">1</span> <span class="number">2</span> <span class="number">2</span> <span class="number">2</span> <span class="number">5</span> <span class="number">5</span>];</span><br><span class="line">incoming = [<span class="number">1</span> <span class="number">2</span> <span class="number">14</span>; <span class="number">4</span> <span class="number">5</span> <span class="number">14</span>; <span class="number">2</span> <span class="number">5</span> <span class="number">16</span>];</span><br><span class="line">accepted = <span class="built_in">false</span>(<span class="number">1</span>,<span class="number">3</span>); history = <span class="built_in">zeros</span>(<span class="number">3</span>,<span class="number">6</span>);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">size</span>(incoming,<span class="number">1</span>)</span><br><span class="line">    u = incoming(k,<span class="number">1</span>); v = incoming(k,<span class="number">2</span>);</span><br><span class="line">    old_u = labels(u); old_v = labels(v);</span><br><span class="line">    accepted(k) = old_u~=old_v;</span><br><span class="line">    <span class="keyword">if</span> accepted(k)</span><br><span class="line">        <span class="keyword">for</span> vertex = <span class="number">1</span>:<span class="built_in">numel</span>(labels)</span><br><span class="line">            <span class="keyword">if</span> labels(vertex)==old_v, labels(vertex)=old_u; <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    history(k,:) = labels;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(accepted); <span class="built_in">disp</span>(history);</span><br><span class="line">assert(<span class="built_in">isequal</span>(accepted,logical([<span class="number">1</span> <span class="number">1</span> <span class="number">0</span>])));</span><br><span class="line">assert(<span class="built_in">numel</span>(unique(labels))==<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+<p>合并时要改整个分量的标签, 只改新边两个端点会遗漏同组其他城市.
+标签的具体数值可以不同,
+重要的是相同标签恰好对应已选边的同一连通分量.</p>
+<h3 id="把全部候选按权重排序">22.3.2 把全部候选按权重排序</h3>
+<p>Kruskal按全图边权从小到大考察. 同权时按端点编号固定顺序,
+便于对照手算. 这只是并列时的复现规则,
+不表示某个端点编号更有建设价值.</p>
+<p><strong>Python: <code>edge_sort_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mst_data <span class="keyword">import</span> EDGES</span><br><span class="line"></span><br><span class="line">normalized = [(<span class="built_in">min</span>(u, v), <span class="built_in">max</span>(u, v), w) <span class="keyword">for</span> u, v, w <span class="keyword">in</span> EDGES]</span><br><span class="line">ordered = <span class="built_in">sorted</span>(normalized, key=<span class="keyword">lambda</span> edge: (edge[<span class="number">2</span>], edge[<span class="number">0</span>], edge[<span class="number">1</span>]))</span><br><span class="line"><span class="keyword">for</span> edge <span class="keyword">in</span> ordered:</span><br><span class="line">    <span class="built_in">print</span>(edge)</span><br><span class="line"><span class="keyword">assert</span> ordered[:<span class="number">5</span>] == [(<span class="number">5</span>, <span class="number">6</span>, <span class="number">10</span>), (<span class="number">3</span>, <span class="number">4</span>, <span class="number">12</span>), (<span class="number">2</span>, <span class="number">3</span>, <span class="number">13</span>), (<span class="number">1</span>, <span class="number">2</span>, <span class="number">14</span>), (<span class="number">4</span>, <span class="number">5</span>, <span class="number">14</span>)]</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>edge_sort_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">E = mst_data();</span><br><span class="line">E(:,<span class="number">1</span>:<span class="number">2</span>) = <span class="built_in">sort</span>(E(:,<span class="number">1</span>:<span class="number">2</span>),<span class="number">2</span>);</span><br><span class="line">ordered = <span class="built_in">sortrows</span>(E,[<span class="number">3</span> <span class="number">1</span> <span class="number">2</span>]);</span><br><span class="line"><span class="built_in">disp</span>(ordered);</span><br><span class="line">assert(<span class="built_in">isequal</span>(ordered(<span class="number">1</span>:<span class="number">5</span>,:),[<span class="number">5</span> <span class="number">6</span> <span class="number">10</span>; <span class="number">3</span> <span class="number">4</span> <span class="number">12</span>; <span class="number">2</span> <span class="number">3</span> <span class="number">13</span>; <span class="number">1</span> <span class="number">2</span> <span class="number">14</span>; <span class="number">4</span> <span class="number">5</span> <span class="number">14</span>]));</span><br></pre></td></tr></table></figure>
+<h3 id="将排序与分量合并放入循环">22.3.3 将排序与分量合并放入循环</h3>
+<p><strong>Python: <code>kruskal_labels_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mst_data <span class="keyword">import</span> N, EDGES</span><br><span class="line"></span><br><span class="line"><span class="comment"># Fixed lesson graph; component labels replace a disjoint-set class.</span></span><br><span class="line">ordered = <span class="built_in">sorted</span>([(<span class="built_in">min</span>(u, v), <span class="built_in">max</span>(u, v), w) <span class="keyword">for</span> u, v, w <span class="keyword">in</span> EDGES],</span><br><span class="line">                 key=<span class="keyword">lambda</span> edge: (edge[<span class="number">2</span>], edge[<span class="number">0</span>], edge[<span class="number">1</span>]))</span><br><span class="line">labels = &#123;v: v <span class="keyword">for</span> v <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, N + <span class="number">1</span>)&#125;</span><br><span class="line">selected = []</span><br><span class="line">total = <span class="number">0</span></span><br><span class="line">trace = []</span><br><span class="line"><span class="keyword">for</span> u, v, weight <span class="keyword">in</span> ordered:</span><br><span class="line">    old_u, old_v = labels[u], labels[v]</span><br><span class="line">    accepted = old_u != old_v</span><br><span class="line">    <span class="keyword">if</span> accepted:</span><br><span class="line">        selected.append((u, v, weight))</span><br><span class="line">        total += weight</span><br><span class="line">        <span class="keyword">for</span> vertex <span class="keyword">in</span> labels:</span><br><span class="line">            <span class="keyword">if</span> labels[vertex] == old_v:</span><br><span class="line">                labels[vertex] = old_u</span><br><span class="line">    trace.append(<span class="built_in">dict</span>(edge=(u, v, weight), accepted=accepted,</span><br><span class="line">                      labels=labels.copy(), selected=selected.copy(), total=total))</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(selected) == N - <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"><span class="keyword">if</span> <span class="built_in">len</span>(selected) != N - <span class="number">1</span>:</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&quot;图不连通, 无法构造覆盖全部顶点的树&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;选边顺序:&quot;</span>, selected)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;累计费用:&quot;</span>, [row[<span class="string">&quot;total&quot;</span>] <span class="keyword">for</span> row <span class="keyword">in</span> trace])</span><br><span class="line"><span class="keyword">assert</span> total == <span class="number">63</span> <span class="keyword">and</span> <span class="built_in">len</span>(<span class="built_in">set</span>(labels.values())) == <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>kruskal_labels_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">E = mst_data(); E(:,<span class="number">1</span>:<span class="number">2</span>) = <span class="built_in">sort</span>(E(:,<span class="number">1</span>:<span class="number">2</span>),<span class="number">2</span>);</span><br><span class="line">ordered = <span class="built_in">sortrows</span>(E,[<span class="number">3</span> <span class="number">1</span> <span class="number">2</span>]); n = <span class="number">6</span>;</span><br><span class="line">labels = <span class="number">1</span>:n; selected = <span class="built_in">zeros</span>(<span class="number">0</span>,<span class="number">3</span>); total = <span class="number">0</span>;</span><br><span class="line">label_history = <span class="built_in">zeros</span>(<span class="number">0</span>,n); total_history = [];</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">size</span>(ordered,<span class="number">1</span>)</span><br><span class="line">    u = ordered(k,<span class="number">1</span>); v = ordered(k,<span class="number">2</span>); weight = ordered(k,<span class="number">3</span>);</span><br><span class="line">    old_u = labels(u); old_v = labels(v);</span><br><span class="line">    <span class="keyword">if</span> old_u~=old_v</span><br><span class="line">        selected(<span class="keyword">end</span>+<span class="number">1</span>,:) = [u,v,weight]; total = total+weight;</span><br><span class="line">        <span class="keyword">for</span> vertex = <span class="number">1</span>:n</span><br><span class="line">            <span class="keyword">if</span> labels(vertex)==old_v, labels(vertex)=old_u; <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    label_history(<span class="keyword">end</span>+<span class="number">1</span>,:) = labels;</span><br><span class="line">    total_history(<span class="keyword">end</span>+<span class="number">1</span>) = total;</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">size</span>(selected,<span class="number">1</span>)==n<span class="number">-1</span>, <span class="keyword">break</span>; <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">if</span> <span class="built_in">size</span>(selected,<span class="number">1</span>)~=n<span class="number">-1</span>, error(<span class="string">&#x27;Disconnected graph: no spanning tree.&#x27;</span>); <span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(selected); <span class="built_in">disp</span>(total_history);</span><br><span class="line">assert(total==<span class="number">63</span> &amp;&amp; <span class="built_in">numel</span>(unique(labels))==<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+<p>该程序从空边集开始, 每次只加入连接不同分量的边. 达到 <span
+class="math inline">\(n-1\)</span> 条边即可停止, 此时连通且无圈.
+如果全部边考察完仍不足 <span class="math inline">\(n-1\)</span>,
+完整生成树任务不可行. 返回森林的模式另见22.9节.</p>
+<p>本例推演如下, 每行显示加入后状态:</p>
+<p>表 22-3 Kruskal 的逐边判断.</p>
+<div class="line-block">步骤 | 考察边 | 权重 | 是否加入 | 当前分量 |
+累计权重 |<br />
+: ---: | : ---: | : ---: | : ---: | : ---: | : ---: |<br />
+1 | 5—6 | 10 | 加入 | <span
+class="math inline">\(\{1\},\{2\},\{3\},\{4\},\{5,6\}\)</span> | 10
+|<br />
+2 | 3—4 | 12 | 加入 | <span
+class="math inline">\(\{1\},\{2\},\{3,4\},\{5,6\}\)</span> | 22 |<br />
+3 | 2—3 | 13 | 加入 | <span
+class="math inline">\(\{1\},\{2,3,4\},\{5,6\}\)</span> | 35 |<br />
+4 | 1—2 | 14 | 加入 | <span
+class="math inline">\(\{1,2,3,4\},\{5,6\}\)</span> | 49 |<br />
+5 | 4—5 | 14 | 加入 | <span
+class="math inline">\(\{1,2,3,4,5,6\}\)</span> | 63 |</div>
+<p>本例最先考察的五条边恰好都可以加入,
+不代表一般图中只需机械取最便宜的五条.
+前面的标签小程序已经给出了连接同一分量时需要跳过的情形.</p>
+<p><img src="/images/MinimumSpanningTree/kruskal_steps.png" style="width:100%"></p>
+<p>图 22-3 Kruskal的五次分量合并. 最后附图演示若继续考察2—5,
+它会成圈而被拒绝. 实际算法选满五条边后已停止, 附图不是第六次加入.</p>
+<p>标签版便于看清合并, 但每次合并扫描全部顶点.
+更高效的并查集用代表与父指针维护分量, <code>find</code> 查代表,
+<code>union</code> 合并. 它仍须保存实际选中的边,
+并查集的父指针不能直接充当通信线路.
+完整并查集实现与MATLAB对应函数保留在延伸阅读F.4.</p>
+<h2 id="prim的候选范围是整个已连接集合">22.4
+Prim的候选范围是整个已连接集合</h2>
+<h3 id="什么叫跨割边">22.4.1 什么叫跨割边</h3>
+<p>把顶点分成非空的已加入集合 <span class="math inline">\(U\)</span>
+与外部集合 <span class="math inline">\(V\setminus U\)</span>,
+就得到一个割. 一端在内, 一端在外的边称为跨割边.
+Prim每轮从全部跨割边中选最轻的一条, 加入它的外部端点.</p>
+<p>六城市图中若 <span class="math inline">\(U=\{1,2\}\)</span>,
+候选为1—3(18), 2—3(13), 2—4(18), 2—5(16), 所以选2—3.
+集合内部的1—2已经用于连接, 不再作为接入外部城市的候选.</p>
+<h3 id="为什么不能只看刚加入的城市">22.4.2
+为什么不能只看刚加入的城市</h3>
+<p>再看一个独立四顶点反例: 边为1—2(1), 1—3(2), 2—3(9), 2—4(10), 3—4(3).
+从1开始, 先加入2. 此时完整跨割候选中最轻的是1—3(2),
+它来自较早加入的城市1. 若只查看刚加入的城市2, 就会错选2—3(9).</p>
+<p><strong>Python: <code>cut_candidates_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mst_data <span class="keyword">import</span> EDGES</span><br><span class="line"></span><br><span class="line">small = [(<span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>), (<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>), (<span class="number">2</span>, <span class="number">3</span>, <span class="number">9</span>), (<span class="number">2</span>, <span class="number">4</span>, <span class="number">10</span>), (<span class="number">3</span>, <span class="number">4</span>, <span class="number">3</span>)]</span><br><span class="line">cases = [(<span class="string">&quot;六城市数据&quot;</span>, EDGES), (<span class="string">&quot;独立四点反例&quot;</span>, small)]</span><br><span class="line">inside = &#123;<span class="number">1</span>, <span class="number">2</span>&#125;</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> name, edges <span class="keyword">in</span> cases:</span><br><span class="line">    crossing = [(u, v, w) <span class="keyword">for</span> u, v, w <span class="keyword">in</span> edges <span class="keyword">if</span> (u <span class="keyword">in</span> inside) != (v <span class="keyword">in</span> inside)]</span><br><span class="line">    crossing.sort(key=<span class="keyword">lambda</span> edge: (edge[<span class="number">2</span>], edge[<span class="number">0</span>], edge[<span class="number">1</span>]))</span><br><span class="line">    best = crossing[<span class="number">0</span>]</span><br><span class="line">    records.append(<span class="built_in">dict</span>(name=name, crossing=crossing, best=best))</span><br><span class="line">    <span class="built_in">print</span>(name, <span class="string">&quot;跨割候选:&quot;</span>, crossing, <span class="string">&quot;选择:&quot;</span>, best)</span><br><span class="line"><span class="keyword">assert</span> records[<span class="number">0</span>][<span class="string">&quot;best&quot;</span>] == (<span class="number">2</span>, <span class="number">3</span>, <span class="number">13</span>)</span><br><span class="line"><span class="keyword">assert</span> records[<span class="number">1</span>][<span class="string">&quot;best&quot;</span>] == (<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>cut_candidates_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">small = [<span class="number">1</span> <span class="number">2</span> <span class="number">1</span>; <span class="number">1</span> <span class="number">3</span> <span class="number">2</span>; <span class="number">2</span> <span class="number">3</span> <span class="number">9</span>; <span class="number">2</span> <span class="number">4</span> <span class="number">10</span>; <span class="number">3</span> <span class="number">4</span> <span class="number">3</span>];</span><br><span class="line">cases = &#123;mst_data(),small&#125;; inside = [<span class="number">1</span> <span class="number">2</span>]; choices = <span class="built_in">zeros</span>(<span class="number">2</span>,<span class="number">3</span>);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">numel</span>(cases)</span><br><span class="line">    E = cases&#123;k&#125;;</span><br><span class="line">    mask = xor(<span class="built_in">ismember</span>(E(:,<span class="number">1</span>),inside),<span class="built_in">ismember</span>(E(:,<span class="number">2</span>),inside));</span><br><span class="line">    crossing = <span class="built_in">sortrows</span>(E(mask,:),[<span class="number">3</span> <span class="number">1</span> <span class="number">2</span>]);</span><br><span class="line">    choices(k,:) = crossing(<span class="number">1</span>,:);</span><br><span class="line">    <span class="built_in">disp</span>(crossing); <span class="built_in">disp</span>(choices(k,:));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">assert(<span class="built_in">isequal</span>(choices,[<span class="number">2</span> <span class="number">3</span> <span class="number">13</span>; <span class="number">1</span> <span class="number">3</span> <span class="number">2</span>]));</span><br></pre></td></tr></table></figure>
+<p><img src="/images/MinimumSpanningTree/prim_cut_step.png" style="width:100%"></p>
+<p>图 22-4 四顶点独立反例. 蓝色城市1, 2属于当前集合, 城市2最近加入.
+权重2的1—3是全割最轻候选; 3—4两端都在外部, 此轮也不是候选.
+这个反例不改动六城市原数据.</p>
+<p>程序用两端是否在集合中的判断取异或: 恰有一个端点在内才留下.
+同在内部或同在外部的边都不参与本轮比较.
+这把一句选边规则变成了可逐项核对的条件.</p>
+<h2 id="用key保存最轻接入边-完成prim循环">22.5 用key保存最轻接入边,
+完成Prim循环</h2>
+<h3 id="key与最短距离的更新不同">22.5.1 key与最短距离的更新不同</h3>
+<p>对外部城市 <span class="math inline">\(v\)</span>,
+<code>key[v]</code> 表示从当前整个集合 <span
+class="math inline">\(U\)</span> 接入它的最轻单边权重,
+<code>parent[v]</code> 保存这条接入边在 <span
+class="math inline">\(U\)</span> 内的端点. 初始起点的key设为0,
+是为了先取出起点, 不代表建设了一条零费用边.</p>
+<p>六城市图从1开始, 加入2之前, 接入3的候选是1—3(18). 加入2后发现2—3(13),
+Prim把key改为13. 若做第 21 章的最短路, 经2的累计候选却是 <span
+class="math inline">\(14+13=27\)</span>, 不优于直接到3的18.</p>
+<p><strong>Python: <code>prim_key_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> inf</span><br><span class="line"></span><br><span class="line"><span class="comment"># The six-city example after cities 1 and 2 have joined the Prim tree.</span></span><br><span class="line">key = [inf, <span class="number">0</span>, <span class="number">14</span>, <span class="number">18</span>, inf, inf, inf]</span><br><span class="line">parent = [<span class="literal">None</span>, <span class="literal">None</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="literal">None</span>, <span class="literal">None</span>, <span class="literal">None</span>]</span><br><span class="line">distance = [inf, <span class="number">0</span>, <span class="number">14</span>, <span class="number">18</span>, inf, inf, inf]</span><br><span class="line">u, v, weight = <span class="number">2</span>, <span class="number">3</span>, <span class="number">13</span></span><br><span class="line"><span class="keyword">if</span> weight &lt; key[v]:</span><br><span class="line">    key[v] = weight</span><br><span class="line">    parent[v] = u</span><br><span class="line">dijkstra_candidate = distance[u] + weight</span><br><span class="line"><span class="keyword">if</span> dijkstra_candidate &lt; distance[v]:</span><br><span class="line">    distance[v] = dijkstra_candidate</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Prim接入城市3的边权及前驱:&quot;</span>, key[<span class="number">3</span>], parent[<span class="number">3</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Dijkstra经城市2的候选与保留距离:&quot;</span>, dijkstra_candidate, distance[<span class="number">3</span>])</span><br><span class="line"><span class="keyword">assert</span> key[<span class="number">3</span>] == <span class="number">13</span> <span class="keyword">and</span> parent[<span class="number">3</span>] == <span class="number">2</span></span><br><span class="line"><span class="keyword">assert</span> dijkstra_candidate == <span class="number">27</span> <span class="keyword">and</span> distance[<span class="number">3</span>] == <span class="number">18</span></span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>prim_key_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">key = [<span class="number">0</span> <span class="number">14</span> <span class="number">18</span> <span class="built_in">inf</span> <span class="built_in">inf</span> <span class="built_in">inf</span>];</span><br><span class="line">parent = [<span class="number">0</span> <span class="number">1</span> <span class="number">1</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span>];</span><br><span class="line">distance = [<span class="number">0</span> <span class="number">14</span> <span class="number">18</span> <span class="built_in">inf</span> <span class="built_in">inf</span> <span class="built_in">inf</span>];</span><br><span class="line">u = <span class="number">2</span>; v = <span class="number">3</span>; weight = <span class="number">13</span>;</span><br><span class="line"><span class="keyword">if</span> weight&lt;key(v), key(v)=weight; parent(v)=u; <span class="keyword">end</span></span><br><span class="line">dijkstra_candidate = distance(u)+weight;</span><br><span class="line"><span class="keyword">if</span> dijkstra_candidate&lt;distance(v), distance(v)=dijkstra_candidate; <span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>([key(<span class="number">3</span>),parent(<span class="number">3</span>)]);</span><br><span class="line"><span class="built_in">disp</span>([dijkstra_candidate,distance(<span class="number">3</span>)]);</span><br><span class="line">assert(key(<span class="number">3</span>)==<span class="number">13</span> &amp;&amp; parent(<span class="number">3</span>)==<span class="number">2</span>);</span><br><span class="line">assert(dijkstra_candidate==<span class="number">27</span> &amp;&amp; distance(<span class="number">3</span>)==<span class="number">18</span>);</span><br></pre></td></tr></table></figure>
+<p>因此Prim更新比较 <span class="math inline">\(w(u,v)\)</span> 与
+<code>key[v]</code>, Dijkstra更新比较 <span
+class="math inline">\(d[u]+w(u,v)\)</span> 与 <span
+class="math inline">\(d[v]\)</span>. 两者都可逐个选顶点,
+保存量的含义与优化目标分别定义.</p>
+<h3 id="把选择-加入与更新接起来">22.5.2 把选择, 加入与更新接起来</h3>
+<p><strong>Python: <code>prim_loop_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> inf</span><br><span class="line"><span class="keyword">from</span> mst_data <span class="keyword">import</span> N, EDGES</span><br><span class="line"></span><br><span class="line">neighbors = [[] <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(N + <span class="number">1</span>)]</span><br><span class="line"><span class="keyword">for</span> u, v, weight <span class="keyword">in</span> EDGES:</span><br><span class="line">    neighbors[u].append((v, weight))</span><br><span class="line">    neighbors[v].append((u, weight))</span><br><span class="line">key = [inf] * (N + <span class="number">1</span>)</span><br><span class="line">parent = [<span class="literal">None</span>] * (N + <span class="number">1</span>)</span><br><span class="line">used = [<span class="literal">False</span>] * (N + <span class="number">1</span>)</span><br><span class="line">key[<span class="number">1</span>] = <span class="number">0</span></span><br><span class="line">selected = []</span><br><span class="line">total = <span class="number">0</span></span><br><span class="line">trace = []</span><br><span class="line"><span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">    best, u = inf, <span class="literal">None</span></span><br><span class="line">    <span class="keyword">for</span> v <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, N + <span class="number">1</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> used[v] <span class="keyword">and</span> key[v] &lt; best:</span><br><span class="line">            best, u = key[v], v</span><br><span class="line">    <span class="keyword">if</span> u <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;图不连通, 剩余顶点无法接入&quot;</span>)</span><br><span class="line">    used[u] = <span class="literal">True</span></span><br><span class="line">    <span class="keyword">if</span> parent[u] <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">        a, b = <span class="built_in">sorted</span>((parent[u], u))</span><br><span class="line">        selected.append((a, b, key[u]))</span><br><span class="line">        total += key[u]</span><br><span class="line">    <span class="keyword">for</span> v, weight <span class="keyword">in</span> neighbors[u]:</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> used[v] <span class="keyword">and</span> weight &lt; key[v]:</span><br><span class="line">            key[v] = weight</span><br><span class="line">            parent[v] = u</span><br><span class="line">    trace.append(<span class="built_in">dict</span>(vertex=u, used=used.copy(), key=key.copy(),</span><br><span class="line">                      parent=parent.copy(), selected=selected.copy(), total=total))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;选边顺序:&quot;</span>, selected)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;累计费用:&quot;</span>, [row[<span class="string">&quot;total&quot;</span>] <span class="keyword">for</span> row <span class="keyword">in</span> trace])</span><br><span class="line"><span class="keyword">assert</span> total == <span class="number">63</span> <span class="keyword">and</span> <span class="built_in">len</span>(selected) == N - <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>prim_loop_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">E = mst_data(); n = <span class="number">6</span>; neighbors = cell(<span class="number">1</span>,n);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">size</span>(E,<span class="number">1</span>)</span><br><span class="line">    u=E(k,<span class="number">1</span>); v=E(k,<span class="number">2</span>); weight=E(k,<span class="number">3</span>);</span><br><span class="line">    neighbors&#123;u&#125;(<span class="keyword">end</span>+<span class="number">1</span>,:)=[v,weight];</span><br><span class="line">    neighbors&#123;v&#125;(<span class="keyword">end</span>+<span class="number">1</span>,:)=[u,weight];</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">key=<span class="built_in">inf</span>(<span class="number">1</span>,n); parent=<span class="built_in">zeros</span>(<span class="number">1</span>,n); used=<span class="built_in">false</span>(<span class="number">1</span>,n); key(<span class="number">1</span>)=<span class="number">0</span>;</span><br><span class="line">selected=<span class="built_in">zeros</span>(<span class="number">0</span>,<span class="number">3</span>); total=<span class="number">0</span>; total_history=[];</span><br><span class="line">used_history=<span class="built_in">false</span>(<span class="number">0</span>,n); key_history=<span class="built_in">zeros</span>(<span class="number">0</span>,n);</span><br><span class="line"><span class="keyword">for</span> round_id=<span class="number">1</span>:n</span><br><span class="line">    best=<span class="built_in">inf</span>; u=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> v=<span class="number">1</span>:n</span><br><span class="line">        <span class="keyword">if</span> ~used(v) &amp;&amp; key(v)&lt;best, best=key(v); u=v; <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">if</span> u==<span class="number">0</span>, error(<span class="string">&#x27;Disconnected graph: remaining vertices cannot join.&#x27;</span>); <span class="keyword">end</span></span><br><span class="line">    used(u)=<span class="built_in">true</span>;</span><br><span class="line">    <span class="keyword">if</span> parent(u)~=<span class="number">0</span></span><br><span class="line">        selected(<span class="keyword">end</span>+<span class="number">1</span>,:)=[<span class="built_in">sort</span>([parent(u),u]),key(u)];</span><br><span class="line">        total=total+key(u);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">for</span> k=<span class="number">1</span>:<span class="built_in">size</span>(neighbors&#123;u&#125;,<span class="number">1</span>)</span><br><span class="line">        v=neighbors&#123;u&#125;(k,<span class="number">1</span>); weight=neighbors&#123;u&#125;(k,<span class="number">2</span>);</span><br><span class="line">        <span class="keyword">if</span> ~used(v) &amp;&amp; weight&lt;key(v), key(v)=weight; parent(v)=u; <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    used_history(<span class="keyword">end</span>+<span class="number">1</span>,:)=used; key_history(<span class="keyword">end</span>+<span class="number">1</span>,:)=key;</span><br><span class="line">    total_history(<span class="keyword">end</span>+<span class="number">1</span>)=total;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(selected); <span class="built_in">disp</span>(total_history);</span><br><span class="line">assert(total==<span class="number">63</span> &amp;&amp; <span class="built_in">size</span>(selected,<span class="number">1</span>)==n<span class="number">-1</span>);</span><br></pre></td></tr></table></figure>
+<p>Python数组第0项只是占位, 有效城市为1至N, 与MATLAB索引1至6保持对应.
+起点没有前驱, 所以第一轮不增加建设边与费用.
+之后每轮增加一座城市和一条接入边, 更新外部城市的最好候选.</p>
+<p>每个外部点此前从整个集合得到的最好接入边会保留.
+新增城市的邻边只用于改进这些候选, 这与只看最新城市的错误方法不同.
+本例从城市1开始:</p>
+<p>表 22-4 Prim 的跨割选择.</p>
+<div class="line-block">轮次 | 加入前的 <span
+class="math inline">\(U\)</span> | 最轻跨割边 | 新加入城市 | 累计权重
+|<br />
+: ---: | : ---: | : ---: | : ---: | : ---: |<br />
+1 | <span class="math inline">\(\{1\}\)</span> | 1—2(14) | 2 | 14
+|<br />
+2 | <span class="math inline">\(\{1,2\}\)</span> | 2—3(13) | 3 | 27
+|<br />
+3 | <span class="math inline">\(\{1,2,3\}\)</span> | 3—4(12) | 4 | 39
+|<br />
+4 | <span class="math inline">\(\{1,2,3,4\}\)</span> | 4—5(14) | 5 | 53
+|<br />
+5 | <span class="math inline">\(\{1,2,3,4,5\}\)</span> | 5—6(10) | 6 |
+63 |</div>
+<p>选边权重为 <span class="math inline">\(14,13,12,14,10\)</span>,
+无须单调递增. Prim只比较每轮的跨割候选,
+Kruskal则按全图权重顺序考察边.</p>
+<p><img src="/images/MinimumSpanningTree/prim_steps.png" style="width:100%"></p>
+<p>图 22-5 从城市1开始的Prim过程, 包含起点初态和五次加边.
+蓝色顶点为已加入城市, 红色边为已选建设线路.</p>
+<h2 id="选边为什么安全-本例为什么唯一">22.6 选边为什么安全,
+本例为什么唯一?</h2>
+<h3 id="最轻跨割边的交换论证">22.6.1 最轻跨割边的交换论证</h3>
+<p>任意生成树都要连接割的两侧. 设 <span class="math inline">\(e\)</span>
+是某个割上的最轻边, 取一棵最小生成树 <span
+class="math inline">\(T\)</span>. 若它已包含 <span
+class="math inline">\(e\)</span>, 无须修改; 否则加入 <span
+class="math inline">\(e\)</span> 会形成一个圈, 圈上还存在另一条跨割边
+<span class="math inline">\(f\)</span>. 删除 <span
+class="math inline">\(f\)</span>, 得到新生成树 <span
+class="math inline">\(T&#39;\)</span>, 并有</p>
+<p><span class="math display">\[
+L(T&#39;)=L(T)+w(e)-w(f)\leqslant L(T).
+\]</span></p>
+<p>因为原树已经最优, 新树也最优, 所以这条最轻边至少属于某棵最小生成树.
+若它是该割上唯一最轻边, 不含它就会通过交换严格降低费用, 与最优矛盾,
+因而它属于所有最小生成树.</p>
+<p>逐步算法还要保留此前的安全选择. 若当前边集包含于某棵最小生成树,
+且当前边没有跨越所用的割, 上述删除的跨割边 <span
+class="math inline">\(f\)</span> 就不会属于当前边集.
+交换后可同时保留旧选择与新边.</p>
+<p>Prim的已选边全在 <span class="math inline">\(U\)</span> 内,
+本轮最轻跨割边符合这个条件. Kruskal取一端所在分量为割的一侧,
+按排序取到的可合并边也是该割最轻边: 更轻的跨割边应早已被考察并合并,
+与它现在仍跨越分量矛盾. 因而两种贪心规则都有全局最优性依据.</p>
+<h3 id="重复权重不自动意味着多个最优方案">22.6.2
+重复权重不自动意味着多个最优方案</h3>
+<p>六城市图虽然有重复的14, 16, 18, 仍可用五个割证明唯一性. 依次取</p>
+<p><span class="math display">\[
+S=\{1\},\{1,2\},\{1,2,3\},\{1,2,3,4\},\{1,2,3,4,5\}.
+\]</span></p>
+<p>各割上的唯一最轻边依次为1—2, 2—3, 3—4, 4—5, 5—6.
+每条都属于所有最小生成树, 五条已经组成生成树,
+因而本例没有另一组最优边集.</p>
+<p><strong>Python: <code>cut_certificate_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mst_data <span class="keyword">import</span> N, EDGES</span><br><span class="line"></span><br><span class="line">records = []</span><br><span class="line">forced = []</span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, N):</span><br><span class="line">    side = <span class="built_in">set</span>(<span class="built_in">range</span>(<span class="number">1</span>, j + <span class="number">1</span>))</span><br><span class="line">    crossing = [(u, v, w) <span class="keyword">for</span> u, v, w <span class="keyword">in</span> EDGES <span class="keyword">if</span> (u <span class="keyword">in</span> side) != (v <span class="keyword">in</span> side)]</span><br><span class="line">    minimum = <span class="built_in">min</span>(w <span class="keyword">for</span> u, v, w <span class="keyword">in</span> crossing)</span><br><span class="line">    light = [edge <span class="keyword">for</span> edge <span class="keyword">in</span> crossing <span class="keyword">if</span> edge[<span class="number">2</span>] == minimum]</span><br><span class="line">    records.append(<span class="built_in">dict</span>(side=<span class="built_in">sorted</span>(side), crossing=crossing, light=light))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;割的一侧:&quot;</span>, <span class="built_in">sorted</span>(side), <span class="string">&quot;最轻跨割边:&quot;</span>, light)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(light) == <span class="number">1</span>:</span><br><span class="line">        forced.append(light[<span class="number">0</span>])</span><br><span class="line"><span class="keyword">assert</span> forced == [(<span class="number">1</span>, <span class="number">2</span>, <span class="number">14</span>), (<span class="number">2</span>, <span class="number">3</span>, <span class="number">13</span>), (<span class="number">3</span>, <span class="number">4</span>, <span class="number">12</span>), (<span class="number">4</span>, <span class="number">5</span>, <span class="number">14</span>), (<span class="number">5</span>, <span class="number">6</span>, <span class="number">10</span>)]</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">sum</span>(w <span class="keyword">for</span> u, v, w <span class="keyword">in</span> forced) == <span class="number">63</span></span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>cut_certificate_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">E = mst_data(); n=<span class="number">6</span>; forced=<span class="built_in">zeros</span>(<span class="number">0</span>,<span class="number">3</span>); light_sets=cell(<span class="number">1</span>,n<span class="number">-1</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span>=<span class="number">1</span>:n<span class="number">-1</span></span><br><span class="line">    side=<span class="number">1</span>:<span class="built_in">j</span>;</span><br><span class="line">    mask=xor(<span class="built_in">ismember</span>(E(:,<span class="number">1</span>),side),<span class="built_in">ismember</span>(E(:,<span class="number">2</span>),side));</span><br><span class="line">    crossing=E(mask,:); minimum=<span class="built_in">min</span>(crossing(:,<span class="number">3</span>));</span><br><span class="line">    light=crossing(crossing(:,<span class="number">3</span>)==minimum,:);</span><br><span class="line">    light_sets&#123;<span class="built_in">j</span>&#125;=light;</span><br><span class="line">    <span class="built_in">disp</span>(side); <span class="built_in">disp</span>(light);</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">size</span>(light,<span class="number">1</span>)==<span class="number">1</span>, forced(<span class="keyword">end</span>+<span class="number">1</span>,:)=light; <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">assert(<span class="built_in">isequal</span>(forced,[<span class="number">1</span> <span class="number">2</span> <span class="number">14</span>; <span class="number">2</span> <span class="number">3</span> <span class="number">13</span>; <span class="number">3</span> <span class="number">4</span> <span class="number">12</span>; <span class="number">4</span> <span class="number">5</span> <span class="number">14</span>; <span class="number">5</span> <span class="number">6</span> <span class="number">10</span>]));</span><br><span class="line">assert(sum(forced(:,<span class="number">3</span>))==<span class="number">63</span>);</span><br></pre></td></tr></table></figure>
+<p>同权三角形则不同, 删去任意一条边都得到总权重2的最小生成树.
+边权两两不同能保证唯一, 但具有重复权重时仍需具体判断.</p>
+<h3 id="对小图枚举全部候选作独立核验">22.6.3
+对小图枚举全部候选作独立核验</h3>
+<p>十条边中选五条, 共 <span
+class="math inline">\(\binom{10}{5}=252\)</span> 个子集.
+对每个子集检查六点连通, 便能确认它是否为生成树.
+再比较所有可行子集的总权重与最优边集数量.</p>
+<p><strong>Python: <code>enumerate_trees.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> itertools <span class="keyword">import</span> combinations</span><br><span class="line"><span class="keyword">from</span> mst_data <span class="keyword">import</span> N, EDGES</span><br><span class="line">feasible = []</span><br><span class="line"><span class="keyword">for</span> subset <span class="keyword">in</span> combinations(EDGES, N - <span class="number">1</span>):</span><br><span class="line">    reached = &#123;<span class="number">1</span>&#125;</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">        <span class="keyword">for</span> u, v, weight <span class="keyword">in</span> subset:</span><br><span class="line">            <span class="keyword">if</span> u <span class="keyword">in</span> reached <span class="keyword">or</span> v <span class="keyword">in</span> reached:</span><br><span class="line">                reached.update((u, v))</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(reached) == N:</span><br><span class="line">        feasible.append((<span class="built_in">sum</span>(w <span class="keyword">for</span> u, v, w <span class="keyword">in</span> subset), subset))</span><br><span class="line">best = <span class="built_in">min</span>(cost <span class="keyword">for</span> cost, subset <span class="keyword">in</span> feasible)</span><br><span class="line">optimal = [subset <span class="keyword">for</span> cost, subset <span class="keyword">in</span> feasible <span class="keyword">if</span> cost == best]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Trees:&quot;</span>, <span class="built_in">len</span>(feasible), <span class="string">&quot;Best:&quot;</span>, best, <span class="string">&quot;Optimal count:&quot;</span>, <span class="built_in">len</span>(optimal))</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>enumerate_trees.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">E=mst_data(); n=<span class="number">6</span>;</span><br><span class="line">ids=<span class="built_in">nchoosek</span>(<span class="number">1</span>:<span class="built_in">size</span>(E,<span class="number">1</span>),n<span class="number">-1</span>);</span><br><span class="line">feasible_costs=[]; feasible_ids=<span class="built_in">zeros</span>(<span class="number">0</span>,n<span class="number">-1</span>);</span><br><span class="line"><span class="keyword">for</span> k=<span class="number">1</span>:<span class="built_in">size</span>(ids,<span class="number">1</span>)</span><br><span class="line">    chosen=E(ids(k,:),:); reached=<span class="built_in">false</span>(<span class="number">1</span>,n); reached(<span class="number">1</span>)=<span class="built_in">true</span>;</span><br><span class="line">    <span class="keyword">for</span> pass=<span class="number">1</span>:n<span class="number">-1</span></span><br><span class="line">        <span class="keyword">for</span> <span class="built_in">j</span>=<span class="number">1</span>:<span class="built_in">size</span>(chosen,<span class="number">1</span>)</span><br><span class="line">            u=chosen(<span class="built_in">j</span>,<span class="number">1</span>); v=chosen(<span class="built_in">j</span>,<span class="number">2</span>);</span><br><span class="line">            <span class="keyword">if</span> reached(u) || reached(v), reached([u,v])=<span class="built_in">true</span>; <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">if</span> all(reached)</span><br><span class="line">        feasible_costs(<span class="keyword">end</span>+<span class="number">1</span>)=sum(chosen(:,<span class="number">3</span>));</span><br><span class="line">        feasible_ids(<span class="keyword">end</span>+<span class="number">1</span>,:)=ids(k,:);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">best=<span class="built_in">min</span>(feasible_costs); optimum_count=nnz(feasible_costs==best);</span><br><span class="line"><span class="built_in">disp</span>([<span class="built_in">numel</span>(feasible_costs),best,optimum_count]);</span><br><span class="line">assert(<span class="built_in">numel</span>(feasible_costs)==<span class="number">100</span> &amp;&amp; best==<span class="number">63</span> &amp;&amp; optimum_count==<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+<p>得到100棵生成树, 最优总权重63, 最优边集一组. 这与割性质证明相互核对.
+枚举只适合小图, 大图的候选数会迅速增加.
+MATLAB枚举程序是本次补充的完整对应版本.</p>
+<h3 id="将目标与约束写成式子选读">22.6.4 将目标与约束写成式子(选读)</h3>
+<p>令 <span class="math inline">\(x_e\in\{0,1\}\)</span> 表示选边, <span
+class="math inline">\(\delta(S)\)</span> 表示割 <span
+class="math inline">\(S,V\setminus S\)</span> 上的边集.
+对当前无自环模型, 完整形式为</p>
+<p><span class="math display">\[
+\begin{gathered}
+\min\quad \sum\limits_{e\in E}w(e)x_e,\\[4pt]
+\text{s.t.}\quad
+\left\{\begin{aligned}
+&amp;\sum\limits_{e\in E}x_e=n-1,\\
+&amp;\sum\limits_{e\in\delta(S)}x_e\geqslant1,
+\quad\varnothing\ne S\subsetneq V,\\
+&amp;x_e\in\{0,1\},\quad e\in E.
+\end{aligned}\right.
+\end{gathered}
+\]</span></p>
+<p>每个非空真子集都有至少一条对外连接, 保证连通; 再加上 <span
+class="math inline">\(n-1\)</span> 条边的数量约束, 就得到树.
+这个模型说明可行性, 专门图算法则能利用结构直接求解.
+模型的原有环境与完整解释也保留在延伸阅读F.2.</p>
+<h2 id="最小建设边集-与两点最短路线分别计算">22.7 最小建设边集,
+与两点最短路线分别计算</h2>
+<h3 id="两种问题的优化对象">22.7.1 两种问题的优化对象</h3>
+<p>在同一组边权上比较两种数学目标:</p>
+<p>表 22-5 生成树与最短路径的目标比较.</p>
+<div class="line-block">任务 | 优化对象 | 六城市例子 |<br />
+: --- | : --- | : --- |<br />
+1到6的最短路径 | 一条路线的权值和 | <span
+class="math inline">\(1\to2\to5\to6\)</span>, 代价40 |<br />
+最小生成树 | 连接全部点的建设边权和 | <span
+class="math inline">\(1—2—3—4—5—6\)</span>, 总权重63 |</div>
+<p>最小生成树中1到6的唯一路径代价为63, 原图却能走代价40的路线.
+本章比较的是相同权重下两个不同目标;
+实际通信时间等指标需要另行确定相应边权.
+最低建设代价不能直接保证全部点对的传输代价都最小.</p>
+<h3 id="理解选边后用成熟接口复核">22.7.2 理解选边后用成熟接口复核</h3>
+<p>下例保留原有库实现, 先检查图连通, 再求树并核对顶点覆盖, 边数和总权重.
+MATLAB的 <code>sparse</code> 使用Kruskal, <code>dense</code> 使用Prim;
+NetworkX默认使用Kruskal. [1, 2]</p>
+<p><strong>Python: <code>library_demo.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> networkx <span class="keyword">as</span> nx</span><br><span class="line"><span class="keyword">from</span> mst_data <span class="keyword">import</span> N, EDGES</span><br><span class="line">G = nx.Graph()</span><br><span class="line">G.add_nodes_from(<span class="built_in">range</span>(<span class="number">1</span>, N + <span class="number">1</span>))</span><br><span class="line">G.add_weighted_edges_from(EDGES)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> nx.is_connected(G):</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&quot;The network is disconnected.&quot;</span>)</span><br><span class="line">T = nx.minimum_spanning_tree(G, weight=<span class="string">&quot;weight&quot;</span>, algorithm=<span class="string">&quot;kruskal&quot;</span>)</span><br><span class="line">total = <span class="built_in">sum</span>(data[<span class="string">&quot;weight&quot;</span>] <span class="keyword">for</span> u, v, data <span class="keyword">in</span> T.edges(data=<span class="literal">True</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Selected:&quot;</span>, <span class="built_in">sorted</span>(T.edges(data=<span class="string">&quot;weight&quot;</span>)))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Total:&quot;</span>, total)</span><br><span class="line"><span class="keyword">assert</span> nx.is_tree(T) <span class="keyword">and</span> <span class="built_in">set</span>(T.nodes()) == <span class="built_in">set</span>(G.nodes())</span><br><span class="line"><span class="keyword">assert</span> T.number_of_edges() == N - <span class="number">1</span> <span class="keyword">and</span> total == <span class="number">63</span></span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>library_demo.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">E=mst_data();</span><br><span class="line">G=graph(E(:,<span class="number">1</span>),E(:,<span class="number">2</span>),E(:,<span class="number">3</span>),<span class="number">6</span>);</span><br><span class="line">assert(<span class="built_in">numel</span>(unique(conncomp(G)))==<span class="number">1</span>);</span><br><span class="line">Tk=minspantree(G,<span class="string">&#x27;Method&#x27;</span>,<span class="string">&#x27;sparse&#x27;</span>);</span><br><span class="line">Tp=minspantree(G,<span class="string">&#x27;Method&#x27;</span>,<span class="string">&#x27;dense&#x27;</span>,<span class="string">&#x27;Root&#x27;</span>,<span class="number">1</span>);</span><br><span class="line">assert(sum(Tk.Edges.Weight)==<span class="number">63</span> &amp;&amp; sum(Tp.Edges.Weight)==<span class="number">63</span>);</span><br><span class="line">assert(numedges(Tk)==<span class="number">5</span> &amp;&amp; <span class="built_in">numel</span>(unique(conncomp(Tk)))==<span class="number">1</span>);</span><br><span class="line"><span class="built_in">disp</span>(Tk.Edges); <span class="built_in">disp</span>(sum(Tk.Edges.Weight));</span><br></pre></td></tr></table></figure>
+<p>两种算法得到同一组五条边, 总权重63. 对其他同权图,
+选边顺序甚至最优边集都可能不同, 应先检查结果是否为生成树,
+再比较最优值与具体边的含义. 原有带输入检查的Kruskal,
+Prim和完整调用示例均见延伸阅读F.4, F.5.</p>
+<h2 id="线路报价改变时-最优方案怎样调整">22.8 线路报价改变时,
+最优方案怎样调整?</h2>
+<h3 id="先看哪部分保持-哪部分需要替换">22.8.1 先看哪部分保持,
+哪部分需要替换</h3>
+<p>将5—6的权重由10改为 <span class="math inline">\(t\geqslant0\)</span>,
+其他数据不变.
+前五个城市之间的四条相邻连接边仍分别是对应前缀割的唯一最轻边, 总权重53.
+城市6可经5—6接入, 也可经4—6接入, 后者权重19. 因而</p>
+<p><span class="math display">\[
+L^*(t)=53+\min\{t,19\}.
+\]</span></p>
+<p>当 <span class="math inline">\(t&lt;19\)</span> 时选择5—6, 当 <span
+class="math inline">\(t&gt;19\)</span> 时改选4—6. 当 <span
+class="math inline">\(t=19\)</span>, 两种接入同样最优.
+临界值来自这组固定教学数据, 实际报价变化应重新核对全部候选线路.</p>
+<p><img src="/images/MinimumSpanningTree/cost_sensitivity.png" style="width:100%"></p>
+<p>图 22-6 改变5—6权重后的最优值. 低于19时随报价增加,
+超过19后改选替代线路, 最优总权重保持72. 临界处有两组最优边集.</p>
+<p><strong>Python: <code>sensitivity.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mst_data <span class="keyword">import</span> N, EDGES</span><br><span class="line"><span class="keyword">from</span> kruskal <span class="keyword">import</span> kruskal</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">cost_at</span>(<span class="params">t</span>):</span><br><span class="line">    changed = [(u, v, t <span class="keyword">if</span> (u, v) == (<span class="number">5</span>, <span class="number">6</span>) <span class="keyword">else</span> w) <span class="keyword">for</span> u, v, w <span class="keyword">in</span> EDGES]</span><br><span class="line">    <span class="keyword">return</span> kruskal(N, changed)[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="keyword">for</span> t <span class="keyword">in</span> [<span class="number">0</span>, <span class="number">10</span>, <span class="number">18</span>, <span class="number">19</span>, <span class="number">20</span>, <span class="number">30</span>]:</span><br><span class="line">        <span class="built_in">print</span>(t, cost_at(t))</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>sensitivity.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">E=mst_data(); row=<span class="built_in">find</span>(E(:,<span class="number">1</span>)==<span class="number">5</span> &amp; E(:,<span class="number">2</span>)==<span class="number">6</span>);</span><br><span class="line"><span class="keyword">for</span> t=[<span class="number">0</span>,<span class="number">10</span>,<span class="number">18</span>,<span class="number">19</span>,<span class="number">20</span>,<span class="number">30</span>]</span><br><span class="line">    changed=E; changed(row,<span class="number">3</span>)=t;</span><br><span class="line">    [~,total]=kruskal(<span class="number">6</span>,changed);</span><br><span class="line">    <span class="built_in">disp</span>([t,total]);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>删除5—6后也只能通过4—6接入城市6, 新最优值为72.
+公式解释与重算承担不同作用: 前者说明临界变化为什么发生,
+后者在更新后的数据上核对结果. 如多条边同时变化,
+不能直接套用这个单参数结论.</p>
+<h2 id="不连通-零权与负权需要怎样处理">22.9 不连通,
+零权与负权需要怎样处理?</h2>
+<h3 id="完整生成树与最小生成森林">22.9.1 完整生成树与最小生成森林</h3>
+<p>不连通图不存在覆盖全部顶点的一棵生成树. 若任务改为各分量内部建设,
+可以分别求树, 合起来称为最小生成森林. 有 <span
+class="math inline">\(n\)</span> 个顶点, <span
+class="math inline">\(c\)</span> 个分量时, 森林边数为</p>
+<p><span class="math display">\[
+\sum\limits_{i=1}^{c}(n_i-1)=n-c.
+\]</span></p>
+<p>孤立点单独构成一个分量, 贡献0条边. 单顶点本身就是树, 不需要建设边,
+总权重0.</p>
+<h3 id="零权与负权是合法的树权重">22.9.2 零权与负权是合法的树权重</h3>
+<p>最小生成树允许有限负权与零权. 它只选择固定数量的边且不能成圈,
+没有通过反复绕负权圈降低费用的机制. 自环不能连接两个分量,
+无论权重多小都不能加入树.</p>
+<p>但负权下, 不要求无圈的最小费用连通子图与最小生成树的目标不同.
+三条边全为-1的三角形, 树只选两条, 总权重-2; 允许保留圈时三条全选为-3.
+需要按真实任务保留无圈等约束.</p>
+<p><strong>Python: <code>forest_boundary_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> kruskal <span class="keyword">import</span> kruskal</span><br><span class="line"><span class="keyword">from</span> prim <span class="keyword">import</span> prim</span><br><span class="line"></span><br><span class="line">edges = [(<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>), (<span class="number">3</span>, <span class="number">4</span>, <span class="number">3</span>)]</span><br><span class="line">forest, total, components = kruskal(<span class="number">5</span>, edges, require_connected=<span class="literal">False</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;森林:&quot;</span>, forest, <span class="string">&quot;总权重:&quot;</span>, total, <span class="string">&quot;分量数:&quot;</span>, components)</span><br><span class="line">rejected = []</span><br><span class="line"><span class="keyword">for</span> algorithm <span class="keyword">in</span> [kruskal, prim]:</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        algorithm(<span class="number">5</span>, edges)</span><br><span class="line">    <span class="keyword">except</span> ValueError:</span><br><span class="line">        rejected.append(algorithm.__name__)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;按完整生成树任务拒绝不连通输入:&quot;</span>, rejected)</span><br><span class="line">special = [(<span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>), (<span class="number">2</span>, <span class="number">3</span>, -<span class="number">2</span>), (<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>), (<span class="number">1</span>, <span class="number">1</span>, -<span class="number">100</span>)]</span><br><span class="line">tree, special_total, _ = kruskal(<span class="number">3</span>, special)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;零权, 负权与自环:&quot;</span>, tree, special_total)</span><br><span class="line"><span class="keyword">assert</span> total == <span class="number">5</span> <span class="keyword">and</span> components == <span class="number">3</span> <span class="keyword">and</span> <span class="built_in">len</span>(forest) == <span class="number">5</span> - components</span><br><span class="line"><span class="keyword">assert</span> rejected == [<span class="string">&quot;kruskal&quot;</span>, <span class="string">&quot;prim&quot;</span>]</span><br><span class="line"><span class="keyword">assert</span> special_total == -<span class="number">2</span> <span class="keyword">and</span> <span class="built_in">all</span>(u != v <span class="keyword">for</span> u, v, w <span class="keyword">in</span> tree)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>forest_boundary_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">E=[<span class="number">1</span> <span class="number">2</span> <span class="number">2</span>; <span class="number">3</span> <span class="number">4</span> <span class="number">3</span>];</span><br><span class="line">[F,total,components]=kruskal(<span class="number">5</span>,E,<span class="built_in">false</span>);</span><br><span class="line"><span class="built_in">disp</span>(F); <span class="built_in">disp</span>([total,components]);</span><br><span class="line">rejected=<span class="built_in">false</span>(<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">try</span></span><br><span class="line">    kruskal(<span class="number">5</span>,E);</span><br><span class="line"><span class="keyword">catch</span></span><br><span class="line">    rejected(<span class="number">1</span>)=<span class="built_in">true</span>;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">try</span></span><br><span class="line">    prim(<span class="number">5</span>,E);</span><br><span class="line"><span class="keyword">catch</span></span><br><span class="line">    rejected(<span class="number">2</span>)=<span class="built_in">true</span>;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">special=[<span class="number">1</span> <span class="number">2</span> <span class="number">0</span>; <span class="number">2</span> <span class="number">3</span> <span class="number">-2</span>; <span class="number">1</span> <span class="number">3</span> <span class="number">5</span>; <span class="number">1</span> <span class="number">1</span> <span class="number">-100</span>];</span><br><span class="line">[T,special_total]=kruskal(<span class="number">3</span>,special);</span><br><span class="line"><span class="built_in">disp</span>(T); <span class="built_in">disp</span>(special_total);</span><br><span class="line">assert(total==<span class="number">5</span> &amp;&amp; components==<span class="number">3</span> &amp;&amp; <span class="built_in">size</span>(F,<span class="number">1</span>)==<span class="number">5</span>-components);</span><br><span class="line">assert(all(rejected));</span><br><span class="line">assert(special_total==<span class="number">-2</span> &amp;&amp; all(T(:,<span class="number">1</span>)~=T(:,<span class="number">2</span>)));</span><br></pre></td></tr></table></figure>
+<p>程序显式要求森林时返回三个分量, 两条边与总权重5;
+按完整生成树任务调用则报告不连通. 特殊三点例子选择负权-2与零权0,
+跳过负自环, 总权重-2. 使用数值矩阵0表示无边的接口时,
+应另用显式边表保留真实零权边.</p>
+<h3 id="库接口的覆盖范围需要明确">22.9.3 库接口的覆盖范围需要明确</h3>
+<p>表 22-6 库接口对不连通输入的处理.</p>
+<div class="line-block">接口或模式 | 不连通输入的处理 |<br />
+: --- | : --- |<br />
+本章Kruskal默认模式 | 拒绝完整生成树任务 |<br />
+本章Kruskal关闭完整连通要求 | 返回各分量的森林与分量数 |<br />
+本章Prim封装 | 拒绝不连通输入 |<br />
+NetworkX <code>minimum_spanning_tree</code> | 返回各分量的最小生成森林
+|<br />
+MATLAB <code>minspantree</code> 默认 <code>Type='tree'</code> |
+只取根节点所在分量的树边 |<br />
+MATLAB指定 <code>Type='forest'</code> | 求全部分量的最小生成森林 |</div>
+<p>MATLAB默认根索引为1, 默认方法为 <code>dense</code>, 即Prim.
+不同接口的默认范围分别核对, 业务要求全部城市互通时先检查整体连通性. [1,
+2] 原有矩阵建图, 零权与森林示例完整保留在配套文件与延伸阅读F.8.</p>
+<h2 id="根据规模选择实现-根据需求检查模型">22.10 根据规模选择实现,
+根据需求检查模型</h2>
+<h3 id="核心运算与教学记录的开销分开说明">22.10.1
+核心运算与教学记录的开销分开说明</h3>
+<p>记顶点数为 <span class="math inline">\(n\)</span>, 边数为 <span
+class="math inline">\(m\)</span>. 下表描述不计逐轮快照的主要运算:</p>
+<p>表 22-7 基本实现的时间与存储量.</p>
+<div class="line-block">实现 | 主要时间 | 基本存储 |<br />
+: --- | : --- | : --- |<br />
+全分量标签Kruskal | 排序加至多 <span class="math inline">\(n-1\)</span>
+次全标签改写, <span class="math inline">\(O(m\log m+n^2)\)</span> |
+<span class="math inline">\(O(n+m)\)</span> |<br />
+并查集Kruskal | 常用界 <span class="math inline">\(O(n+m\log
+m)\)</span>, 合并近似线性 | <span class="math inline">\(O(n+m)\)</span>
+|<br />
+扫描Prim | <span class="math inline">\(O(n^2+m)\)</span> | <span
+class="math inline">\(O(n+m)\)</span> |<br />
+堆版Prim | 常用简单图实现 <span class="math inline">\(O((n+m)\log
+n)\)</span> | <span class="math inline">\(O(n+m)\)</span> |</div>
+<p>本章标签Kruskal每次考察候选都保存全标签和已选边, 最坏增加 <span
+class="math inline">\(O(mn)\)</span> 时间与存储; Prim逐轮保存数组,
+额外存储为 <span class="math inline">\(O(n^2)\)</span>.
+配套并查集与Prim封装不保存这些全部快照. 小图枚举的组合数量增长很快,
+用于独立核验, 不作为大网络的求解方式.</p>
+<p>固定教学数据便于逐步解释. 更换输入时, 应检查方向, 全部顶点, 候选端点,
+有限权重, 单位与可加性. 平行边如需追踪独立线路属性, 应保留线路编号;
+浮点合计与并列判断需根据尺度处理误差. 本章整数例子使用精确比较.</p>
+<h3 id="工程要求超出树模型时">22.10.2 工程要求超出树模型时</h3>
+<p>树中每条边都是桥, 删除任意一条都会断开. 若要求单条线路故障后仍互通,
+应增加冗余与可靠性约束. 线路容量, 节点度数, 最大传输距离和单向连通,
+也有各自的扩展模型. 如果只连接指定终端, 又允许选择额外中转点,
+还可能进入Steiner树等不同任务.</p>
+<p>报告结果时, 说明全部顶点与可选边, 目标与单位, 选中的边及编号,
+连通与无圈检查, 总权重回代, 最优性依据, 并列方案与数据变化.
+下一章进入线性规划, 将更一般的决策变量,
+目标函数与约束统一写成优化模型.</p>
+<h3 id="练习">22.10.3 练习</h3>
+<ol type="1">
+<li>在22.2节第四个候选中, 已有六个给定顶点和五条边, 为什么仍不是生成树?
+检查第三个候选的总权重, 说明结构可行与最优有何区别.</li>
+<li>从标签 <span class="math inline">\((1,2,2,2,5,5)\)</span> 开始,
+依次考虑1—2, 4—5, 2—5. 写出每次标签变化,
+并指出最后一条会与哪些已选边组成圈.</li>
+<li>对六城市十条边完成排序. 解释两个权重14的候选为何可以都加入;
+若某条更便宜的候选两端已连通, 应怎样处理?</li>
+<li>对22.4节四点反例, 从1开始写出正确Prim选边和总权重. 只看最新加入点时,
+第二步会错选什么? 正确候选范围是什么?</li>
+<li>说明Prim处理2—3时为何把接入权重18改为13,
+而Dijkstra不把从1到3的距离18改为27. 两个数组分别表示什么?</li>
+<li>从城市6开始运行Prim, 逐轮列出边与累计总权重. 与从1开始的边集比较,
+哪些内容改变, 哪些结论保持?</li>
+<li>等权三角形有几棵最小生成树? 六城市图也有重复权重,
+为什么最优边集仍唯一? 给出一个唯一最轻割的具体例子.</li>
+<li>将5—6权重分别改为18, 19, 20, 写出最优总权重与接入城市6的选择.
+删除5—6后又如何?</li>
+<li>五顶点图只有1—2(2), 3—4(3), 求分量数, 最小生成森林边数与总权重.
+再对边权-2, 0, 5的三角形求最小生成树, 说明零权边的输入方式.</li>
+<li>最小生成树是否满足任意一条已建线路损坏后全体城市仍互通?
+建设总费用最小又能否保证每个点对传输代价最小?
+分别说明需要进一步明确的模型要求.</li>
+</ol>
+<p>参考解答见 <code>ExerciseHints.md</code>.
+延伸阅读F.10保留原有8题及完整答案.</p>
+<p>配套阅读与实验: <a
+href="../reading/22/Index.md">本章资料索引</a>.</p>
+<h2 id="参考资料">参考资料</h2>
+<p>[1] MathWorks官方文档: <a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/matlab/ref/graph.minspantree.html">minspantree</a>.
+[2] NetworkX官方文档: <a
+target="_blank" rel="noopener" href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.tree.mst.minimum_spanning_tree.html">minimum_spanning_tree</a>.</p>
+<p><code>MinimumSpanningTreeFurtherReading.md</code>
+完整保留原有10节及参考资料, 包括原始模型与交换证明, 并查集Kruskal,
+扫描Prim, 通用输入检查, 树的比较, 唯一性割表, 报价分析, 矩阵与森林接口,
+复杂度和8道练习. 可按学习进度查阅, 所有原有代码与数学环境均保留.</p>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

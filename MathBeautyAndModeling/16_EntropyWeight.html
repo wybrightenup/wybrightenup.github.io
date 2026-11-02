@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="第 16 章 熵权法: 从数据差异构造权重 上一章用成对比较表达准则的重要性. 本章换一条路径: 观察当前候选方案在某项指标上的数值分布, 用分布偏离均匀的程度构造权重. 两种方法回答的问题不同, 不能因为权重由程序计算, 就把它当作没有评价判断的客观事实. 先只看一列已经转换为&quot;越大越好&quot;的评价值: 0, 3, 7. 三个数之和为10, 所占比重为0, 0.3, 0.7. 接下来只">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/MathBeautyAndModeling/16_EntropyWeight.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="第 16 章 熵权法: 从数据差异构造权重 上一章用成对比较表达准则的重要性. 本章换一条路径: 观察当前候选方案在某项指标上的数值分布, 用分布偏离均匀的程度构造权重. 两种方法回答的问题不同, 不能因为权重由程序计算, 就把它当作没有评价判断的客观事实. 先只看一列已经转换为&quot;越大越好&quot;的评价值: 0, 3, 7. 三个数之和为10, 所占比重为0, 0.3, 0.7. 接下来只">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/EntropyWeight/EntropyWeight-Steps.png">
+<meta property="og:image" content="http://example.com/images/EntropyWeight/EntropyWeight-1.png">
+<meta property="og:image" content="http://example.com/images/EntropyWeight/EntropyWeight-2.png">
+<meta property="og:image" content="http://example.com/images/EntropyWeight/EntropyWeight-4.png">
+<meta property="og:image" content="http://example.com/images/EntropyWeight/EntropyWeight-3.png">
+<meta property="article:published_time" content="2026-11-02T02:53:08.532Z">
+<meta property="article:modified_time" content="2026-10-31T09:20:34.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/EntropyWeight/EntropyWeight-Steps.png">
+
+
+<link rel="canonical" href="http://example.com/MathBeautyAndModeling/16_EntropyWeight">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/MathBeautyAndModeling/16_EntropyWeight.html","path":"MathBeautyAndModeling/16_EntropyWeight.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-16-%E7%AB%A0-%E7%86%B5%E6%9D%83%E6%B3%95-%E4%BB%8E%E6%95%B0%E6%8D%AE%E5%B7%AE%E5%BC%82%E6%9E%84%E9%80%A0%E6%9D%83%E9%87%8D"><span class="nav-number">1.</span> <span class="nav-text">第 16 章 熵权法:
+从数据差异构造权重</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E4%B8%80%E5%88%97%E6%95%B0%E6%8D%AE%E5%BC%80%E5%A7%8B-%E5%85%88%E6%8A%8A%E6%AF%94%E9%87%8D%E7%AE%97%E5%87%BA%E6%9D%A5"><span class="nav-number">1.1.</span> <span class="nav-text">16.1 从一列数据开始,
+先把比重算出来</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E7%AE%97%E4%B8%80%E4%B8%AA%E4%B9%98%E7%A7%AF%E9%A1%B9-%E5%86%8D%E5%BE%97%E5%88%B0%E8%BF%99%E4%B8%80%E5%88%97%E7%9A%84%E7%86%B5"><span class="nav-number">1.2.</span> <span class="nav-text">16.2 先算一个乘积项,
+再得到这一列的熵</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A3%E6%AF%94%E9%87%8D%E8%AE%A1%E7%AE%97%E5%AF%B9%E6%95%B0-%E9%9B%B6%E9%A1%B9%E5%8D%95%E7%8B%AC%E5%A4%84%E7%90%86"><span class="nav-number">1.2.1.</span> <span class="nav-text">16.2.1 正比重计算对数,
+零项单独处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%86%B5-%E5%BD%92%E4%B8%80%E5%8C%96%E7%86%B5%E4%B8%8E%E5%B7%AE%E5%BC%82%E7%B3%BB%E6%95%B0%E6%98%AF%E4%B8%89%E6%AD%A5"><span class="nav-number">1.2.2.</span> <span class="nav-text">16.2.2 熵,
+归一化熵与差异系数是三步</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AF%94%E8%BE%83%E5%9D%87%E5%8C%80%E5%92%8C%E9%9B%86%E4%B8%AD-%E5%86%8D%E6%8A%8A%E5%B7%AE%E5%BC%82%E7%B3%BB%E6%95%B0%E5%8F%98%E6%88%90%E6%9D%83%E9%87%8D"><span class="nav-number">1.3.</span> <span class="nav-text">16.3 比较均匀和集中,
+再把差异系数变成权重</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9D%87%E5%8C%80%E5%88%86%E5%B8%83%E7%9A%84%E7%86%B5%E6%9C%80%E5%A4%A7"><span class="nav-number">1.3.1.</span> <span class="nav-text">16.3.1 均匀分布的熵最大</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%8D%E9%99%A4%E4%B8%80%E6%AC%A1%E6%80%BB%E5%92%8C-%E6%89%8D%E5%BE%97%E5%88%B0%E7%86%B5%E6%9D%83"><span class="nav-number">1.3.2.</span> <span class="nav-text">16.3.2 再除一次总和, 才得到熵权</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E5%8E%9F%E5%A7%8B%E7%85%A7%E6%98%8E%E6%8C%87%E6%A0%87%E5%88%B0%E9%9D%9E%E8%B4%9F%E6%AD%A3%E5%90%91%E5%8C%96%E5%80%BC"><span class="nav-number">1.4.</span> <span class="nav-text">16.4
+从原始照明指标到非负正向化值</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E8%A7%84%E5%AE%9A%E6%AF%8F%E9%A1%B9%E6%80%8E%E6%A0%B7%E6%89%8D%E7%AE%97%E5%A5%BD"><span class="nav-number">1.4.1.</span> <span class="nav-text">16.4.1 先规定每项怎样才算好</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E5%88%97%E5%90%84%E7%AE%97%E4%B8%80%E6%AC%A1%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.4.2.</span> <span class="nav-text">16.4.2 四列各算一次转换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%86%E5%90%8C%E4%B8%80%E5%88%97%E7%9A%84%E8%AE%A1%E7%AE%97-%E5%AF%B9%E5%9B%9B%E4%B8%AA%E6%8C%87%E6%A0%87%E9%87%8D%E5%A4%8D"><span class="nav-number">1.5.</span> <span class="nav-text">16.5 将同一列的计算,
+对四个指标重复</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%B6%E5%80%BC-%E5%B8%B8%E6%95%B0%E5%88%97%E5%92%8C%E5%85%A8%E9%83%A8%E6%97%A0%E5%B7%AE%E5%BC%82%E5%88%86%E5%88%AB%E5%A4%84%E7%90%86"><span class="nav-number">1.6.</span> <span class="nav-text">16.6 零值,
+常数列和全部无差异分别处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E7%9F%AD%E6%AD%A5%E9%AA%A4%E6%8E%A5%E6%88%90%E5%AE%8C%E6%95%B4%E8%B5%8B%E6%9D%83%E5%87%BD%E6%95%B0"><span class="nav-number">1.7.</span> <span class="nav-text">16.7 把短步骤接成完整赋权函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%B9%E5%8F%98%E5%8E%9F%E7%82%B9%E4%B8%8E%E6%94%B9%E5%8F%98%E5%8D%95%E4%BD%8D-%E6%98%AF%E4%B8%A4%E7%A7%8D%E4%B8%8D%E5%90%8C%E6%93%8D%E4%BD%9C"><span class="nav-number">1.8.</span> <span class="nav-text">16.8 改变原点与改变单位,
+是两种不同操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E7%9C%8B%E5%90%8C%E6%96%B9%E5%B7%AE%E5%8F%8D%E4%BE%8B"><span class="nav-number">1.8.1.</span> <span class="nav-text">16.8.1 先看同方差反例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E6%9C%AC%E4%BE%8B%E5%86%8D%E4%BD%9C%E6%9E%81%E5%B7%AE%E5%8F%98%E6%8D%A2"><span class="nav-number">1.8.2.</span> <span class="nav-text">16.8.2 对本例再作极差变换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%86%E6%9D%83%E9%87%8D%E6%8E%A5%E5%88%B0%E8%AF%84%E4%BB%B7-%E5%85%88%E7%AE%97%E4%B8%80%E4%B8%AA%E6%96%B9%E6%A1%88%E7%9A%84%E8%B7%9D%E7%A6%BB"><span class="nav-number">1.9.</span> <span class="nav-text">16.9 将权重接到评价:
+先算一个方案的距离</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B5%8B%E6%9D%83%E6%9C%AC%E8%BA%AB%E4%B8%8D%E4%BA%A7%E7%94%9F%E6%96%B9%E6%A1%88%E6%80%BB%E6%8E%92%E5%BA%8F"><span class="nav-number">1.9.1.</span> <span class="nav-text">16.9.1 赋权本身不产生方案总排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%9D%E6%8C%81%E5%90%8C%E4%B8%80z-%E6%AF%94%E8%BE%83%E7%AD%89%E6%9D%83%E4%B8%8E%E7%86%B5%E6%9D%83"><span class="nav-number">1.9.2.</span> <span class="nav-text">16.9.2 保持同一Z, 比较等权与熵权</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E6%95%B0%E6%8D%AE%E5%B7%AE%E5%BC%82%E6%94%BE%E5%9B%9E%E8%AF%84%E4%BB%B7%E7%9B%AE%E6%A0%87"><span class="nav-number">1.10.</span> <span class="nav-text">16.10 把数据差异放回评价目标</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.10.1.</span> <span class="nav-text">16.10.1 练习</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.11.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="第-16-章-熵权法-从数据差异构造权重">第 16 章 熵权法:
+从数据差异构造权重</h1>
+<p>上一章用成对比较表达准则的重要性. 本章换一条路径:
+观察当前候选方案在某项指标上的数值分布, 用分布偏离均匀的程度构造权重.
+两种方法回答的问题不同, 不能因为权重由程序计算,
+就把它当作没有评价判断的客观事实.</p>
+<p>先只看一列已经转换为"越大越好"的评价值: 0, 3, 7. 三个数之和为10,
+所占比重为0, 0.3, 0.7. 接下来只用这三个比重, 算出这一列的熵与差异系数;
+等所有列都算完, 才把差异系数归一化成权重.</p>
+<p>本章按"算一项—重复一列—重复多列—完整函数"展开,
+再把权重接到TOPSIS评价, 为下一章作准备. 照明改造案例的数值,
+目标与理想区间均为教学设定, 不是工程通用参数或实际项目验证结果.</p>
+<h2 id="从一列数据开始-先把比重算出来">16.1 从一列数据开始,
+先把比重算出来</h2>
+<p>设三个方案在某项指标上的非负正向化值为</p>
+<p><span class="math display">\[
+\boldsymbol x=(0,3,7)^{\mathsf T}.
+\]</span></p>
+<p>这里的"正向化"是指按评价规则处理后, 数值越大代表越好. 0是评价值,
+不表示实际设备指标一定为0.</p>
+<p>先求和 <span class="math inline">\(0+3+7=10\)</span>, 再逐项相除:</p>
+<p><span class="math display">\[
+p_A=0/10=0,\qquad p_B=3/10=0.3,\qquad p_C=7/10=0.7.
+\]</span></p>
+<p><strong>code/column_share_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">x = np.array([<span class="number">0.</span>,<span class="number">3.</span>,<span class="number">7.</span>])</span><br><span class="line">total = <span class="number">0.</span></span><br><span class="line"><span class="keyword">for</span> value <span class="keyword">in</span> x:</span><br><span class="line">    total += value</span><br><span class="line"><span class="keyword">assert</span> total &gt; <span class="number">0</span></span><br><span class="line">p = []</span><br><span class="line"><span class="keyword">for</span> value <span class="keyword">in</span> x:</span><br><span class="line">    p.append(value/total)</span><br><span class="line">p = np.array(p)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Column total:&#x27;</span>,total)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Shares of A, B, C:&#x27;</span>,p)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Share sum:&#x27;</span>,p.<span class="built_in">sum</span>())</span><br></pre></td></tr></table></figure>
+<p><strong>code/column_share_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">x = [<span class="number">0</span>;<span class="number">3</span>;<span class="number">7</span>]; total = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">numel</span>(x)</span><br><span class="line">    total = total+x(k);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">assert(total&gt;<span class="number">0</span>); p = <span class="built_in">zeros</span>(<span class="built_in">size</span>(x));</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">numel</span>(x)</span><br><span class="line">    p(k) = x(k)/total;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">fprintf(<span class="string">&#x27;Column total: %.8f\n&#x27;</span>,total);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Shares of A, B, C:&#x27;</span>); <span class="built_in">disp</span>(p&#x27;);</span><br><span class="line">fprintf(<span class="string">&#x27;Share sum: %.12f\n&#x27;</span>,sum(p));</span><br></pre></td></tr></table></figure>
+<p>三个比重之和为1. 这只表示它们具有分布的形式, 不表示A, B,
+C获选的概率分别是0, 0.3, 0.7. 熵权计算在这里还没有给方案排序.</p>
+<h2 id="先算一个乘积项-再得到这一列的熵">16.2 先算一个乘积项,
+再得到这一列的熵</h2>
+<h3 id="正比重计算对数-零项单独处理">16.2.1 正比重计算对数,
+零项单独处理</h3>
+<p>对正比重 <span class="math inline">\(p\)</span>, 先计算 <span
+class="math inline">\(-p\ln p\)</span>. 本列逐项为:</p>
+<p>表 16-1 一列比重的熵贡献.</p>
+<div class="line-block">方案位置 | 比重 <span
+class="math inline">\(p\)</span> | 熵的贡献 <span
+class="math inline">\(-p\ln p\)</span> |</div>
+<p>|: ---: |: ---: |: ---: | | A | 0 | 按连续延拓取0 | | B | 0.3 |
+0.361192 | | C | 0.7 | 0.249672 |</p>
+<p>正项的计算例如 <span
+class="math inline">\(-0.3\ln0.3\approx0.361192\)</span>. 对零项,
+使用</p>
+<p><span class="math display">\[
+\lim_{p\to0^+}(-p\ln p)=0.
+\]</span></p>
+<p>因此零比重的贡献取0. 这是乘积项的连续延拓, 没有定义 <span
+class="math inline">\(\ln0=0\)</span>. 程序应先判断比重是否为正,
+再取对数, 不先算整个数组的 <code>log</code>后让0去乘负无穷,
+也不为所有零值任意添加小量.</p>
+<h3 id="熵-归一化熵与差异系数是三步">16.2.2 熵,
+归一化熵与差异系数是三步</h3>
+<p>把三项贡献相加, 得到信息熵</p>
+<p><span class="math display">\[
+H=0+0.361192+0.249672\approx0.610864.
+\]</span></p>
+<p>对于三个位置的分布, 最大熵是 <span
+class="math inline">\(\ln3\)</span>. 除以这个最大值, 得到归一化熵,
+再取其补数:</p>
+<p><span class="math display">\[
+E=\frac{H}{\ln3}\approx0.556033,\qquad
+d=1-E\approx0.443967.
+\]</span></p>
+<p>分母中的3是全部方案数, 不能只因为有两项正比重就改用 <span
+class="math inline">\(\ln2\)</span>.</p>
+<p><strong>code/entropy_one_column. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">p = np.array([<span class="number">0.</span>,<span class="number">.3</span>,<span class="number">.7</span>])</span><br><span class="line">contributions = []</span><br><span class="line"><span class="keyword">for</span> share <span class="keyword">in</span> p:</span><br><span class="line">    <span class="keyword">if</span> share &gt; <span class="number">0</span>:</span><br><span class="line">        term = -share*np.log(share)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        term = <span class="number">0.</span>  <span class="comment"># Continuous extension of -p log p; never log(0).</span></span><br><span class="line">    contributions.append(term)</span><br><span class="line">contributions = np.array(contributions)</span><br><span class="line">H = contributions.<span class="built_in">sum</span>()</span><br><span class="line">E = H/np.log(<span class="built_in">len</span>(p))</span><br><span class="line">d = <span class="number">1</span>-E</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Three entropy contributions:&#x27;</span>,contributions)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;H, normalized E, difference d:&#x27;</span>,H,E,d)</span><br></pre></td></tr></table></figure>
+<p><strong>code/entropy_one_column. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">p = [<span class="number">0</span>;<span class="number">.3</span>;<span class="number">.7</span>]; contributions = <span class="built_in">zeros</span>(<span class="built_in">size</span>(p));</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">numel</span>(p)</span><br><span class="line">    <span class="keyword">if</span> p(k)&gt;<span class="number">0</span></span><br><span class="line">        contributions(k) = -p(k)*<span class="built_in">log</span>(p(k));</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        contributions(k) = <span class="number">0</span>; <span class="comment">% Continuous extension, never log(0).</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">H = sum(contributions); E = H/<span class="built_in">log</span>(<span class="built_in">numel</span>(p)); d = <span class="number">1</span>-E;</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Three entropy contributions:&#x27;</span>); <span class="built_in">disp</span>(contributions&#x27;);</span><br><span class="line">fprintf(<span class="string">&#x27;H=%.12f, normalized E=%.12f, difference d=%.12f\n&#x27;</span>,H,E,d);</span><br></pre></td></tr></table></figure>
+<p><img src="/images/EntropyWeight/EntropyWeight-Steps.png" style="width:100%"></p>
+<p>图 16-1 一列比重怎样形成熵与差异系数</p>
+<p>左图显示三个比重, 右图显示各位置对熵的贡献. 零位置不取对数.
+贡献相加得到H, 除以 <span class="math inline">\(\ln3\)</span>得到E,
+再取1-E得到d; 还没有与其他指标共同归一化为权重.</p>
+<h2 id="比较均匀和集中-再把差异系数变成权重">16.3 比较均匀和集中,
+再把差异系数变成权重</h2>
+<h3 id="均匀分布的熵最大">16.3.1 均匀分布的熵最大</h3>
+<p>离散信息熵由Shannon在通信理论中系统讨论[1]. 对 <span
+class="math inline">\(n\)</span> 个位置的分布, 有 <span
+class="math inline">\(0\leqslant H\leqslant\ln n\)</span>.
+全部比重相同时, H达到最大; 全部集中在一个位置时为0.</p>
+<p>可以设想按比重抽取一个方案编号: 三项均为1/3时较难预先猜中编号,
+不确定性较大; 若某项比重为1, 编号已经确定, 不确定性为0. 这帮助理解熵,
+不把比重解释为最终决策概率.</p>
+<p>先用三项独立的练习指标作对比, 它们的比重依次为均匀,
+本章已算过的0/0.3/0.7和单点集中:</p>
+<p>表 16-2 三组比重的熵与差异系数.</p>
+<div class="line-block">练习指标的比重 | 归一化熵E | 差异系数d |</div>
+<p>|: ---: |: ---: |: ---: | | <span
+class="math inline">\((1/3,1/3,1/3)^{\mathsf T}\)</span> | 1 | 0 | |
+<span class="math inline">\((0,0.3,0.7)^{\mathsf T}\)</span> | 0.556033
+| 0.443967 | | <span class="math inline">\((0,0,1)^{\mathsf T}\)</span>
+| 0 | 1 |</p>
+<p>均匀分布的这一列没有区分三个方案, 因而差异系数为0. 单点集中区分明显,
+差异系数为1. 这度量的是指定分布相对均匀分布的差异,
+不是现实价值的大小.</p>
+<p><img src="/images/EntropyWeight/EntropyWeight-1.png" style="width:100%"></p>
+<p>图 16-2 从均匀比重到集中比重</p>
+<p>图中三种分布与上表相同, 下方曲线连接均匀与单点集中. E与d互补,
+此时仍需考虑其他列才能形成相对权重.</p>
+<h3 id="再除一次总和-才得到熵权">16.3.2 再除一次总和, 才得到熵权</h3>
+<p>若仅将这三个练习指标放在一起比较, 差异系数之和为 <span
+class="math inline">\(0+0.443967+1\approx1.443967\)</span>.
+归一化得到权重约</p>
+<p><span class="math display">\[
+\boldsymbol w=(0,0.307464,0.692536)^{\mathsf T}.
+\]</span></p>
+<p><strong>code/compare_distributions_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># Three separate teaching indicators, not the four-column lighting case.</span></span><br><span class="line">P = np.array([[<span class="number">1</span>/<span class="number">3</span>,<span class="number">0</span>,<span class="number">0</span>], [<span class="number">1</span>/<span class="number">3</span>,<span class="number">.3</span>,<span class="number">0</span>], [<span class="number">1</span>/<span class="number">3</span>,<span class="number">.7</span>,<span class="number">1</span>]],dtype=<span class="built_in">float</span>)</span><br><span class="line">entropies = []</span><br><span class="line"><span class="keyword">for</span> column <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">    p = P[:,column]</span><br><span class="line">    positive = p&gt;<span class="number">0</span></span><br><span class="line">    E = -np.<span class="built_in">sum</span>(p[positive]*np.log(p[positive]))/np.log(<span class="number">3</span>)</span><br><span class="line">    E = <span class="built_in">max</span>(<span class="number">0.</span>,<span class="built_in">float</span>(E))</span><br><span class="line">    <span class="keyword">if</span> np.<span class="built_in">all</span>(p==p[<span class="number">0</span>]):</span><br><span class="line">        E = <span class="number">1.</span>  <span class="comment"># The known uniform boundary is exact.</span></span><br><span class="line">    entropies.append(E)</span><br><span class="line">entropies = np.array(entropies)</span><br><span class="line">differences = <span class="number">1</span>-entropies</span><br><span class="line">weights = differences/differences.<span class="built_in">sum</span>()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Columns: uniform, partly concentrated, point mass&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;E, d, relative weight:&#x27;</span>,np.column_stack((entropies,differences,weights)))</span><br></pre></td></tr></table></figure>
+<p><strong>code/compare_distributions_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line"><span class="comment">% Separate teaching indicators, not the four-column lighting case.</span></span><br><span class="line">P = [<span class="number">1</span>/<span class="number">3</span>,<span class="number">0</span>,<span class="number">0</span>;<span class="number">1</span>/<span class="number">3</span>,<span class="number">.3</span>,<span class="number">0</span>;<span class="number">1</span>/<span class="number">3</span>,<span class="number">.7</span>,<span class="number">1</span>]; entropies = <span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">3</span>);</span><br><span class="line"><span class="keyword">for</span> column = <span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    p = P(:,column); positive = p&gt;<span class="number">0</span>;</span><br><span class="line">    E = -sum(p(positive).*<span class="built_in">log</span>(p(positive)))/<span class="built_in">log</span>(<span class="number">3</span>);</span><br><span class="line">    E = <span class="built_in">max</span>(<span class="number">0</span>,E);</span><br><span class="line">    <span class="keyword">if</span> all(p==p(<span class="number">1</span>)), E = <span class="number">1</span>; <span class="keyword">end</span></span><br><span class="line">    entropies(column) = E;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">differences = <span class="number">1</span>-entropies; weights = differences/sum(differences);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Rows: uniform, partly concentrated, point mass&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;E, d, relative weight:&#x27;</span>); <span class="built_in">disp</span>([entropies&#x27;,differences&#x27;,weights&#x27;]);</span><br></pre></td></tr></table></figure>
+<p>一般对 <span class="math inline">\(m\)</span> 项指标,</p>
+<p><span class="math display">\[
+d_j=1-E_j,\qquad
+w_j=\frac{d_j}{\sum\limits_{\ell=1}^{m}d_\ell},
+\qquad\sum\limits_{\ell=1}^{m}d_\ell&gt;0.
+\]</span></p>
+<p>通常 <span class="math inline">\(E_j+d_j=1\)</span>, 但 <span
+class="math inline">\(E_j+w_j\ne1\)</span>. 差异系数只属于这一列,
+最终权重还取决于其他列的差异系数. 以上是三列分布练习,
+与后面四指标照明案例分别计算.</p>
+<h2 id="从原始照明指标到非负正向化值">16.4
+从原始照明指标到非负正向化值</h2>
+<h3 id="先规定每项怎样才算好">16.4.1 先规定每项怎样才算好</h3>
+<p>现在比较三个校园照明改造方案. 教学数据如下,
+假设它们已满足必要的安全与使用底线:</p>
+<p>表 16-3 照明改造的四项教学指标.</p>
+<div class="line-block">方案 | 年节电量(万千瓦时) | 年维护工时(小时) |
+照度设定值(勒克斯) | 采样周期(毫秒) |</div>
+<p>|: ---: |: ---: |: ---: |: ---: |: ---: | | A | 9 | 10 | 175 | 120 |
+| B | 8 | 7 | 164 | 80 | | C | 6 | 3 | 157 | 90 |</p>
+<p>节电量越大越好, 工时越少越好; 照度以165为教学目标, 采样周期以 <span
+class="math inline">\([90,100]\)</span> 为教学理想区间.
+采样过密和过疏各有负担, 本例因此使用区间规则.
+这些目标与区间不作为通用工程推荐.</p>
+<p>熵权公式不会自动识别偏好方向. 先确定指标含义和评分规则,
+才能使用非负数据构造比重.</p>
+<h3 id="四列各算一次转换">16.4.2 四列各算一次转换</h3>
+<p>节电量保留原值. 工时用当前最大值10减去原值, 得到0, 3, 7,
+正是16.1节的输入.</p>
+<p>照度距165的偏差为10, 1, 8, 本组最大偏差为10. 使用 <span
+class="math inline">\(1-\text{偏差}/10\)</span>, 得到0, 0.9, 0.2.
+采样周期超出理想区间的距离为20, 10, 0, 最大值20; 使用 <span
+class="math inline">\(1-\text{超界距离}/20\)</span>, 得到0, 0.5, 1.</p>
+<p><strong>code/four_transforms_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">raw = np.array([[<span class="number">9</span>,<span class="number">10</span>,<span class="number">175</span>,<span class="number">120</span>], [<span class="number">8</span>,<span class="number">7</span>,<span class="number">164</span>,<span class="number">80</span>], [<span class="number">6</span>,<span class="number">3</span>,<span class="number">157</span>,<span class="number">90</span>]],dtype=<span class="built_in">float</span>)</span><br><span class="line">X = np.zeros_like(raw)</span><br><span class="line">X[:,<span class="number">0</span>] = raw[:,<span class="number">0</span>]  <span class="comment"># Benefit: keep the nonnegative observations.</span></span><br><span class="line">X[:,<span class="number">1</span>] = raw[:,<span class="number">1</span>].<span class="built_in">max</span>()-raw[:,<span class="number">1</span>]  <span class="comment"># Cost: lower is better.</span></span><br><span class="line">deviation = <span class="built_in">abs</span>(raw[:,<span class="number">2</span>]-<span class="number">165</span>)</span><br><span class="line">target_scale = deviation.<span class="built_in">max</span>()</span><br><span class="line">X[:,<span class="number">2</span>] = <span class="number">1</span>-deviation/target_scale <span class="keyword">if</span> target_scale&gt;<span class="number">0</span> <span class="keyword">else</span> <span class="number">1</span></span><br><span class="line">outside = np.maximum(<span class="number">90</span>-raw[:,<span class="number">3</span>],<span class="number">0</span>)+np.maximum(raw[:,<span class="number">3</span>]-<span class="number">100</span>,<span class="number">0</span>)</span><br><span class="line">interval_scale = outside.<span class="built_in">max</span>()</span><br><span class="line">X[:,<span class="number">3</span>] = <span class="number">1</span>-outside/interval_scale <span class="keyword">if</span> interval_scale&gt;<span class="number">0</span> <span class="keyword">else</span> <span class="number">1</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Target deviations and scale:&#x27;</span>,deviation,target_scale)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Interval distances and scale:&#x27;</span>,outside,interval_scale)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Transformed matrix:&#x27;</span>,X,sep=<span class="string">&#x27;\n&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>code/four_transforms_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">raw = [<span class="number">9</span>,<span class="number">10</span>,<span class="number">175</span>,<span class="number">120</span>;<span class="number">8</span>,<span class="number">7</span>,<span class="number">164</span>,<span class="number">80</span>;<span class="number">6</span>,<span class="number">3</span>,<span class="number">157</span>,<span class="number">90</span>]; X = <span class="built_in">zeros</span>(<span class="built_in">size</span>(raw));</span><br><span class="line">X(:,<span class="number">1</span>) = raw(:,<span class="number">1</span>); X(:,<span class="number">2</span>) = <span class="built_in">max</span>(raw(:,<span class="number">2</span>))-raw(:,<span class="number">2</span>);</span><br><span class="line">deviation = <span class="built_in">abs</span>(raw(:,<span class="number">3</span>)<span class="number">-165</span>); targetScale = <span class="built_in">max</span>(deviation);</span><br><span class="line"><span class="keyword">if</span> targetScale&gt;<span class="number">0</span>, X(:,<span class="number">3</span>) = <span class="number">1</span>-deviation/targetScale; <span class="keyword">else</span>, X(:,<span class="number">3</span>) = <span class="number">1</span>; <span class="keyword">end</span></span><br><span class="line">outside = <span class="built_in">max</span>(<span class="number">90</span>-raw(:,<span class="number">4</span>),<span class="number">0</span>)+<span class="built_in">max</span>(raw(:,<span class="number">4</span>)<span class="number">-100</span>,<span class="number">0</span>);</span><br><span class="line">intervalScale = <span class="built_in">max</span>(outside);</span><br><span class="line"><span class="keyword">if</span> intervalScale&gt;<span class="number">0</span>, X(:,<span class="number">4</span>) = <span class="number">1</span>-outside/intervalScale; <span class="keyword">else</span>, X(:,<span class="number">4</span>) = <span class="number">1</span>; <span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Target deviations and interval distances:&#x27;</span>); <span class="built_in">disp</span>([deviation,outside]);</span><br><span class="line">fprintf(<span class="string">&#x27;Scales: %.8f, %.8f\n&#x27;</span>,targetScale,intervalScale);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Transformed matrix:&#x27;</span>); <span class="built_in">disp</span>(X);</span><br></pre></td></tr></table></figure>
+<p>结果为</p>
+<p><span class="math display">\[
+X=\begin{pmatrix}
+9&amp;0&amp;0&amp;0\\
+8&amp;3&amp;0.9&amp;0.5\\
+6&amp;7&amp;0.2&amp;1
+\end{pmatrix}.
+\]</span></p>
+<p>0是该转换规则的端点评价, 不表示实际照度或维护工时为0.
+用样本最大偏差作折减尺度会把最远者压到0, 是一项较强的建模选择. 例如165,
+166, 164只相差1, 若这个差异在测量误差或容许范围内, 就不宜机械地转换为1,
+0, 0.</p>
+<p>所有观测都达到目标或都在理想区间内时, 偏差尺度为0, 本章统一取1,
+不除以0. 含负值的指标需先按含义转换, 如效益型 <span
+class="math inline">\((-5,0,5)^{\mathsf T}\)</span>可用极差变换得到
+<span class="math inline">\((0,0.5,1)^{\mathsf T}\)</span>.
+完整四类规则与负值处理见<a
+href="../reading/16/EntropyWeightFurtherReading.md">拓展阅读F.2</a>.</p>
+<h2 id="将同一列的计算-对四个指标重复">16.5 将同一列的计算,
+对四个指标重复</h2>
+<p>本例有 <span class="math inline">\(n=3\)</span> 个方案和 <span
+class="math inline">\(m=4\)</span> 项指标. 每列先求比重,
+再对正比重累加熵贡献:</p>
+<p><span class="math display">\[
+p_{ij}=\frac{x_{ij}}{\sum\limits_{k=1}^{n}x_{kj}},\qquad
+E_j=-\frac1{\ln n}\sum\limits_{i=1}^{n}p_{ij}\ln p_{ij}.
+\]</span></p>
+<p>零项按前面延拓处理. 例如节电量列的比重为 <span
+class="math inline">\((9/23,8/23,6/23)^{\mathsf T}\)</span>,
+维护工时正向列为 <span class="math inline">\((0,3/10,7/10)^{\mathsf
+T}\)</span>. 后两列的列和为1.1和1.5, 也使用同样的相除与累加.</p>
+<p><strong>code/weight_columns_loop. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># Rows A, B, C; columns energy, maintenance, target, interval.</span></span><br><span class="line">X = np.array([[<span class="number">9</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>], [<span class="number">8</span>,<span class="number">3</span>,<span class="number">.9</span>,<span class="number">.5</span>], [<span class="number">6</span>,<span class="number">7</span>,<span class="number">.2</span>,<span class="number">1</span>]], dtype=<span class="built_in">float</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Fixed case: all column totals are positive, at least one column varies.</span></span><br><span class="line">n, m = X.shape</span><br><span class="line"><span class="keyword">assert</span> n&gt;=<span class="number">2</span> <span class="keyword">and</span> np.<span class="built_in">min</span>(X)&gt;=<span class="number">0</span></span><br><span class="line">P = np.zeros_like(X); E = np.zeros(m)</span><br><span class="line"><span class="keyword">for</span> column <span class="keyword">in</span> <span class="built_in">range</span>(m):</span><br><span class="line">    total = np.<span class="built_in">sum</span>(X[:,column]); <span class="keyword">assert</span> total&gt;<span class="number">0</span></span><br><span class="line">    H = <span class="number">0.</span></span><br><span class="line">    <span class="keyword">for</span> row <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">        share = X[row,column]/total</span><br><span class="line">        P[row,column] = share</span><br><span class="line">        <span class="keyword">if</span> share&gt;<span class="number">0</span>:</span><br><span class="line">            H += -share*np.log(share)</span><br><span class="line">    E[column] = H/np.log(n)</span><br><span class="line">d = <span class="number">1</span>-E</span><br><span class="line"><span class="keyword">assert</span> d.<span class="built_in">sum</span>()&gt;<span class="number">0</span></span><br><span class="line">w = d/d.<span class="built_in">sum</span>()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;P:&#x27;</span>,P,sep=<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;E, d, w:&#x27;</span>,np.column_stack((E,d,w)))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Difference sum:&#x27;</span>,d.<span class="built_in">sum</span>())</span><br></pre></td></tr></table></figure>
+<p><strong>code/weight_columns_loop. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line"><span class="comment">% Rows A, B, C; columns energy, maintenance, target, interval.</span></span><br><span class="line">X = [<span class="number">9</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>;<span class="number">8</span>,<span class="number">3</span>,<span class="number">.9</span>,<span class="number">.5</span>;<span class="number">6</span>,<span class="number">7</span>,<span class="number">.2</span>,<span class="number">1</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">% Fixed case: positive column totals and at least one varying column.</span></span><br><span class="line">[n,m] = <span class="built_in">size</span>(X); assert(n&gt;=<span class="number">2</span> &amp;&amp; <span class="built_in">min</span>(X(:))&gt;=<span class="number">0</span>);</span><br><span class="line">P = <span class="built_in">zeros</span>(<span class="built_in">size</span>(X)); E = <span class="built_in">zeros</span>(<span class="number">1</span>,m);</span><br><span class="line"><span class="keyword">for</span> column = <span class="number">1</span>:m</span><br><span class="line">    total = sum(X(:,column)); assert(total&gt;<span class="number">0</span>); H = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> row = <span class="number">1</span>:n</span><br><span class="line">        share = X(row,column)/total; P(row,column) = share;</span><br><span class="line">        <span class="keyword">if</span> share&gt;<span class="number">0</span>, H = H-share*<span class="built_in">log</span>(share); <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    E(column) = H/<span class="built_in">log</span>(n);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">d = <span class="number">1</span>-E; assert(sum(d)&gt;<span class="number">0</span>); w = d/sum(d);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;P:&#x27;</span>); <span class="built_in">disp</span>(P);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;E, d, w:&#x27;</span>); <span class="built_in">disp</span>([E&#x27;,d&#x27;,w&#x27;]);</span><br><span class="line">fprintf(<span class="string">&#x27;Difference sum: %.12f\n&#x27;</span>,sum(d));</span><br></pre></td></tr></table></figure>
+<p>这两个循环程序只处理已经给定的本案例: 输入非负, 每列总和为正,
+至少一列存在差异. 常数和全零的完整处理接在下一节,
+不把当前短程序当作任意输入的通用函数.</p>
+<p>表 16-4 各正向化指标的熵权.</p>
+<div class="line-block">指标正向值 | 归一化熵E | 差异系数d | 熵权w
+|</div>
+<p>|: ---: |: ---: |: ---: |: ---: | | 节电量 | 0.987620 | 0.012380 |
+0.008565 | | 工时转换值 | 0.556033 | 0.443967 | 0.307162 | |
+照度目标满意度 | 0.431580 | 0.568420 | 0.393265 | | 采样区间满意度 |
+0.579380 | 0.420620 | 0.291008 |</p>
+<p>差异系数总和约1.445387. 照度列权重约为 <span
+class="math inline">\(0.568420/1.445387=0.393265\)</span>,
+与16.3节练习指标的权重不同, 因为参与共同归一化的列已经改变.</p>
+<p><img src="/images/EntropyWeight/EntropyWeight-2.png" style="width:100%"></p>
+<p>图 16-3 四列比重, 熵与熵权的对应关系</p>
+<p>图中维持指标顺序不变. 熵与差异系数互补, 权重由所有差异系数共同决定.
+节电量比重接近均匀, 所以本次熵权很小,
+不能据此解释为节能在现实中不重要.</p>
+<h2 id="零值-常数列和全部无差异分别处理">16.6 零值,
+常数列和全部无差异分别处理</h2>
+<p>单个零值不妨碍非零列求比重, 其熵贡献按0处理. 非零常数列如 <span
+class="math inline">\((2,2,2)^{\mathsf T}\)</span>, 比重均为1/3, <span
+class="math inline">\(E=1,d=0\)</span>. 当其他列存在可用差异时,
+该列最终熵权为0.</p>
+<p>全零列的列和为0, 比重公式没有定义. 本章用均匀比重作为记录用替代值,
+明确设置 <span class="math inline">\(E=1,d=0\)</span>.
+这是无区分度处理约定, 不是从0/0计算出来的比重.</p>
+<p><strong>code/zero_constant_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">cases = [np.array([[<span class="number">2</span>,<span class="number">0</span>,<span class="number">0</span>],[<span class="number">2</span>,<span class="number">0</span>,<span class="number">1</span>],[<span class="number">2</span>,<span class="number">0</span>,<span class="number">2</span>]],dtype=<span class="built_in">float</span>),</span><br><span class="line">         np.array([[<span class="number">2</span>,<span class="number">0</span>],[<span class="number">2</span>,<span class="number">0</span>],[<span class="number">2</span>,<span class="number">0</span>]],dtype=<span class="built_in">float</span>)]</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> X <span class="keyword">in</span> cases:</span><br><span class="line">    n,m = X.shape</span><br><span class="line">    P = np.zeros_like(X); E = np.zeros(m)</span><br><span class="line">    <span class="keyword">for</span> column <span class="keyword">in</span> <span class="built_in">range</span>(m):</span><br><span class="line">        x = X[:,column]</span><br><span class="line">        <span class="keyword">if</span> np.<span class="built_in">all</span>(x==x[<span class="number">0</span>]):</span><br><span class="line">            <span class="comment"># Zero columns use a declared bookkeeping convention.</span></span><br><span class="line">            P[:,column] = <span class="number">1</span>/n; E[column] = <span class="number">1.</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            p = x/x.<span class="built_in">sum</span>(); P[:,column] = p</span><br><span class="line">            positive = p&gt;<span class="number">0</span></span><br><span class="line">            E[column] = -np.<span class="built_in">sum</span>(p[positive]*np.log(p[positive]))/np.log(n)</span><br><span class="line">    d = <span class="number">1</span>-E</span><br><span class="line">    <span class="keyword">if</span> d.<span class="built_in">sum</span>()==<span class="number">0</span>:</span><br><span class="line">        weights = <span class="literal">None</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;No entropy weights: every column has no discrimination.&#x27;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        weights = d/d.<span class="built_in">sum</span>()</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;Weights:&#x27;</span>,weights)</span><br><span class="line">    records.append(&#123;<span class="string">&#x27;P&#x27;</span>:P,<span class="string">&#x27;E&#x27;</span>:E,<span class="string">&#x27;d&#x27;</span>:d,<span class="string">&#x27;weights&#x27;</span>:weights&#125;)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;Recorded E and d:&#x27;</span>,E,d)</span><br></pre></td></tr></table></figure>
+<p><strong>code/zero_constant_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">cases = &#123;[<span class="number">2</span>,<span class="number">0</span>,<span class="number">0</span>;<span class="number">2</span>,<span class="number">0</span>,<span class="number">1</span>;<span class="number">2</span>,<span class="number">0</span>,<span class="number">2</span>],[<span class="number">2</span>,<span class="number">0</span>;<span class="number">2</span>,<span class="number">0</span>;<span class="number">2</span>,<span class="number">0</span>]&#125;;</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="built_in">numel</span>(cases)</span><br><span class="line">    X = cases&#123;<span class="built_in">j</span>&#125;; [n,m] = <span class="built_in">size</span>(X); P = <span class="built_in">zeros</span>(<span class="built_in">size</span>(X)); E = <span class="built_in">zeros</span>(<span class="number">1</span>,m);</span><br><span class="line">    <span class="keyword">for</span> column = <span class="number">1</span>:m</span><br><span class="line">        x = X(:,column);</span><br><span class="line">        <span class="keyword">if</span> all(x==x(<span class="number">1</span>))</span><br><span class="line">            P(:,column) = <span class="number">1</span>/n; E(column) = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            p = x/sum(x); P(:,column) = p; positive = p&gt;<span class="number">0</span>;</span><br><span class="line">            E(column) = -sum(p(positive).*<span class="built_in">log</span>(p(positive)))/<span class="built_in">log</span>(n);</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    d = <span class="number">1</span>-E;</span><br><span class="line">    <span class="keyword">if</span> sum(d)==<span class="number">0</span></span><br><span class="line">        weights = [];</span><br><span class="line">        <span class="built_in">disp</span>(<span class="string">&#x27;No entropy weights: every column has no discrimination.&#x27;</span>);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        weights = d/sum(d); <span class="built_in">disp</span>(<span class="string">&#x27;Weights:&#x27;</span>); <span class="built_in">disp</span>(weights);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    <span class="built_in">disp</span>(<span class="string">&#x27;Recorded E and d:&#x27;</span>); <span class="built_in">disp</span>([E;d]);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>第一组矩阵前两列分别是非零常数列与全零列, 第三列为0, 1, 2.
+程序得到权重 <span class="math inline">\((0,0,1)^{\mathsf T}\)</span>.
+第二组所有列都无差异, 差异系数总和为0, 因而没有可归一化的熵权.
+程序报告无法确定, 不悄悄切换成等权.</p>
+<p>没有当前样本区分度, 不等于现实中没有价值.
+必要条件在合格方案中可能都一样, 仍需要保留为可行性要求.
+若另选等权或判断赋权, 应明确说明采用了另一项规则.</p>
+<h2 id="把短步骤接成完整赋权函数">16.7 把短步骤接成完整赋权函数</h2>
+<p>下面函数仍执行相同的四步, 增加定义域, 常数与零列处理.
+它只接收已适当正向化的非负矩阵, 不代替使用者决定目标,
+区间和偏好方向.</p>
+<p><strong>entropy_weight. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">entropy_weight</span>(<span class="params">data</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Input: nonnegative transformed data; rows are alternatives.&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> np.iscomplexobj(data):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;Data must be real&#x27;</span>)</span><br><span class="line">    X = np.asarray(data,dtype=<span class="built_in">float</span>)</span><br><span class="line">    <span class="keyword">if</span> X.ndim!=<span class="number">2</span> <span class="keyword">or</span> <span class="built_in">min</span>(X.shape)==<span class="number">0</span> <span class="keyword">or</span> <span class="keyword">not</span> np.isfinite(X).<span class="built_in">all</span>():</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;Data must be a nonempty finite matrix&#x27;</span>)</span><br><span class="line">    n,m = X.shape</span><br><span class="line">    <span class="keyword">if</span> n&lt;<span class="number">2</span> <span class="keyword">or</span> np.<span class="built_in">any</span>(X&lt;<span class="number">0</span>):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;At least two alternatives and nonnegative data are required&#x27;</span>)</span><br><span class="line">    constant = X.<span class="built_in">max</span>(axis=<span class="number">0</span>)==X.<span class="built_in">min</span>(axis=<span class="number">0</span>)</span><br><span class="line">    <span class="comment"># Positive scaling preserves proportions and avoids overflow in column sums.</span></span><br><span class="line">    scale = X.<span class="built_in">max</span>(axis=<span class="number">0</span>)</span><br><span class="line">    scaled = np.divide(X,scale,out=np.zeros_like(X),where=scale&gt;<span class="number">0</span>)</span><br><span class="line">    column_sum = scaled.<span class="built_in">sum</span>(axis=<span class="number">0</span>)</span><br><span class="line">    P = np.full_like(X,<span class="number">1</span>/n)</span><br><span class="line">    np.divide(scaled,column_sum,out=P,where=column_sum&gt;<span class="number">0</span>)</span><br><span class="line">    P[:,constant] = <span class="number">1</span>/n  <span class="comment"># Book convention for zero and constant columns.</span></span><br><span class="line">    terms = np.zeros_like(P)</span><br><span class="line">    positive = P&gt;<span class="number">0</span></span><br><span class="line">    terms[positive] = P[positive]*np.log(P[positive])</span><br><span class="line">    E = np.clip(-terms.<span class="built_in">sum</span>(axis=<span class="number">0</span>)/np.log(n),<span class="number">0</span>,<span class="number">1</span>)</span><br><span class="line">    E[constant] = <span class="number">1</span></span><br><span class="line">    d = <span class="number">1</span>-E</span><br><span class="line">    d[constant] = <span class="number">0</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> np.<span class="built_in">any</span>(d&gt;<span class="number">0</span>):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;No usable entropy differences at the current precision&#x27;</span>)</span><br><span class="line">    w = d/d.<span class="built_in">sum</span>()</span><br><span class="line">    norm = np.linalg.norm(scaled,axis=<span class="number">0</span>)</span><br><span class="line">    Z = np.divide(scaled,norm,out=np.zeros_like(X),where=norm&gt;<span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">dict</span>(X=X,Z=Z,P=P,entropy=E,difference=d,weights=w,constant=constant)</span><br></pre></td></tr></table></figure>
+<p><strong>entropy_weight. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">r</span> = <span class="title">entropy_weight</span><span class="params">(X)</span></span></span><br><span class="line"><span class="comment">% Input: nonnegative transformed data; rows are alternatives.</span></span><br><span class="line"><span class="keyword">if</span> ~isnumeric(X) || ~<span class="built_in">isreal</span>(X) || ~ismatrix(X) || <span class="built_in">isempty</span>(X) ...</span><br><span class="line">        || any(~<span class="built_in">isfinite</span>(X(:)))</span><br><span class="line">    error(<span class="string">&#x27;Data must be a nonempty finite real matrix&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">X = double(X); [n,m] = <span class="built_in">size</span>(X);</span><br><span class="line"><span class="keyword">if</span> n&lt;<span class="number">2</span> || any(X(:)&lt;<span class="number">0</span>)</span><br><span class="line">    error(<span class="string">&#x27;At least two alternatives and nonnegative data are required&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">constant = <span class="built_in">max</span>(X,[],<span class="number">1</span>)==<span class="built_in">min</span>(X,[],<span class="number">1</span>);</span><br><span class="line">scale = <span class="built_in">max</span>(X,[],<span class="number">1</span>); scaled = <span class="built_in">zeros</span>(n,m); valid = scale&gt;<span class="number">0</span>;</span><br><span class="line">scaled(:,valid) = X(:,valid)./scale(valid);</span><br><span class="line">columnSum = sum(scaled,<span class="number">1</span>);</span><br><span class="line">P = <span class="built_in">ones</span>(n,m)/n; valid = columnSum&gt;<span class="number">0</span>;</span><br><span class="line">P(:,valid) = scaled(:,valid)./columnSum(valid);</span><br><span class="line">P(:,constant) = <span class="number">1</span>/n;</span><br><span class="line">terms = <span class="built_in">zeros</span>(<span class="built_in">size</span>(P)); positive = P&gt;<span class="number">0</span>;</span><br><span class="line">terms(positive) = P(positive).*<span class="built_in">log</span>(P(positive));</span><br><span class="line">E = <span class="built_in">min</span>(<span class="built_in">max</span>(-sum(terms,<span class="number">1</span>)/<span class="built_in">log</span>(n),<span class="number">0</span>),<span class="number">1</span>); E(constant) = <span class="number">1</span>;</span><br><span class="line">d = <span class="number">1</span>-E; d(constant) = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">if</span> ~any(d&gt;<span class="number">0</span>)</span><br><span class="line">    error(<span class="string">&#x27;No usable entropy differences at the current precision&#x27;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">w = d/sum(d);</span><br><span class="line">norms = <span class="built_in">sqrt</span>(sum(scaled.^<span class="number">2</span>,<span class="number">1</span>)); Z = <span class="built_in">zeros</span>(n,m); valid = norms&gt;<span class="number">0</span>;</span><br><span class="line">Z(:,valid) = scaled(:,valid)./norms(valid);</span><br><span class="line">r.X = X; r.Z = Z; r.P = P; r.entropy = E;</span><br><span class="line">r.difference = d; r.weights = w; r.constant = constant;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>先按列最大值作正比例缩放, 再求列和, 可以避免大数直接相加溢出,
+不改变理论比重. 常数列单独标记; 全零列的向量标准化结果记0.
+当没有可用差异时明确报错.</p>
+<p>边界截断仅用于修正浮点舍入的微小越界. 极接近均匀时, <span
+class="math inline">\(1-E\)</span>可能损失相对精度,
+最大值缩放不能解决这种相消. 此时应核对测量精度, 按需要提高计算精度,
+不把近机器精度的差别解释为真实信息.</p>
+<p>完整固定案例也可独立运行下面的数组程序.
+更换数据时应使用前面的输入检查与退化处理; 当前矩阵各列都非零,
+且存在差异.</p>
+<p><strong>entropy_quick. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># X has already been transformed to nonnegative benefit-type values.</span></span><br><span class="line">X = np.array([[<span class="number">9</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>], [<span class="number">8</span>,<span class="number">3</span>,<span class="number">.9</span>,<span class="number">.5</span>], [<span class="number">6</span>,<span class="number">7</span>,<span class="number">.2</span>,<span class="number">1</span>]], dtype=<span class="built_in">float</span>)</span><br><span class="line">n = X.shape[<span class="number">0</span>]</span><br><span class="line">P = X/X.<span class="built_in">sum</span>(axis=<span class="number">0</span>)</span><br><span class="line">terms = np.zeros_like(P)</span><br><span class="line">positive = P&gt;<span class="number">0</span></span><br><span class="line">terms[positive] = P[positive]*np.log(P[positive])</span><br><span class="line">E = -terms.<span class="built_in">sum</span>(axis=<span class="number">0</span>)/np.log(n)</span><br><span class="line">d = <span class="number">1</span>-E</span><br><span class="line">w = d/d.<span class="built_in">sum</span>()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Proportions:&#x27;</span>,P,sep=<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Normalized entropy:&#x27;</span>,E)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Difference coefficients:&#x27;</span>,d)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Weights:&#x27;</span>,w)</span><br></pre></td></tr></table></figure>
+<p><strong>entropy_quick. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">X = [<span class="number">9</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>;<span class="number">8</span>,<span class="number">3</span>,<span class="number">.9</span>,<span class="number">.5</span>;<span class="number">6</span>,<span class="number">7</span>,<span class="number">.2</span>,<span class="number">1</span>];</span><br><span class="line">n = <span class="built_in">size</span>(X,<span class="number">1</span>);</span><br><span class="line">P = X./sum(X,<span class="number">1</span>);</span><br><span class="line">terms = <span class="built_in">zeros</span>(<span class="built_in">size</span>(P)); positive = P&gt;<span class="number">0</span>;</span><br><span class="line">terms(positive) = P(positive).*<span class="built_in">log</span>(P(positive));</span><br><span class="line">E = -sum(terms,<span class="number">1</span>)/<span class="built_in">log</span>(n);</span><br><span class="line">d = <span class="number">1</span>-E; w = d/sum(d);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Proportions:&#x27;</span>); <span class="built_in">disp</span>(P);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Normalized entropy:&#x27;</span>); <span class="built_in">disp</span>(E);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Difference coefficients:&#x27;</span>); <span class="built_in">disp</span>(d);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Weights:&#x27;</span>); <span class="built_in">disp</span>(w);</span><br></pre></td></tr></table></figure>
+<p>Python中的 <code>axis=0</code>和MATLAB的
+<code>sum(X,1)</code>都沿方案方向求每列总和. 数学权重统一写为列向量,
+程序内部可按运算需要使用一维数组或行数组.
+从原始数据到完整评价的全部函数与调用保留在<a
+href="../reading/16/EntropyWeightFurtherReading.md">拓展阅读</a>.</p>
+<h2 id="改变原点与改变单位-是两种不同操作">16.8 改变原点与改变单位,
+是两种不同操作</h2>
+<h3 id="先看同方差反例">16.8.1 先看同方差反例</h3>
+<p>考虑 <span class="math inline">\((164,165,166)^{\mathsf T}\)</span>
+与 <span class="math inline">\((0,1,2)^{\mathsf T}\)</span>.
+它们相差常数164, 按总体公式计算方差都为2/3. 但前者比重接近1/3, 后者为
+<span class="math inline">\((0,1/3,2/3)^{\mathsf T}\)</span>,
+熵与差异系数明显不同.</p>
+<p>若只将第一列乘10, 比重则不变, 因为分子与列和同时乘10.</p>
+<p><strong>code/scaling_shift_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">x = np.array([<span class="number">164.</span>,<span class="number">165.</span>,<span class="number">166.</span>])</span><br><span class="line">columns = np.column_stack((x,<span class="number">10</span>*x,x-<span class="number">164</span>))</span><br><span class="line">P = columns/columns.<span class="built_in">sum</span>(axis=<span class="number">0</span>)</span><br><span class="line">entropies = []</span><br><span class="line"><span class="keyword">for</span> column <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">    p = P[:,column]; positive = p&gt;<span class="number">0</span></span><br><span class="line">    entropies.append(-np.<span class="built_in">sum</span>(p[positive]*np.log(p[positive]))/np.log(<span class="number">3</span>))</span><br><span class="line">entropies = np.array(entropies)</span><br><span class="line">variances = columns.var(axis=<span class="number">0</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Columns: original, ten times original, shifted origin&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Population variance, E, d:&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(np.column_stack((variances,entropies,<span class="number">1</span>-entropies)))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Proportions:&#x27;</span>,P,sep=<span class="string">&#x27;\n&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>code/scaling_shift_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">x = [<span class="number">164</span>;<span class="number">165</span>;<span class="number">166</span>]; columns = [x,<span class="number">10</span>*x,x<span class="number">-164</span>];</span><br><span class="line">P = columns./sum(columns,<span class="number">1</span>); entropies = <span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">3</span>);</span><br><span class="line"><span class="keyword">for</span> column = <span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    p = P(:,column); positive = p&gt;<span class="number">0</span>;</span><br><span class="line">    entropies(column) = -sum(p(positive).*<span class="built_in">log</span>(p(positive)))/<span class="built_in">log</span>(<span class="number">3</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">variances = <span class="built_in">mean</span>((columns-<span class="built_in">mean</span>(columns,<span class="number">1</span>)).^<span class="number">2</span>,<span class="number">1</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Columns: original, ten times original, shifted origin&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Population variance, E, d:&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>([variances&#x27;,entropies&#x27;,<span class="number">1</span>-entropies&#x27;]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Proportions:&#x27;</span>); <span class="built_in">disp</span>(P);</span><br></pre></td></tr></table></figure>
+<p>表 16-5 方差与熵差异系数的对照.</p>
+<div class="line-block">数据列 | 总体方差 | 归一化熵E | 差异系数d
+|</div>
+<p>|: ---: |: ---: |: ---: |: ---: | | 164, 165, 166 | 2/3 | 0.999989 |
+0.000011 | | 1640, 1650, 1660 | 200/3 | 0.999989 | 0.000011 | | 0, 1, 2
+| 2/3 | 0.579380 | 0.420620 |</p>
+<p>所以原始方差或极差越大, 不保证熵权越大. 熵权依赖转换后比重的分布.
+换单位时, 如果还涉及目标和理想区间, 它们也要同步换单位,
+才是同一规则下的比较.</p>
+<h3 id="对本例再作极差变换">16.8.2 对本例再作极差变换</h3>
+<p>把节电量9, 8, 6减去最小值6, 再除以极差3, 得到1, 2/3, 0, 比重从9/23,
+8/23, 6/23变成3/5, 2/5, 0. 后三列本来最小值为0, 只发生正比例缩放,
+自身比重和差异系数不变.</p>
+<p><strong>code/preprocessing_compare_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># Rows A, B, C; columns energy, maintenance, target, interval.</span></span><br><span class="line">X = np.array([[<span class="number">9</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>], [<span class="number">8</span>,<span class="number">3</span>,<span class="number">.9</span>,<span class="number">.5</span>], [<span class="number">6</span>,<span class="number">7</span>,<span class="number">.2</span>,<span class="number">1</span>]], dtype=<span class="built_in">float</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Every case column varies; no zero range occurs in this fixed exercise.</span></span><br><span class="line">changed_X = (X-X.<span class="built_in">min</span>(axis=<span class="number">0</span>))/(X.<span class="built_in">max</span>(axis=<span class="number">0</span>)-X.<span class="built_in">min</span>(axis=<span class="number">0</span>))</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> label, values <span class="keyword">in</span> [(<span class="string">&#x27;Original&#x27;</span>,X),(<span class="string">&#x27;Range transformed&#x27;</span>,changed_X)]:</span><br><span class="line">    P = values/values.<span class="built_in">sum</span>(axis=<span class="number">0</span>)</span><br><span class="line">    terms = np.zeros_like(P); positive = P&gt;<span class="number">0</span></span><br><span class="line">    terms[positive] = P[positive]*np.log(P[positive])</span><br><span class="line">    E = -terms.<span class="built_in">sum</span>(axis=<span class="number">0</span>)/np.log(<span class="built_in">len</span>(values))</span><br><span class="line">    d = <span class="number">1</span>-E; w = d/d.<span class="built_in">sum</span>()</span><br><span class="line">    Z = values/np.sqrt(np.<span class="built_in">sum</span>(values**<span class="number">2</span>,axis=<span class="number">0</span>))</span><br><span class="line">    records.append(&#123;<span class="string">&#x27;P&#x27;</span>:P,<span class="string">&#x27;E&#x27;</span>:E,<span class="string">&#x27;d&#x27;</span>:d,<span class="string">&#x27;w&#x27;</span>:w,<span class="string">&#x27;Z&#x27;</span>:Z&#125;)</span><br><span class="line">    <span class="built_in">print</span>(label,<span class="string">&#x27;weights:&#x27;</span>,w)</span><br><span class="line">    <span class="built_in">print</span>(label,<span class="string">&#x27;energy shares:&#x27;</span>,P[:,<span class="number">0</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Other three differences before/after:&#x27;</span>,records[<span class="number">0</span>][<span class="string">&#x27;d&#x27;</span>][<span class="number">1</span>:],records[<span class="number">1</span>][<span class="string">&#x27;d&#x27;</span>][<span class="number">1</span>:])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Maximum change in normalized Z:&#x27;</span>,np.<span class="built_in">max</span>(<span class="built_in">abs</span>(records[<span class="number">0</span>][<span class="string">&#x27;Z&#x27;</span>]-records[<span class="number">1</span>][<span class="string">&#x27;Z&#x27;</span>])))</span><br></pre></td></tr></table></figure>
+<p><strong>code/preprocessing_compare_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line"><span class="comment">% Rows A, B, C; columns energy, maintenance, target, interval.</span></span><br><span class="line">X = [<span class="number">9</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>;<span class="number">8</span>,<span class="number">3</span>,<span class="number">.9</span>,<span class="number">.5</span>;<span class="number">6</span>,<span class="number">7</span>,<span class="number">.2</span>,<span class="number">1</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">% All four columns vary in this fixed exercise.</span></span><br><span class="line">changedX = (X-<span class="built_in">min</span>(X,[],<span class="number">1</span>))./(<span class="built_in">max</span>(X,[],<span class="number">1</span>)-<span class="built_in">min</span>(X,[],<span class="number">1</span>));</span><br><span class="line">cases = &#123;X,changedX&#125;; names = &#123;<span class="string">&#x27;Original&#x27;</span>,<span class="string">&#x27;Range transformed&#x27;</span>&#125;; records = cell(<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">    values = cases&#123;<span class="built_in">j</span>&#125;; P = values./sum(values,<span class="number">1</span>);</span><br><span class="line">    terms = <span class="built_in">zeros</span>(<span class="built_in">size</span>(P)); positive = P&gt;<span class="number">0</span>;</span><br><span class="line">    terms(positive) = P(positive).*<span class="built_in">log</span>(P(positive));</span><br><span class="line">    E = -sum(terms,<span class="number">1</span>)/<span class="built_in">log</span>(<span class="built_in">size</span>(values,<span class="number">1</span>)); d = <span class="number">1</span>-E; w = d/sum(d);</span><br><span class="line">    Z = values./<span class="built_in">sqrt</span>(sum(values.^<span class="number">2</span>,<span class="number">1</span>));</span><br><span class="line">    records&#123;<span class="built_in">j</span>&#125; = struct(<span class="string">&#x27;P&#x27;</span>,P,<span class="string">&#x27;E&#x27;</span>,E,<span class="string">&#x27;d&#x27;</span>,d,<span class="string">&#x27;w&#x27;</span>,w,<span class="string">&#x27;Z&#x27;</span>,Z);</span><br><span class="line">    fprintf(<span class="string">&#x27;%s weights and energy shares:\n&#x27;</span>,names&#123;<span class="built_in">j</span>&#125;); <span class="built_in">disp</span>(w); <span class="built_in">disp</span>(P(:,<span class="number">1</span>)&#x27;);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Other three differences before/after:&#x27;</span>); <span class="built_in">disp</span>([records&#123;<span class="number">1</span>&#125;.d(<span class="number">2</span>:<span class="number">4</span>);records&#123;<span class="number">2</span>&#125;.d(<span class="number">2</span>:<span class="number">4</span>)]);</span><br><span class="line">fprintf(<span class="string">&#x27;Maximum change in normalized Z: %.12f\n&#x27;</span>,<span class="built_in">max</span>(<span class="built_in">max</span>(<span class="built_in">abs</span>(records&#123;<span class="number">1</span>&#125;.Z-records&#123;<span class="number">2</span>&#125;.Z))));</span><br></pre></td></tr></table></figure>
+<p>表 16-6 极差变换前后的熵权.</p>
+<div class="line-block">指标 | 原正向化矩阵的熵权 | 再作极差变换的熵权
+|</div>
+<p>|: ---: |: ---: |: ---: | | 节电量 | 0.008565 | 0.212809 | |
+工时转换值 | 0.307162 | 0.243884 | | 照度目标满意度 | 0.393265 |
+0.312249 | | 采样区间满意度 | 0.291008 | 0.231058 |</p>
+<p><img src="/images/EntropyWeight/EntropyWeight-4.png" style="width:100%"></p>
+<p>图 16-4 一列差异改变, 所有权重的共同分母也改变</p>
+<p>节电量差异系数增大, 其他三项差异系数不变, 但全部权重都随共同分母变化.
+因而同一指标的比重不变, 不保证其最终权重不变.</p>
+<p>程序还输出两套向量标准化矩阵Z的差别. 如果接着比较两套TOPSIS分数,
+改变的是X, Z与权重, 不能把差异全部归因于权重.
+完整预处理与TOPSIS敏感性实验见<a
+href="../reading/16/EntropyWeightFurtherReading.md">拓展阅读F.7</a>.</p>
+<h2 id="将权重接到评价-先算一个方案的距离">16.9 将权重接到评价:
+先算一个方案的距离</h2>
+<h3 id="赋权本身不产生方案总排序">16.9.1 赋权本身不产生方案总排序</h3>
+<p>熵权还需与加权求和或TOPSIS等评价方法配合. 这里用原案例作TOPSIS预览,
+下一章再系统讨论理想解与距离评价.</p>
+<p>先作列向量标准化:</p>
+<p><span class="math display">\[
+z_{ij}=\frac{x_{ij}}{\sqrt{\sum\limits_{k=1}^{n}x_{kj}^2}},
+\qquad v_{ij}=w_jz_{ij}.
+\]</span></p>
+<p>按每列最大和最小的加权坐标, 分别构成正理想解 <span
+class="math inline">\(\boldsymbol v^+\)</span>与负理想解 <span
+class="math inline">\(\boldsymbol v^-\)</span>. 本章统一先把坐标乘权重,
+再算欧氏距离:</p>
+<p><span class="math display">\[
+D_i^+=\sqrt{\sum\limits_{j=1}^{m}(v_{ij}-v_j^+)^2},\qquad
+D_i^-=\sqrt{\sum\limits_{j=1}^{m}(v_{ij}-v_j^-)^2},
+\qquad S_i=\frac{D_i^-}{D_i^++D_i^-}.
+\]</span></p>
+<p>分母需大于0. 距离平方中实际含 <span
+class="math inline">\(w_j^2\)</span>, 不要与"在平方项前直接乘 <span
+class="math inline">\(w_j\)</span>"的另一种约定混用.</p>
+<p>下面把完整案例已经记录的未舍入熵权作为给定输入,
+先逐项计算方案A的两个距离, 再对三个方案重复. 本段只演示评价,
+不重新估计权重.</p>
+<p><strong>code/topsis_one_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># Rows A, B, C; columns energy, maintenance, target, interval.</span></span><br><span class="line">X = np.array([[<span class="number">9</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>], [<span class="number">8</span>,<span class="number">3</span>,<span class="number">.9</span>,<span class="number">.5</span>], [<span class="number">6</span>,<span class="number">7</span>,<span class="number">.2</span>,<span class="number">1</span>]], dtype=<span class="built_in">float</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Given, unrounded entropy weights recorded by the complete case.</span></span><br><span class="line">w = np.array([<span class="number">0.0085653744386524</span>, <span class="number">0.30716152006399017</span>, <span class="number">0.3932647057330505</span>, <span class="number">0.2910083997643068</span>])</span><br><span class="line">Z = X/np.sqrt(np.<span class="built_in">sum</span>(X**<span class="number">2</span>,axis=<span class="number">0</span>))</span><br><span class="line">V = Z*w</span><br><span class="line">ideal = V.<span class="built_in">max</span>(axis=<span class="number">0</span>); anti_ideal = V.<span class="built_in">min</span>(axis=<span class="number">0</span>)</span><br><span class="line">positive_square = <span class="number">0.</span>; negative_square = <span class="number">0.</span></span><br><span class="line"><span class="keyword">for</span> column <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>):</span><br><span class="line">    positive_square += (V[<span class="number">0</span>,column]-ideal[column])**<span class="number">2</span></span><br><span class="line">    negative_square += (V[<span class="number">0</span>,column]-anti_ideal[column])**<span class="number">2</span></span><br><span class="line">dp_A, dn_A = np.sqrt(positive_square), np.sqrt(negative_square)</span><br><span class="line">score_A = dn_A/(dp_A+dn_A)</span><br><span class="line">dp = np.sqrt(np.<span class="built_in">sum</span>((V-ideal)**<span class="number">2</span>,axis=<span class="number">1</span>))</span><br><span class="line">dn = np.sqrt(np.<span class="built_in">sum</span>((V-anti_ideal)**<span class="number">2</span>,axis=<span class="number">1</span>))</span><br><span class="line">scores = dn/(dp+dn)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Plan A distances to ideal and anti-ideal:&#x27;</span>,dp_A,dn_A)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Plan A closeness:&#x27;</span>,score_A)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;A, B, C closeness:&#x27;</span>,scores)</span><br><span class="line"><span class="comment"># Multiplying coordinates by w means squared distances contain w**2.</span></span><br></pre></td></tr></table></figure>
+<p><strong>code/topsis_one_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line"><span class="comment">% Rows A, B, C; columns energy, maintenance, target, interval.</span></span><br><span class="line">X = [<span class="number">9</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>;<span class="number">8</span>,<span class="number">3</span>,<span class="number">.9</span>,<span class="number">.5</span>;<span class="number">6</span>,<span class="number">7</span>,<span class="number">.2</span>,<span class="number">1</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">% Given weights recorded by the complete Python case.</span></span><br><span class="line">w = [<span class="number">0.0085653744386524</span>,<span class="number">0.30716152006399017</span>,<span class="number">0.3932647057330505</span>,<span class="number">0.2910083997643068</span>];</span><br><span class="line">Z = X./<span class="built_in">sqrt</span>(sum(X.^<span class="number">2</span>,<span class="number">1</span>)); V = Z.*w;</span><br><span class="line">ideal = <span class="built_in">max</span>(V,[],<span class="number">1</span>); antiIdeal = <span class="built_in">min</span>(V,[],<span class="number">1</span>);</span><br><span class="line">positiveSquare = <span class="number">0</span>; negativeSquare = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> column = <span class="number">1</span>:<span class="number">4</span></span><br><span class="line">    positiveSquare = positiveSquare+(V(<span class="number">1</span>,column)-ideal(column))^<span class="number">2</span>;</span><br><span class="line">    negativeSquare = negativeSquare+(V(<span class="number">1</span>,column)-antiIdeal(column))^<span class="number">2</span>;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">dpA = <span class="built_in">sqrt</span>(positiveSquare); dnA = <span class="built_in">sqrt</span>(negativeSquare); scoreA = dnA/(dpA+dnA);</span><br><span class="line">dp = <span class="built_in">sqrt</span>(sum((V-ideal).^<span class="number">2</span>,<span class="number">2</span>)); dn = <span class="built_in">sqrt</span>(sum((V-antiIdeal).^<span class="number">2</span>,<span class="number">2</span>));</span><br><span class="line">scores = dn./(dp+dn);</span><br><span class="line">fprintf(<span class="string">&#x27;Plan A distances=%.12f, %.12f; closeness=%.12f\n&#x27;</span>,dpA,dnA,scoreA);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;A, B, C closeness:&#x27;</span>); <span class="built_in">disp</span>(scores&#x27;);</span><br><span class="line"><span class="comment">% Coordinate weights w produce w squared in squared distances.</span></span><br></pre></td></tr></table></figure>
+<p>程序得到A到正理想解的距离约0.542988, 到负理想解的距离约0.001910,
+贴近度约0.003505. A虽然节电量最大, 但该项熵权很小, 其余三个转换值又为0,
+因而按本套规则得到较低贴近度.</p>
+<h3 id="保持同一z-比较等权与熵权">16.9.2 保持同一Z, 比较等权与熵权</h3>
+<p>表 16-7 保持评价路线后的等权与熵权比较.</p>
+<div class="line-block">方案 | 等权TOPSIS贴近度 | 熵权TOPSIS贴近度
+|</div>
+<p>|: ---: |: ---: |: ---: | | A | 0.121536 | 0.003505 | | B | 0.624387
+| 0.671149 | | C | 0.621747 | 0.568478 |</p>
+<p><img src="/images/EntropyWeight/EntropyWeight-3.png" style="width:100%"></p>
+<p>图 16-5 同一标准化矩阵中, 只改变权重</p>
+<p>这次比较保持X, Z和距离约定不变, 只改变权重. 两次都为 <span
+class="math inline">\(B&gt;C&gt;A\)</span>, 不表示对所有合理规则都稳健;
+等权时B与C还十分接近. 贴近度不是获选概率,
+分数改变也不表示方案实际性能改变.</p>
+<p>本例向量标准化只给各列乘正尺度, 因子在计算比重时会约掉,
+所以熵权可以直接从非负X求得. 这不意味着正向化或减最小值也能省略,
+它们处理的任务不同. 完整TOPSIS函数, 调用与两种加权约定见<a
+href="../reading/16/EntropyWeightFurtherReading.md">拓展阅读F.5</a>.</p>
+<h2 id="把数据差异放回评价目标">16.10 把数据差异放回评价目标</h2>
+<p>给定数据和规则后, 熵权由公式确定, 但指标选择, 候选范围,
+目标与满意度规则仍含建模判断. 测量噪声和异常值也可能增加差异,
+重复或高度相关的指标也不会被熵权自动识别.</p>
+<p>节电量权重只有约0.008565, 应与项目目标一起讨论,
+不能直接据此降低对节能的重视. 如果需要结合有依据的判断权重,
+先统一指标含义与顺序, 可研究</p>
+<p><span class="math display">\[
+w_j^{(\mathrm{comb})}=\lambda w_j^{(\mathrm{jud})}
++(1-\lambda)w_j^{(\mathrm{ent})},\qquad0\leqslant\lambda\leqslant1.
+\]</span></p>
+<p>两组权重都非负且和为1时, 组合也如此. 但 <span
+class="math inline">\(\lambda\)</span>仍需依据,
+不能只挑一个产生预期排序的值. 增删候选还可能同时改变转换尺度, 比重,
+方案数与理想解, 权重不宜当作永久不变的事实.</p>
+<p>报告应交代原始数据与方向, 转换规则, 零与常数列约定, 比重和熵权,
+评价方法及敏感性. 计算一致性帮助核对公式, 不代替工程调研与目标判断.
+信息论性质的Jensen证明, KL解释与换底关系见<a
+href="../reading/16/EntropyWeightFurtherReading.md">拓展阅读F.9</a>.</p>
+<h3 id="练习">16.10.1 练习</h3>
+<ol type="1">
+<li>对 <span class="math inline">\((0,3,7)^{\mathsf
+T}\)</span>手算列和与比重. 为什么比重和为1,
+不能解释为三个方案获选的概率?</li>
+<li>手算 <span class="math inline">\(-0.3\ln0.3\)</span>与 <span
+class="math inline">\(-0.7\ln0.7\)</span>, 得到H, E与d.
+零项应该怎样处理? 为什么归一化分母用 <span
+class="math inline">\(\ln3\)</span>而不是 <span
+class="math inline">\(\ln2\)</span>?</li>
+<li>比较三项练习分布的E, d与权重. 如果其中一项差异系数改变,
+另一项的最终权重能否保持不变? E与w是否互补?</li>
+<li>从照明原数据手算维护工时, 照度与采样周期的转换.
+如果照度全体达到目标, 为什么不能继续除以最大偏差0? 如果差别在测量误差内,
+应重新讨论什么?</li>
+<li>用循环程序核对本例第三列比重与熵权.
+为什么第三列自己的d不能直接叫作权重?
+为什么节电量小熵权不等于节能无价值?</li>
+<li>将非零常数列, 全零列和非恒定列放在一起, 解释各自处理.
+若全部列都无差异, 能否静默改成等权?</li>
+<li>比较164, 165, 166与0, 1, 2的总体方差, 比重和d. 再将第一列乘10,
+解释单位缩放和平移的不同影响.</li>
+<li>手算本例节电量极差变换后的值与比重. 为什么其他三列比重不变,
+最终权重仍改变? 若接着做TOPSIS, 还有哪个矩阵也改变?</li>
+<li>核对方案A的TOPSIS两个距离和贴近度.
+说明本章距离平方为什么出现权重的平方. 比较等权与熵权时,
+哪些输入保持不变?</li>
+<li>设计一个有依据的判断权重与熵权组合练习. 先统一指标与顺序,
+指定多个合理的 <span class="math inline">\(\lambda\)</span>,
+报告排序与近似并列情况, 并说明仍需现实调查的内容.</li>
+</ol>
+<p>提示见<a href="../reading/16/ExerciseHints.md">ExerciseHints. md</a>.
+另外八道练习及十四个具名代码块见<a
+href="../reading/16/EntropyWeightFurtherReading.md">完整拓展阅读</a>.</p>
+<p>配套阅读与实验: <a
+href="../reading/16/Index.md">本章资料索引</a>.</p>
+<h2 id="参考资料">参考资料</h2>
+<p>[1] SHANNON C E. A mathematical theory of communication[J]. Bell
+System Technical Journal, 1948, 27: 379-423, 623-656. <a
+target="_blank" rel="noopener" href="https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf">论文副本</a>.</p>
+<p>[2] HWANG C L, YOON K. Multiple Attribute Decision Making: Methods
+and Applications - A State-of-the-Art Survey[M]. Berlin, Heidelberg:
+Springer, 1981. <a
+target="_blank" rel="noopener" href="https://link.springer.com/book/10.1007/978-3-642-48318-9">出版方资料</a>,
+DOI: 10.1007/978-3-642-48318-9.</p>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

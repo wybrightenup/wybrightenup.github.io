@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="第 12 章 灰色预测 GM(1, 1): 小样本序列的趋势建模 上一章强调了训练数据与新样本的区别. 这一章面对一条较短的时间序列: 只有十年的记录, 能不能先用前七年预测后三年, 再检查预测是否有帮助? 灰色预测GM(1, 1)先将原始值累加, 再用一个一阶方程描述累加后的变化, 估计两个参数, 最后通过相邻项相减还原单期数值. 我们先逐项完成这些计算, 再做留出与滚动检验. 这">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/MathBeautyAndModeling/12_GreyPredictionGM11.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="第 12 章 灰色预测 GM(1, 1): 小样本序列的趋势建模 上一章强调了训练数据与新样本的区别. 这一章面对一条较短的时间序列: 只有十年的记录, 能不能先用前七年预测后三年, 再检查预测是否有帮助? 灰色预测GM(1, 1)先将原始值累加, 再用一个一阶方程描述累加后的变化, 估计两个参数, 最后通过相邻项相减还原单期数值. 我们先逐项完成这些计算, 再做留出与滚动检验. 这">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/GreyPredictionGM11/GM11-Original.png">
+<meta property="og:image" content="http://example.com/images/GreyPredictionGM11/GM11-AGO.png">
+<meta property="og:image" content="http://example.com/images/GreyPredictionGM11/GM11-EquationRows.png">
+<meta property="og:image" content="http://example.com/images/GreyPredictionGM11/GM11-Holdout.png">
+<meta property="og:image" content="http://example.com/images/GreyPredictionGM11/GM11-Rolling.png">
+<meta property="og:image" content="http://example.com/images/GreyPredictionGM11/GM11-Forecast.png">
+<meta property="og:image" content="http://example.com/images/GreyPredictionGM11/GM11-Shift.png">
+<meta property="article:published_time" content="2026-11-02T02:53:08.357Z">
+<meta property="article:modified_time" content="2026-10-31T09:20:34.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/GreyPredictionGM11/GM11-Original.png">
+
+
+<link rel="canonical" href="http://example.com/MathBeautyAndModeling/12_GreyPredictionGM11">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/MathBeautyAndModeling/12_GreyPredictionGM11.html","path":"MathBeautyAndModeling/12_GreyPredictionGM11.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-12-%E7%AB%A0-%E7%81%B0%E8%89%B2%E9%A2%84%E6%B5%8B-gm1-1-%E5%B0%8F%E6%A0%B7%E6%9C%AC%E5%BA%8F%E5%88%97%E7%9A%84%E8%B6%8B%E5%8A%BF%E5%BB%BA%E6%A8%A1"><span class="nav-number">1.</span> <span class="nav-text">第 12 章 灰色预测
+GM(1, 1): 小样本序列的趋势建模</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E6%8A%8A%E4%B8%83%E9%A1%B9%E6%95%B0%E9%80%90%E9%A1%B9%E5%8A%A0%E8%B5%B7%E6%9D%A5"><span class="nav-number">1.1.</span> <span class="nav-text">12.1 先把七项数逐项加起来</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E%E6%95%B0%E6%8D%AE%E4%B8%8E%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.1.1.</span> <span class="nav-text">12.1.1 说明数据与任务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%AF%E5%8A%A0%E4%B8%8E%E7%9B%B8%E5%87%8F%E6%98%AF%E4%B8%80%E5%AF%B9%E6%93%8D%E4%BD%9C"><span class="nav-number">1.1.2.</span> <span class="nav-text">12.1.2 累加与相减是一对操作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E4%B8%80%E4%B8%AA%E8%83%8C%E6%99%AF%E5%80%BC-%E5%86%99%E5%87%BA%E4%B8%80%E8%A1%8C%E4%BC%B0%E8%AE%A1%E5%85%B3%E7%B3%BB"><span class="nav-number">1.2.</span> <span class="nav-text">12.2 从一个背景值,
+写出一行估计关系</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E7%AE%97%E7%9B%B8%E9%82%BB%E4%B8%A4%E9%A1%B9%E7%9A%84%E5%B9%B3%E5%9D%87%E6%95%B0"><span class="nav-number">1.2.1.</span> <span class="nav-text">12.2.1 先算相邻两项的平均数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%8A%E5%85%AD%E8%A1%8C%E5%88%86%E5%88%AB%E5%88%97%E5%87%BA%E6%9D%A5"><span class="nav-number">1.2.2.</span> <span class="nav-text">12.2.2 把六行分别列出来</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98-%E5%8F%AA%E6%B1%82%E4%B8%A4%E4%B8%AA%E5%8F%82%E6%95%B0"><span class="nav-number">1.3.</span> <span class="nav-text">12.3 用最小二乘, 只求两个参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E8%BF%98%E5%8E%9F%E7%AC%AC%E4%B8%80%E6%9C%9F%E9%A2%84%E6%B5%8B-%E5%86%8D%E5%86%99%E5%A4%9A%E6%9C%9F%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.4.</span> <span class="nav-text">12.4 先还原第一期预测,
+再写多期程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E6%99%AF%E5%80%BC%E5%85%B3%E7%B3%BB%E6%9D%A5%E8%87%AA%E6%80%8E%E6%A0%B7%E7%9A%84%E8%BF%91%E4%BC%BC"><span class="nav-number">1.4.1.</span> <span class="nav-text">12.4.1 背景值关系来自怎样的近似</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E7%B4%AF%E5%8A%A0%E9%A2%84%E6%B5%8B%E5%80%BC%E7%9B%B8%E5%87%8F-%E5%BE%97%E5%88%B0%E4%B8%80%E4%B8%AA%E5%8D%95%E6%9C%9F%E9%A2%84%E6%B5%8B"><span class="nav-number">1.4.2.</span> <span class="nav-text">12.4.2 两个累加预测值相减,
+得到一个单期预测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%99%E5%90%8E%E9%9D%A2%E7%9A%84%E6%95%B0%E7%BB%84%E8%AE%A1%E7%AE%97%E5%87%86%E5%A4%87%E4%B8%80%E4%B8%AA%E7%AD%89%E4%BB%B7%E5%85%AC%E5%BC%8F"><span class="nav-number">1.4.3.</span> <span class="nav-text">12.4.3
+给后面的数组计算准备一个等价公式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%8C%E6%88%90%E4%B8%80%E6%AC%A1%E7%95%99%E5%87%BA%E6%A3%80%E9%AA%8C-%E5%B9%B6%E4%B8%8E%E7%AE%80%E5%8D%95%E5%9F%BA%E5%87%86%E6%AF%94%E8%BE%83"><span class="nav-number">1.5.</span> <span class="nav-text">12.5 完成一次留出检验,
+并与简单基准比较</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E6%8A%8A%E4%B8%A4%E4%B8%AA%E5%9F%BA%E5%87%86%E7%AE%97%E6%B8%85%E6%A5%9A"><span class="nav-number">1.5.1.</span> <span class="nav-text">12.5.1 先把两个基准算清楚</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%8D%E6%8A%8A%E4%B8%89%E6%9D%A1%E9%A2%84%E6%B5%8B%E4%B8%8E%E5%AE%9E%E9%99%85%E7%95%99%E5%87%BA%E5%80%BC%E9%80%90%E9%A1%B9%E6%AF%94%E8%BE%83"><span class="nav-number">1.5.2.</span> <span class="nav-text">12.5.2
+再把三条预测与实际留出值逐项比较</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E6%8D%A2%E4%B8%80%E4%B8%AA%E9%A2%84%E6%B5%8B%E8%B5%B7%E7%82%B9-%E5%86%8D%E9%87%8D%E5%A4%8D%E5%9B%9B%E6%AC%A1"><span class="nav-number">1.6.</span> <span class="nav-text">12.6 先换一个预测起点,
+再重复四次</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AA%E6%8B%BF%E5%89%8D%E5%9B%9B%E9%A1%B9-%E5%81%9A%E4%B8%80%E6%AC%A1%E4%B8%89%E6%9C%9F%E9%A2%84%E6%B5%8B"><span class="nav-number">1.6.1.</span> <span class="nav-text">12.6.1 只拿前四项,
+做一次三期预测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E5%9B%9B%E4%B8%AA%E5%85%B1%E5%90%8C%E8%B5%B7%E7%82%B9-%E5%88%86%E5%BC%80%E6%AF%94%E8%BE%83%E4%B8%89%E4%B8%AA%E6%AD%A5%E9%95%BF"><span class="nav-number">1.6.2.</span> <span class="nav-text">12.6.2 用四个共同起点,
+分开比较三个步长</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%84%E4%BB%B7%E4%B9%8B%E5%90%8E-%E5%86%8D%E7%94%A8%E5%85%A8%E6%A0%B7%E6%9C%AC%E9%87%8D%E4%BC%B0%E4%B8%8E%E5%A4%96%E6%8E%A8"><span class="nav-number">1.7.</span> <span class="nav-text">12.7 评价之后,
+再用全样本重估与外推</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AD%9B%E6%9F%A5-%E5%B9%B3%E7%A7%BB%E4%B8%8E%E8%AF%AF%E5%B7%AE%E8%AF%8A%E6%96%AD%E6%80%8E%E6%A0%B7%E4%BD%BF%E7%94%A8"><span class="nav-number">1.8.</span> <span class="nav-text">12.8 筛查,
+平移与误差诊断怎样使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E7%AD%9B%E6%9F%A5-%E4%BB%8D%E8%A6%81%E8%AF%84%E4%BB%B7%E9%A2%84%E6%B5%8B"><span class="nav-number">1.8.1.</span> <span class="nav-text">12.8.1 通过筛查, 仍要评价预测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8D%A2%E5%8D%95%E4%BD%8D%E4%B8%8E%E5%8A%A0%E5%B8%B8%E6%95%B0%E4%B8%8D%E5%90%8C"><span class="nav-number">1.8.2.</span> <span class="nav-text">12.8.2 换单位与加常数不同</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E7%9F%AD%E5%BA%8F%E5%88%97%E7%9A%84%E7%BB%93%E8%AE%BA%E4%BB%8D%E9%9C%80%E6%9B%B4%E6%96%B0"><span class="nav-number">1.8.3.</span> <span class="nav-text">12.8.3 简短序列的结论仍需更新</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%99%E5%87%BA%E4%B8%80%E6%AE%B5%E5%AE%8C%E6%95%B4%E7%BB%93%E8%AE%BA-%E5%86%8D%E6%A0%B8%E5%AF%B9%E8%AE%A1%E7%AE%97"><span class="nav-number">1.9.</span> <span class="nav-text">12.9 写出一段完整结论,
+再核对计算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.10.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="第-12-章-灰色预测-gm1-1-小样本序列的趋势建模">第 12 章 灰色预测
+GM(1, 1): 小样本序列的趋势建模</h1>
+<p>上一章强调了训练数据与新样本的区别. 这一章面对一条较短的时间序列:
+只有十年的记录, 能不能先用前七年预测后三年, 再检查预测是否有帮助?</p>
+<p>灰色预测GM(1, 1)先将原始值累加, 再用一个一阶方程描述累加后的变化,
+估计两个参数, 最后通过相邻项相减还原单期数值. 我们先逐项完成这些计算,
+再做留出与滚动检验.</p>
+<p>这里的"灰色"是信息部分已知, 部分未知的比喻. 模型参数少, 计算较简单,
+但未知信息不会因为取了这个名字就自动变得可预测.</p>
+<h2 id="先把七项数逐项加起来">12.1 先把七项数逐项加起来</h2>
+<h3 id="说明数据与任务">12.1.1 说明数据与任务</h3>
+<p>以年度废水排放指标为背景, 给出以下教学数据. 年份只作时间标签,
+计量单位与地区来源未指定, 不据此判断真实地区的环境状况.</p>
+<p>表 12-1 年度教学序列与时间划分.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">年份</th>
+<th style="text-align: right;">指标值</th>
+<th>本次用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1995</td>
+<td style="text-align: right;">174</td>
+<td>训练</td>
+</tr>
+<tr>
+<td style="text-align: right;">1996</td>
+<td style="text-align: right;">179</td>
+<td>训练</td>
+</tr>
+<tr>
+<td style="text-align: right;">1997</td>
+<td style="text-align: right;">183</td>
+<td>训练</td>
+</tr>
+<tr>
+<td style="text-align: right;">1998</td>
+<td style="text-align: right;">189</td>
+<td>训练</td>
+</tr>
+<tr>
+<td style="text-align: right;">1999</td>
+<td style="text-align: right;">207</td>
+<td>训练</td>
+</tr>
+<tr>
+<td style="text-align: right;">2000</td>
+<td style="text-align: right;">234</td>
+<td>训练</td>
+</tr>
+<tr>
+<td style="text-align: right;">2001</td>
+<td style="text-align: right;">220.5</td>
+<td>训练</td>
+</tr>
+<tr>
+<td style="text-align: right;">2002</td>
+<td style="text-align: right;">256</td>
+<td>留出评价</td>
+</tr>
+<tr>
+<td style="text-align: right;">2003</td>
+<td style="text-align: right;">270</td>
+<td>留出评价</td>
+</tr>
+<tr>
+<td style="text-align: right;">2004</td>
+<td style="text-align: right;">285</td>
+<td>留出评价</td>
+</tr>
+</tbody>
+</table>
+<p>先固定一个方案: 只用1995至2001年的七项记录估计模型, 预测2002至2004年,
+再与后三项比较. 后三项不参加参数估计或背景值选择.
+这是一项给定历史数据上的回溯检验.</p>
+<p><img src="/images/GreyPredictionGM11/GM11-Original.png" style="width:100%"></p>
+<p>图 12-1 先看原始记录, 再划分时间</p>
+<p>虚线区分训练期与留出期. 整体增长中包含2001年的回落,
+不能因为记录按年份排列, 就认为它必然适合某种趋势模型.
+排放总量还不能直接代表水质污染程度, 本模型也没有政策或治理投入变量.</p>
+<h3 id="累加与相减是一对操作">12.1.2 累加与相减是一对操作</h3>
+<p>前七项原值记为 <span
+class="math inline">\(x^{(0)}_1,\ldots,x^{(0)}_7\)</span>. 上标 <span
+class="math inline">\((0)\)</span> 表示原始序列, 不是乘方. 逐项累加,
+得到</p>
+<p><span class="math display">\[
+174,\quad174+179=353,\quad353+183=536,\quad\ldots.
+\]</span></p>
+<p>累加后的序列记为 <span class="math inline">\(x^{(1)}\)</span>, 上标
+<span class="math inline">\((1)\)</span> 表示做了一次累加.
+也叫一次累加生成, 简称1-AGO. 用循环先把这件事做完,
+再通过相减恢复原值.</p>
+<p><strong>accumulate_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">x = [<span class="number">174</span>,<span class="number">179</span>,<span class="number">183</span>,<span class="number">189</span>,<span class="number">207</span>,<span class="number">234</span>,<span class="number">220.5</span>]</span><br><span class="line">total = <span class="number">0.0</span></span><br><span class="line">accumulated = []</span><br><span class="line"><span class="keyword">for</span> value <span class="keyword">in</span> x:</span><br><span class="line">    total += value</span><br><span class="line">    accumulated.append(total)</span><br><span class="line">restored = [accumulated[<span class="number">0</span>]]</span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="built_in">len</span>(accumulated)):</span><br><span class="line">    restored.append(accumulated[j]-accumulated[j-<span class="number">1</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Accumulated values:&quot;</span>,accumulated)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Restored original values:&quot;</span>,restored)</span><br></pre></td></tr></table></figure>
+<p><strong>accumulate_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">x = [<span class="number">174</span>,<span class="number">179</span>,<span class="number">183</span>,<span class="number">189</span>,<span class="number">207</span>,<span class="number">234</span>,<span class="number">220.5</span>]&#x27;;</span><br><span class="line">accumulated = <span class="built_in">zeros</span>(<span class="built_in">size</span>(x)); total = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="built_in">numel</span>(x)</span><br><span class="line">    total = total+x(<span class="built_in">j</span>); accumulated(<span class="built_in">j</span>) = total;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">restored = <span class="built_in">zeros</span>(<span class="built_in">size</span>(x)); restored(<span class="number">1</span>) = accumulated(<span class="number">1</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">2</span>:<span class="built_in">numel</span>(x)</span><br><span class="line">    restored(<span class="built_in">j</span>) = accumulated(<span class="built_in">j</span>)-accumulated(<span class="built_in">j</span><span class="number">-1</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Accumulated values:&#x27;</span>); <span class="built_in">disp</span>(accumulated&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Restored original values:&#x27;</span>); <span class="built_in">disp</span>(restored&#x27;);</span><br></pre></td></tr></table></figure>
+<p>前七项累加值为</p>
+<p><span class="math display">\[
+174,353,536,725,932,1166,1386.5.
+\]</span></p>
+<p>例如 <span class="math inline">\(536-353=183\)</span>,
+又找回了第三个原值. 一般地,</p>
+<p><span class="math display">\[
+x^{(1)}_k=\sum\limits_{i=1}^{k}x^{(0)}_i,\qquad
+x^{(0)}_1=x^{(1)}_1,\qquad
+x^{(0)}_k=x^{(1)}_k-x^{(1)}_{k-1}\quad(k\geqslant2).
+\]</span></p>
+<p><img src="/images/GreyPredictionGM11/GM11-AGO.png" style="width:100%"></p>
+<p>图 12-2 同一组数据的原值与累加值</p>
+<p>图中画出全部十项, 用来比较两种表示; 下文估计训练参数时仍只使用前七项.
+累加可能使总体变化更容易观察, 但变换可逆, 没有增加观测信息.
+相邻累加值共享许多原始记录, 也不是新获得的独立样本.</p>
+<h2 id="从一个背景值-写出一行估计关系">12.2 从一个背景值,
+写出一行估计关系</h2>
+<h3 id="先算相邻两项的平均数">12.2.1 先算相邻两项的平均数</h3>
+<p>第一个需要计算的背景值, 是累加序列前两项的平均数:</p>
+<p><span class="math display">\[
+z^{(1)}_2=\frac{174+353}{2}=263.5.
+\]</span></p>
+<p>它对应第二期原值179. 下一行用累加值353与536的平均数444.5,
+对应第三期原值183. 每个背景值都要与同一期原值配对.</p>
+<p>传统GM(1, 1)采用如下近似关系:</p>
+<p><span class="math display">\[
+x^{(0)}_k+a z^{(1)}_k\approx u.
+\]</span></p>
+<p>其中 <span class="math inline">\(a,u\)</span> 是待估计参数.
+对第一行来说, 就是</p>
+<p><span class="math display">\[
+179+263.5a\approx u,
+\qquad\text{或}\qquad179\approx(-263.5)a+1\times u.
+\]</span></p>
+<p>先会组这一行, 再组其余五行. 这条近似关系与一阶变化方程的联系,
+放在12.4说明.</p>
+<h3 id="把六行分别列出来">12.2.2 把六行分别列出来</h3>
+<p><strong>background_rows. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">x = [<span class="number">174</span>,<span class="number">179</span>,<span class="number">183</span>,<span class="number">189</span>,<span class="number">207</span>,<span class="number">234</span>,<span class="number">220.5</span>]</span><br><span class="line">total = <span class="number">0.0</span></span><br><span class="line">accumulated = []</span><br><span class="line"><span class="keyword">for</span> value <span class="keyword">in</span> x:</span><br><span class="line">    total += value</span><br><span class="line">    accumulated.append(total)</span><br><span class="line">rows, target = [], []</span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="built_in">len</span>(x)):</span><br><span class="line">    background = (accumulated[j-<span class="number">1</span>]+accumulated[j])/<span class="number">2</span></span><br><span class="line">    rows.append([-background,<span class="number">1.0</span>])</span><br><span class="line">    target.append(x[j])</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;k, background, design row, target:&quot;</span>,j+<span class="number">1</span>,background,rows[-<span class="number">1</span>],target[-<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
+<p><strong>background_rows. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">x = [<span class="number">174</span>,<span class="number">179</span>,<span class="number">183</span>,<span class="number">189</span>,<span class="number">207</span>,<span class="number">234</span>,<span class="number">220.5</span>]&#x27;;</span><br><span class="line">accumulated = cumsum(x);</span><br><span class="line">rows = <span class="built_in">zeros</span>(<span class="built_in">numel</span>(x)<span class="number">-1</span>,<span class="number">2</span>); target = <span class="built_in">zeros</span>(<span class="built_in">numel</span>(x)<span class="number">-1</span>,<span class="number">1</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">2</span>:<span class="built_in">numel</span>(x)</span><br><span class="line">    background = (accumulated(<span class="built_in">j</span><span class="number">-1</span>)+accumulated(<span class="built_in">j</span>))/<span class="number">2</span>;</span><br><span class="line">    rows(<span class="built_in">j</span><span class="number">-1</span>,:) = [-background,<span class="number">1</span>]; target(<span class="built_in">j</span><span class="number">-1</span>) = x(<span class="built_in">j</span>);</span><br><span class="line">    fprintf(<span class="string">&#x27;k=%d, background=%.6f, row=[%.6f,1], target=%.6f\n&#x27;</span>, ...</span><br><span class="line">        <span class="built_in">j</span>,background,-background,x(<span class="built_in">j</span>));</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>表 12-2 GM 参数估计的逐行数据.</p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: right;">原值期数 <span
+class="math inline">\(k\)</span></th>
+<th style="text-align: right;">背景值 <span
+class="math inline">\(z^{(1)}_k\)</span></th>
+<th style="text-align: right;">参数 <span
+class="math inline">\(a\)</span> 前的系数</th>
+<th style="text-align: right;">参数 <span
+class="math inline">\(u\)</span> 前的系数</th>
+<th style="text-align: right;">对应目标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">263.50</td>
+<td style="text-align: right;">-263.50</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">179</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">444.50</td>
+<td style="text-align: right;">-444.50</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">183</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">630.50</td>
+<td style="text-align: right;">-630.50</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">189</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">828.50</td>
+<td style="text-align: right;">-828.50</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">207</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">1049.00</td>
+<td style="text-align: right;">-1049.00</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">234</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">1276.25</td>
+<td style="text-align: right;">-1276.25</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">220.5</td>
+</tr>
+</tbody>
+</table>
+<p>七项原始数据产生六个相邻背景值, 因而有六行估计关系.
+第一项174用于构造累加与背景值, 不是又多出一条独立估计方程.</p>
+<h2 id="用最小二乘-只求两个参数">12.3 用最小二乘, 只求两个参数</h2>
+<p>把每行的两个系数排在一起, 就得到前面回归章节学习过的设计矩阵.
+这里固定参数顺序为 <span class="math inline">\((a,u)^{\mathsf
+T}\)</span>:</p>
+<p><span class="math display">\[
+B=\begin{pmatrix}
+-263.5&amp;1\\-444.5&amp;1\\-630.5&amp;1\\-828.5&amp;1\\-1049&amp;1\\-1276.25&amp;1
+\end{pmatrix},\qquad
+Y=(179,183,189,207,234,220.5)^{\mathsf T}.
+\]</span></p>
+<p>六条关系通常不能同时精确成立, 所以求解</p>
+<p><span class="math display">\[
+\min_{a,u}\quad\sum\limits_{k=2}^{7}
+\left(x^{(0)}_k+a z^{(1)}_k-u\right)^2
+=\min_{\theta}\|B\theta-Y\|_2^2,\qquad\theta=(a,u)^{\mathsf T}.
+\]</span></p>
+<p>Python用 <code>np.linalg.lstsq</code>, MATLAB用左除 <code>B\Y</code>.
+这里第一列是负背景值, 第二列是1; 返回顺序是发展系数 <span
+class="math inline">\(a\)</span>, 灰作用量 <span
+class="math inline">\(u\)</span>,
+不能沿用某些直线程序的"截距在前"顺序.</p>
+<p><strong>fit_parameters_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">x = np.array([<span class="number">174</span>,<span class="number">179</span>,<span class="number">183</span>,<span class="number">189</span>,<span class="number">207</span>,<span class="number">234</span>,<span class="number">220.5</span>], dtype=<span class="built_in">float</span>)</span><br><span class="line">accumulated = np.cumsum(x)</span><br><span class="line">background = (accumulated[:-<span class="number">1</span>]+accumulated[<span class="number">1</span>:])/<span class="number">2</span></span><br><span class="line">B = np.column_stack((-background,np.ones(<span class="built_in">len</span>(background))))</span><br><span class="line">Y = x[<span class="number">1</span>:]</span><br><span class="line">a, u = np.linalg.lstsq(B,Y,rcond=<span class="literal">None</span>)[<span class="number">0</span>]</span><br><span class="line">equation_fitted = B @ np.array([a,u])</span><br><span class="line">equation_residual = Y-equation_fitted</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Design matrix:\n&quot;</span>,B)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Parameters in the order a, u:&quot;</span>,a,u)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Background-equation fitted values:&quot;</span>,equation_fitted)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Background-equation squared error:&quot;</span>,np.<span class="built_in">sum</span>(equation_residual**<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<p><strong>fit_parameters_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">x = [<span class="number">174</span>,<span class="number">179</span>,<span class="number">183</span>,<span class="number">189</span>,<span class="number">207</span>,<span class="number">234</span>,<span class="number">220.5</span>]&#x27;;</span><br><span class="line">accumulated = cumsum(x);</span><br><span class="line">background = (accumulated(<span class="number">1</span>:<span class="keyword">end</span><span class="number">-1</span>)+accumulated(<span class="number">2</span>:<span class="keyword">end</span>))/<span class="number">2</span>;</span><br><span class="line">B = [-background,<span class="built_in">ones</span>(<span class="built_in">numel</span>(background),<span class="number">1</span>)]; Y = x(<span class="number">2</span>:<span class="keyword">end</span>);</span><br><span class="line"><span class="built_in">beta</span> = B\Y; a = <span class="built_in">beta</span>(<span class="number">1</span>); u = <span class="built_in">beta</span>(<span class="number">2</span>);</span><br><span class="line">equation_fitted = B*[a;u]; equation_residual = Y-equation_fitted;</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Design matrix:&#x27;</span>); <span class="built_in">disp</span>(B);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Parameters in the order a, u:&#x27;</span>); <span class="built_in">disp</span>([a,u]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Background-equation fitted values:&#x27;</span>); <span class="built_in">disp</span>(equation_fitted&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Background-equation squared error:&#x27;</span>); <span class="built_in">disp</span>(sum(equation_residual.^<span class="number">2</span>));</span><br></pre></td></tr></table></figure>
+<p>得到</p>
+<p><span class="math display">\[
+\widehat a=-0.0533552851,\qquad
+\widehat u=162.1357867265.
+\]</span></p>
+<p><img src="/images/GreyPredictionGM11/GM11-EquationRows.png" style="width:100%"></p>
+<p>图 12-3 从相邻累加值的平均数, 到六行最小二乘关系</p>
+<p>左图仅用前七项, 橙色点表示相邻端点平均数.
+右图将六个背景值与对应原值配对, 直线为 <span
+class="math inline">\(-\widehat a z+\widehat u\)</span>.
+这里拟合的是估计方程, 还没有生成未来预测.</p>
+<p>本节最小化的是背景值方程的误差.
+下一节从连续方程求解再还原出的原尺度拟合值, 其平方误差不一定也最小.
+两种误差不能混称为同一个最小二乘目标.</p>
+<h2 id="先还原第一期预测-再写多期程序">12.4 先还原第一期预测,
+再写多期程序</h2>
+<h3 id="背景值关系来自怎样的近似">12.4.1 背景值关系来自怎样的近似</h3>
+<p>GM(1, 1)的两个"1"分别表示一阶方程和一个建模变量. 用连续函数 <span
+class="math inline">\(y(t)\)</span> 描述累加序列, 采用</p>
+<p><span class="math display">\[
+\frac{\mathrm{d}y}{\mathrm{d}t}+ay=u,\qquad y(1)=x^{(0)}_1.
+\]</span></p>
+<p>对长度为1的区间 <span class="math inline">\([k-1,k]\)</span> 积分,
+得到</p>
+<p><span class="math display">\[
+y(k)-y(k-1)+a\int_{k-1}^{k}y(t)\,\mathrm{d}t=u.
+\]</span></p>
+<p>把观测累加值作为端点, 用两个端点的平均数近似这个单位区间上的积分,
+就得到前面的背景值关系. 区间增量等于原值, 是累加定义给出的等式;
+用平均数代替积分, 则是近似.
+不能把瞬时导数与某一整期增量写成精确相等.</p>
+<p>本章固定采用相邻均值作背景值, 原序列首项作初值.
+等间隔单位步长和有限正值是当前程序的使用前提.
+数据少本身不说明这种趋势结构合适.</p>
+<h3 id="两个累加预测值相减-得到一个单期预测">12.4.2 两个累加预测值相减,
+得到一个单期预测</h3>
+<p>当 <span class="math inline">\(\widehat a\ne0\)</span> 时,
+解这一阶线性方程得到</p>
+<p><span class="math display">\[
+\widehat x^{(1)}_k=
+\left(x^{(0)}_1-\frac{\widehat u}{\widehat a}\right)
+\mathrm{e}^{-\widehat a(k-1)}+\frac{\widehat u}{\widehat a}.
+\]</span></p>
+<p>本例第7期是2001年, 第8期是2002年. 把刚才估计的参数代入,
+模型给出的累加值为</p>
+<p><span class="math display">\[
+\widehat x^{(1)}_7\approx1386.217071,\qquad
+\widehat x^{(1)}_8\approx1628.726928.
+\]</span></p>
+<p>因此第一期留出预测为</p>
+<p><span class="math display">\[
+\widehat x^{(0)}_8=
+\widehat x^{(1)}_8-\widehat x^{(1)}_7
+\approx242.509857.
+\]</span></p>
+<p><strong>restore_one_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> exp</span><br><span class="line"></span><br><span class="line"><span class="comment"># Parameters estimated only from records 1 through 7.</span></span><br><span class="line">first_value = <span class="number">174.0</span></span><br><span class="line">a = -<span class="number">0.05335528513349494</span></span><br><span class="line">u = <span class="number">162.13578672650968</span></span><br><span class="line">k = <span class="number">8</span>  <span class="comment"># First forecast, labelled 2002.</span></span><br><span class="line">previous_accumulated = (first_value-u/a)*exp(-a*(k-<span class="number">2</span>))+u/a</span><br><span class="line">next_accumulated = (first_value-u/a)*exp(-a*(k-<span class="number">1</span>))+u/a</span><br><span class="line">prediction = next_accumulated-previous_accumulated</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Model accumulated values at 7 and 8:&quot;</span>,previous_accumulated,next_accumulated)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Restored prediction at 8 (2002):&quot;</span>,prediction)</span><br></pre></td></tr></table></figure>
+<p><strong>restore_one_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">first_value = <span class="number">174</span>;</span><br><span class="line">a = <span class="number">-0.05335528513349494</span>; u = <span class="number">162.13578672650968</span>;</span><br><span class="line">k = <span class="number">8</span>;</span><br><span class="line">previous_accumulated = (first_value-u/a)*<span class="built_in">exp</span>(-a*(k<span class="number">-2</span>))+u/a;</span><br><span class="line">next_accumulated = (first_value-u/a)*<span class="built_in">exp</span>(-a*(k<span class="number">-1</span>))+u/a;</span><br><span class="line">prediction = next_accumulated-previous_accumulated;</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Model accumulated values at 7 and 8:&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>([previous_accumulated,next_accumulated]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Restored prediction at 8 (2002):&#x27;</span>); <span class="built_in">disp</span>(prediction);</span><br></pre></td></tr></table></figure>
+<p>这里两个被减的量都来自同一个已拟合模型.
+观测累加值1386.5与模型累加估计1386.217071不完全相同.
+若用模型第8期累加值减去观测第7期累加值, 就改变了还原方法.</p>
+<h3 id="给后面的数组计算准备一个等价公式">12.4.3
+给后面的数组计算准备一个等价公式</h3>
+<p>相邻累加预测作差, 也可合并为</p>
+<p><span class="math display">\[
+\widehat x^{(0)}_k=
+\left(\widehat u-\widehat a x^{(0)}_1\right)
+\frac{\mathrm{e}^{\widehat a}-1}{\widehat a}
+\mathrm{e}^{-\widehat a(k-1)},\qquad k\geqslant2.
+\]</span></p>
+<p>接下来的多期程序采用这个等价形式. <code>expm1(a)</code> 计算 <span
+class="math inline">\(\mathrm{e}^a-1\)</span>, 当 <span
+class="math inline">\(a\)</span> 很小时比直接相减更准确. <span
+class="math inline">\(a=0\)</span> 时, 这个分式因子的连续延拓值为1,
+原方程变成 <span class="math inline">\(y&#39;=u\)</span>,
+第二项起的还原值为 <span class="math inline">\(u\)</span>.
+因此程序单独处理 <span class="math inline">\(a=0\)</span>, 不计算 <span
+class="math inline">\(u/a\)</span>.</p>
+<p>首项按初值固定为 <span class="math inline">\(x^{(0)}_1\)</span>.
+还原公式从第2项开始; 用前 <span class="math inline">\(n\)</span>
+项训练时, 第一条未来预测对应 <span class="math inline">\(k=n+1\)</span>.
+期数和年份要先对应好, 再写数组下标.</p>
+<h2 id="完成一次留出检验-并与简单基准比较">12.5 完成一次留出检验,
+并与简单基准比较</h2>
+<h3 id="先把两个基准算清楚">12.5.1 先把两个基准算清楚</h3>
+<p>末值基准对未来每一期都预测训练期最后一个值220.5.
+漂移基准则把首末两项之间的平均每期增量延续下去:</p>
+<p><span class="math display">\[
+\text{每期平均增量}=\frac{220.5-174}{7-1}=7.75.
+\]</span></p>
+<p>所以未来三期漂移预测为228.25, 236.00, 243.75.
+两个基准与GM使用同一个信息截止点, 不偷看后三项.</p>
+<h3 id="再把三条预测与实际留出值逐项比较">12.5.2
+再把三条预测与实际留出值逐项比较</h3>
+<p><strong>holdout_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">x = np.array([<span class="number">174</span>,<span class="number">179</span>,<span class="number">183</span>,<span class="number">189</span>,<span class="number">207</span>,<span class="number">234</span>,<span class="number">220.5</span>,<span class="number">256</span>,<span class="number">270</span>,<span class="number">285</span>], dtype=<span class="built_in">float</span>)</span><br><span class="line">actual = x[<span class="number">7</span>:<span class="number">10</span>].copy()</span><br><span class="line">x = x[:<span class="number">7</span>]</span><br><span class="line">accumulated = np.cumsum(x)</span><br><span class="line">background = (accumulated[:-<span class="number">1</span>]+accumulated[<span class="number">1</span>:])/<span class="number">2</span></span><br><span class="line">B = np.column_stack((-background,np.ones(<span class="built_in">len</span>(background))))</span><br><span class="line">Y = x[<span class="number">1</span>:]</span><br><span class="line">a, u = np.linalg.lstsq(B,Y,rcond=<span class="literal">None</span>)[<span class="number">0</span>]</span><br><span class="line">factor = np.expm1(a)/a <span class="keyword">if</span> a != <span class="number">0</span> <span class="keyword">else</span> <span class="number">1.0</span></span><br><span class="line">k = np.arange(<span class="built_in">len</span>(x)+<span class="number">1</span>,<span class="built_in">len</span>(x)+<span class="number">4</span>)</span><br><span class="line">future = (u-a*x[<span class="number">0</span>])*factor*np.exp(-a*(k-<span class="number">1</span>))</span><br><span class="line">h = np.arange(<span class="number">1</span>,<span class="number">4</span>)</span><br><span class="line">last_value = np.full(<span class="number">3</span>,x[-<span class="number">1</span>])</span><br><span class="line">drift = x[-<span class="number">1</span>]+h*(x[-<span class="number">1</span>]-x[<span class="number">0</span>])/(<span class="built_in">len</span>(x)-<span class="number">1</span>)</span><br><span class="line">predictions = np.column_stack((future,last_value,drift))</span><br><span class="line">errors = np.<span class="built_in">abs</span>(actual[:,<span class="literal">None</span>]-predictions)/actual[:,<span class="literal">None</span>]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Training count:&quot;</span>,<span class="built_in">len</span>(x))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;a, u:&quot;</span>,a,u)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Actual, GM11, last value, drift:\n&quot;</span>,np.column_stack((actual,predictions)))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;MAPE percentages, GM11 / last / drift:&quot;</span>,<span class="number">100</span>*errors.mean(axis=<span class="number">0</span>))</span><br></pre></td></tr></table></figure>
+<p><strong>holdout_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">x = [<span class="number">174</span>,<span class="number">179</span>,<span class="number">183</span>,<span class="number">189</span>,<span class="number">207</span>,<span class="number">234</span>,<span class="number">220.5</span>,<span class="number">256</span>,<span class="number">270</span>,<span class="number">285</span>]&#x27;;</span><br><span class="line">actual = x(<span class="number">8</span>:<span class="number">10</span>); x = x(<span class="number">1</span>:<span class="number">7</span>);</span><br><span class="line">accumulated = cumsum(x);</span><br><span class="line">background = (accumulated(<span class="number">1</span>:<span class="keyword">end</span><span class="number">-1</span>)+accumulated(<span class="number">2</span>:<span class="keyword">end</span>))/<span class="number">2</span>;</span><br><span class="line">B = [-background,<span class="built_in">ones</span>(<span class="built_in">numel</span>(background),<span class="number">1</span>)]; Y = x(<span class="number">2</span>:<span class="keyword">end</span>);</span><br><span class="line"><span class="built_in">beta</span> = B\Y; a = <span class="built_in">beta</span>(<span class="number">1</span>); u = <span class="built_in">beta</span>(<span class="number">2</span>);</span><br><span class="line"><span class="keyword">if</span> a == <span class="number">0</span>, <span class="built_in">factor</span> = <span class="number">1</span>; <span class="keyword">else</span>, <span class="built_in">factor</span> = <span class="built_in">expm1</span>(a)/a; <span class="keyword">end</span></span><br><span class="line">k = (<span class="built_in">numel</span>(x)+<span class="number">1</span>:<span class="built_in">numel</span>(x)+<span class="number">3</span>)&#x27;;</span><br><span class="line">future = (u-a*x(<span class="number">1</span>))*<span class="built_in">factor</span>*<span class="built_in">exp</span>(-a*(k<span class="number">-1</span>));</span><br><span class="line">h = (<span class="number">1</span>:<span class="number">3</span>)&#x27;; last_value = <span class="built_in">repmat</span>(x(<span class="keyword">end</span>),<span class="number">3</span>,<span class="number">1</span>);</span><br><span class="line">drift = x(<span class="keyword">end</span>)+h*(x(<span class="keyword">end</span>)-x(<span class="number">1</span>))/(<span class="built_in">numel</span>(x)<span class="number">-1</span>);</span><br><span class="line">predictions = [future,last_value,drift];</span><br><span class="line">errors = <span class="built_in">abs</span>(actual-predictions)./actual;</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Training count:&#x27;</span>); <span class="built_in">disp</span>(<span class="built_in">numel</span>(x));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;a, u:&#x27;</span>); <span class="built_in">disp</span>([a,u]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Actual, GM11, last value, drift:&#x27;</span>); <span class="built_in">disp</span>([actual,predictions]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;MAPE percentages, GM11 / last / drift:&#x27;</span>); <span class="built_in">disp</span>(<span class="number">100</span>*<span class="built_in">mean</span>(errors,<span class="number">1</span>));</span><br></pre></td></tr></table></figure>
+<p>表 12-3 三期留出预测与两种基准.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">留出年份</th>
+<th style="text-align: right;">教学观测</th>
+<th style="text-align: right;">GM预测</th>
+<th style="text-align: right;">末值基准</th>
+<th style="text-align: right;">漂移基准</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">2002</td>
+<td style="text-align: right;">256</td>
+<td style="text-align: right;">242.5099</td>
+<td style="text-align: right;">220.5</td>
+<td style="text-align: right;">228.25</td>
+</tr>
+<tr>
+<td style="text-align: right;">2003</td>
+<td style="text-align: right;">270</td>
+<td style="text-align: right;">255.8004</td>
+<td style="text-align: right;">220.5</td>
+<td style="text-align: right;">236.00</td>
+</tr>
+<tr>
+<td style="text-align: right;">2004</td>
+<td style="text-align: right;">285</td>
+<td style="text-align: right;">269.8194</td>
+<td style="text-align: right;">220.5</td>
+<td style="text-align: right;">243.75</td>
+</tr>
+</tbody>
+</table>
+<p>例如第一期GM的绝对相对误差为 <span
+class="math inline">\(|256-242.509857|/256\approx5.2696\%\)</span>.
+三期全部计入平均绝对百分比误差(MAPE):</p>
+<p><span class="math display">\[
+\operatorname{MAPE}=\frac{100\%}{3}
+\sum\limits_{h=1}^{3}
+\frac{|x^{(0)}_{7+h}-\widehat x^{(0)}_{7+h}|}{x^{(0)}_{7+h}}.
+\]</span></p>
+<p>表 12-4 三期留出的平均百分比误差.</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th style="text-align: right;">三期留出MAPE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GM(1, 1)</td>
+<td style="text-align: right;">5.2851%</td>
+</tr>
+<tr>
+<td>末值基准</td>
+<td style="text-align: right;">18.2774%</td>
+</tr>
+<tr>
+<td>漂移基准</td>
+<td style="text-align: right;">12.6354%</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/images/GreyPredictionGM11/GM11-Holdout.png" style="width:100%"></p>
+<p>图 12-4 三种方法使用同一训练期, 评价同三项留出记录</p>
+<p>本次GM三期均低估观测值, 但平均误差小于两个基准.
+三条留出记录只能提供有限证据,
+不能据此断言对更远未来或其他序列也有优势.</p>
+<p>若按这些留出结果反复调节背景值或平移常数, 留出期就参加了模型选择.
+最后仍需新的评价数据, 不能继续把它称为未参加选择的检验.</p>
+<h2 id="先换一个预测起点-再重复四次">12.6 先换一个预测起点,
+再重复四次</h2>
+<h3 id="只拿前四项-做一次三期预测">12.6.1 只拿前四项,
+做一次三期预测</h3>
+<p>这次假定只知道前四项174, 179, 183, 189. 三个随后值207, 234,
+220.5只用于评价. 同样估计两个参数, 再让三种方法各预测三期.</p>
+<p><strong>one_origin_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">x = np.array([<span class="number">174</span>,<span class="number">179</span>,<span class="number">183</span>,<span class="number">189</span>,<span class="number">207</span>,<span class="number">234</span>,<span class="number">220.5</span>,<span class="number">256</span>,<span class="number">270</span>,<span class="number">285</span>], dtype=<span class="built_in">float</span>)</span><br><span class="line">actual = x[<span class="number">4</span>:<span class="number">7</span>].copy()</span><br><span class="line">x = x[:<span class="number">4</span>]</span><br><span class="line">accumulated = np.cumsum(x)</span><br><span class="line">background = (accumulated[:-<span class="number">1</span>]+accumulated[<span class="number">1</span>:])/<span class="number">2</span></span><br><span class="line">B = np.column_stack((-background,np.ones(<span class="built_in">len</span>(background))))</span><br><span class="line">Y = x[<span class="number">1</span>:]</span><br><span class="line">a, u = np.linalg.lstsq(B,Y,rcond=<span class="literal">None</span>)[<span class="number">0</span>]</span><br><span class="line">factor = np.expm1(a)/a <span class="keyword">if</span> a != <span class="number">0</span> <span class="keyword">else</span> <span class="number">1.0</span></span><br><span class="line">k = np.arange(<span class="built_in">len</span>(x)+<span class="number">1</span>,<span class="built_in">len</span>(x)+<span class="number">4</span>)</span><br><span class="line">future = (u-a*x[<span class="number">0</span>])*factor*np.exp(-a*(k-<span class="number">1</span>))</span><br><span class="line">h = np.arange(<span class="number">1</span>,<span class="number">4</span>)</span><br><span class="line">last_value = np.full(<span class="number">3</span>,x[-<span class="number">1</span>])</span><br><span class="line">drift = x[-<span class="number">1</span>]+h*(x[-<span class="number">1</span>]-x[<span class="number">0</span>])/(<span class="built_in">len</span>(x)-<span class="number">1</span>)</span><br><span class="line">predictions = np.column_stack((future,last_value,drift))</span><br><span class="line">errors = np.<span class="built_in">abs</span>(actual[:,<span class="literal">None</span>]-predictions)/actual[:,<span class="literal">None</span>]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Training count:&quot;</span>,<span class="built_in">len</span>(x))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;a, u:&quot;</span>,a,u)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Actual, GM11, last value, drift:\n&quot;</span>,np.column_stack((actual,predictions)))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;MAPE percentages, GM11 / last / drift:&quot;</span>,<span class="number">100</span>*errors.mean(axis=<span class="number">0</span>))</span><br></pre></td></tr></table></figure>
+<p><strong>one_origin_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">x = [<span class="number">174</span>,<span class="number">179</span>,<span class="number">183</span>,<span class="number">189</span>,<span class="number">207</span>,<span class="number">234</span>,<span class="number">220.5</span>,<span class="number">256</span>,<span class="number">270</span>,<span class="number">285</span>]&#x27;;</span><br><span class="line">actual = x(<span class="number">5</span>:<span class="number">7</span>); x = x(<span class="number">1</span>:<span class="number">4</span>);</span><br><span class="line">accumulated = cumsum(x);</span><br><span class="line">background = (accumulated(<span class="number">1</span>:<span class="keyword">end</span><span class="number">-1</span>)+accumulated(<span class="number">2</span>:<span class="keyword">end</span>))/<span class="number">2</span>;</span><br><span class="line">B = [-background,<span class="built_in">ones</span>(<span class="built_in">numel</span>(background),<span class="number">1</span>)]; Y = x(<span class="number">2</span>:<span class="keyword">end</span>);</span><br><span class="line"><span class="built_in">beta</span> = B\Y; a = <span class="built_in">beta</span>(<span class="number">1</span>); u = <span class="built_in">beta</span>(<span class="number">2</span>);</span><br><span class="line"><span class="keyword">if</span> a == <span class="number">0</span>, <span class="built_in">factor</span> = <span class="number">1</span>; <span class="keyword">else</span>, <span class="built_in">factor</span> = <span class="built_in">expm1</span>(a)/a; <span class="keyword">end</span></span><br><span class="line">k = (<span class="built_in">numel</span>(x)+<span class="number">1</span>:<span class="built_in">numel</span>(x)+<span class="number">3</span>)&#x27;;</span><br><span class="line">future = (u-a*x(<span class="number">1</span>))*<span class="built_in">factor</span>*<span class="built_in">exp</span>(-a*(k<span class="number">-1</span>));</span><br><span class="line">h = (<span class="number">1</span>:<span class="number">3</span>)&#x27;; last_value = <span class="built_in">repmat</span>(x(<span class="keyword">end</span>),<span class="number">3</span>,<span class="number">1</span>);</span><br><span class="line">drift = x(<span class="keyword">end</span>)+h*(x(<span class="keyword">end</span>)-x(<span class="number">1</span>))/(<span class="built_in">numel</span>(x)<span class="number">-1</span>);</span><br><span class="line">predictions = [future,last_value,drift];</span><br><span class="line">errors = <span class="built_in">abs</span>(actual-predictions)./actual;</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Training count:&#x27;</span>); <span class="built_in">disp</span>(<span class="built_in">numel</span>(x));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;a, u:&#x27;</span>); <span class="built_in">disp</span>([a,u]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Actual, GM11, last value, drift:&#x27;</span>); <span class="built_in">disp</span>([actual,predictions]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;MAPE percentages, GM11 / last / drift:&#x27;</span>); <span class="built_in">disp</span>(<span class="number">100</span>*<span class="built_in">mean</span>(errors,<span class="number">1</span>));</span><br></pre></td></tr></table></figure>
+<p>GM三期预测约为193.9017, 199.2623, 204.7712, MAPE约9.4354%;
+末值与漂移分别约14.0707%与9.5735%. 训练终点改变后, 参数也改变了,
+不能直接沿用七期训练的参数.</p>
+<h3 id="用四个共同起点-分开比较三个步长">12.6.2 用四个共同起点,
+分开比较三个步长</h3>
+<p>现在依次只用最初4, 5, 6, 7项建模, 每次都预测后面三项.
+这叫作扩展训练窗口的滚动起点检验. 三种方法使用相同起点,
+每个预测步长都有四个误差.</p>
+<p>将刚才的拟合与还原放进 <code>forecast_prefix</code> 函数,
+再用循环重复. 完整的输入检查与归一化版本保留在进一步阅读;
+这里的简明函数用于给出的有限正值教学数据.</p>
+<p><strong>rolling_origins_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">forecast_prefix</span>(<span class="params">train</span>):</span><br><span class="line">    accumulated = np.cumsum(train)</span><br><span class="line">    z = (accumulated[:-<span class="number">1</span>]+accumulated[<span class="number">1</span>:])/<span class="number">2</span></span><br><span class="line">    B = np.column_stack((-z,np.ones(<span class="built_in">len</span>(z))))</span><br><span class="line">    a, u = np.linalg.lstsq(B,train[<span class="number">1</span>:],rcond=<span class="literal">None</span>)[<span class="number">0</span>]</span><br><span class="line">    factor = np.expm1(a)/a <span class="keyword">if</span> a != <span class="number">0</span> <span class="keyword">else</span> <span class="number">1.0</span></span><br><span class="line">    k = np.arange(<span class="built_in">len</span>(train)+<span class="number">1</span>,<span class="built_in">len</span>(train)+<span class="number">4</span>)</span><br><span class="line">    <span class="keyword">return</span> (u-a*train[<span class="number">0</span>])*factor*np.exp(-a*(k-<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">x = np.array([<span class="number">174</span>,<span class="number">179</span>,<span class="number">183</span>,<span class="number">189</span>,<span class="number">207</span>,<span class="number">234</span>,<span class="number">220.5</span>,<span class="number">256</span>,<span class="number">270</span>,<span class="number">285</span>], dtype=<span class="built_in">float</span>)</span><br><span class="line">errors = np.zeros((<span class="number">4</span>,<span class="number">3</span>,<span class="number">3</span>))  <span class="comment"># origin, horizon, method</span></span><br><span class="line">predictions = np.zeros((<span class="number">4</span>,<span class="number">3</span>,<span class="number">3</span>))</span><br><span class="line"><span class="keyword">for</span> row,n <span class="keyword">in</span> <span class="built_in">enumerate</span>([<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>]):</span><br><span class="line">    train = x[:n]</span><br><span class="line">    actual = x[n:n+<span class="number">3</span>]</span><br><span class="line">    h = np.arange(<span class="number">1</span>,<span class="number">4</span>)</span><br><span class="line">    pred = np.column_stack((forecast_prefix(train),np.full(<span class="number">3</span>,train[-<span class="number">1</span>]),</span><br><span class="line">        train[-<span class="number">1</span>]+h*(train[-<span class="number">1</span>]-train[<span class="number">0</span>])/(n-<span class="number">1</span>)))</span><br><span class="line">    predictions[row] = pred</span><br><span class="line">    errors[row] = np.<span class="built_in">abs</span>(actual[:,<span class="literal">None</span>]-pred)/actual[:,<span class="literal">None</span>]</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Origin&quot;</span>,n,<span class="string">&quot;MAPE percentages:&quot;</span>,<span class="number">100</span>*errors[row].mean(axis=<span class="number">0</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;By horizon, GM11 / last / drift (%):\n&quot;</span>,<span class="number">100</span>*errors.mean(axis=<span class="number">0</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;All twelve positions (%):&quot;</span>,<span class="number">100</span>*errors.mean(axis=(<span class="number">0</span>,<span class="number">1</span>)))</span><br></pre></td></tr></table></figure>
+<p><strong>rolling_origins_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">x = [<span class="number">174</span>,<span class="number">179</span>,<span class="number">183</span>,<span class="number">189</span>,<span class="number">207</span>,<span class="number">234</span>,<span class="number">220.5</span>,<span class="number">256</span>,<span class="number">270</span>,<span class="number">285</span>]&#x27;;</span><br><span class="line">errors = <span class="built_in">zeros</span>(<span class="number">4</span>,<span class="number">3</span>,<span class="number">3</span>); predictions = <span class="built_in">zeros</span>(<span class="number">4</span>,<span class="number">3</span>,<span class="number">3</span>);</span><br><span class="line"><span class="keyword">for</span> n = <span class="number">4</span>:<span class="number">7</span></span><br><span class="line">    train = x(<span class="number">1</span>:n); actual = x(n+<span class="number">1</span>:n+<span class="number">3</span>); h = (<span class="number">1</span>:<span class="number">3</span>)&#x27;;</span><br><span class="line">    pred = [forecast_prefix(train),<span class="built_in">repmat</span>(train(<span class="keyword">end</span>),<span class="number">3</span>,<span class="number">1</span>), ...</span><br><span class="line">        train(<span class="keyword">end</span>)+h*(train(<span class="keyword">end</span>)-train(<span class="number">1</span>))/(n<span class="number">-1</span>)];</span><br><span class="line">    predictions(n<span class="number">-3</span>,:,:) = <span class="built_in">reshape</span>(pred,[<span class="number">1</span>,<span class="number">3</span>,<span class="number">3</span>]);</span><br><span class="line">    errors(n<span class="number">-3</span>,:,:) = <span class="built_in">reshape</span>(<span class="built_in">abs</span>(actual-pred)./actual,[<span class="number">1</span>,<span class="number">3</span>,<span class="number">3</span>]);</span><br><span class="line">    fprintf(<span class="string">&#x27;Origin %d MAPE percentages:\n&#x27;</span>,n); <span class="built_in">disp</span>(<span class="number">100</span>*<span class="built_in">mean</span>(<span class="built_in">abs</span>(actual-pred)./actual,<span class="number">1</span>));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;By horizon, GM11 / last / drift (%):&#x27;</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="number">100</span>*<span class="built_in">reshape</span>(<span class="built_in">mean</span>(errors,<span class="number">1</span>),[<span class="number">3</span>,<span class="number">3</span>]));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;All twelve positions (%):&#x27;</span>); <span class="built_in">disp</span>(<span class="number">100</span>*<span class="built_in">reshape</span>(<span class="built_in">mean</span>(<span class="built_in">mean</span>(errors,<span class="number">1</span>),<span class="number">2</span>),[<span class="number">1</span>,<span class="number">3</span>]));</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">future</span> = <span class="title">forecast_prefix</span><span class="params">(train)</span></span></span><br><span class="line">accumulated = cumsum(train);</span><br><span class="line">z = (accumulated(<span class="number">1</span>:<span class="keyword">end</span><span class="number">-1</span>)+accumulated(<span class="number">2</span>:<span class="keyword">end</span>))/<span class="number">2</span>;</span><br><span class="line">B = [-z,<span class="built_in">ones</span>(<span class="built_in">numel</span>(z),<span class="number">1</span>)]; <span class="built_in">beta</span> = B\train(<span class="number">2</span>:<span class="keyword">end</span>);</span><br><span class="line">a = <span class="built_in">beta</span>(<span class="number">1</span>); u = <span class="built_in">beta</span>(<span class="number">2</span>);</span><br><span class="line"><span class="keyword">if</span> a == <span class="number">0</span>, <span class="built_in">factor</span> = <span class="number">1</span>; <span class="keyword">else</span>, <span class="built_in">factor</span> = <span class="built_in">expm1</span>(a)/a; <span class="keyword">end</span></span><br><span class="line">k = (<span class="built_in">numel</span>(train)+<span class="number">1</span>:<span class="built_in">numel</span>(train)+<span class="number">3</span>)&#x27;;</span><br><span class="line">future = (u-a*train(<span class="number">1</span>))*<span class="built_in">factor</span>*<span class="built_in">exp</span>(-a*(k<span class="number">-1</span>));</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>表 12-5 共同起点按步长汇总的误差.</p>
+<table>
+<thead>
+<tr>
+<th>预测步长</th>
+<th style="text-align: right;">GM平均绝对百分比误差</th>
+<th style="text-align: right;">末值基准</th>
+<th style="text-align: right;">漂移基准</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1期</td>
+<td style="text-align: right;">7.6511%</td>
+<td style="text-align: right;">10.0559%</td>
+<td style="text-align: right;">9.1744%</td>
+</tr>
+<tr>
+<td>2期</td>
+<td style="text-align: right;">5.8509%</td>
+<td style="text-align: right;">13.0701%</td>
+<td style="text-align: right;">7.4229%</td>
+</tr>
+<tr>
+<td>3期</td>
+<td style="text-align: right;">6.0193%</td>
+<td style="text-align: right;">17.3478%</td>
+<td style="text-align: right;">7.8573%</td>
+</tr>
+<tr>
+<td>十二个位置等权汇总</td>
+<td style="text-align: right;">6.5071%</td>
+<td style="text-align: right;">13.4913%</td>
+<td style="text-align: right;">8.1515%</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/images/GreyPredictionGM11/GM11-Rolling.png" style="width:100%"></p>
+<p>图 12-5 对共同起点分别汇总预测步长, 并查看局部误差</p>
+<p>平均结果较好, 不等于每个起点都较好. 例如只用前六项时,
+GM三期MAPE约5.1176%, 漂移约4.1153%, 这一局部比较中漂移更好.</p>
+<p>不同起点的训练窗口重叠, 也可能预测同一个年份,
+所以这十二个位置不是十二次独立实验. 平均多步误差也不必严格随步长上升.
+应同时看共同起点的汇总和各起点的具体结果.</p>
+<h2 id="评价之后-再用全样本重估与外推">12.7 评价之后,
+再用全样本重估与外推</h2>
+<p>完成固定的留出检验后, 可以用全部十项重估参数.
+这是利用更多已有信息建立新模型,
+不会回头改变前面七项训练得到的预测结果.</p>
+<p><strong>full_refit_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">x = np.array([<span class="number">174</span>,<span class="number">179</span>,<span class="number">183</span>,<span class="number">189</span>,<span class="number">207</span>,<span class="number">234</span>,<span class="number">220.5</span>,<span class="number">256</span>,<span class="number">270</span>,<span class="number">285</span>], dtype=<span class="built_in">float</span>)</span><br><span class="line">accumulated = np.cumsum(x)</span><br><span class="line">background = (accumulated[:-<span class="number">1</span>]+accumulated[<span class="number">1</span>:])/<span class="number">2</span></span><br><span class="line">B = np.column_stack((-background,np.ones(<span class="built_in">len</span>(background))))</span><br><span class="line">Y = x[<span class="number">1</span>:]</span><br><span class="line">a, u = np.linalg.lstsq(B,Y,rcond=<span class="literal">None</span>)[<span class="number">0</span>]</span><br><span class="line">factor = np.expm1(a)/a <span class="keyword">if</span> a != <span class="number">0</span> <span class="keyword">else</span> <span class="number">1.0</span></span><br><span class="line">k = np.arange(<span class="number">2</span>,<span class="built_in">len</span>(x)+<span class="number">4</span>)</span><br><span class="line">restored = (u-a*x[<span class="number">0</span>])*factor*np.exp(-a*(k-<span class="number">1</span>))</span><br><span class="line">all_values = np.r_[x[<span class="number">0</span>],restored]</span><br><span class="line">fitted, future = all_values[:<span class="built_in">len</span>(x)],all_values[<span class="built_in">len</span>(x):]</span><br><span class="line">relative_error = np.<span class="built_in">abs</span>(x[<span class="number">1</span>:]-fitted[<span class="number">1</span>:])/x[<span class="number">1</span>:]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Full-history a, u:&quot;</span>,a,u)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Fitted values:&quot;</span>,fitted)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;In-sample MAPE excluding fixed initial value (%):&quot;</span>,<span class="number">100</span>*relative_error.mean())</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Growth factor after the second value:&quot;</span>,np.exp(-a))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Conditional extrapolation for 2005-2007:&quot;</span>,future)</span><br></pre></td></tr></table></figure>
+<p><strong>full_refit_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">x = [<span class="number">174</span>,<span class="number">179</span>,<span class="number">183</span>,<span class="number">189</span>,<span class="number">207</span>,<span class="number">234</span>,<span class="number">220.5</span>,<span class="number">256</span>,<span class="number">270</span>,<span class="number">285</span>]&#x27;;</span><br><span class="line">accumulated = cumsum(x);</span><br><span class="line">background = (accumulated(<span class="number">1</span>:<span class="keyword">end</span><span class="number">-1</span>)+accumulated(<span class="number">2</span>:<span class="keyword">end</span>))/<span class="number">2</span>;</span><br><span class="line">B = [-background,<span class="built_in">ones</span>(<span class="built_in">numel</span>(background),<span class="number">1</span>)]; Y = x(<span class="number">2</span>:<span class="keyword">end</span>);</span><br><span class="line"><span class="built_in">beta</span> = B\Y; a = <span class="built_in">beta</span>(<span class="number">1</span>); u = <span class="built_in">beta</span>(<span class="number">2</span>);</span><br><span class="line"><span class="keyword">if</span> a == <span class="number">0</span>, <span class="built_in">factor</span> = <span class="number">1</span>; <span class="keyword">else</span>, <span class="built_in">factor</span> = <span class="built_in">expm1</span>(a)/a; <span class="keyword">end</span></span><br><span class="line">k = (<span class="number">2</span>:<span class="built_in">numel</span>(x)+<span class="number">3</span>)&#x27;;</span><br><span class="line">restored = (u-a*x(<span class="number">1</span>))*<span class="built_in">factor</span>*<span class="built_in">exp</span>(-a*(k<span class="number">-1</span>));</span><br><span class="line">all_values = [x(<span class="number">1</span>);restored];</span><br><span class="line">fitted = all_values(<span class="number">1</span>:<span class="built_in">numel</span>(x)); future = all_values(<span class="built_in">numel</span>(x)+<span class="number">1</span>:<span class="keyword">end</span>);</span><br><span class="line">relative_error = <span class="built_in">abs</span>(x(<span class="number">2</span>:<span class="keyword">end</span>)-fitted(<span class="number">2</span>:<span class="keyword">end</span>))./x(<span class="number">2</span>:<span class="keyword">end</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Full-history a, u:&#x27;</span>); <span class="built_in">disp</span>([a,u]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Fitted values:&#x27;</span>); <span class="built_in">disp</span>(fitted&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;In-sample MAPE excluding fixed initial value (%):&#x27;</span>); <span class="built_in">disp</span>(<span class="number">100</span>*<span class="built_in">mean</span>(relative_error));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Growth factor after the second value:&#x27;</span>); <span class="built_in">disp</span>(<span class="built_in">exp</span>(-a));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Conditional extrapolation for 2005-2007:&#x27;</span>); <span class="built_in">disp</span>(future&#x27;);</span><br></pre></td></tr></table></figure>
+<p>全样本参数为 <span class="math inline">\(\widehat
+a\approx-0.0623984986\)</span>, <span class="math inline">\(\widehat
+u\approx156.6161747109\)</span>. 原尺度样本内MAPE从第2项起计算,
+约为2.5999%. 第一项174被初始条件固定,
+它的零误差不应人为拉低样本内平均值. 这里排除的是固定初值的样本内首项,
+不是把留出评价的第一期也排除.</p>
+<p>以2004年作为信息截止点, 三期条件外推为:</p>
+<p>表 12-6 历史截止点后的条件外推.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">年份标签</th>
+<th style="text-align: right;">条件外推值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">2005</td>
+<td style="text-align: right;">303.0122</td>
+</tr>
+<tr>
+<td style="text-align: right;">2006</td>
+<td style="text-align: right;">322.5221</td>
+</tr>
+<tr>
+<td style="text-align: right;">2007</td>
+<td style="text-align: right;">343.2881</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/images/GreyPredictionGM11/GM11-Forecast.png" style="width:100%"></p>
+<p>图 12-6 全样本历史拟合与三期条件外推</p>
+<p>虚线右侧没有提供观测值. 预测线从末期模型拟合值接出,
+不是将最后一个观测值冒充拟合值.
+2005至2007只是这个历史教学例子的外推标签, 不是面向当前年份的预测.</p>
+<p>对第二项及以后的正还原值, 相邻增长因子固定为 <span
+class="math inline">\(\mathrm{e}^{-\widehat a}\)</span>, 本例约1.06439,
+即每期增长约6.44%. 这是当前模型的趋势延续假设,
+并不保证真实增长率保持不变. 传统模型不能直接表示明显的季节性,
+趋势反转或机制突变.</p>
+<h2 id="筛查-平移与误差诊断怎样使用">12.8 筛查,
+平移与误差诊断怎样使用</h2>
+<h3 id="通过筛查-仍要评价预测">12.8.1 通过筛查, 仍要评价预测</h3>
+<p>常见的原始级比定义为 <span
+class="math inline">\(\lambda_k=x^{(0)}_{k-1}/x^{(0)}_k\)</span>.
+一种教学参考筛查检查它是否都位于</p>
+<p><span class="math display">\[
+\left(\mathrm{e}^{-2/(n+1)},\mathrm{e}^{2/(n+1)}\right).
+\]</span></p>
+<p>七期训练时 <span class="math inline">\(n=7\)</span>, 区间约为 <span
+class="math inline">\((0.778801,1.284025)\)</span>. 若用十项重估, <span
+class="math inline">\(n=10\)</span>, 对应区间不同.
+不能用后来新增的数据改变早先训练时的检查口径. 本例均通过参考筛查,
+但通过不等于预测可靠.</p>
+<p>光滑比, 原始级比, 原尺度残差与级比偏差衡量不同方面.
+进一步阅读F.4分别推导并配图说明. 它们都不能代替后续记录上的预测比较,
+经验阈值也不是通用统计保证.</p>
+<h3 id="换单位与加常数不同">12.8.2 换单位与加常数不同</h3>
+<p>将所有原值乘以正常数, 发展系数 <span class="math inline">\(a\)</span>
+不变, <span class="math inline">\(u\)</span> 和预测随同缩放,
+相对误差不变. 完整函数在计算前除以最大值, 再换回原尺度,
+利用了这个性质.</p>
+<p>如果每项加上同一个常数, 累加值会多出随期数变化的一项, 背景值也改变,
+重新估计的 <span class="math inline">\(a\)</span> 一般不同.
+因此加常数建模后再减回, 不保证与直接建模等价.</p>
+<p>保持七期训练与三期留出不变, 预先给定平移常数作敏感性演示:</p>
+<p>表 12-7 平移常数的原尺度敏感性.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">平移常数</th>
+<th style="text-align: right;">减回常数后的原尺度留出MAPE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">5.2851%</td>
+</tr>
+<tr>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">5.9350%</td>
+</tr>
+<tr>
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">6.8947%</td>
+</tr>
+<tr>
+<td style="text-align: right;">10000</td>
+<td style="text-align: right;">7.1732%</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/images/GreyPredictionGM11/GM11-Shift.png" style="width:100%"></p>
+<p>图 12-7 级比接近1, 不代表原尺度预测更好</p>
+<p>四种平移后的训练序列都通过所用级比筛查, 原尺度误差却不同.
+极大常数能使相邻比值接近1, 只是分式的代数性质, 没有增加观测信息.
+比较时要减回常数, 用原尺度的实际留出值作分母. 这些常数用于演示敏感性,
+不按留出分数选择最优常数.</p>
+<h3 id="简短序列的结论仍需更新">12.8.3 简短序列的结论仍需更新</h3>
+<p>本章模型针对等间隔有限正值. 零值, 负值或缺失项的处理,
+应先回到指标定义和适用模型. 背景值由同一批观测构造,
+传统GM也不自动给出指定覆盖率的预测区间,
+不能直接套用普通回归的区间公式.</p>
+<p>即使输入恰好是指数序列,
+背景值方程估计与连续响应还原的组合也未必零误差.
+进一步阅读与补充程序展示了这一点. 把模型的近似与适用条件写清楚,
+比把一条平滑曲线当成确定未来更有用.</p>
+<h2 id="写出一段完整结论-再核对计算">12.9 写出一段完整结论,
+再核对计算</h2>
+<p>本例可以这样报告: 使用给定等间隔正值教学序列,
+固定相邻均值背景值和首项初值, 以前七项估计传统GM(1, 1).
+三期留出MAPE为5.2851%, 低于末值基准18.2774%和漂移基准12.6354%.
+共同起点滚动比较中平均误差也较低, 但局部起点并非总优于漂移.
+之后用十项重估, 演示三期条件外推,
+未提供相应未来观测或具有覆盖率保证的区间.
+数据来源与单位尚不足以支持真实地区或治理政策判断.</p>
+<ol type="1">
+<li>对前四项174, 179, 183, 189逐项累加, 再还原.
+为什么七个累加值不等于新增了七条观测?</li>
+<li>手算前两行背景值与目标值. 设计矩阵第一列为什么是负背景值?
+七项训练为何只有六行估计关系?</li>
+<li>用背景值和原值作普通直线拟合, 记截距c和斜率d. 它们与本章a,
+u怎样对应? 背景值估计误差最小, 是否意味着连续响应还原误差也最小?</li>
+<li>用模型第7, 8期累加值计算第一期留出预测. 如果误减观测累加值1386.5,
+结果会变成多少? 两种计算哪里不同?</li>
+<li>手算漂移基准的7.75及三期预测, 再算三方法的留出MAPE.
+留出的第一期应排除吗? 全样本固定初值的零误差为何要排除?</li>
+<li>查看共同起点4, 5, 6, 7的误差, 找出GM不如漂移的一个起点.
+解释为何十二个误差位置不能当作十二次独立实验.</li>
+<li>比较七期与十期估计的a, u和外推值.
+十期样本内MAPE能否代替三期留出MAPE? 若a=0, u=8, 首项为5,
+累加与还原序列分别是什么?</li>
+<li>用完整函数将输入乘以1000并比较参数与预测,
+再与加1000后减回的结果比较.
+为什么通过级比区间不能证明原尺度预测已改善?</li>
+</ol>
+<p>完整归一化函数, 常数序列与数值边界,
+原诊断推导和全部原练习保留在进一步阅读中. 下一章学习ARIMA时间序列模型,
+继续检查趋势, 时间边界和留出预测.</p>
+<p>配套阅读与实验: <a
+href="../reading/12/Index.md">本章资料索引</a>.</p>
+<h2 id="参考资料">参考资料</h2>
+<p>[1] DENG J L. Control problems of grey systems[J]. Systems &amp;
+Control Letters, 1982, 1(5): 288-294. DOI:
+10.1016/S0167-6911(82)80025-X.</p>
+<p>[2] MA X, WU W, ZHANG Y. Improved GM(1, 1) model based on Simpson
+formula and its applications[J]. Journal of Grey System, 2019, 31(4):
+33-46. <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1908.03493">作者公开稿</a>.</p>
+<p>[3] NumPy. <a
+target="_blank" rel="noopener" href="https://numpy.org/doc/stable/reference/generated/numpy.linalg.lstsq.html">numpy.
+linalg. lstsq</a>, <a
+target="_blank" rel="noopener" href="https://numpy.org/doc/stable/reference/generated/numpy.expm1.html">numpy.
+expm1</a>.</p>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

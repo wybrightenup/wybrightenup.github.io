@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="第 11 章 机器学习初步: 从训练数据到新样本 前几章已经学习了回归与降维. 机器学习继续面对同一个实际问题: 怎样根据已有数据建立规则, 再用于尚未见过的样本? 本章先预测一次用水量, 再用三个邻居判断一个类别. 看清预测怎样发生之后, 再把训练, 验证与测试分开. 我们将用同一个鸢尾花案例完成一次训练内选参数和最终评价, 最后学习分组, 物品共现和一个神经单元的更新. 完整的">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/MathBeautyAndModeling/11_MachineLearning.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="第 11 章 机器学习初步: 从训练数据到新样本 前几章已经学习了回归与降维. 机器学习继续面对同一个实际问题: 怎样根据已有数据建立规则, 再用于尚未见过的样本? 本章先预测一次用水量, 再用三个邻居判断一个类别. 看清预测怎样发生之后, 再把训练, 验证与测试分开. 我们将用同一个鸢尾花案例完成一次训练内选参数和最终评价, 最后学习分组, 物品共现和一个神经单元的更新. 完整的">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/MachineLearning/ML-31.png">
+<meta property="og:image" content="http://example.com/images/MachineLearning/ML-49.png">
+<meta property="og:image" content="http://example.com/images/MachineLearning/KNNEvaluation.png">
+<meta property="og:image" content="http://example.com/images/MachineLearning/ML-52.png">
+<meta property="og:image" content="http://example.com/images/MachineLearning/ML-54.png">
+<meta property="og:image" content="http://example.com/images/MachineLearning/ML-33.png">
+<meta property="article:published_time" content="2026-11-02T02:53:08.305Z">
+<meta property="article:modified_time" content="2026-10-31T09:20:34.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/MachineLearning/ML-31.png">
+
+
+<link rel="canonical" href="http://example.com/MathBeautyAndModeling/11_MachineLearning">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/MathBeautyAndModeling/11_MachineLearning.html","path":"MathBeautyAndModeling/11_MachineLearning.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-11-%E7%AB%A0-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%88%9D%E6%AD%A5-%E4%BB%8E%E8%AE%AD%E7%BB%83%E6%95%B0%E6%8D%AE%E5%88%B0%E6%96%B0%E6%A0%B7%E6%9C%AC"><span class="nav-number">1.</span> <span class="nav-text">第 11 章 机器学习初步:
+从训练数据到新样本</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E7%94%A8%E4%B8%80%E6%9D%A1%E5%B7%B2%E6%9C%89%E8%A7%84%E5%88%99-%E5%81%9A%E4%B8%80%E6%AC%A1%E9%A2%84%E6%B5%8B"><span class="nav-number">1.1.</span> <span class="nav-text">11.1 先用一条已有规则,
+做一次预测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E4%B8%8E%E6%B5%8B%E8%AF%95%E5%90%84%E5%81%9A%E4%BB%80%E4%B9%88"><span class="nav-number">1.2.</span> <span class="nav-text">11.2 训练与测试各做什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E7%95%99%E5%87%BA%E4%B8%80%E9%83%A8%E5%88%86%E8%AE%B0%E5%BD%95"><span class="nav-number">1.2.1.</span> <span class="nav-text">11.2.1 先留出一部分记录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%8D%E4%B8%8E%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E5%9F%BA%E7%BA%BF%E6%AF%94%E8%BE%83"><span class="nav-number">1.2.2.</span> <span class="nav-text">11.2.2 再与一个简单基线比较</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8D%A2%E4%B8%80%E7%A7%8D%E7%AD%94%E6%A1%88-%E8%AE%A9%E4%B8%89%E4%B8%AA%E9%82%BB%E5%B1%85%E6%8A%95%E7%A5%A8"><span class="nav-number">1.3.</span> <span class="nav-text">11.3 换一种答案: 让三个邻居投票</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E5%80%BC%E9%A2%84%E6%B5%8B%E4%B8%8E%E7%B1%BB%E5%88%AB%E9%A2%84%E6%B5%8B"><span class="nav-number">1.3.1.</span> <span class="nav-text">11.3.1 数值预测与类别预测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E9%80%90%E7%82%B9%E7%AE%97%E8%B7%9D%E7%A6%BB-%E5%86%8D%E6%8E%92%E5%BA%8F%E6%8A%95%E7%A5%A8"><span class="nav-number">1.3.2.</span> <span class="nav-text">11.3.2 先逐点算距离, 再排序投票</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E5%AE%8C%E6%95%B4%E5%81%9A%E4%B8%80%E6%8A%98%E9%AA%8C%E8%AF%81"><span class="nav-number">1.4.</span> <span class="nav-text">11.4 先完整做一折验证</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%98%8E%E7%A1%AE%E8%BF%99%E4%B8%80%E5%BC%A0%E8%A1%A8%E7%9A%84%E8%A1%8C%E4%B8%8E%E5%88%97"><span class="nav-number">1.4.1.</span> <span class="nav-text">11.4.1 明确这一张表的行与列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E5%8C%96%E4%B9%9F%E5%8F%AA%E7%9C%8B%E5%BD%93%E5%89%8D%E8%AE%AD%E7%BB%83%E9%83%A8%E5%88%86"><span class="nav-number">1.4.2.</span> <span class="nav-text">11.4.2 标准化也只看当前训练部分</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%8D%E9%87%8D%E5%A4%8D%E4%BA%94%E6%8A%98-%E7%84%B6%E5%90%8E%E9%80%89%E6%8B%A9%E9%82%BB%E5%B1%85%E6%95%B0"><span class="nav-number">1.5.</span> <span class="nav-text">11.5 再重复五折, 然后选择邻居数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%99%E6%AF%8F%E4%B8%AA%E5%80%99%E9%80%89%E6%96%B9%E6%A1%88%E7%9B%B8%E5%90%8C%E7%9A%84%E6%9C%BA%E4%BC%9A"><span class="nav-number">1.5.1.</span> <span class="nav-text">11.5.1 给每个候选方案相同的机会</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E8%AF%BB%E8%AE%AD%E7%BB%83%E5%86%85%E7%BB%93%E6%9E%9C-%E5%86%8D%E8%AF%BB%E6%B5%8B%E8%AF%95%E7%BB%93%E6%9E%9C"><span class="nav-number">1.5.2.</span> <span class="nav-text">11.5.2 先读训练内结果,
+再读测试结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B2%A1%E6%9C%89%E6%A0%87%E7%AD%BE%E6%97%B6-%E6%80%8E%E6%A0%B7%E6%8A%8A%E7%9B%B8%E4%BC%BC%E6%A0%B7%E6%9C%AC%E5%88%86%E7%BB%84"><span class="nav-number">1.6.</span> <span class="nav-text">11.6 没有标签时,
+怎样把相似样本分组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E5%88%86%E9%85%8D%E5%88%B0%E6%9C%80%E8%BF%91%E4%B8%AD%E5%BF%83-%E5%86%8D%E6%9B%B4%E6%96%B0%E4%B8%AD%E5%BF%83"><span class="nav-number">1.6.1.</span> <span class="nav-text">11.6.1 先分配到最近中心,
+再更新中心</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B0%87%E6%95%B0%E4%B9%9F%E4%B8%8D%E8%83%BD%E5%8F%AA%E7%9C%8B%E4%B8%80%E4%B8%AA%E8%AF%AF%E5%B7%AE"><span class="nav-number">1.6.2.</span> <span class="nav-text">11.6.2 簇数也不能只看一个误差</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%8F%E5%B8%B8%E4%B8%80%E8%B5%B7%E5%87%BA%E7%8E%B0-%E5%B0%B1%E4%B8%80%E5%AE%9A%E6%98%AF%E5%BC%BA%E5%85%B3%E8%81%94%E5%90%97"><span class="nav-number">1.7.</span> <span class="nav-text">11.7 经常一起出现,
+就一定是强关联吗</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B9%9F%E5%85%88%E7%AE%97%E4%B8%80%E4%B8%AA%E5%8D%95%E5%85%83"><span class="nav-number">1.8.</span> <span class="nav-text">11.8 神经网络也先算一个单元</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E4%B8%80%E4%B8%AA%E4%BB%BB%E5%8A%A1%E5%81%9A%E5%AE%8C%E6%95%B4-%E5%86%8D%E6%89%A9%E5%B1%95%E6%96%B9%E6%B3%95"><span class="nav-number">1.9.</span> <span class="nav-text">11.9 把一个任务做完整,
+再扩展方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.10.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="第-11-章-机器学习初步-从训练数据到新样本">第 11 章 机器学习初步:
+从训练数据到新样本</h1>
+<p>前几章已经学习了回归与降维. 机器学习继续面对同一个实际问题:
+怎样根据已有数据建立规则, 再用于尚未见过的样本?</p>
+<p>本章先预测一次用水量, 再用三个邻居判断一个类别. 看清预测怎样发生之后,
+再把训练, 验证与测试分开.
+我们将用同一个鸢尾花案例完成一次训练内选参数和最终评价, 最后学习分组,
+物品共现和一个神经单元的更新.</p>
+<p>完整的六分类器比较, CNN, RNN, LSTM和关联挖掘程序保留在进一步阅读中.
+先掌握本章的计算与评价流程, 再扩展模型,
+会更容易理解长程序中的每一步.</p>
+<h2 id="先用一条已有规则-做一次预测">11.1 先用一条已有规则,
+做一次预测</h2>
+<p>校园服务点想根据每日服务人数估计用水量.
+下面用100条教学模拟记录学习这一问题, 人数从20到218, 每隔2人取一个数.
+用水量由近似线性关系加上独立随机扰动产生, 不是实际校园调查数据.</p>
+<p>先给出从训练记录中得到的一条直线:</p>
+<p><span class="math display">\[
+\widehat y=3.172372+0.117788x.
+\]</span></p>
+<p><span class="math inline">\(x\)</span> 是人数, <span
+class="math inline">\(\widehat y\)</span> 是预测的每日用水量, 单位为
+<span class="math inline">\(\mathrm{m}^3\)</span>. 如果人数为100,
+只需代入:</p>
+<p><span class="math display">\[
+\widehat y=3.172372+0.117788\times100\approx14.9512.
+\]</span></p>
+<p>这就是一次预测. 程序里的系数保留更多小数,
+运算仍只是一次乘法和一次加法.</p>
+<p><strong>code/one_water_prediction. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">people = <span class="number">100</span></span><br><span class="line">intercept = <span class="number">3.1723720444409214</span></span><br><span class="line">slope = <span class="number">0.11778829561124192</span></span><br><span class="line">prediction = intercept + slope * people</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Water prediction at 100 people:&quot;</span>, prediction)</span><br></pre></td></tr></table></figure>
+<p><strong>code/one_water_prediction. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">people = <span class="number">100</span>;</span><br><span class="line">intercept = <span class="number">3.1723720444409214</span>;</span><br><span class="line">slope = <span class="number">0.11778829561124192</span>;</span><br><span class="line">prediction = intercept+slope*people;</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Water prediction at 100 people:&#x27;</span>); <span class="built_in">disp</span>(prediction);</span><br></pre></td></tr></table></figure>
+<p>斜率表示人数每增加1人, 直线给出的预测用水量增加约 <span
+class="math inline">\(0.1178\ \mathrm{m}^3\)</span>.
+截距是人数为0时的直线延伸值, 这个人数不在样本范围内,
+不能直接把它认定为实际基本用水量.</p>
+<p>下一步才回答: 系数从哪里来, 怎样知道这条直线对新记录是否有用?</p>
+<h2 id="训练与测试各做什么">11.2 训练与测试各做什么</h2>
+<h3 id="先留出一部分记录">11.2.1 先留出一部分记录</h3>
+<p>100条模拟记录分为80条训练记录和20条测试记录. 训练记录用来确定系数,
+测试记录在模型固定后用来评价误差. 本例是独立扰动产生的模拟记录,
+随机划分用于演示;
+真实连续监测资料还应根据时间先后或设备来源安排划分.</p>
+<p>回归模型只在训练记录上减少平方误差:</p>
+<p><span class="math display">\[
+\min_{\beta_0,\beta_1}\quad
+\sum\limits_{i\in\mathcal I_{\mathrm{tr}}}(y_i-\beta_0-\beta_1x_i)^2.
+\]</span></p>
+<p>其中 <span class="math inline">\(\mathcal I_{\mathrm{tr}}\)</span>
+表示训练记录的编号集合. 用训练部分计算平均数与离差乘积,
+就能得到前面学习过的最小二乘斜率和截距.</p>
+<h3 id="再与一个简单基线比较">11.2.2 再与一个简单基线比较</h3>
+<p>除了直线, 还可以对所有新记录都预测同一个数: 训练集用水量的平均值.
+这个简单规则叫作<strong>基线</strong>. 它不使用人数特征,
+但可以帮助我们判断较复杂的模型增加了多少作用.</p>
+<p>下面读取已提供的数据与划分. <code>train</code> 为真的行用于估计参数,
+为假的行用于最终计算误差. 两种语言读取同一份记录, 不各自重新抽样.</p>
+<p><strong>code/fit_water_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pathlib <span class="keyword">import</span> Path</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">ROOT = Path(__file__).resolve().parents[<span class="number">1</span>]</span><br><span class="line">D = np.loadtxt(ROOT/<span class="string">&#x27;data/water.csv&#x27;</span>, delimiter=<span class="string">&#x27;,&#x27;</span>, skiprows=<span class="number">1</span>)</span><br><span class="line">x, y = D[:, <span class="number">0</span>], D[:, <span class="number">1</span>]</span><br><span class="line">train = np.loadtxt(ROOT/<span class="string">&#x27;data/water_split.csv&#x27;</span>).astype(<span class="built_in">bool</span>)</span><br><span class="line">mean_x, mean_y = x[train].mean(), y[train].mean()</span><br><span class="line">slope = np.<span class="built_in">sum</span>((x[train]-mean_x)*(y[train]-mean_y)) / np.<span class="built_in">sum</span>((x[train]-mean_x)**<span class="number">2</span>)</span><br><span class="line">intercept = mean_y - slope*mean_x</span><br><span class="line">prediction = intercept + slope*x[~train]</span><br><span class="line">residual = y[~train] - prediction</span><br><span class="line">rmse = np.sqrt(np.mean(residual**<span class="number">2</span>))</span><br><span class="line">baseline_rmse = np.sqrt(np.mean((y[~train]-mean_y)**<span class="number">2</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Training and test counts:&quot;</span>, train.<span class="built_in">sum</span>(), (~train).<span class="built_in">sum</span>())</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Intercept and slope:&quot;</span>, intercept, slope)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Prediction at 100:&quot;</span>, intercept+<span class="number">100</span>*slope)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Test RMSE:&quot;</span>, rmse)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Training-mean baseline test RMSE:&quot;</span>, baseline_rmse)</span><br></pre></td></tr></table></figure>
+<p><strong>code/fit_water_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">root = fileparts(fileparts(mfilename(<span class="string">&#x27;fullpath&#x27;</span>)));</span><br><span class="line">D = readmatrix(fullfile(root,<span class="string">&#x27;data&#x27;</span>,<span class="string">&#x27;water.csv&#x27;</span>));</span><br><span class="line">x = D(:,<span class="number">1</span>); y = D(:,<span class="number">2</span>);</span><br><span class="line">train = logical(readmatrix(fullfile(root,<span class="string">&#x27;data&#x27;</span>,<span class="string">&#x27;water_split.csv&#x27;</span>)));</span><br><span class="line">mean_x = <span class="built_in">mean</span>(x(train)); mean_y = <span class="built_in">mean</span>(y(train));</span><br><span class="line">slope = sum((x(train)-mean_x).*(y(train)-mean_y))/sum((x(train)-mean_x).^<span class="number">2</span>);</span><br><span class="line">intercept = mean_y-slope*mean_x;</span><br><span class="line">prediction = intercept+slope*x(~train);</span><br><span class="line">residual = y(~train)-prediction;</span><br><span class="line">rmse = <span class="built_in">sqrt</span>(<span class="built_in">mean</span>(residual.^<span class="number">2</span>));</span><br><span class="line">baseline_rmse = <span class="built_in">sqrt</span>(<span class="built_in">mean</span>((y(~train)-mean_y).^<span class="number">2</span>));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Training and test counts:&#x27;</span>); <span class="built_in">disp</span>([sum(train),sum(~train)]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Intercept and slope:&#x27;</span>); <span class="built_in">disp</span>([intercept,slope]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Prediction at 100:&#x27;</span>); <span class="built_in">disp</span>(intercept+<span class="number">100</span>*slope);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Test RMSE and baseline RMSE:&#x27;</span>); <span class="built_in">disp</span>([rmse,baseline_rmse]);</span><br></pre></td></tr></table></figure>
+<p>测试集的均方根误差为</p>
+<p><span class="math display">\[
+\operatorname{RMSE}=\sqrt{\frac1{n_{\mathrm{te}}}
+\sum\limits_{i\in\mathcal I_{\mathrm{te}}}(y_i-\widehat y_i)^2},
+\]</span></p>
+<p>其中 <span class="math inline">\(n_{\mathrm{te}}\)</span>
+为测试记录数. 本例直线的RMSE约为 <span class="math inline">\(0.9025\
+\mathrm{m}^3\)</span>, 训练均值基线约为 <span
+class="math inline">\(6.9065\ \mathrm{m}^3\)</span>. 在这组模拟数据上,
+利用人数比只报一个平均值更有帮助, 这也与数据预设的近似线性机制一致.</p>
+<p><img src="/images/MachineLearning/ML-31.png" style="width:100%"></p>
+<p>图 11-1 模拟用水量与训练得到的直线</p>
+<p>蓝点是训练记录, 橙色方点是留出的测试记录. 直线只由训练记录确定.
+图中同时出现两组点, 不表示它们都参加了拟合.</p>
+<p>拟合结果好, 仍不能说明真实用水只由人数决定. 实际应用还可能需要气候,
+服务类型和学期安排等特征. 训练误差小, 也不能代替新记录上的评价.</p>
+<h2 id="换一种答案-让三个邻居投票">11.3 换一种答案: 让三个邻居投票</h2>
+<h3 id="数值预测与类别预测">11.3.1 数值预测与类别预测</h3>
+<p>预测用水量的答案是一个数, 属于回归任务. 判断花的品种, 答案是一个类别,
+属于分类任务. 描述样本的量叫作<strong>特征</strong>,
+想预测的数值或类别叫作<strong>目标或标签</strong>.</p>
+<p>先用六个二维教学点理解分类. 两个坐标已经换算到可比较的尺度.
+0和1只是类别编号, 不表示类别之间的数值距离. 待判断的点位于 <span
+class="math inline">\((0,0)\)</span>.</p>
+<p>表 11-1 六个教学点到待判断点的距离.</p>
+<table>
+<thead>
+<tr>
+<th>记录</th>
+<th>两个特征</th>
+<th style="text-align: right;">类别</th>
+<th style="text-align: right;">到待判断点的距离</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><span class="math inline">\((0.3,0.3)\)</span></td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.424264</td>
+</tr>
+<tr>
+<td>2</td>
+<td><span class="math inline">\((-0.6,0.1)\)</span></td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.608276</td>
+</tr>
+<tr>
+<td>3</td>
+<td><span class="math inline">\((-1.8,-1.2)\)</span></td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2.163331</td>
+</tr>
+<tr>
+<td>4</td>
+<td><span class="math inline">\((0.7,-0.2)\)</span></td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.728011</td>
+</tr>
+<tr>
+<td>5</td>
+<td><span class="math inline">\((1.7,1.3)\)</span></td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.140093</td>
+</tr>
+<tr>
+<td>6</td>
+<td><span class="math inline">\((-1.5,1.6)\)</span></td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.193171</td>
+</tr>
+</tbody>
+</table>
+<p>例如第一条记录到待判断点的距离是 <span
+class="math inline">\(\sqrt{0.3^2+0.3^2}\approx0.424264\)</span>.
+三个最近邻是记录1, 2, 4, 它们的类别依次为0, 0, 1. 类别0获得两票,
+所以预测为0.</p>
+<h3 id="先逐点算距离-再排序投票">11.3.2 先逐点算距离, 再排序投票</h3>
+<p><strong>code/nearest_one. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> sqrt</span><br><span class="line"></span><br><span class="line"><span class="comment"># Two scaled features; class 0 is blue and class 1 is orange.</span></span><br><span class="line">points = [(<span class="number">0.3</span>,<span class="number">0.3</span>),(-<span class="number">0.6</span>,<span class="number">0.1</span>),(-<span class="number">1.8</span>,-<span class="number">1.2</span>),</span><br><span class="line">          (<span class="number">0.7</span>,-<span class="number">0.2</span>),(<span class="number">1.7</span>,<span class="number">1.3</span>),(-<span class="number">1.5</span>,<span class="number">1.6</span>)]</span><br><span class="line">labels = [<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>]</span><br><span class="line">query = (<span class="number">0.0</span>,<span class="number">0.0</span>)</span><br><span class="line">distances = []</span><br><span class="line"><span class="keyword">for</span> j, (x,y) <span class="keyword">in</span> <span class="built_in">enumerate</span>(points):</span><br><span class="line">    distance = sqrt((x-query[<span class="number">0</span>])**<span class="number">2</span> + (y-query[<span class="number">1</span>])**<span class="number">2</span>)</span><br><span class="line">    distances.append((distance,j))</span><br><span class="line">distances.sort()  <span class="comment"># Equal distances follow original record order.</span></span><br><span class="line">nearest = [j <span class="keyword">for</span> distance,j <span class="keyword">in</span> distances[:<span class="number">3</span>]]</span><br><span class="line">votes = [<span class="number">0</span>,<span class="number">0</span>]</span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> nearest:</span><br><span class="line">    votes[labels[j]] += <span class="number">1</span></span><br><span class="line">prediction = <span class="number">0</span> <span class="keyword">if</span> votes[<span class="number">0</span>] &gt;= votes[<span class="number">1</span>] <span class="keyword">else</span> <span class="number">1</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Distances and zero-based row indices:&quot;</span>, distances)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Three nearest row indices:&quot;</span>, nearest)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Votes and predicted class:&quot;</span>, votes, prediction)</span><br></pre></td></tr></table></figure>
+<p><strong>code/nearest_one. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">X = [<span class="number">.3</span>,<span class="number">.3</span>;<span class="number">-.6</span>,<span class="number">.1</span>;<span class="number">-1.8</span>,<span class="number">-1.2</span>;<span class="number">.7</span>,<span class="number">-.2</span>;<span class="number">1.7</span>,<span class="number">1.3</span>;<span class="number">-1.5</span>,<span class="number">1.6</span>];</span><br><span class="line">y = [<span class="number">0</span>;<span class="number">0</span>;<span class="number">0</span>;<span class="number">1</span>;<span class="number">1</span>;<span class="number">1</span>]; query = [<span class="number">0</span>,<span class="number">0</span>];</span><br><span class="line">distances = <span class="built_in">zeros</span>(<span class="number">6</span>,<span class="number">1</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="number">6</span></span><br><span class="line">    distances(<span class="built_in">i</span>) = <span class="built_in">sqrt</span>((X(<span class="built_in">i</span>,<span class="number">1</span>)-query(<span class="number">1</span>))^<span class="number">2</span>+(X(<span class="built_in">i</span>,<span class="number">2</span>)-query(<span class="number">2</span>))^<span class="number">2</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">[sorted_distance,order] = <span class="built_in">sort</span>(distances,<span class="string">&#x27;ascend&#x27;</span>);</span><br><span class="line">nearest = order(<span class="number">1</span>:<span class="number">3</span>);</span><br><span class="line">votes = [<span class="number">0</span>,<span class="number">0</span>];</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    label = y(nearest(<span class="built_in">j</span>));</span><br><span class="line">    votes(label+<span class="number">1</span>) = votes(label+<span class="number">1</span>)+<span class="number">1</span>;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">[~,index] = <span class="built_in">max</span>(votes); prediction = index<span class="number">-1</span>;</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Distances and one-based row indices:&#x27;</span>); <span class="built_in">disp</span>([sorted_distance,order]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Three nearest row indices:&#x27;</span>); <span class="built_in">disp</span>(nearest&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Votes and predicted class:&#x27;</span>); <span class="built_in">disp</span>([votes,prediction]);</span><br></pre></td></tr></table></figure>
+<p>Python的记录索引从0开始, 因而输出0, 1, 3; MATLAB从1开始, 输出1, 2, 4.
+它们对应同三条记录. 本例约定距离相同时按原记录顺序,
+票数相同时取较小类别编号.</p>
+<p><img src="/images/MachineLearning/ML-49.png" style="width:100%"></p>
+<p>图 11-2 三个近邻中的多数投票</p>
+<p>星号为待判断点, 蓝色表示类别0, 橙色表示类别1. 虚线圆包含三个最近邻.
+这就是 <span class="math inline">\(k\)</span> 近邻方法(KNN)的一次分类,
+本例 <span class="math inline">\(k=3\)</span>.</p>
+<p>KNN没有先拟合一条分界直线, 而是保留训练样本, 预测时再找邻居.
+邻居数太小可能受个别样本影响, 太大也可能混合不同类别. 应怎样选 <span
+class="math inline">\(k\)</span>, 需要接下来安排的验证过程.</p>
+<h2 id="先完整做一折验证">11.4 先完整做一折验证</h2>
+<h3 id="明确这一张表的行与列">11.4.1 明确这一张表的行与列</h3>
+<p>鸢尾花(Iris)教学数据有150条记录. 每行是一朵花,
+四列特征依次是花萼长度, 花萼宽度, 花瓣长度和花瓣宽度, 单位为厘米. 标签0,
+1, 2依次表示setosa, versicolor, virginica三个品种.</p>
+<p>我们沿用材料中的划分, 留出30条测试记录, 其余120条用于训练内比较.
+三类在训练部分各40条, 测试部分各10条. 先把120条再分成五折, 每折24条,
+每类8条.</p>
+<p>本节只做第一折: 用其余96条作为当前训练记录,
+用第一折24条作为当前验证记录. 那30条最终测试记录仍不参加这一步.</p>
+<h3 id="标准化也只看当前训练部分">11.4.2 标准化也只看当前训练部分</h3>
+<p>对每列先减平均数, 再除以标准差, 可以减少尺度对距离的影响.
+这两个量都只能由当前96条估计. 验证记录使用同一套均值和尺度,
+不另算自己的均值.</p>
+<p>本节按标准化库常用的分母 <span class="math inline">\(n\)</span>
+计算标准差, Python写为 <code>ddof=0</code>, MATLAB写为
+<code>std(X,1,1)</code>. 它与第 10 章PCA采用的样本标准差口径不同,
+使用时应先说明. 两种口径都不能用测试记录估计预处理参数.</p>
+<p>下面明确写出这一折的标准化, 距离, 投票和评价,
+暂不调用交叉验证接口.</p>
+<p><strong>code/one_fold_knn. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pathlib <span class="keyword">import</span> Path</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">ROOT = Path(__file__).resolve().parents[<span class="number">1</span>]</span><br><span class="line">D = np.loadtxt(ROOT/<span class="string">&#x27;data/iris.csv&#x27;</span>, delimiter=<span class="string">&#x27;,&#x27;</span>, skiprows=<span class="number">1</span>)</span><br><span class="line">X, y = D[:, :<span class="number">4</span>], D[:, <span class="number">4</span>].astype(<span class="built_in">int</span>)</span><br><span class="line">train = np.loadtxt(ROOT/<span class="string">&#x27;data/iris_split.csv&#x27;</span>).astype(<span class="built_in">bool</span>)</span><br><span class="line">fold = np.loadtxt(ROOT/<span class="string">&#x27;data/iris_folds.csv&#x27;</span>).astype(<span class="built_in">int</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Fold 1 is validation; held-out test rows have fold==0 and never enter here.</span></span><br><span class="line">fit_rows = train &amp; (fold != <span class="number">1</span>)</span><br><span class="line">val_rows = train &amp; (fold == <span class="number">1</span>)</span><br><span class="line">mean = X[fit_rows].mean(axis=<span class="number">0</span>)</span><br><span class="line">scale = X[fit_rows].std(axis=<span class="number">0</span>, ddof=<span class="number">0</span>)</span><br><span class="line">scale[scale == <span class="number">0</span>] = <span class="number">1</span></span><br><span class="line">A = (X[fit_rows]-mean)/scale</span><br><span class="line">B = (X[val_rows]-mean)/scale</span><br><span class="line">fit_y = y[fit_rows]</span><br><span class="line">pred = []</span><br><span class="line"><span class="keyword">for</span> query <span class="keyword">in</span> B:</span><br><span class="line">    distance = np.<span class="built_in">sum</span>((A-query)**<span class="number">2</span>, axis=<span class="number">1</span>)</span><br><span class="line">    nearest = np.argsort(distance, kind=<span class="string">&#x27;stable&#x27;</span>)[:<span class="number">3</span>]</span><br><span class="line">    votes = np.bincount(fit_y[nearest], minlength=<span class="number">3</span>)</span><br><span class="line">    pred.append(<span class="built_in">int</span>(np.argmax(votes)))</span><br><span class="line">pred = np.array(pred)</span><br><span class="line">accuracy = np.mean(pred == y[val_rows])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Fold training and validation counts:&quot;</span>, fit_rows.<span class="built_in">sum</span>(), val_rows.<span class="built_in">sum</span>())</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Mean learned in this fold:&quot;</span>, mean)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Fold accuracy:&quot;</span>, accuracy)</span><br></pre></td></tr></table></figure>
+<p><strong>code/one_fold_knn. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">root = fileparts(fileparts(mfilename(<span class="string">&#x27;fullpath&#x27;</span>)));</span><br><span class="line">D = readmatrix(fullfile(root,<span class="string">&#x27;data&#x27;</span>,<span class="string">&#x27;iris.csv&#x27;</span>));</span><br><span class="line">X = D(:,<span class="number">1</span>:<span class="number">4</span>); y = D(:,<span class="number">5</span>);</span><br><span class="line">train = logical(readmatrix(fullfile(root,<span class="string">&#x27;data&#x27;</span>,<span class="string">&#x27;iris_split.csv&#x27;</span>)));</span><br><span class="line">fold = readmatrix(fullfile(root,<span class="string">&#x27;data&#x27;</span>,<span class="string">&#x27;iris_folds.csv&#x27;</span>));</span><br><span class="line"></span><br><span class="line">fit_rows = train &amp; (fold ~= <span class="number">1</span>);</span><br><span class="line">val_rows = train &amp; (fold == <span class="number">1</span>);</span><br><span class="line">mu = <span class="built_in">mean</span>(X(fit_rows,:),<span class="number">1</span>); scale = std(X(fit_rows,:),<span class="number">1</span>,<span class="number">1</span>);</span><br><span class="line">scale(scale == <span class="number">0</span>) = <span class="number">1</span>;</span><br><span class="line">A = (X(fit_rows,:)-mu)./scale;</span><br><span class="line">B = (X(val_rows,:)-mu)./scale;</span><br><span class="line">fit_y = y(fit_rows); pred = <span class="built_in">zeros</span>(sum(val_rows),<span class="number">1</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="built_in">size</span>(B,<span class="number">1</span>)</span><br><span class="line">    distance = sum((A-B(<span class="built_in">i</span>,:)).^<span class="number">2</span>,<span class="number">2</span>);</span><br><span class="line">    [~,order] = <span class="built_in">sort</span>(distance,<span class="string">&#x27;ascend&#x27;</span>); nearest = order(<span class="number">1</span>:<span class="number">3</span>);</span><br><span class="line">    votes = <span class="built_in">accumarray</span>(fit_y(nearest)+<span class="number">1</span>,<span class="number">1</span>,[<span class="number">3</span>,<span class="number">1</span>]);</span><br><span class="line">    [~,index] = <span class="built_in">max</span>(votes); pred(<span class="built_in">i</span>) = index<span class="number">-1</span>;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">accuracy = <span class="built_in">mean</span>(pred == y(val_rows));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Fold training and validation counts:&#x27;</span>); <span class="built_in">disp</span>([sum(fit_rows),sum(val_rows)]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Mean learned in this fold:&#x27;</span>); <span class="built_in">disp</span>(mu);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Fold accuracy:&#x27;</span>); <span class="built_in">disp</span>(accuracy);</span><br></pre></td></tr></table></figure>
+<p>这一折训练96条, 验证24条, 用3个邻居得到23/24正确, 验证准确率约95.83%.
+训练均值只来自96条, 例如第一列约为5.820833厘米.</p>
+<p>如果先用全部150条计算标准差, 再作划分, 最终测试记录就已参与预处理.
+如果将第 10 章PCA接在分类器前, PCA的均值,
+尺度和方向也应在每一折的当前训练部分重新估计.</p>
+<h2 id="再重复五折-然后选择邻居数">11.5 再重复五折, 然后选择邻居数</h2>
+<h3 id="给每个候选方案相同的机会">11.5.1 给每个候选方案相同的机会</h3>
+<p>现在比较 <span class="math inline">\(k=3,5,7\)</span>. 每个 <span
+class="math inline">\(k\)</span> 都使用相同的五折, 依次让一折作验证,
+其余四折作训练. 五次验证准确率取平均后, 再按预先约定的规则选择:
+平均准确率最高者入选, 同分取较小的 <span
+class="math inline">\(k\)</span>.</p>
+<p>为避免把距离与投票代码重复写15遍, 将上一节的操作放入
+<code>predict_knn</code> 函数. 函数每次接收本轮训练数据和查询数据,
+在本轮训练部分估计标准化参数, 再返回预测类别.
+主程序的两层循环分别对应候选邻居数与五折.</p>
+<p><strong>code/select_knn_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pathlib <span class="keyword">import</span> Path</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">ROOT = Path(__file__).resolve().parents[<span class="number">1</span>]</span><br><span class="line">D = np.loadtxt(ROOT/<span class="string">&#x27;data/iris.csv&#x27;</span>, delimiter=<span class="string">&#x27;,&#x27;</span>, skiprows=<span class="number">1</span>)</span><br><span class="line">X, y = D[:, :<span class="number">4</span>], D[:, <span class="number">4</span>].astype(<span class="built_in">int</span>)</span><br><span class="line">train = np.loadtxt(ROOT/<span class="string">&#x27;data/iris_split.csv&#x27;</span>).astype(<span class="built_in">bool</span>)</span><br><span class="line">fold = np.loadtxt(ROOT/<span class="string">&#x27;data/iris_folds.csv&#x27;</span>).astype(<span class="built_in">int</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">predict_knn</span>(<span class="params">fit_X, fit_y, query_X, k</span>):</span><br><span class="line">    mean = fit_X.mean(axis=<span class="number">0</span>)</span><br><span class="line">    scale = fit_X.std(axis=<span class="number">0</span>, ddof=<span class="number">0</span>)</span><br><span class="line">    scale[scale == <span class="number">0</span>] = <span class="number">1</span></span><br><span class="line">    A, B = (fit_X-mean)/scale, (query_X-mean)/scale</span><br><span class="line">    pred = []</span><br><span class="line">    <span class="keyword">for</span> query <span class="keyword">in</span> B:</span><br><span class="line">        distance = np.<span class="built_in">sum</span>((A-query)**<span class="number">2</span>, axis=<span class="number">1</span>)</span><br><span class="line">        nearest = np.argsort(distance, kind=<span class="string">&#x27;stable&#x27;</span>)[:k]</span><br><span class="line">        votes = np.bincount(fit_y[nearest], minlength=<span class="number">3</span>)</span><br><span class="line">        pred.append(<span class="built_in">int</span>(np.argmax(votes)))</span><br><span class="line">    <span class="keyword">return</span> np.array(pred)</span><br><span class="line"></span><br><span class="line">choices = [<span class="number">3</span>,<span class="number">5</span>,<span class="number">7</span>]</span><br><span class="line">fold_accuracy = np.zeros((<span class="built_in">len</span>(choices),<span class="number">5</span>))</span><br><span class="line"><span class="keyword">for</span> row, k <span class="keyword">in</span> <span class="built_in">enumerate</span>(choices):</span><br><span class="line">    <span class="keyword">for</span> f <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">6</span>):</span><br><span class="line">        fit_rows = train &amp; (fold != f)</span><br><span class="line">        val_rows = train &amp; (fold == f)</span><br><span class="line">        pred = predict_knn(X[fit_rows],y[fit_rows],X[val_rows],k)</span><br><span class="line">        fold_accuracy[row,f-<span class="number">1</span>] = np.mean(pred == y[val_rows])</span><br><span class="line">mean_accuracy = fold_accuracy.mean(axis=<span class="number">1</span>)</span><br><span class="line"><span class="comment"># choices are ascending: an exact tie selects the smaller k.</span></span><br><span class="line">chosen_k = choices[<span class="built_in">int</span>(np.argmax(mean_accuracy))]</span><br><span class="line">test_prediction = predict_knn(X[train],y[train],X[~train],chosen_k)</span><br><span class="line">test_accuracy = np.mean(test_prediction == y[~train])</span><br><span class="line">confusion = np.zeros((<span class="number">3</span>,<span class="number">3</span>),dtype=<span class="built_in">int</span>)</span><br><span class="line"><span class="keyword">for</span> actual, predicted <span class="keyword">in</span> <span class="built_in">zip</span>(y[~train],test_prediction):</span><br><span class="line">    confusion[actual,predicted] += <span class="number">1</span></span><br><span class="line">baseline_class = <span class="built_in">int</span>(np.argmax(np.bincount(y[train])))</span><br><span class="line">baseline_accuracy = np.mean(y[~train] == baseline_class)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Fold accuracies:\n&quot;</span>,fold_accuracy)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Mean training-side validation accuracy:&quot;</span>,mean_accuracy)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Chosen k:&quot;</span>,chosen_k)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Final test accuracy:&quot;</span>,test_accuracy)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Confusion matrix, rows=true / columns=predicted:\n&quot;</span>,confusion)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Most-frequent-class baseline accuracy:&quot;</span>,baseline_accuracy)</span><br></pre></td></tr></table></figure>
+<p><strong>code/select_knn_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">root = fileparts(fileparts(mfilename(<span class="string">&#x27;fullpath&#x27;</span>)));</span><br><span class="line">D = readmatrix(fullfile(root,<span class="string">&#x27;data&#x27;</span>,<span class="string">&#x27;iris.csv&#x27;</span>));</span><br><span class="line">X = D(:,<span class="number">1</span>:<span class="number">4</span>); y = D(:,<span class="number">5</span>);</span><br><span class="line">train = logical(readmatrix(fullfile(root,<span class="string">&#x27;data&#x27;</span>,<span class="string">&#x27;iris_split.csv&#x27;</span>)));</span><br><span class="line">fold = readmatrix(fullfile(root,<span class="string">&#x27;data&#x27;</span>,<span class="string">&#x27;iris_folds.csv&#x27;</span>));</span><br><span class="line"></span><br><span class="line">choices = [<span class="number">3</span>,<span class="number">5</span>,<span class="number">7</span>]; fold_accuracy = <span class="built_in">zeros</span>(<span class="number">3</span>,<span class="number">5</span>);</span><br><span class="line"><span class="keyword">for</span> row = <span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    k = choices(row);</span><br><span class="line">    <span class="keyword">for</span> f = <span class="number">1</span>:<span class="number">5</span></span><br><span class="line">        fit_rows = train &amp; (fold ~= f); val_rows = train &amp; (fold == f);</span><br><span class="line">        pred = predict_knn(X(fit_rows,:),y(fit_rows),X(val_rows,:),k);</span><br><span class="line">        fold_accuracy(row,f) = <span class="built_in">mean</span>(pred == y(val_rows));</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">mean_accuracy = <span class="built_in">mean</span>(fold_accuracy,<span class="number">2</span>);</span><br><span class="line">[~,index] = <span class="built_in">max</span>(mean_accuracy); chosen_k = choices(index);</span><br><span class="line">test_prediction = predict_knn(X(train,:),y(train),X(~train,:),chosen_k);</span><br><span class="line">test_accuracy = <span class="built_in">mean</span>(test_prediction == y(~train));</span><br><span class="line">confusion = <span class="built_in">accumarray</span>([y(~train)+<span class="number">1</span>,test_prediction+<span class="number">1</span>],<span class="number">1</span>,[<span class="number">3</span>,<span class="number">3</span>]);</span><br><span class="line">counts = <span class="built_in">accumarray</span>(y(train)+<span class="number">1</span>,<span class="number">1</span>,[<span class="number">3</span>,<span class="number">1</span>]);</span><br><span class="line">[~,index] = <span class="built_in">max</span>(counts); baseline_class = index<span class="number">-1</span>;</span><br><span class="line">baseline_accuracy = <span class="built_in">mean</span>(y(~train) == baseline_class);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Fold accuracies:&#x27;</span>); <span class="built_in">disp</span>(fold_accuracy);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Mean training-side validation accuracy:&#x27;</span>); <span class="built_in">disp</span>(mean_accuracy&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Chosen k:&#x27;</span>); <span class="built_in">disp</span>(chosen_k);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Final test accuracy:&#x27;</span>); <span class="built_in">disp</span>(test_accuracy);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Confusion matrix, rows=true / columns=predicted:&#x27;</span>); <span class="built_in">disp</span>(confusion);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Most-frequent-class baseline accuracy:&#x27;</span>); <span class="built_in">disp</span>(baseline_accuracy);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">pred</span> = <span class="title">predict_knn</span><span class="params">(fit_X,fit_y,query_X,k)</span></span></span><br><span class="line">mu = <span class="built_in">mean</span>(fit_X,<span class="number">1</span>); scale = std(fit_X,<span class="number">1</span>,<span class="number">1</span>);</span><br><span class="line">scale(scale == <span class="number">0</span>) = <span class="number">1</span>;</span><br><span class="line">A = (fit_X-mu)./scale; B = (query_X-mu)./scale;</span><br><span class="line">pred = <span class="built_in">zeros</span>(<span class="built_in">size</span>(B,<span class="number">1</span>),<span class="number">1</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="built_in">size</span>(B,<span class="number">1</span>)</span><br><span class="line">    distance = sum((A-B(<span class="built_in">i</span>,:)).^<span class="number">2</span>,<span class="number">2</span>);</span><br><span class="line">    [~,order] = <span class="built_in">sort</span>(distance,<span class="string">&#x27;ascend&#x27;</span>); nearest = order(<span class="number">1</span>:k);</span><br><span class="line">    votes = <span class="built_in">accumarray</span>(fit_y(nearest)+<span class="number">1</span>,<span class="number">1</span>,[<span class="number">3</span>,<span class="number">1</span>]);</span><br><span class="line">    [~,index] = <span class="built_in">max</span>(votes); pred(<span class="built_in">i</span>) = index<span class="number">-1</span>;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<h3 id="先读训练内结果-再读测试结果">11.5.2 先读训练内结果,
+再读测试结果</h3>
+<p>表 11-2 训练数据内的近邻数比较.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">邻居数</th>
+<th style="text-align: right;">五折平均验证准确率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">96.6667%</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">95.8333%</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">93.3333%</td>
+</tr>
+</tbody>
+</table>
+<p>因此选 <span class="math inline">\(k=3\)</span>.
+接着用全部120条训练记录重新估计标准化参数, 保留这些记录作为近邻参照,
+最后评价预留的30条测试记录. 本例正确28条, 测试准确率为93.3333%.
+多数类常数基线为33.3333%; 三类训练样本同数时, 约定选较小编号0.</p>
+<p>表 11-3 预留测试记录的混淆矩阵.</p>
+<table>
+<thead>
+<tr>
+<th>真实类别  预测类别</th>
+<th style="text-align: right;">0</th>
+<th style="text-align: right;">1</th>
+<th style="text-align: right;">2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td>1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td>2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">8</td>
+</tr>
+</tbody>
+</table>
+<p>这张表叫作<strong>混淆矩阵</strong>, 行是真实类别, 列是预测类别.
+对角线合计28, 另外2条真实类别2被预测为1. 准确率只给出总比例,
+混淆矩阵进一步指出错误发生在哪里.</p>
+<p><img src="/images/MachineLearning/KNNEvaluation.png" style="width:100%"></p>
+<p>图 11-3 训练内选择KNN参数, 再评价预留测试记录</p>
+<p>左图是120条训练记录内的五折平均结果, 右图是选定 <span
+class="math inline">\(k=3\)</span> 后的30条测试记录.
+两侧使用的数据和作用不同, 不能把两个百分比当成同一批样本的结果.</p>
+<p>这里比较的是KNN内部的三个邻居数.
+进一步阅读中的六分类器比较是另一个预先定义的选择流程,
+其测试结果不能拿回来反复调整本节方案. 反复按测试表现改模型,
+这份测试数据就实际承担了验证作用, 后面还需要新的独立评价.</p>
+<p>当前演示使用等权投票, 距离并列按原行顺序, 票数并列取较小类别编号.
+复杂库在并列边界上的实现可能不同, 比较程序时应核对这些约定.</p>
+<h2 id="没有标签时-怎样把相似样本分组">11.6 没有标签时,
+怎样把相似样本分组</h2>
+<h3 id="先分配到最近中心-再更新中心">11.6.1 先分配到最近中心,
+再更新中心</h3>
+<p>分类已经知道训练样本的类别. 聚类没有这样的答案,
+它根据样本相似程度组织分组. K-Means先指定簇数, 用每个簇的均值表示该簇,
+希望样本到所属中心的平方距离总和较小.</p>
+<p>先用六个二维点, 只做一次更新. 初始中心取 <span
+class="math inline">\((0,0)\)</span> 和 <span
+class="math inline">\((10,10)\)</span>. 前三个点离第一个中心近,
+后三个离第二个中心近:</p>
+<p><span class="math display">\[
+(0,0),(0,2),(2,0);\qquad (8,8),(8,10),(10,8).
+\]</span></p>
+<p>第一组的新中心为 <span
+class="math inline">\(((0+0+2)/3,(0+2+0)/3)=(2/3,2/3)\)</span>.
+第二组同理为 <span class="math inline">\((26/3,26/3)\)</span>.
+程序先计算距离和分组, 再更新均值.</p>
+<p><strong>code/one_kmeans_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">X = np.array([[<span class="number">0</span>,<span class="number">0</span>],[<span class="number">0</span>,<span class="number">2</span>],[<span class="number">2</span>,<span class="number">0</span>],[<span class="number">8</span>,<span class="number">8</span>],[<span class="number">8</span>,<span class="number">10</span>],[<span class="number">10</span>,<span class="number">8</span>]],dtype=<span class="built_in">float</span>)</span><br><span class="line">centers = np.array([[<span class="number">0</span>,<span class="number">0</span>],[<span class="number">10</span>,<span class="number">10</span>]],dtype=<span class="built_in">float</span>)</span><br><span class="line">distance = np.<span class="built_in">sum</span>((X[:,<span class="literal">None</span>,:]-centers[<span class="literal">None</span>,:,:])**<span class="number">2</span>,axis=<span class="number">2</span>)</span><br><span class="line">labels = np.argmin(distance,axis=<span class="number">1</span>)</span><br><span class="line">before = np.<span class="built_in">sum</span>(distance[np.arange(<span class="built_in">len</span>(X)),labels])</span><br><span class="line">new_centers = centers.copy()</span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>):</span><br><span class="line">    new_centers[j] = X[labels == j].mean(axis=<span class="number">0</span>)</span><br><span class="line">after = np.<span class="built_in">sum</span>((X-new_centers[labels])**<span class="number">2</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Assignments, zero-based labels:&quot;</span>,labels)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Updated centers:\n&quot;</span>,new_centers)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Squared distances before and after the center update:&quot;</span>,before,after)</span><br></pre></td></tr></table></figure>
+<p><strong>code/one_kmeans_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">X = [<span class="number">0</span>,<span class="number">0</span>;<span class="number">0</span>,<span class="number">2</span>;<span class="number">2</span>,<span class="number">0</span>;<span class="number">8</span>,<span class="number">8</span>;<span class="number">8</span>,<span class="number">10</span>;<span class="number">10</span>,<span class="number">8</span>];</span><br><span class="line">centers = [<span class="number">0</span>,<span class="number">0</span>;<span class="number">10</span>,<span class="number">10</span>]; distance = <span class="built_in">zeros</span>(<span class="number">6</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">    distance(:,<span class="built_in">j</span>) = sum((X-centers(<span class="built_in">j</span>,:)).^<span class="number">2</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">[best,labels] = <span class="built_in">min</span>(distance,[],<span class="number">2</span>); before = sum(best);</span><br><span class="line">new_centers = centers;</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">    new_centers(<span class="built_in">j</span>,:) = <span class="built_in">mean</span>(X(labels == <span class="built_in">j</span>,:),<span class="number">1</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">after = sum(sum((X-new_centers(labels,:)).^<span class="number">2</span>));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Assignments, one-based labels:&#x27;</span>); <span class="built_in">disp</span>(labels&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Updated centers:&#x27;</span>); <span class="built_in">disp</span>(new_centers);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Squared distances before and after center update:&#x27;</span>); <span class="built_in">disp</span>([before,after]);</span><br></pre></td></tr></table></figure>
+<p>保持这次分组时, 更新中心使平方距离总和从24降到约10.666667.
+完整算法重复分配与更新, 但不同初始中心可能得到不同结果,
+不能把一次下降当成全局最优证明. 实际实现还要处理空簇,
+停止容差与迭代上限.</p>
+<h3 id="簇数也不能只看一个误差">11.6.2 簇数也不能只看一个误差</h3>
+<p>再看材料中的150个二维模拟资源需求点. 这些点与前面六点小算例不同,
+坐标表示已经换算尺度的指标, 负值不表示负的实际需求.
+完整生成与聚类程序见进一步阅读F.3.</p>
+<p><img src="/images/MachineLearning/ML-52.png" style="width:100%"></p>
+<p>图 11-4 150个模拟资源需求点的三个簇</p>
+<p>红色叉号是中心, 颜色只表示分组, 簇编号没有高低等级.
+对同一数据比较不同簇数:</p>
+<p>表 11-4 不同簇数的内部指标.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">簇数</th>
+<th style="text-align: right;">簇内平方距离总和</th>
+<th style="text-align: right;">平均轮廓系数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">765.5559</td>
+<td style="text-align: right;">0.6009</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">103.0263</td>
+<td style="text-align: right;">0.8041</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">87.9943</td>
+<td style="text-align: right;">0.6456</td>
+</tr>
+</tbody>
+</table>
+<p>轮廓系数综合比较样本与同簇及最近其他簇的距离,
+较大通常意味着分组更紧凑且更分离. 本例从3簇增到4簇, 平方距离继续下降,
+轮廓系数却下降. 因此不能只按随簇数增加往往下降的误差选簇数,
+还要结合分组稳定性和实际用途. 这些结果也不意味着所有数据都应选3簇.</p>
+<h2 id="经常一起出现-就一定是强关联吗">11.7 经常一起出现,
+就一定是强关联吗</h2>
+<p>十笔模拟应急物资领用事务中, 水记为W, 口罩记为M, 手电记为L.
+一行是一笔完整事务, 同一种物品领用多件也只记一次:</p>
+<p>表 11-5 应急物资领用的十笔事务.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">事务</th>
+<th>领用物品</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>W, M, L</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>W, M</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>W, M, L</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>W, L</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>W, M</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>M, L</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>W, M, L</td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td>W, M</td>
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td>W, L</td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td>W, M, L</td>
+</tr>
+</tbody>
+</table>
+<p>先只检查一条规则: 领用口罩的事务中, 有多少也领用水? 水出现9次,
+口罩出现8次, 二者共同出现7次. 因此规则 <span
+class="math inline">\(M\Rightarrow W\)</span> 的支持度,
+置信度与提升度分别是</p>
+<p><span class="math display">\[
+\operatorname{supp}=\frac7{10}=0.7,\qquad
+\operatorname{conf}=\frac78=0.875,\qquad
+\operatorname{lift}=\frac{0.875}{0.9}\approx0.972222.
+\]</span></p>
+<p>支持度表示共同出现的事务比例, 置信度把范围缩到含口罩的事务中,
+提升度再与水本来就有的高频率比较. 这三个分母对应不同问题.</p>
+<p><strong>code/one_rule_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">transactions = [<span class="string">&quot;WML&quot;</span>,<span class="string">&quot;WM&quot;</span>,<span class="string">&quot;WML&quot;</span>,<span class="string">&quot;WL&quot;</span>,<span class="string">&quot;WM&quot;</span>,</span><br><span class="line">                <span class="string">&quot;ML&quot;</span>,<span class="string">&quot;WML&quot;</span>,<span class="string">&quot;WM&quot;</span>,<span class="string">&quot;WL&quot;</span>,<span class="string">&quot;WML&quot;</span>]</span><br><span class="line">count_w = count_m = count_both = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> transaction <span class="keyword">in</span> transactions:</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&quot;W&quot;</span> <span class="keyword">in</span> transaction:</span><br><span class="line">        count_w += <span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span> <span class="string">&quot;M&quot;</span> <span class="keyword">in</span> transaction:</span><br><span class="line">        count_m += <span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span> <span class="string">&quot;W&quot;</span> <span class="keyword">in</span> transaction <span class="keyword">and</span> <span class="string">&quot;M&quot;</span> <span class="keyword">in</span> transaction:</span><br><span class="line">        count_both += <span class="number">1</span></span><br><span class="line">support_w = count_w/<span class="built_in">len</span>(transactions)</span><br><span class="line">support_m = count_m/<span class="built_in">len</span>(transactions)</span><br><span class="line">support_both = count_both/<span class="built_in">len</span>(transactions)</span><br><span class="line">confidence = support_both/support_m</span><br><span class="line">lift = confidence/support_w</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;W, M, WM counts:&quot;</span>,count_w,count_m,count_both)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Rule M -&gt; W support, confidence, lift:&quot;</span>,support_both,confidence,lift)</span><br></pre></td></tr></table></figure>
+<p><strong>code/one_rule_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line"><span class="comment">% Columns: W=water, M=mask, L=light; rows are complete transactions.</span></span><br><span class="line">T = [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>;<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>;<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>;<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>;<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>;</span><br><span class="line">     <span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>;<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>;<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>;<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>;<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>];</span><br><span class="line">count_w = <span class="number">0</span>; count_m = <span class="number">0</span>; count_both = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="built_in">size</span>(T,<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">if</span> T(<span class="built_in">i</span>,<span class="number">1</span>), count_w = count_w+<span class="number">1</span>; <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">if</span> T(<span class="built_in">i</span>,<span class="number">2</span>), count_m = count_m+<span class="number">1</span>; <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">if</span> T(<span class="built_in">i</span>,<span class="number">1</span>) &amp;&amp; T(<span class="built_in">i</span>,<span class="number">2</span>), count_both = count_both+<span class="number">1</span>; <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">support_w = count_w/<span class="built_in">size</span>(T,<span class="number">1</span>); support_m = count_m/<span class="built_in">size</span>(T,<span class="number">1</span>);</span><br><span class="line">support_both = count_both/<span class="built_in">size</span>(T,<span class="number">1</span>);</span><br><span class="line">confidence = support_both/support_m; lift = confidence/support_w;</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;W, M, WM counts:&#x27;</span>); <span class="built_in">disp</span>([count_w,count_m,count_both]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Rule M -&gt; W support, confidence, lift:&#x27;</span>); <span class="built_in">disp</span>([support_both,confidence,lift]);</span><br></pre></td></tr></table></figure>
+<p>本例置信度达到87.5%, 提升度却小于1,
+因为水在全部事务中已有90%的出现率. 所以高置信度并不自动代表正关联,
+更不能证明因果关系.</p>
+<p><img src="/images/MachineLearning/ML-54.png" style="width:100%"></p>
+<p>图 11-5 项集之间的包含关系与支持度</p>
+<p>一个项集加入更多物品, 包含它的事务数不会增加. 例如ML的支持度为0.5,
+WML为0.4. 设最小支持度为0.6, ML不频繁, 含它的WML也不可能频繁.
+Apriori利用这个性质减少候选; FP-Growth则建立共享前缀的FP树,
+再挖掘条件模式. 两种完整算法与规则生成见进一步阅读F.5,
+FP树双语实现见F.8.</p>
+<p>这组事务是教学模拟资料. 规则可以启发进一步核查领用结构,
+不能直接决定真实采购比例.</p>
+<h2 id="神经网络也先算一个单元">11.8 神经网络也先算一个单元</h2>
+<p>一个二分类单元先把输入加权相加, 再把得分变成0到1之间的概率:</p>
+<p><span class="math display">\[
+z=w_1x_1+w_2x_2+b,\qquad
+p=\frac1{1+\mathrm{e}^{-z}}.
+\]</span></p>
+<p>取 <span class="math inline">\(x_1=0.5,x_2=1\)</span>, 权重为 <span
+class="math inline">\(w_1=0.2,w_2=-0.1\)</span>, 偏置 <span
+class="math inline">\(b=0\)</span>. 此时 <span
+class="math inline">\(z=0\)</span>, 概率 <span
+class="math inline">\(p=0.5\)</span>. 如果真实标签是1, 交叉熵损失为
+<span class="math inline">\(L=-\log p\approx0.693147\)</span>.</p>
+<p><img src="/images/MachineLearning/ML-33.png" style="width:100%"></p>
+<p>图 11-6 线性得分经过Sigmoid变成概率</p>
+<p>曲线描述得分与概率的对应, 不是两个类别的样本分布.
+得分为0时概率为0.5.</p>
+<p>训练就是调整权重, 使损失减小. 对这个Sigmoid与二元交叉熵组合, 有 <span
+class="math inline">\(\partial L/\partial z=p-y\)</span>. 取学习率0.1,
+一次梯度更新为</p>
+<p><span class="math display">\[
+\begin{aligned}
+w_j^{\mathrm{new}}&amp;=w_j-0.1(p-y)x_j,\quad j=1,2,\\
+b^{\mathrm{new}}&amp;=b-0.1(p-y).
+\end{aligned}
+\]</span></p>
+<p><strong>code/one_neuron_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> exp, log</span><br><span class="line"></span><br><span class="line">x1, x2, target = <span class="number">0.5</span>, <span class="number">1.0</span>, <span class="number">1.0</span></span><br><span class="line">w1, w2, bias, rate = <span class="number">0.2</span>, -<span class="number">0.1</span>, <span class="number">0.0</span>, <span class="number">0.1</span></span><br><span class="line">z = w1*x1+w2*x2+bias</span><br><span class="line">probability = <span class="number">1</span>/(<span class="number">1</span>+exp(-z))</span><br><span class="line">loss_before = -log(probability)  <span class="comment"># target is 1 in this example.</span></span><br><span class="line">gradient = probability-target</span><br><span class="line">w1_new = w1-rate*gradient*x1</span><br><span class="line">w2_new = w2-rate*gradient*x2</span><br><span class="line">bias_new = bias-rate*gradient</span><br><span class="line">z_new = w1_new*x1+w2_new*x2+bias_new</span><br><span class="line">probability_new = <span class="number">1</span>/(<span class="number">1</span>+exp(-z_new))</span><br><span class="line">loss_after = -log(probability_new)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Score, probability, loss:&quot;</span>,z,probability,loss_before)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Updated weights and bias:&quot;</span>,w1_new,w2_new,bias_new)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Probability and loss after one update:&quot;</span>,probability_new,loss_after)</span><br></pre></td></tr></table></figure>
+<p><strong>code/one_neuron_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">x1 = <span class="number">.5</span>; x2 = <span class="number">1</span>; target = <span class="number">1</span>;</span><br><span class="line">w1 = <span class="number">.2</span>; w2 = <span class="number">-.1</span>; bias = <span class="number">0</span>; rate = <span class="number">.1</span>;</span><br><span class="line">z = w1*x1+w2*x2+bias;</span><br><span class="line">probability = <span class="number">1</span>/(<span class="number">1</span>+<span class="built_in">exp</span>(-z)); loss_before = -<span class="built_in">log</span>(probability);</span><br><span class="line">gradient = probability-target;</span><br><span class="line">w1_new = w1-rate*gradient*x1; w2_new = w2-rate*gradient*x2;</span><br><span class="line">bias_new = bias-rate*gradient;</span><br><span class="line">z_new = w1_new*x1+w2_new*x2+bias_new;</span><br><span class="line">probability_new = <span class="number">1</span>/(<span class="number">1</span>+<span class="built_in">exp</span>(-z_new)); loss_after = -<span class="built_in">log</span>(probability_new);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Score, probability, loss:&#x27;</span>); <span class="built_in">disp</span>([z,probability,loss_before]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Updated weights and bias:&#x27;</span>); <span class="built_in">disp</span>([w1_new,w2_new,bias_new]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Probability and loss after one update:&#x27;</span>); <span class="built_in">disp</span>([probability_new,loss_after]);</span><br></pre></td></tr></table></figure>
+<p>本例更新后权重和偏置为0.225, -0.05, 0.05, 概率约为0.528095,
+损失约为0.638478. 这展示一次前向计算, 求导和更新,
+还不是一个经过独立验证的分类模型. 学习率与数据改变后,
+也不能保证每次更新都改善最终测试表现.</p>
+<p>更大的网络将多个单元和非线性变换连接起来.
+CNN利用图像的局部空间结构共享权重, RNN逐时刻传递隐藏状态,
+LSTM增加门与细胞状态来调节记忆. 结构更复杂,
+仍要沿用训练内选择与最终独立评价的流程.</p>
+<p>进一步阅读F.4保留完整CNN, RNN和LSTM双语实验及尺寸推导. 数字数据是原始
+<span class="math inline">\(8\times8\)</span> 图像, 插值到 <span
+class="math inline">\(28\times28\)</span> 没有增加原始细节.
+序列标签只由第一个传感器十次读数的均值决定, 顺序置换不改变标签,
+因而该实验不能验证长期记忆或顺序识别能力. 已知规则基线达到100%,
+网络成绩不能据此证明复杂模型更优.</p>
+<p>完整网络使用数值稳定的损失实现. PyTorch的
+<code>CrossEntropyLoss</code> 与 <code>BCEWithLogitsLoss</code>
+接收原始得分, 不应先额外做Softmax或Sigmoid再送入对应损失.
+本节的小数算例只是把一次更新写清楚.</p>
+<h2 id="把一个任务做完整-再扩展方法">11.9 把一个任务做完整,
+再扩展方法</h2>
+<p>表 11-6 机器学习任务与配套方法.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>任务</th>
+<th>本章入口</th>
+<th>进一步阅读中的完整方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>预测连续数值</td>
+<td>用水量训练与基线</td>
+<td>线性回归</td>
+</tr>
+<tr>
+<td>预测类别</td>
+<td>近邻投票与训练内选参数</td>
+<td>逻辑回归, 决策树, 朴素贝叶斯, 随机森林, SVM, KNN</td>
+</tr>
+<tr>
+<td>没有标签的分组</td>
+<td>一次分配与中心更新</td>
+<td>K-Means与簇数比较</td>
+</tr>
+<tr>
+<td>图像和序列分类</td>
+<td>一个单元的损失更新</td>
+<td>CNN, RNN, LSTM</td>
+</tr>
+<tr>
+<td>事务共现</td>
+<td>一条规则的支持度, 置信度和提升度</td>
+<td>Apriori, FP-Growth与完整规则生成</td>
+</tr>
+</tbody>
+</table>
+<p>报告结果时, 先写目标, 特征和数据来源, 再写划分方式, 训练内选择规则,
+最终测试指标和基线. 对分类再看各类错误, 对聚类检查距离与稳定性,
+对关联分析检查支持度与边际频率. 预测结果要用于资源安排时,
+还需要另建含容量, 功率和时间等约束的决策模型.</p>
+<p>本节KNN结论可以写成: 使用Iris的四个测量特征,
+在120条训练记录中按相同五折比较3, 5, 7个邻居,
+每折仅用当前训练部分标准化.
+按平均验证准确率最高且同分选较小邻居数的规则选择 <span
+class="math inline">\(k=3\)</span>. 用全部120条重新建立变换与近邻参照,
+在30条测试记录中正确28条, 准确率93.3333%, 高于常数基线33.3333%.
+两条错误均为类别2被预测为1. 这是给定教学数据与划分下的结果,
+不代表所有样本和场景的固定准确率.</p>
+<ol type="1">
+<li>用已有用水模型分别预测80人和120人的用水量, 计算二者差值.
+再用训练部分重算系数与基线误差.</li>
+<li>手算第一, 第二, 第四条二维记录到原点的距离及三票结果.
+若直接把第一坐标放大100倍, 邻近关系为什么可能改变?</li>
+<li>列出Iris第一折当前训练, 验证和最终测试的记录数及每类数量.
+为什么本折标准化只能用96条估计?</li>
+<li>按提供的五折重新计算三个邻居数的平均准确率与选择结果.
+如果测试集某个分数更高,
+能否据此回去改邻居数并继续称它为最终独立测试?</li>
+<li>根据KNN混淆矩阵计算总准确率以及类别2的召回率.
+为什么一个总准确率不能说明每个类别都表现相同?</li>
+<li>手算六点聚类的新中心与更新前后误差.
+再比较150点案例中3簇与4簇的两项指标,
+说明簇数增加为何不自动改善分组解释.</li>
+<li>手算 <span class="math inline">\(W\Rightarrow M\)</span>, <span
+class="math inline">\(M\Rightarrow W\)</span>, <span
+class="math inline">\(L\Rightarrow W\)</span> 的置信度与提升度.
+在支持度0.6, 置信度0.7的阈值下保留哪些规则? 再用完整算法核对.</li>
+<li>核对神经单元的一次梯度更新. 解释十时刻均值标签为何不检验顺序识别;
+如果另选网络宽度或训练轮数, 应在哪里比较, 哪些数据留作最终评价?</li>
+</ol>
+<p>下一章学习灰色预测GM(1, 1). 模型形式改变后, 仍要说明数据从何而来,
+哪些记录用于估计, 怎样检验对后续记录的预测.</p>
+<p>配套阅读与实验: <a
+href="../reading/11/Index.md">本章资料索引</a>.</p>
+<h2 id="参考资料">参考资料</h2>
+<p>[1] scikit-learn. <a
+target="_blank" rel="noopener" href="https://scikit-learn.org/stable/common_pitfalls.html">Common
+pitfalls and recommended practices</a>, <a
+target="_blank" rel="noopener" href="https://scikit-learn.org/stable/modules/cross_validation.html">Cross-validation</a>.
+[2] PyTorch. <a
+target="_blank" rel="noopener" href="https://docs.pytorch.org/docs/stable/nn.html">Neural network
+modules</a>. [3] mlxtend. <a
+target="_blank" rel="noopener" href="https://rasbt.github.io/mlxtend/user_guide/frequent_patterns/apriori/">Apriori</a>,
+<a
+target="_blank" rel="noopener" href="https://rasbt.github.io/mlxtend/user_guide/frequent_patterns/fpgrowth/">FP-Growth</a>,
+<a
+target="_blank" rel="noopener" href="https://rasbt.github.io/mlxtend/user_guide/frequent_patterns/association_rules/">Association
+rules</a>. [4] MathWorks. <a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/deeplearning/ref/trainnet.html">trainnet</a>,
+<a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/deeplearning/ref/minibatchpredict.html">minibatchpredict</a>.</p>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

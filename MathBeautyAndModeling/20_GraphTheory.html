@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="第 20 章 图论基础: 用顶点和边描述连接关系 校园里有四个公共服务地点, 哪些地点之间可以直接通行? 从社区服务中心到科技馆, 至少要经过几段通道? 如果要求巡查每一段通道, 是否能做到每段只走一次? 这些问题都与连接关系有关, 但它们对路线的要求并不相同. 本章先用一张四顶点小图学习读图, 数度数, 填矩阵和检查路线, 再把重复的手算步骤写成循环. 随后用七桥问题认识平行边与欧">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/MathBeautyAndModeling/20_GraphTheory.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="第 20 章 图论基础: 用顶点和边描述连接关系 校园里有四个公共服务地点, 哪些地点之间可以直接通行? 从社区服务中心到科技馆, 至少要经过几段通道? 如果要求巡查每一段通道, 是否能做到每段只走一次? 这些问题都与连接关系有关, 但它们对路线的要求并不相同. 本章先用一张四顶点小图学习读图, 数度数, 填矩阵和检查路线, 再把重复的手算步骤写成循环. 随后用七桥问题认识平行边与欧">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/GraphTheory/GT-Steps.png">
+<meta property="og:image" content="http://example.com/images/GraphTheory/GT-4.png">
+<meta property="og:image" content="http://example.com/images/GraphTheory/GT-1.png">
+<meta property="og:image" content="http://example.com/images/GraphTheory/GT-3.png">
+<meta property="og:image" content="http://example.com/images/GraphTheory/GT-2.png">
+<meta property="article:published_time" content="2026-11-02T02:53:08.826Z">
+<meta property="article:modified_time" content="2026-10-31T09:20:34.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/GraphTheory/GT-Steps.png">
+
+
+<link rel="canonical" href="http://example.com/MathBeautyAndModeling/20_GraphTheory">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/MathBeautyAndModeling/20_GraphTheory.html","path":"MathBeautyAndModeling/20_GraphTheory.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-20-%E7%AB%A0-%E5%9B%BE%E8%AE%BA%E5%9F%BA%E7%A1%80-%E7%94%A8%E9%A1%B6%E7%82%B9%E5%92%8C%E8%BE%B9%E6%8F%8F%E8%BF%B0%E8%BF%9E%E6%8E%A5%E5%85%B3%E7%B3%BB"><span class="nav-number">1.</span> <span class="nav-text">第 20 章 图论基础:
+用顶点和边描述连接关系</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E6%8A%8A%E5%9B%9B%E4%B8%AA%E5%9C%B0%E7%82%B9%E4%B9%8B%E9%97%B4%E7%9A%84%E8%BF%9E%E6%8E%A5%E5%86%99%E6%B8%85%E6%A5%9A"><span class="nav-number">1.1.</span> <span class="nav-text">20.1
+先把四个地点之间的连接写清楚</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E5%9C%B0%E7%82%B9%E8%A1%A8%E5%88%B0%E8%BE%B9%E8%A1%A8"><span class="nav-number">1.1.1.</span> <span class="nav-text">20.1.1 从地点表到边表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%A6%E6%95%B0%E5%B0%B1%E6%98%AF%E6%95%B0%E5%85%B3%E8%81%94%E7%9A%84%E8%BE%B9%E7%AB%AF"><span class="nav-number">1.1.2.</span> <span class="nav-text">20.1.2 度数就是数关联的边端</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E9%82%BB%E6%8E%A5%E7%9F%A9%E9%98%B5%E8%AE%B0%E5%BD%95%E5%90%8C%E4%B8%80%E5%BC%A0%E5%9B%BE"><span class="nav-number">1.2.</span> <span class="nav-text">20.2 用邻接矩阵记录同一张图</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E8%A7%84%E5%AE%9A%E8%A1%8C%E5%88%97%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.2.1.</span> <span class="nav-text">20.2.1 先规定行列顺序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%B9%E8%A1%A8-%E9%82%BB%E6%8E%A5%E8%A1%A8%E5%92%8C%E7%9F%A9%E9%98%B5%E5%90%84%E4%BF%9D%E5%AD%98%E4%BB%80%E4%B9%88"><span class="nav-number">1.2.2.</span> <span class="nav-text">20.2.2 边表,
+邻接表和矩阵各保存什么</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%B8%B2%E9%A1%B6%E7%82%B9%E6%98%AF%E5%90%A6%E6%9E%84%E6%88%90%E5%90%88%E6%B3%95%E8%B7%AF%E7%BA%BF"><span class="nav-number">1.3.</span> <span class="nav-text">20.3 一串顶点是否构成合法路线?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AF%8F%E4%B8%80%E6%AD%A5%E9%83%BD%E8%A6%81%E6%9C%89%E8%BE%B9"><span class="nav-number">1.3.1.</span> <span class="nav-text">20.3.1 每一步都要有边</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%8F%E8%BF%87%E5%87%A0%E6%9D%A1%E8%BE%B9-%E4%B8%8E%E8%B4%B9%E7%94%A8%E5%A4%9A%E5%B0%91%E5%88%86%E5%BC%80%E8%AE%A1%E7%AE%97"><span class="nav-number">1.3.2.</span> <span class="nav-text">20.3.2 经过几条边,
+与费用多少分开计算</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E4%B8%80%E4%B8%AA%E8%B5%B7%E7%82%B9%E9%80%90%E5%B1%82%E6%89%BE%E5%87%BA%E8%83%BD%E5%88%B0%E8%BE%BE%E7%9A%84%E7%82%B9"><span class="nav-number">1.4.</span> <span class="nav-text">20.4
+从一个起点逐层找出能到达的点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%BF%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2%E7%9A%84%E6%89%8B%E7%AE%97%E8%BF%87%E7%A8%8B"><span class="nav-number">1.4.1.</span> <span class="nav-text">20.4.1 广度优先搜索的手算过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%B1%82%E6%95%B0%E6%98%AF%E6%9C%80%E5%B0%91%E8%BE%B9%E6%95%B0"><span class="nav-number">1.4.2.</span> <span class="nav-text">20.4.2 为什么层数是最少边数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E8%BE%BE%E6%80%A7%E4%B8%8E%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F"><span class="nav-number">1.4.3.</span> <span class="nav-text">20.4.3 可达性与连通分量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E4%B8%8A%E6%96%B9%E5%90%91%E5%90%8E-%E5%93%AA%E4%BA%9B%E7%BB%93%E8%AE%BA%E4%BC%9A%E6%94%B9%E5%8F%98"><span class="nav-number">1.5.</span> <span class="nav-text">20.5 加上方向后, 哪些结论会改变?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E6%9D%A1%E6%9C%89%E5%90%91%E8%BE%B9%E5%8F%AA%E5%85%81%E8%AE%B8%E6%B2%BF%E7%AE%AD%E5%A4%B4%E5%89%8D%E8%BF%9B"><span class="nav-number">1.5.1.</span> <span class="nav-text">20.5.1
+一条有向边只允许沿箭头前进</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E5%BA%A7%E6%A1%A5%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BF%85%E9%A1%BB%E9%80%90%E5%BA%A7%E4%BF%9D%E5%AD%98"><span class="nav-number">1.6.</span> <span class="nav-text">20.6 七座桥为什么必须逐座保存?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E5%9D%97%E9%99%86%E5%9C%B0%E6%98%AF%E4%B8%80%E4%B8%AA%E9%A1%B6%E7%82%B9-%E4%B8%80%E5%BA%A7%E6%A1%A5%E6%98%AF%E4%B8%80%E6%9D%A1%E8%BE%B9"><span class="nav-number">1.6.1.</span> <span class="nav-text">20.6.1 一块陆地是一个顶点,
+一座桥是一条边</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A5%87%E5%BA%A6%E9%A1%B6%E7%82%B9%E5%BF%85%E9%A1%BB%E6%88%90%E5%81%B6%E6%95%B0%E4%B8%AA%E5%87%BA%E7%8E%B0"><span class="nav-number">1.6.2.</span> <span class="nav-text">20.6.2 奇度顶点必须成偶数个出现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E5%BA%A6%E6%95%B0%E5%88%A4%E5%AE%9A%E5%88%B0%E4%B8%80%E6%9D%A1%E5%AE%9E%E9%99%85%E5%8F%AF%E8%B5%B0%E7%9A%84%E6%AC%A7%E6%8B%89%E9%80%9A%E8%B7%AF"><span class="nav-number">1.7.</span> <span class="nav-text">20.7
+从度数判定到一条实际可走的欧拉通路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A4%E5%AE%9A%E6%9D%A1%E4%BB%B6%E9%87%8C%E8%BF%98%E9%9C%80%E8%A6%81%E8%BF%9E%E9%80%9A%E6%80%A7"><span class="nav-number">1.7.1.</span> <span class="nav-text">20.7.1 判定条件里还需要连通性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E6%A0%B8%E5%AF%B9%E4%B8%80%E6%9D%A1%E7%BB%99%E5%AE%9A%E8%B7%AF%E7%BA%BF"><span class="nav-number">1.7.2.</span> <span class="nav-text">20.7.2 先核对一条给定路线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%8D%E4%BD%BF%E7%94%A8%E5%9B%BE%E5%AF%B9%E8%B1%A1%E5%88%A4%E6%96%AD%E5%B9%B6%E6%9E%84%E9%80%A0"><span class="nav-number">1.7.3.</span> <span class="nav-text">20.7.3 再使用图对象判断并构造</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%B6%E8%B4%B9%E7%94%A8%E8%BE%B9%E4%B8%8E%E6%B2%A1%E6%9C%89%E8%BE%B9%E6%80%8E%E6%A0%B7%E5%8C%BA%E5%88%86"><span class="nav-number">1.8.</span> <span class="nav-text">20.8 零费用边与没有边怎样区分?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E7%A7%8D%E7%9F%A9%E9%98%B5%E7%BA%A6%E5%AE%9A%E5%88%86%E5%88%AB%E8%AF%B4%E6%98%8E"><span class="nav-number">1.8.1.</span> <span class="nav-text">20.8.1 三种矩阵约定分别说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%89%E5%AD%98%E5%9C%A8%E6%80%A7%E8%A7%84%E5%88%99%E6%8F%90%E5%8F%96%E8%BE%B9%E8%A1%A8"><span class="nav-number">1.8.2.</span> <span class="nav-text">20.8.2 按存在性规则提取边表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E8%BD%AF%E4%BB%B6%E6%A0%B8%E5%AF%B9%E9%9B%B6%E6%9D%83%E8%BE%B9%E4%B8%8E%E5%AD%A4%E7%AB%8B%E7%82%B9"><span class="nav-number">1.8.3.</span> <span class="nav-text">20.8.3 用软件核对零权边与孤立点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9E%E9%80%9A%E5%85%A8%E9%83%A8%E9%A1%B6%E7%82%B9-%E4%B8%8E%E6%89%BE%E5%88%B0%E4%B8%80%E6%9D%A1%E7%9F%AD%E8%B7%AF%E7%BA%BF%E4%B8%8D%E5%90%8C"><span class="nav-number">1.9.</span> <span class="nav-text">20.9 连通全部顶点,
+与找到一条短路线不同</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E5%88%A4%E6%96%AD%E9%80%89%E5%87%BA%E7%9A%84%E8%BE%B9%E6%98%AF%E5%90%A6%E6%9E%84%E6%88%90%E6%A0%91"><span class="nav-number">1.9.1.</span> <span class="nav-text">20.9.1 先判断选出的边是否构成树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E5%B0%8F%E5%9B%BE%E8%AF%B4%E6%98%8E%E4%B8%BA%E4%BB%80%E4%B9%88%E6%9C%80%E5%B0%8F%E8%B4%B9%E7%94%A8%E4%B8%BA-13"><span class="nav-number">1.9.2.</span> <span class="nav-text">20.9.2 用小图说明为什么最小费用为
+13</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E7%82%B9%E4%B9%8B%E9%97%B4%E7%9A%84%E6%9C%80%E5%B0%8F%E8%B4%B9%E7%94%A8%E5%8F%A6%E6%9C%89%E7%9B%AE%E6%A0%87"><span class="nav-number">1.9.3.</span> <span class="nav-text">20.9.3
+两点之间的最小费用另有目标</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E8%AF%B4%E6%98%8E%E4%BB%BB%E5%8A%A1-%E5%86%8D%E9%80%89%E6%8B%A9%E5%9B%BE%E4%B8%8E%E7%AE%97%E6%B3%95"><span class="nav-number">1.10.</span> <span class="nav-text">20.10 先说明任务, 再选择图与算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E5%BC%A0%E5%9B%BE%E5%8F%AF%E4%BB%A5%E6%8F%90%E5%87%BA%E4%B8%8D%E5%90%8C%E9%97%AE%E9%A2%98"><span class="nav-number">1.10.1.</span> <span class="nav-text">20.10.1 一张图可以提出不同问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%99%E5%87%BA%E8%83%BD%E8%AE%A9%E4%BB%96%E4%BA%BA%E6%A0%B8%E5%AF%B9%E7%9A%84%E5%9B%BE%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.10.2.</span> <span class="nav-text">20.10.2 写出能让他人核对的图模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.10.3.</span> <span class="nav-text">20.10.3 练习</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.11.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="第-20-章-图论基础-用顶点和边描述连接关系">第 20 章 图论基础:
+用顶点和边描述连接关系</h1>
+<p>校园里有四个公共服务地点, 哪些地点之间可以直接通行?
+从社区服务中心到科技馆, 至少要经过几段通道? 如果要求巡查每一段通道,
+是否能做到每段只走一次? 这些问题都与连接关系有关,
+但它们对路线的要求并不相同.</p>
+<p>本章先用一张四顶点小图学习读图, 数度数, 填矩阵和检查路线,
+再把重复的手算步骤写成循环. 随后用七桥问题认识平行边与欧拉通路,
+最后区分可达性, 最短路线和全网连接三个任务.
+最短路径和最小生成树的系统算法分别在第 21 章, 第 22 章展开;
+原有完整案例与推导也保留在本章延伸阅读中.</p>
+<p>学习后, 应能把现实对象写成顶点表和边表, 解释矩阵中每个元素的含义,
+按方向核验一条路线, 并根据任务选择合适的图模型.
+本章所有数值例子均为教学数据, 图上位置只表示布局.</p>
+<h2 id="先把四个地点之间的连接写清楚">20.1
+先把四个地点之间的连接写清楚</h2>
+<h3 id="从地点表到边表">20.1.1 从地点表到边表</h3>
+<p>设四个地点及其内部编号如下:</p>
+<p>表 20-1 四个顶点对应的地点.</p>
+<div class="line-block">顶点编号 | 地点 |<br />
+: ---: | : --- |<br />
+1 | 图书馆 |<br />
+2 | 科技馆 |<br />
+3 | 博物馆 |<br />
+4 | 社区服务中心 |</div>
+<p>先只关心两个地点之间是否存在可双向通行的通道. 假设有四条通道: 1—2,
+2—3, 3—1, 4—1. 用一个顶点表示一个地点, 用一条无向边表示一条通道,
+就得到</p>
+<p><span class="math display">\[
+G=(V,E),\qquad V=\{1,2,3,4\},
+\]</span></p>
+<p><span class="math display">\[
+E=\{\{1,2\},\{2,3\},\{3,1\},\{4,1\}\}.
+\]</span></p>
+<p>顶点数记为 <span class="math inline">\(n=|V|=4\)</span>, 边数记为
+<span class="math inline">\(m=|E|=4\)</span>.
+无向边的两个端点没有先后之分, 所以 1—4 与 4—1 是同一条边. 本例没有自环,
+任意两个顶点之间至多有一条边, 因而是简单无向图.</p>
+<p>图中线条相交但未标出顶点, 不表示可以在交点换路.
+同一组边可以用不同布局绘制; 若任务与实际距离或转弯有关, 仍须保存距离,
+坐标或转向限制, 不能因画成图就删掉相关信息.</p>
+<h3 id="度数就是数关联的边端">20.1.2 度数就是数关联的边端</h3>
+<p>顶点 1 与三条边关联, 度数为 3; 顶点 4 只有一条关联边, 度数为 1.
+按顶点顺序 1, 2, 3, 4, 度数依次为</p>
+<p><span class="math display">\[
+d(1)=3,\quad d(2)=2,\quad d(3)=2,\quad d(4)=1.
+\]</span></p>
+<p>逐条边手算时, 每读到一条边, 就给它的两个端点各加 1. 例如先读 1—2,
+计数变成 <span class="math inline">\((1,1,0,0)\)</span>; 再读 2—3, 变成
+<span class="math inline">\((1,2,1,0)\)</span>; 读完四条边, 得到 <span
+class="math inline">\((3,2,2,1)\)</span>.</p>
+<p><strong>Python: <code>code/degree_count_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">nodes = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line">edges = [(<span class="number">1</span>, <span class="number">2</span>), (<span class="number">2</span>, <span class="number">3</span>), (<span class="number">3</span>, <span class="number">1</span>), (<span class="number">4</span>, <span class="number">1</span>)]</span><br><span class="line">degree = &#123;v: <span class="number">0</span> <span class="keyword">for</span> v <span class="keyword">in</span> nodes&#125;</span><br><span class="line"><span class="keyword">for</span> u, v <span class="keyword">in</span> edges:</span><br><span class="line">    degree[u] += <span class="number">1</span></span><br><span class="line">    degree[v] += <span class="number">1</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;按顶点顺序的度数:&quot;</span>, [degree[v] <span class="keyword">for</span> v <span class="keyword">in</span> nodes])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;度数和与两倍边数:&quot;</span>, <span class="built_in">sum</span>(degree.values()), <span class="number">2</span> * <span class="built_in">len</span>(edges))</span><br><span class="line"><span class="keyword">assert</span> [degree[v] <span class="keyword">for</span> v <span class="keyword">in</span> nodes] == [<span class="number">3</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">1</span>]</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">sum</span>(degree.values()) == <span class="number">2</span> * <span class="built_in">len</span>(edges)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>code/degree_count_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">nodes = <span class="number">1</span>:<span class="number">4</span>;</span><br><span class="line">edges = [<span class="number">1</span> <span class="number">2</span>; <span class="number">2</span> <span class="number">3</span>; <span class="number">3</span> <span class="number">1</span>; <span class="number">4</span> <span class="number">1</span>];</span><br><span class="line">degree_values = <span class="built_in">zeros</span>(<span class="number">1</span>,<span class="built_in">numel</span>(nodes));</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">size</span>(edges,<span class="number">1</span>)</span><br><span class="line">    u = edges(k,<span class="number">1</span>); v = edges(k,<span class="number">2</span>);</span><br><span class="line">    degree_values(u) = degree_values(u) + <span class="number">1</span>;</span><br><span class="line">    degree_values(v) = degree_values(v) + <span class="number">1</span>;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(degree_values);</span><br><span class="line"><span class="built_in">disp</span>([sum(degree_values), <span class="number">2</span>*<span class="built_in">size</span>(edges,<span class="number">1</span>)]);</span><br><span class="line">assert(<span class="built_in">isequal</span>(degree_values,[<span class="number">3</span> <span class="number">2</span> <span class="number">2</span> <span class="number">1</span>]));</span><br><span class="line">assert(sum(degree_values) == <span class="number">2</span>*<span class="built_in">size</span>(edges,<span class="number">1</span>));</span><br></pre></td></tr></table></figure>
+<p>字典 <code>degree</code> 的键是顶点名称, 值是当前计数. MATLAB
+用连续内部编号直接定位数组元素. 循环中两次加 1 对应一条边的两个端点.
+即使将来遇到自环, 两个端点落在同一个顶点, 也要执行两次加 1.</p>
+<p>任意有限无向图都有握手定理</p>
+<p><span class="math display">\[
+\sum\limits_{v\in V}d(v)=2m.
+\]</span></p>
+<p>本例为 <span class="math inline">\(3+2+2+1=8=2\times4\)</span>.
+度数和检查有助于发现漏计, 但不能单独证明边表完全正确:
+把某条边接错到其他顶点, 度数和仍可能不变. 还要逐条核对端点.</p>
+<h2 id="用邻接矩阵记录同一张图">20.2 用邻接矩阵记录同一张图</h2>
+<h3 id="先规定行列顺序">20.2.1 先规定行列顺序</h3>
+<p>边表逐行保存两个端点, 易于添加边属性. 另一种表示是 0-1 邻接矩阵.
+对本例无自环的简单图, 规定行和列都按顶点 1, 2, 3, 4 排列, 定义</p>
+<p><span class="math display">\[
+A_{ij}=\begin{cases}
+1,&amp;\text{顶点 }i\text{ 与 }j\text{ 之间有边},\\
+0,&amp;\text{两者之间没有边}.
+\end{cases}
+\]</span></p>
+<p>例如, <span class="math inline">\(A_{12}=1\)</span> 表示 1 与 2
+直接相连, <span class="math inline">\(A_{24}=0\)</span> 表示 2 与 4
+没有直接边. 读一条无向边 1—2, 要同时在第1行第2列和第2行第1列填 1.
+全部读完得到</p>
+<p><span class="math display">\[
+A=\begin{bmatrix}
+0&amp;1&amp;1&amp;1\\
+1&amp;0&amp;1&amp;0\\
+1&amp;1&amp;0&amp;0\\
+1&amp;0&amp;0&amp;0
+\end{bmatrix}.
+\]</span></p>
+<p>矩阵对称, 对角线全为 0. 在本例的简单无向图中, 第 <span
+class="math inline">\(i\)</span> 行的和等于 <span
+class="math inline">\(d(i)\)</span>. 若含平行边或自环,
+需要另行声明矩阵计数约定, 不能照搬这个结论.</p>
+<p><strong>Python:
+<code>code/adjacency_matrix_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">nodes = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line">edges = [(<span class="number">1</span>, <span class="number">2</span>), (<span class="number">2</span>, <span class="number">3</span>), (<span class="number">3</span>, <span class="number">1</span>), (<span class="number">4</span>, <span class="number">1</span>)]</span><br><span class="line">index = &#123;v: i <span class="keyword">for</span> i, v <span class="keyword">in</span> <span class="built_in">enumerate</span>(nodes)&#125;</span><br><span class="line">A = [[<span class="number">0</span> <span class="keyword">for</span> _ <span class="keyword">in</span> nodes] <span class="keyword">for</span> _ <span class="keyword">in</span> nodes]</span><br><span class="line"><span class="keyword">for</span> u, v <span class="keyword">in</span> edges:</span><br><span class="line">    i, j = index[u], index[v]</span><br><span class="line">    A[i][j] = <span class="number">1</span></span><br><span class="line">    A[j][i] = <span class="number">1</span></span><br><span class="line">row_sums = [<span class="built_in">sum</span>(row) <span class="keyword">for</span> row <span class="keyword">in</span> A]</span><br><span class="line">neighbors_of_1 = [nodes[j] <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(nodes)) <span class="keyword">if</span> A[index[<span class="number">1</span>]][j] == <span class="number">1</span>]</span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> A:</span><br><span class="line">    <span class="built_in">print</span>(row)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;各行的和:&quot;</span>, row_sums)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;顶点 1 的邻点:&quot;</span>, neighbors_of_1)</span><br><span class="line"><span class="keyword">assert</span> row_sums == [<span class="number">3</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">1</span>]</span><br><span class="line"><span class="keyword">assert</span> neighbors_of_1 == [<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB:
+<code>code/adjacency_matrix_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">nodes = <span class="number">1</span>:<span class="number">4</span>;</span><br><span class="line">edges = [<span class="number">1</span> <span class="number">2</span>; <span class="number">2</span> <span class="number">3</span>; <span class="number">3</span> <span class="number">1</span>; <span class="number">4</span> <span class="number">1</span>];</span><br><span class="line">A = <span class="built_in">zeros</span>(<span class="built_in">numel</span>(nodes));</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">size</span>(edges,<span class="number">1</span>)</span><br><span class="line">    u = edges(k,<span class="number">1</span>); v = edges(k,<span class="number">2</span>);</span><br><span class="line">    A(u,v) = <span class="number">1</span>;</span><br><span class="line">    A(v,u) = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">row_sums = sum(A,<span class="number">2</span>).&#x27;;</span><br><span class="line">neighbors_of_1 = <span class="built_in">find</span>(A(<span class="number">1</span>,:) == <span class="number">1</span>);</span><br><span class="line"><span class="built_in">disp</span>(A); <span class="built_in">disp</span>(row_sums); <span class="built_in">disp</span>(neighbors_of_1);</span><br><span class="line">assert(<span class="built_in">isequal</span>(row_sums,[<span class="number">3</span> <span class="number">2</span> <span class="number">2</span> <span class="number">1</span>]));</span><br><span class="line">assert(<span class="built_in">isequal</span>(neighbors_of_1,[<span class="number">2</span> <span class="number">3</span> <span class="number">4</span>]));</span><br></pre></td></tr></table></figure>
+<p>Python 列表下标从 0 开始, 因而用 <code>index</code>
+显式把顶点名称映射到矩阵位置. 顶点 1 对应下标 0, 不是下标 1. MATLAB
+此例的内部编号从 1 开始, 与数组下标相同; 若改用不连续的外部编号,
+同样应先建立映射.</p>
+<p><img src="/images/GraphTheory/GT-Steps.png" style="width:100%"></p>
+<p>图 20-1 同一张图的三种读法. 左图直接数边端;
+中图用固定顺序记录邻接关系; 右图从顶点 4 按最少边数分层, 第0层为起点.
+右图中 2—3 的边位于同一层内, 仍属于原图, 不因搜索分层而被删除.</p>
+<h3 id="边表-邻接表和矩阵各保存什么">20.2.2 边表,
+邻接表和矩阵各保存什么</h3>
+<p>表 20-2 图的三种数据表示.</p>
+<div class="line-block">表示 | 本例中如何记录 | 适合直接检查的内容
+|<br />
+: --- | : --- | : --- |<br />
+边表 | <code>(1,2), (2,3), (3,1), (4,1)</code> | 有哪些边,
+每条边的端点与属性 |<br />
+邻接表 | 顶点 1 对应邻点 2, 3, 4 | 从一个点下一步可以去哪里 |<br />
+邻接矩阵 | <span class="math inline">\(A_{ij}\)</span> 为 0 或 1 |
+指定两点之间是否直接有边 |</div>
+<p>普通邻接表存储量通常为 <span class="math inline">\(O(n+m)\)</span>,
+稠密矩阵需要 <span class="math inline">\(O(n^2)\)</span> 个元素.
+大型稀疏网络可能只有少量直接联系, 无须先构造一个大矩阵才能搜索.
+选择表示时, 先看需要保留什么, 再看算法怎样访问这些信息.</p>
+<h2 id="一串顶点是否构成合法路线">20.3 一串顶点是否构成合法路线?</h2>
+<h3 id="每一步都要有边">20.3.1 每一步都要有边</h3>
+<p>在四顶点图中, <span class="math inline">\(4\to1\to2\to3\)</span>
+合法, 因为相邻两点之间都有边. <span
+class="math inline">\(4\to2\to3\)</span> 不合法, 因为 4 与 2 没有直接边.
+即使 4 能间接到达 2, 也不能把不存在的直接一步写进路线.</p>
+<p>一条游走可以重复顶点与边. 为避免不同教材的译名产生混淆,
+本章约定如下:</p>
+<p>表 20-3 游走与迹及路径的要求.</p>
+<div class="line-block">名称 | 对重复的要求 | 本例 |<br />
+: --- | : --- | : --- |<br />
+游走 | 沿相邻边连续前进, 可重复顶点与边 | <span
+class="math inline">\(4\to1\to2\to1\to3\)</span> |<br />
+迹 | 不重复边, 可以重复顶点 | <span
+class="math inline">\(4\to1\to2\to3\to1\)</span> |<br />
+路径 | 不重复顶点 | <span class="math inline">\(4\to1\to2\to3\)</span>
+|<br />
+圈 | 首尾相同, 除首尾外顶点不重复的闭迹 | <span
+class="math inline">\(1\to2\to3\to1\)</span> |</div>
+<p>在简单无向图中, 沿同一条边去后又原路返回, 如 <span
+class="math inline">\(1\to2\to1\)</span>, 重复了边 1—2, 所以不是圈.
+多重图中两条不同的平行边可以组成长度为 2 的圈; 允许自环的模型中,
+自环可以组成长度为 1 的圈.
+下列检查程序限定在当前没有平行边和自环的简单图, 不用于这些扩展情形.</p>
+<h3 id="经过几条边-与费用多少分开计算">20.3.2 经过几条边,
+与费用多少分开计算</h3>
+<p>给四条边附上通行时间, 单位统一为 min:</p>
+<p>表 20-4 四顶点图的边与通行时间.</p>
+<div class="line-block">边编号 | 端点 | 时间 / min |<br />
+: ---: | : ---: | : ---: |<br />
+1 | 1—2 | 3 |<br />
+2 | 2—3 | 8 |<br />
+3 | 3—1 | 9 |<br />
+4 | 4—1 | 2 |</div>
+<p>权函数记为 <span class="math inline">\(w:E\to\mathbb{R}\)</span>.
+若费用可逐边相加, 路线 <span
+class="math inline">\(v_0,v_1,\ldots,v_k\)</span> 的总费用为</p>
+<p><span class="math display">\[
+L=\sum\limits_{r=1}^{k}w(\{v_{r-1},v_r\}).
+\]</span></p>
+<p>每次实际经过都要计入, 即使同一条边被走了两次. 先手算: <span
+class="math inline">\(4\to1\to2\to3\)</span> 经过 3 条边, 时间为 <span
+class="math inline">\(2+3+8=13\)</span> min; <span
+class="math inline">\(4\to1\to3\)</span> 经过 2 条边, 时间为 <span
+class="math inline">\(2+9=11\)</span> min. 这只是比较两条候选路线,
+还没有证明其中一条比所有合法路线都短.</p>
+<p><strong>Python: <code>code/route_check_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Fixed simple undirected graph: endpoint pairs identify edges uniquely.</span></span><br><span class="line">weighted_edges = [(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>), (<span class="number">2</span>, <span class="number">3</span>, <span class="number">8</span>), (<span class="number">3</span>, <span class="number">1</span>, <span class="number">9</span>), (<span class="number">4</span>, <span class="number">1</span>, <span class="number">2</span>)]</span><br><span class="line">weight = &#123;<span class="built_in">tuple</span>(<span class="built_in">sorted</span>((u, v))): w <span class="keyword">for</span> u, v, w <span class="keyword">in</span> weighted_edges&#125;</span><br><span class="line">routes = [[<span class="number">4</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">4</span>, <span class="number">1</span>, <span class="number">3</span>], [<span class="number">4</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">3</span>], [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">1</span>]]</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> route <span class="keyword">in</span> routes:</span><br><span class="line">    edge_keys = []</span><br><span class="line">    cost = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> u, v <span class="keyword">in</span> <span class="built_in">zip</span>(route[:-<span class="number">1</span>], route[<span class="number">1</span>:]):</span><br><span class="line">        key = <span class="built_in">tuple</span>(<span class="built_in">sorted</span>((u, v)))</span><br><span class="line">        <span class="keyword">if</span> key <span class="keyword">not</span> <span class="keyword">in</span> weight:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&quot;相邻两点之间没有边&quot;</span>)</span><br><span class="line">        edge_keys.append(key)</span><br><span class="line">        cost += weight[key]</span><br><span class="line">    is_trail = <span class="built_in">len</span>(<span class="built_in">set</span>(edge_keys)) == <span class="built_in">len</span>(edge_keys)</span><br><span class="line">    is_path = <span class="built_in">len</span>(<span class="built_in">set</span>(route)) == <span class="built_in">len</span>(route)</span><br><span class="line">    is_cycle = (route[<span class="number">0</span>] == route[-<span class="number">1</span>] <span class="keyword">and</span> <span class="built_in">len</span>(edge_keys) &gt;= <span class="number">3</span></span><br><span class="line">                <span class="keyword">and</span> is_trail <span class="keyword">and</span> <span class="built_in">len</span>(<span class="built_in">set</span>(route[:-<span class="number">1</span>])) == <span class="built_in">len</span>(route) - <span class="number">1</span>)</span><br><span class="line">    record = <span class="built_in">dict</span>(route=route, cost=cost, is_trail=is_trail,</span><br><span class="line">                  is_path=is_path, is_cycle=is_cycle)</span><br><span class="line">    records.append(record)</span><br><span class="line">    <span class="built_in">print</span>(record)</span><br><span class="line"><span class="keyword">assert</span> [r[<span class="string">&quot;cost&quot;</span>] <span class="keyword">for</span> r <span class="keyword">in</span> records] == [<span class="number">13</span>, <span class="number">11</span>, <span class="number">17</span>, <span class="number">20</span>]</span><br><span class="line"><span class="keyword">assert</span> [r[<span class="string">&quot;is_cycle&quot;</span>] <span class="keyword">for</span> r <span class="keyword">in</span> records] == [<span class="literal">False</span>, <span class="literal">False</span>, <span class="literal">False</span>, <span class="literal">True</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>code/route_check_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line"><span class="comment">% This example is a simple undirected graph, with no parallel edges or loops.</span></span><br><span class="line">edges = [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span>; <span class="number">2</span> <span class="number">3</span> <span class="number">8</span>; <span class="number">3</span> <span class="number">1</span> <span class="number">9</span>; <span class="number">4</span> <span class="number">1</span> <span class="number">2</span>];</span><br><span class="line">routes = &#123;[<span class="number">4</span> <span class="number">1</span> <span class="number">2</span> <span class="number">3</span>], [<span class="number">4</span> <span class="number">1</span> <span class="number">3</span>], [<span class="number">4</span> <span class="number">1</span> <span class="number">2</span> <span class="number">1</span> <span class="number">3</span>], [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">1</span>]&#125;;</span><br><span class="line">costs = <span class="built_in">zeros</span>(<span class="number">1</span>,<span class="built_in">numel</span>(routes));</span><br><span class="line">flags = <span class="built_in">false</span>(<span class="built_in">numel</span>(routes),<span class="number">3</span>);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">numel</span>(routes)</span><br><span class="line">    route = routes&#123;k&#125;; edge_ids = <span class="built_in">zeros</span>(<span class="number">1</span>,<span class="built_in">numel</span>(route)<span class="number">-1</span>);</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="built_in">numel</span>(route)<span class="number">-1</span></span><br><span class="line">        u = route(<span class="built_in">j</span>); v = route(<span class="built_in">j</span>+<span class="number">1</span>);</span><br><span class="line">        hit = <span class="built_in">find</span>((edges(:,<span class="number">1</span>)==u &amp; edges(:,<span class="number">2</span>)==v) | ...</span><br><span class="line">                   (edges(:,<span class="number">1</span>)==v &amp; edges(:,<span class="number">2</span>)==u));</span><br><span class="line">        assert(<span class="built_in">numel</span>(hit)==<span class="number">1</span>);</span><br><span class="line">        edge_ids(<span class="built_in">j</span>) = hit;</span><br><span class="line">        costs(k) = costs(k) + edges(hit,<span class="number">3</span>);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    is_trail = <span class="built_in">numel</span>(unique(edge_ids)) == <span class="built_in">numel</span>(edge_ids);</span><br><span class="line">    is_path = <span class="built_in">numel</span>(unique(route)) == <span class="built_in">numel</span>(route);</span><br><span class="line">    is_cycle = route(<span class="number">1</span>)==route(<span class="keyword">end</span>) &amp;&amp; <span class="built_in">numel</span>(edge_ids)&gt;=<span class="number">3</span> &amp;&amp; ...</span><br><span class="line">        is_trail &amp;&amp; <span class="built_in">numel</span>(unique(route(<span class="number">1</span>:<span class="keyword">end</span><span class="number">-1</span>)))==<span class="built_in">numel</span>(route)<span class="number">-1</span>;</span><br><span class="line">    flags(k,:) = [is_trail,is_path,is_cycle];</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(costs); <span class="built_in">disp</span>(flags);</span><br><span class="line">assert(<span class="built_in">isequal</span>(costs,[<span class="number">13</span> <span class="number">11</span> <span class="number">17</span> <span class="number">20</span>]));</span><br><span class="line">assert(<span class="built_in">isequal</span>(flags,logical([<span class="number">1</span> <span class="number">1</span> <span class="number">0</span>; <span class="number">1</span> <span class="number">1</span> <span class="number">0</span>; <span class="number">0</span> <span class="number">0</span> <span class="number">0</span>; <span class="number">1</span> <span class="number">0</span> <span class="number">1</span>])));</span><br></pre></td></tr></table></figure>
+<p>程序先检查每个相邻顶点对是否有边, 再累加费用, 最后判断有无重复.
+当前是简单图, 排序后的端点对可唯一标识无向边. 七桥问题存在平行边,
+就必须改用桥编号, 不能继续用端点对代替一座桥.</p>
+<p>四条路线的核对结果如下:</p>
+<p>表 20-5 候选路线的结构与代价.</p>
+<div class="line-block">路线 | 时间 / min | 是迹 | 是路径 | 是圈 |<br />
+: --- | : ---: | : ---: | : ---: | : ---: |<br />
+<span class="math inline">\(4\to1\to2\to3\)</span> | 13 | 是 | 是 | 否
+|<br />
+<span class="math inline">\(4\to1\to3\)</span> | 11 | 是 | 是 | 否
+|<br />
+<span class="math inline">\(4\to1\to2\to1\to3\)</span> | 17 | 否 | 否 |
+否 |<br />
+<span class="math inline">\(1\to2\to3\to1\)</span> | 20 | 是 | 否 | 是
+|</div>
+<h2 id="从一个起点逐层找出能到达的点">20.4
+从一个起点逐层找出能到达的点</h2>
+<h3 id="广度优先搜索的手算过程">20.4.1 广度优先搜索的手算过程</h3>
+<p>如果从顶点 4 出发, 第一步只能到 1; 从 1 再走一步, 可以新到达 2 和 3.
+因而分层为</p>
+<p><span class="math display">\[
+L_0=\{4\},\qquad L_1=\{1\},\qquad L_2=\{2,3\}.
+\]</span></p>
+<p>广度优先搜索(BFS)用队列保存已发现但还未处理的点.
+队列先加入的点先取出, 如同按顺序排队.
+一个点第一次被发现时就记录层数并入队, 以后再遇到它不重复入队.</p>
+<p>表 20-6 广度优先搜索的队列变化.</p>
+<div class="line-block">操作 | 新发现的点 | 操作后的队列 |<br />
+: --- | : --- | : --- |<br />
+起点 4 入队, 记层数为 0 | 4 | <code>[4]</code> |<br />
+取出 4, 查看邻点 1 | 1, 层数 1 | <code>[1]</code> |<br />
+取出 1, 依边表顺序查看 2, 3, 4 | 2, 3, 层数 2 | <code>[2,3]</code>
+|<br />
+取出 2, 邻点均已发现 | 无 | <code>[3]</code> |<br />
+取出 3, 邻点均已发现 | 无 | <code>[]</code> |</div>
+<p><strong>Python: <code>code/bfs_layers_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> deque</span><br><span class="line"></span><br><span class="line">nodes = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line">edges = [(<span class="number">1</span>, <span class="number">2</span>), (<span class="number">2</span>, <span class="number">3</span>), (<span class="number">3</span>, <span class="number">1</span>), (<span class="number">4</span>, <span class="number">1</span>)]</span><br><span class="line">neighbors = &#123;v: [] <span class="keyword">for</span> v <span class="keyword">in</span> nodes&#125;</span><br><span class="line"><span class="keyword">for</span> u, v <span class="keyword">in</span> edges:</span><br><span class="line">    neighbors[u].append(v)</span><br><span class="line">    neighbors[v].append(u)</span><br><span class="line">start = <span class="number">4</span></span><br><span class="line">distance = &#123;start: <span class="number">0</span>&#125;</span><br><span class="line">queue = deque([start])</span><br><span class="line">order = []</span><br><span class="line"><span class="keyword">while</span> queue:</span><br><span class="line">    u = queue.popleft()</span><br><span class="line">    order.append(u)</span><br><span class="line">    <span class="keyword">for</span> v <span class="keyword">in</span> neighbors[u]:</span><br><span class="line">        <span class="keyword">if</span> v <span class="keyword">not</span> <span class="keyword">in</span> distance:</span><br><span class="line">            distance[v] = distance[u] + <span class="number">1</span></span><br><span class="line">            queue.append(v)</span><br><span class="line">layers = [[v <span class="keyword">for</span> v <span class="keyword">in</span> order <span class="keyword">if</span> distance[v] == k]</span><br><span class="line">          <span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">max</span>(distance.values()) + <span class="number">1</span>)]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;访问顺序:&quot;</span>, order)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;逐层顶点:&quot;</span>, layers)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;到各点的最少边数:&quot;</span>, distance)</span><br><span class="line"><span class="keyword">assert</span> order == [<span class="number">4</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line"><span class="keyword">assert</span> layers == [[<span class="number">4</span>], [<span class="number">1</span>], [<span class="number">2</span>, <span class="number">3</span>]]</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">len</span>(distance) == <span class="built_in">len</span>(nodes)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>code/bfs_layers_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">nodes = <span class="number">1</span>:<span class="number">4</span>;</span><br><span class="line">edges = [<span class="number">1</span> <span class="number">2</span>; <span class="number">2</span> <span class="number">3</span>; <span class="number">3</span> <span class="number">1</span>; <span class="number">4</span> <span class="number">1</span>];</span><br><span class="line">neighbors = cell(<span class="number">1</span>,<span class="built_in">numel</span>(nodes));</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">size</span>(edges,<span class="number">1</span>)</span><br><span class="line">    u = edges(k,<span class="number">1</span>); v = edges(k,<span class="number">2</span>);</span><br><span class="line">    neighbors&#123;u&#125;(<span class="keyword">end</span>+<span class="number">1</span>) = v;</span><br><span class="line">    neighbors&#123;v&#125;(<span class="keyword">end</span>+<span class="number">1</span>) = u;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">start = <span class="number">4</span>;</span><br><span class="line">distance = -<span class="built_in">ones</span>(<span class="number">1</span>,<span class="built_in">numel</span>(nodes));</span><br><span class="line">distance(start) = <span class="number">0</span>;</span><br><span class="line">queue = start; head = <span class="number">1</span>; order = [];</span><br><span class="line"><span class="keyword">while</span> head &lt;= <span class="built_in">numel</span>(queue)</span><br><span class="line">    u = queue(head); head = head + <span class="number">1</span>;</span><br><span class="line">    order(<span class="keyword">end</span>+<span class="number">1</span>) = u;</span><br><span class="line">    <span class="keyword">for</span> v = neighbors&#123;u&#125;</span><br><span class="line">        <span class="keyword">if</span> distance(v) == <span class="number">-1</span></span><br><span class="line">            distance(v) = distance(u) + <span class="number">1</span>;</span><br><span class="line">            queue(<span class="keyword">end</span>+<span class="number">1</span>) = v;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(order); <span class="built_in">disp</span>(distance);</span><br><span class="line">assert(<span class="built_in">isequal</span>(order,[<span class="number">4</span> <span class="number">1</span> <span class="number">2</span> <span class="number">3</span>]));</span><br><span class="line">assert(<span class="built_in">isequal</span>(distance,[<span class="number">1</span> <span class="number">2</span> <span class="number">2</span> <span class="number">0</span>]));</span><br><span class="line">assert(all(distance&gt;=<span class="number">0</span>));</span><br></pre></td></tr></table></figure>
+<p>Python 的 <code>popleft()</code> 从队首取点, <code>append()</code>
+在队尾加点. MATLAB 用 <code>head</code> 指向队首,
+不必每次删除数组第一个元素. Python 字典里尚无记录的点表示未发现; MATLAB
+用 -1 表示未发现, 0 留给起点. 同一层顶点的访问先后可随邻点顺序变化,
+最少边数不受影响.</p>
+<h3 id="为什么层数是最少边数">20.4.2 为什么层数是最少边数</h3>
+<p>先处理第0层, 只能发现一步可达的点; 处理完第1层之后,
+就发现所有两步可达且此前未发现的点. 依此推进, 如果某点能用更少的边到达,
+它应当已在更早的层被发现.
+因而首次记录的层数就是从起点到它的最少边数.</p>
+<p>该结论适用于不带权的图, 或每条边费用相同的情形. 若边权不同,
+最少边数不一定意味着最少费用. 例如另一个三点图中, 1—3 的费用为 10, 1—2
+和 2—3 的费用各为 1. 一步直达费用 10, 两步经过 2 只需 2.
+需要最小权值和时, 应使用与边权条件相符的最短路算法.</p>
+<h3 id="可达性与连通分量">20.4.3 可达性与连通分量</h3>
+<p>本例从 4 发现全部四个点, 所以整个无向图连通. 一般地,
+无向图从任意一个起点能发现全部顶点, 就等价于连通. 若删去边 4—1, 从 4
+搜索只能得到它自身, 其余 1, 2, 3 形成另一个连通分量.</p>
+<p>找全部连通分量时, 先从一个尚未访问的顶点搜索, 把找到的点记为一组;
+再从剩余顶点重新开始, 直到顶点全部分组. 孤立顶点单独形成一个分量.
+用邻接表时, BFS 和深度优先搜索(DFS)通常都能在 <span
+class="math inline">\(O(n+m)\)</span> 时间内完成遍历. DFS
+沿一条分支深入再回退, 适合可达性等任务,
+其首次访问顺序一般不能直接解释成最少边数.</p>
+<h2 id="加上方向后-哪些结论会改变">20.5 加上方向后, 哪些结论会改变?</h2>
+<h3 id="一条有向边只允许沿箭头前进">20.5.1
+一条有向边只允许沿箭头前进</h3>
+<p>把同样的端点数据解释为有向边:</p>
+<p><span class="math display">\[
+1\to2,\quad2\to3,\quad3\to1,\quad4\to1.
+\]</span></p>
+<p>这时 4 可以到 1, 1 却没有直接回到 4 的边, 也没有间接到达 4 的路线. 从
+1 只能到达 1, 2, 3; 从 4 则能到达全部四个点.
+同一份端点表采用无向或有向解释, 对可达性的结论可以不同.</p>
+<p>有向图的入度 <span class="math inline">\(d^-(v)\)</span>
+计到达该点的边, 出度 <span class="math inline">\(d^+(v)\)</span>
+计离开该点的边. 逐条读 <span class="math inline">\(u\to v\)</span> 时,
+给 <span class="math inline">\(u\)</span> 的出度加 1, 给 <span
+class="math inline">\(v\)</span> 的入度加 1. 自环对两者各贡献 1.
+因而</p>
+<p><span class="math display">\[
+\sum\limits_{v\in V}d^-(v)=\sum\limits_{v\in V}d^+(v)=m.
+\]</span></p>
+<p><strong>Python:
+<code>code/directed_degree_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">nodes = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line">arcs = [(<span class="number">1</span>, <span class="number">2</span>), (<span class="number">2</span>, <span class="number">3</span>), (<span class="number">3</span>, <span class="number">1</span>), (<span class="number">4</span>, <span class="number">1</span>)]</span><br><span class="line">indegree = &#123;v: <span class="number">0</span> <span class="keyword">for</span> v <span class="keyword">in</span> nodes&#125;</span><br><span class="line">outdegree = &#123;v: <span class="number">0</span> <span class="keyword">for</span> v <span class="keyword">in</span> nodes&#125;</span><br><span class="line">successors = &#123;v: [] <span class="keyword">for</span> v <span class="keyword">in</span> nodes&#125;</span><br><span class="line"><span class="keyword">for</span> u, v <span class="keyword">in</span> arcs:</span><br><span class="line">    outdegree[u] += <span class="number">1</span></span><br><span class="line">    indegree[v] += <span class="number">1</span></span><br><span class="line">    successors[u].append(v)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">reachable</span>(<span class="params">start</span>):</span><br><span class="line">    reached = &#123;start&#125;</span><br><span class="line">    stack = [start]</span><br><span class="line">    <span class="keyword">while</span> stack:</span><br><span class="line">        u = stack.pop()</span><br><span class="line">        <span class="keyword">for</span> v <span class="keyword">in</span> successors[u]:</span><br><span class="line">            <span class="keyword">if</span> v <span class="keyword">not</span> <span class="keyword">in</span> reached:</span><br><span class="line">                reached.add(v)</span><br><span class="line">                stack.append(v)</span><br><span class="line">    <span class="keyword">return</span> reached</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;入度:&quot;</span>, [indegree[v] <span class="keyword">for</span> v <span class="keyword">in</span> nodes])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;出度:&quot;</span>, [outdegree[v] <span class="keyword">for</span> v <span class="keyword">in</span> nodes])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;从 1 可达:&quot;</span>, <span class="built_in">sorted</span>(reachable(<span class="number">1</span>)))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;从 4 可达:&quot;</span>, <span class="built_in">sorted</span>(reachable(<span class="number">4</span>)))</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">sum</span>(indegree.values()) == <span class="built_in">sum</span>(outdegree.values()) == <span class="built_in">len</span>(arcs)</span><br><span class="line"><span class="keyword">assert</span> reachable(<span class="number">1</span>) == &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line"><span class="keyword">assert</span> reachable(<span class="number">4</span>) == &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>code/directed_degree_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">nodes = <span class="number">1</span>:<span class="number">4</span>;</span><br><span class="line">arcs = [<span class="number">1</span> <span class="number">2</span>; <span class="number">2</span> <span class="number">3</span>; <span class="number">3</span> <span class="number">1</span>; <span class="number">4</span> <span class="number">1</span>];</span><br><span class="line">in_degree = <span class="built_in">zeros</span>(<span class="number">1</span>,<span class="built_in">numel</span>(nodes));</span><br><span class="line">out_degree = <span class="built_in">zeros</span>(<span class="number">1</span>,<span class="built_in">numel</span>(nodes));</span><br><span class="line">successors = cell(<span class="number">1</span>,<span class="built_in">numel</span>(nodes));</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">size</span>(arcs,<span class="number">1</span>)</span><br><span class="line">    u = arcs(k,<span class="number">1</span>); v = arcs(k,<span class="number">2</span>);</span><br><span class="line">    out_degree(u) = out_degree(u) + <span class="number">1</span>;</span><br><span class="line">    in_degree(v) = in_degree(v) + <span class="number">1</span>;</span><br><span class="line">    successors&#123;u&#125;(<span class="keyword">end</span>+<span class="number">1</span>) = v;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">starts = [<span class="number">1</span> <span class="number">4</span>]; reached_sets = cell(<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">    reached = <span class="built_in">false</span>(<span class="number">1</span>,<span class="built_in">numel</span>(nodes));</span><br><span class="line">    reached(starts(k)) = <span class="built_in">true</span>; stack = starts(k);</span><br><span class="line">    <span class="keyword">while</span> ~<span class="built_in">isempty</span>(stack)</span><br><span class="line">        u = stack(<span class="keyword">end</span>); stack(<span class="keyword">end</span>) = [];</span><br><span class="line">        <span class="keyword">for</span> v = successors&#123;u&#125;</span><br><span class="line">            <span class="keyword">if</span> ~reached(v)</span><br><span class="line">                reached(v) = <span class="built_in">true</span>; stack(<span class="keyword">end</span>+<span class="number">1</span>) = v;</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    reached_sets&#123;k&#125; = <span class="built_in">find</span>(reached);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(in_degree); <span class="built_in">disp</span>(out_degree); <span class="built_in">disp</span>(reached_sets);</span><br><span class="line">assert(<span class="built_in">isequal</span>(in_degree,[<span class="number">2</span> <span class="number">1</span> <span class="number">1</span> <span class="number">0</span>]));</span><br><span class="line">assert(<span class="built_in">isequal</span>(out_degree,[<span class="number">1</span> <span class="number">1</span> <span class="number">1</span> <span class="number">1</span>]));</span><br><span class="line">assert(<span class="built_in">isequal</span>(reached_sets&#123;<span class="number">1</span>&#125;,[<span class="number">1</span> <span class="number">2</span> <span class="number">3</span>]));</span><br><span class="line">assert(<span class="built_in">isequal</span>(reached_sets&#123;<span class="number">2</span>&#125;,[<span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span>]));</span><br></pre></td></tr></table></figure>
+<p><code>successors[u]</code> 只保存从 <span
+class="math inline">\(u\)</span> 出发的后继, 不擅自补回程边.
+<code>reachable</code> 用栈逐点找可达集合, 是一个小型 DFS;
+它不计算最少边数. 表中结果可先逐条箭头手算, 再对照程序.</p>
+<p>表 20-7 有向图的入度与出度.</p>
+<div class="line-block">顶点 | 入度 | 出度 |<br />
+: ---: | : ---: | : ---: |<br />
+1 | 2 | 1 |<br />
+2 | 1 | 1 |<br />
+3 | 1 | 1 |<br />
+4 | 0 | 1 |</div>
+<p>忽略箭头后连通, 称为弱连通; 任意两点都能按箭头互相到达, 称为强连通.
+当前有向图弱连通但不强连通. 有向图从某个起点能到达全部点,
+也不能单独推出强连通, 顶点 4 的搜索结果就是反例.</p>
+<p><img src="/images/GraphTheory/GT-4.png" style="width:100%"></p>
+<p>图 20-2 图对象的几种表示. 左上是无权无向图; 右上以名称标识地点;
+左下保存无向边权; 右下按给定端点顺序保存方向和权重. 命名地点图中,
+School, Library, Science, Museum, Community 分别表示学校, 图书馆,
+科技馆, 博物馆, 社区服务中心. 这些示例是教学关系网络.</p>
+<p>若双向通道的两个方向费用或限制不同, 应分别记录两条有向边及其属性.
+边权可以表示时间, 距离或建设费用,
+但容量等属性不能未经说明就作为应累加最小化的通行费用.</p>
+<h2 id="七座桥为什么必须逐座保存">20.6 七座桥为什么必须逐座保存?</h2>
+<h3 id="一块陆地是一个顶点-一座桥是一条边">20.6.1 一块陆地是一个顶点,
+一座桥是一条边</h3>
+<p>经典七桥问题问: 四块陆地由七座桥连接, 能否连续行走,
+使每座桥恰好经过一次? 允许多次到达同一块陆地, 也允许起终点不同.
+将陆地形状暂时略去, 保留每座桥的两个端点, 得到下面的多重图.</p>
+<p>表 20-8 七桥的独立边编号.</p>
+<div class="line-block">桥编号 | 两个端点 |<br />
+: ---: | : ---: |<br />
+<span class="math inline">\(b_1\)</span> | A—B |<br />
+<span class="math inline">\(b_2\)</span> | A—B |<br />
+<span class="math inline">\(b_3\)</span> | A—C |<br />
+<span class="math inline">\(b_4\)</span> | A—C |<br />
+<span class="math inline">\(b_5\)</span> | A—D |<br />
+<span class="math inline">\(b_6\)</span> | B—D |<br />
+<span class="math inline">\(b_7\)</span> | C—D |</div>
+<p>相同端点之间有两条不同的边, 称为平行边. 保存 A—B 这一对端点还不够,
+必须区分 <span class="math inline">\(b_1\)</span> 和 <span
+class="math inline">\(b_2\)</span>. 逐座数桥得到</p>
+<p><span class="math display">\[
+d(A)=5,\qquad d(B)=d(C)=d(D)=3.
+\]</span></p>
+<p><strong>Python: <code>code/bridge_degree_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">nodes = [<span class="string">&quot;A&quot;</span>, <span class="string">&quot;B&quot;</span>, <span class="string">&quot;C&quot;</span>, <span class="string">&quot;D&quot;</span>]</span><br><span class="line">bridges = [(<span class="string">&quot;A&quot;</span>, <span class="string">&quot;B&quot;</span>), (<span class="string">&quot;A&quot;</span>, <span class="string">&quot;B&quot;</span>), (<span class="string">&quot;A&quot;</span>, <span class="string">&quot;C&quot;</span>), (<span class="string">&quot;A&quot;</span>, <span class="string">&quot;C&quot;</span>),</span><br><span class="line">           (<span class="string">&quot;A&quot;</span>, <span class="string">&quot;D&quot;</span>), (<span class="string">&quot;B&quot;</span>, <span class="string">&quot;D&quot;</span>), (<span class="string">&quot;C&quot;</span>, <span class="string">&quot;D&quot;</span>)]</span><br><span class="line">merged = <span class="built_in">list</span>(<span class="built_in">dict</span>.fromkeys(<span class="built_in">tuple</span>(<span class="built_in">sorted</span>(e)) <span class="keyword">for</span> e <span class="keyword">in</span> bridges))</span><br><span class="line">cases = [(<span class="string">&quot;七座桥&quot;</span>, bridges), (<span class="string">&quot;增加 B-C&quot;</span>, bridges + [(<span class="string">&quot;B&quot;</span>, <span class="string">&quot;C&quot;</span>)]),</span><br><span class="line">         (<span class="string">&quot;错误合并平行桥&quot;</span>, merged)]</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> name, edges <span class="keyword">in</span> cases:</span><br><span class="line">    degree = &#123;v: <span class="number">0</span> <span class="keyword">for</span> v <span class="keyword">in</span> nodes&#125;</span><br><span class="line">    <span class="keyword">for</span> u, v <span class="keyword">in</span> edges:</span><br><span class="line">        degree[u] += <span class="number">1</span></span><br><span class="line">        degree[v] += <span class="number">1</span></span><br><span class="line">    odd = [v <span class="keyword">for</span> v <span class="keyword">in</span> nodes <span class="keyword">if</span> degree[v] % <span class="number">2</span> == <span class="number">1</span>]</span><br><span class="line">    records.append(<span class="built_in">dict</span>(name=name, edges=edges, degree=degree, odd=odd))</span><br><span class="line">    <span class="built_in">print</span>(name, <span class="string">&quot;边数:&quot;</span>, <span class="built_in">len</span>(edges), <span class="string">&quot;度数:&quot;</span>, degree, <span class="string">&quot;奇度顶点:&quot;</span>, odd)</span><br><span class="line"><span class="keyword">assert</span> [r[<span class="string">&quot;odd&quot;</span>] <span class="keyword">for</span> r <span class="keyword">in</span> records] == [[<span class="string">&quot;A&quot;</span>, <span class="string">&quot;B&quot;</span>, <span class="string">&quot;C&quot;</span>, <span class="string">&quot;D&quot;</span>], [<span class="string">&quot;A&quot;</span>, <span class="string">&quot;D&quot;</span>], [<span class="string">&quot;A&quot;</span>, <span class="string">&quot;D&quot;</span>]]</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">len</span>(records[<span class="number">2</span>][<span class="string">&quot;edges&quot;</span>]) == <span class="number">5</span></span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>code/bridge_degree_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">bridges = [<span class="number">1</span> <span class="number">2</span>; <span class="number">1</span> <span class="number">2</span>; <span class="number">1</span> <span class="number">3</span>; <span class="number">1</span> <span class="number">3</span>; <span class="number">1</span> <span class="number">4</span>; <span class="number">2</span> <span class="number">4</span>; <span class="number">3</span> <span class="number">4</span>];</span><br><span class="line">merged = unique(<span class="built_in">sort</span>(bridges,<span class="number">2</span>),<span class="string">&#x27;rows&#x27;</span>);</span><br><span class="line">cases = &#123;bridges,[bridges; <span class="number">2</span> <span class="number">3</span>],merged&#125;;</span><br><span class="line">degrees = <span class="built_in">zeros</span>(<span class="number">3</span>,<span class="number">4</span>); odd_vertices = cell(<span class="number">1</span>,<span class="number">3</span>);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">numel</span>(cases)</span><br><span class="line">    edges = cases&#123;k&#125;;</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="built_in">size</span>(edges,<span class="number">1</span>)</span><br><span class="line">        u = edges(<span class="built_in">j</span>,<span class="number">1</span>); v = edges(<span class="built_in">j</span>,<span class="number">2</span>);</span><br><span class="line">        degrees(k,u) = degrees(k,u) + <span class="number">1</span>;</span><br><span class="line">        degrees(k,v) = degrees(k,v) + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    odd_vertices&#123;k&#125; = <span class="built_in">find</span>(<span class="built_in">mod</span>(degrees(k,:),<span class="number">2</span>)==<span class="number">1</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(degrees); <span class="built_in">disp</span>(odd_vertices);</span><br><span class="line">assert(<span class="built_in">isequal</span>(degrees,[<span class="number">5</span> <span class="number">3</span> <span class="number">3</span> <span class="number">3</span>; <span class="number">5</span> <span class="number">4</span> <span class="number">4</span> <span class="number">3</span>; <span class="number">3</span> <span class="number">2</span> <span class="number">2</span> <span class="number">3</span>]));</span><br><span class="line">assert(<span class="built_in">size</span>(merged,<span class="number">1</span>)==<span class="number">5</span>);</span><br></pre></td></tr></table></figure>
+<p>程序比较三个模型. 原图有 7 条边, 四点度数为 5, 3, 3, 3;
+教学设想增加一座 B—C 桥后, 有 8 条边, 度数为 5, 4, 4, 3;
+如果错误合并平行桥, 只剩 5 条边, 度数变成 3, 2, 2, 3.
+第三个模型与原问题不同, 不能用它替七桥问题作答.</p>
+<p><img src="/images/GraphTheory/GT-1.png" style="width:100%"></p>
+<p>图 20-3 七桥模型及新增 B—C 桥后的教学模型. 曲线分别表示不同桥梁;
+交叉处若没有顶点标记, 不增加陆地或连接点. 右图是方法演示,
+不表示历史桥梁变化.</p>
+<h3 id="奇度顶点必须成偶数个出现">20.6.2 奇度顶点必须成偶数个出现</h3>
+<p>握手定理表明度数和为偶数. 偶度顶点的度数和为偶数,
+因而奇度顶点的数量也必须为偶数. 这个数量可能为 0, 2, 4 或更多,
+不能仅由握手定理就断言只能是 0 或 2.</p>
+<p>七桥问题的特殊约束是每条边恰好走一次. 每到一个中间顶点,
+一条进入边应与一条离开边配对. 如果路线开放,
+只有起点和终点各有一个未配对边端, 因而至多出现两个奇度顶点.
+原图有四个奇度顶点, 已经违反这个必要条件.</p>
+<h2 id="从度数判定到一条实际可走的欧拉通路">20.7
+从度数判定到一条实际可走的欧拉通路</h2>
+<h3 id="判定条件里还需要连通性">20.7.1 判定条件里还需要连通性</h3>
+<p>遍历每条边恰好一次的连续路线称为欧拉通路或欧拉迹;
+首尾相同的称为欧拉回路. 这里允许重复经过顶点.
+研究每个顶点恰好一次是另一类任务.</p>
+<p>对于至少有一条边的有限无向图, 先去除孤立顶点, 剩余部分须连通.
+在此前提下:</p>
+<p>表 20-9 无向欧拉通路的奇度条件.</p>
+<div class="line-block">奇度顶点数 | 结论 | 起终点要求 |<br />
+: ---: | : --- | : --- |<br />
+0 | 存在欧拉回路 | 从任意非孤立点出发并返回 |<br />
+2 | 存在开放欧拉通路 | 从一个奇度顶点走到另一个 |<br />
+大于 2 | 不存在欧拉通路 | 无符合要求的起终点 |</div>
+<p>两组互不连接的三角形虽全部为偶度, 一条路线也无法从一组跳到另一组,
+所以不能省去连通条件. 若实际要求访问全部服务点,
+孤立点也必须纳入可行性检查. 无边图是否允许空路线, 应按任务另外约定;
+本节判定表针对有待遍历边的图.</p>
+<p>具有欧拉回路的连通图通常称为欧拉图; 只有开放通路而无欧拉回路的,
+常称为半欧拉图. 新增 B—C 后的七桥模型属于后一种情形,
+不能把开放路线称为欧拉回路.</p>
+<p>必要性已由进入与离开配对解释. 充分性的思路是: 连通偶度图沿未走边前进,
+不会在非起点提前无路可走, 先得到闭迹; 若仍有边未走,
+可从闭迹上与剩余边关联的顶点再走一个闭迹, 并把它拼接进去,
+直到全部边用完. 两个奇点时, 先在二者间加一条辅助边使度数为偶数,
+构造回路后删去辅助边, 即得到开放通路. 这引出 Hierholzer 构造方法,
+完整实现保留在延伸阅读 F.4.</p>
+<h3 id="先核对一条给定路线">20.7.2 先核对一条给定路线</h3>
+<p>新增 <span class="math inline">\(b_8=\)</span>B—C 后, 从 A 出发按</p>
+<p><span class="math display">\[
+b_1,b_2,b_3,b_4,b_5,b_6,b_8,b_7
+\]</span></p>
+<p>行走, 对应的陆地序列为</p>
+<p><span class="math display">\[
+A\to B\to A\to C\to A\to D\to B\to C\to D.
+\]</span></p>
+<p>现在要逐项确认: 当前桥是否与所在陆地关联? 桥编号是否已经用过?
+最后是否用完全部八个编号? 仅检查路线长度等于边数,
+无法排除重复走一座桥而漏掉另一座.</p>
+<p><strong>Python: <code>code/bridge_route_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">bridges = [(<span class="string">&quot;A&quot;</span>, <span class="string">&quot;B&quot;</span>), (<span class="string">&quot;A&quot;</span>, <span class="string">&quot;B&quot;</span>), (<span class="string">&quot;A&quot;</span>, <span class="string">&quot;C&quot;</span>), (<span class="string">&quot;A&quot;</span>, <span class="string">&quot;C&quot;</span>),</span><br><span class="line">           (<span class="string">&quot;A&quot;</span>, <span class="string">&quot;D&quot;</span>), (<span class="string">&quot;B&quot;</span>, <span class="string">&quot;D&quot;</span>), (<span class="string">&quot;C&quot;</span>, <span class="string">&quot;D&quot;</span>), (<span class="string">&quot;B&quot;</span>, <span class="string">&quot;C&quot;</span>)]</span><br><span class="line">route_ids = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">7</span>]</span><br><span class="line">vertices = [<span class="string">&quot;A&quot;</span>]</span><br><span class="line">used = <span class="built_in">set</span>()</span><br><span class="line"><span class="keyword">for</span> edge_id <span class="keyword">in</span> route_ids:</span><br><span class="line">    <span class="keyword">if</span> edge_id &lt; <span class="number">1</span> <span class="keyword">or</span> edge_id &gt; <span class="built_in">len</span>(bridges) <span class="keyword">or</span> edge_id <span class="keyword">in</span> used:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;桥编号无效或已经使用&quot;</span>)</span><br><span class="line">    u, v = bridges[edge_id - <span class="number">1</span>]</span><br><span class="line">    current = vertices[-<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">if</span> current == u:</span><br><span class="line">        vertices.append(v)</span><br><span class="line">    <span class="keyword">elif</span> current == v:</span><br><span class="line">        vertices.append(u)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;当前桥不能与上一段路线衔接&quot;</span>)</span><br><span class="line">    used.add(edge_id)</span><br><span class="line"><span class="keyword">assert</span> used == <span class="built_in">set</span>(<span class="built_in">range</span>(<span class="number">1</span>, <span class="built_in">len</span>(bridges) + <span class="number">1</span>))</span><br><span class="line"><span class="keyword">assert</span> vertices == [<span class="string">&quot;A&quot;</span>, <span class="string">&quot;B&quot;</span>, <span class="string">&quot;A&quot;</span>, <span class="string">&quot;C&quot;</span>, <span class="string">&quot;A&quot;</span>, <span class="string">&quot;D&quot;</span>, <span class="string">&quot;B&quot;</span>, <span class="string">&quot;C&quot;</span>, <span class="string">&quot;D&quot;</span>]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;桥编号:&quot;</span>, route_ids)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;陆地序列:&quot;</span>, vertices)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>code/bridge_route_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">bridges = [<span class="number">1</span> <span class="number">2</span>; <span class="number">1</span> <span class="number">2</span>; <span class="number">1</span> <span class="number">3</span>; <span class="number">1</span> <span class="number">3</span>; <span class="number">1</span> <span class="number">4</span>; <span class="number">2</span> <span class="number">4</span>; <span class="number">3</span> <span class="number">4</span>; <span class="number">2</span> <span class="number">3</span>];</span><br><span class="line">route_ids = [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span> <span class="number">6</span> <span class="number">8</span> <span class="number">7</span>];</span><br><span class="line">vertices = <span class="number">1</span>; used = <span class="built_in">false</span>(<span class="number">1</span>,<span class="built_in">size</span>(bridges,<span class="number">1</span>));</span><br><span class="line"><span class="keyword">for</span> edge_id = route_ids</span><br><span class="line">    assert(edge_id&gt;=<span class="number">1</span> &amp;&amp; edge_id&lt;=<span class="built_in">size</span>(bridges,<span class="number">1</span>) &amp;&amp; ~used(edge_id));</span><br><span class="line">    u = bridges(edge_id,<span class="number">1</span>); v = bridges(edge_id,<span class="number">2</span>);</span><br><span class="line">    current = vertices(<span class="keyword">end</span>);</span><br><span class="line">    <span class="keyword">if</span> current == u</span><br><span class="line">        vertices(<span class="keyword">end</span>+<span class="number">1</span>) = v;</span><br><span class="line">    <span class="keyword">elseif</span> current == v</span><br><span class="line">        vertices(<span class="keyword">end</span>+<span class="number">1</span>) = u;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        error(<span class="string">&#x27;Consecutive bridges do not meet at the current vertex.&#x27;</span>);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    used(edge_id) = <span class="built_in">true</span>;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">assert(all(used));</span><br><span class="line">assert(<span class="built_in">isequal</span>(vertices,[<span class="number">1</span> <span class="number">2</span> <span class="number">1</span> <span class="number">3</span> <span class="number">1</span> <span class="number">4</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span>]));</span><br><span class="line"><span class="built_in">disp</span>(route_ids); <span class="built_in">disp</span>(vertices);</span><br></pre></td></tr></table></figure>
+<p>这个短程序核验给定路线, 没有自动搜索所有可能路线. 它让边编号,
+连续性与一次性约束可逐步检查. 下一步才交给图算法构造一条路线.</p>
+<h3 id="再使用图对象判断并构造">20.7.3 再使用图对象判断并构造</h3>
+<p>Python 的 NetworkX 中, <code>MultiGraph</code> 用来保留无向平行边,
+边键可保存桥编号; 普通 <code>Graph</code>
+重复添加相同端点时不会自动增加另一条平行边. MATLAB
+用重复的端点行可以建立多重图, 需要分别核对边数和属性,
+不应跨软件照搬规则. [1, 2]</p>
+<p>以下两段是完整演示. MATLAB 的 <code>euler_route.m</code>
+放在同一目录, 全部函数代码见延伸阅读 F.4; 它返回原始边表的编号,
+避免混淆对象内部排序后的边序号.</p>
+<p><strong>Python: <code>graph_euler.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> networkx <span class="keyword">as</span> nx</span><br><span class="line"></span><br><span class="line">bridges = [</span><br><span class="line">    (<span class="string">&quot;A&quot;</span>, <span class="string">&quot;B&quot;</span>, <span class="string">&quot;b1&quot;</span>), (<span class="string">&quot;A&quot;</span>, <span class="string">&quot;B&quot;</span>, <span class="string">&quot;b2&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;A&quot;</span>, <span class="string">&quot;C&quot;</span>, <span class="string">&quot;b3&quot;</span>), (<span class="string">&quot;A&quot;</span>, <span class="string">&quot;C&quot;</span>, <span class="string">&quot;b4&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;A&quot;</span>, <span class="string">&quot;D&quot;</span>, <span class="string">&quot;b5&quot;</span>), (<span class="string">&quot;B&quot;</span>, <span class="string">&quot;D&quot;</span>, <span class="string">&quot;b6&quot;</span>), (<span class="string">&quot;C&quot;</span>, <span class="string">&quot;D&quot;</span>, <span class="string">&quot;b7&quot;</span>),</span><br><span class="line">]</span><br><span class="line">G = nx.MultiGraph()</span><br><span class="line">G.add_nodes_from([<span class="string">&quot;A&quot;</span>, <span class="string">&quot;B&quot;</span>, <span class="string">&quot;C&quot;</span>, <span class="string">&quot;D&quot;</span>])</span><br><span class="line"><span class="keyword">for</span> u, v, bridge_id <span class="keyword">in</span> bridges:</span><br><span class="line">    G.add_edge(u, v, key=bridge_id)</span><br><span class="line"></span><br><span class="line">degrees = <span class="built_in">dict</span>(G.degree())</span><br><span class="line"><span class="keyword">assert</span> G.number_of_edges() == <span class="number">7</span></span><br><span class="line"><span class="keyword">assert</span> degrees == &#123;<span class="string">&quot;A&quot;</span>: <span class="number">5</span>, <span class="string">&quot;B&quot;</span>: <span class="number">3</span>, <span class="string">&quot;C&quot;</span>: <span class="number">3</span>, <span class="string">&quot;D&quot;</span>: <span class="number">3</span>&#125;</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">sum</span>(degrees.values()) == <span class="number">14</span></span><br><span class="line"><span class="keyword">assert</span> nx.is_connected(G)</span><br><span class="line"><span class="keyword">assert</span> <span class="keyword">not</span> nx.has_eulerian_path(G)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;七桥图的度数：&quot;</span>, degrees)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;是否存在欧拉通路：&quot;</span>, nx.has_eulerian_path(G))</span><br><span class="line"></span><br><span class="line">H = G.copy()</span><br><span class="line">H.add_edge(<span class="string">&quot;B&quot;</span>, <span class="string">&quot;C&quot;</span>, key=<span class="string">&quot;b8&quot;</span>)</span><br><span class="line"><span class="keyword">assert</span> nx.has_eulerian_path(H) <span class="keyword">and</span> <span class="keyword">not</span> nx.is_eulerian(H)</span><br><span class="line">route = <span class="built_in">list</span>(nx.eulerian_path(H, source=<span class="string">&quot;A&quot;</span>, keys=<span class="literal">True</span>))</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">len</span>(route) == H.number_of_edges() == <span class="number">8</span></span><br><span class="line"><span class="keyword">assert</span> route[<span class="number">0</span>][<span class="number">0</span>] == <span class="string">&quot;A&quot;</span> <span class="keyword">and</span> route[-<span class="number">1</span>][<span class="number">1</span>] == <span class="string">&quot;D&quot;</span></span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">all</span>(route[i][<span class="number">1</span>] == route[i + <span class="number">1</span>][<span class="number">0</span>] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(route) - <span class="number">1</span>))</span><br><span class="line"><span class="keyword">assert</span> &#123;key <span class="keyword">for</span> u, v, key <span class="keyword">in</span> route&#125; == &#123;<span class="string">f&quot;b<span class="subst">&#123;i&#125;</span>&quot;</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, <span class="number">9</span>)&#125;</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">all</span>(H.has_edge(u, v, key) <span class="keyword">for</span> u, v, key <span class="keyword">in</span> route)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;新增 B—C 桥后的欧拉通路：&quot;</span>, route)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 一个连通条件反例：两组分离的三角形，度数全为偶数。</span></span><br><span class="line">disconnected = nx.Graph([(<span class="number">1</span>, <span class="number">2</span>), (<span class="number">2</span>, <span class="number">3</span>), (<span class="number">3</span>, <span class="number">1</span>),</span><br><span class="line">                         (<span class="number">4</span>, <span class="number">5</span>), (<span class="number">5</span>, <span class="number">6</span>), (<span class="number">6</span>, <span class="number">4</span>)])</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">all</span>(d % <span class="number">2</span> == <span class="number">0</span> <span class="keyword">for</span> v, d <span class="keyword">in</span> disconnected.degree())</span><br><span class="line"><span class="keyword">assert</span> <span class="keyword">not</span> nx.has_eulerian_path(disconnected)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 按只遍历边的任务约定，先去除不关联任何边的孤立点。</span></span><br><span class="line">with_isolate = nx.cycle_graph(<span class="number">3</span>)</span><br><span class="line">with_isolate.add_node(<span class="string">&quot;isolated&quot;</span>)</span><br><span class="line">active = with_isolate.subgraph([v <span class="keyword">for</span> v, d <span class="keyword">in</span> with_isolate.degree() <span class="keyword">if</span> d &gt; <span class="number">0</span>]).copy()</span><br><span class="line"><span class="keyword">assert</span> nx.is_eulerian(active)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>graph_euler.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">%% 七桥多重图：保留各座桥并检查度数</span></span><br><span class="line">clear; clc;</span><br><span class="line">s = [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>];</span><br><span class="line">t = [<span class="number">2</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">4</span>,<span class="number">4</span>];</span><br><span class="line">G = graph(s,t,[],<span class="number">4</span>);</span><br><span class="line">assert(numedges(G) == <span class="number">7</span> &amp;&amp; ismultigraph(G));</span><br><span class="line">d = degree(G);</span><br><span class="line">assert(<span class="built_in">isequal</span>(d,[<span class="number">5</span>,<span class="number">3</span>,<span class="number">3</span>,<span class="number">3</span>].&#x27;));</span><br><span class="line">assert(<span class="built_in">numel</span>(unique(conncomp(G))) == <span class="number">1</span>);</span><br><span class="line">assert(nnz(<span class="built_in">mod</span>(d,<span class="number">2</span>)) == <span class="number">4</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;原七桥图的度数：&#x27;</span>); <span class="built_in">disp</span>(d.&#x27;);</span><br><span class="line">H = addedge(G,<span class="number">2</span>,<span class="number">3</span>);</span><br><span class="line">assert(numedges(H) == <span class="number">8</span>);</span><br><span class="line">assert(<span class="built_in">isequal</span>(degree(H),[<span class="number">5</span>,<span class="number">4</span>,<span class="number">4</span>,<span class="number">3</span>].&#x27;));</span><br><span class="line">assert(nnz(<span class="built_in">mod</span>(degree(H),<span class="number">2</span>)) == <span class="number">2</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;新增 B—C 桥后的度数：&#x27;</span>); <span class="built_in">disp</span>(degree(H).&#x27;);</span><br><span class="line"></span><br><span class="line"><span class="comment">% Each input row is a separate bridge, regardless of MATLAB internal edge order.</span></span><br><span class="line">[vertices,ids] = euler_route([s,<span class="number">2</span>],[t,<span class="number">3</span>],<span class="number">4</span>,<span class="number">1</span>);</span><br><span class="line">assert(<span class="built_in">numel</span>(ids)==<span class="number">8</span> &amp;&amp; <span class="built_in">isequal</span>(<span class="built_in">sort</span>(ids),<span class="number">1</span>:<span class="number">8</span>));</span><br><span class="line">assert(vertices(<span class="number">1</span>)==<span class="number">1</span> &amp;&amp; vertices(<span class="keyword">end</span>)==<span class="number">4</span>);</span><br><span class="line">s8=[s,<span class="number">2</span>]; t8=[t,<span class="number">3</span>];</span><br><span class="line"><span class="keyword">for</span> k=<span class="number">1</span>:<span class="number">8</span></span><br><span class="line">    e=ids(k);</span><br><span class="line">    assert((s8(e)==vertices(k) &amp;&amp; t8(e)==vertices(k+<span class="number">1</span>)) || ...</span><br><span class="line">           (t8(e)==vertices(k) &amp;&amp; s8(e)==vertices(k+<span class="number">1</span>)));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Vertex route:&#x27;</span>); <span class="built_in">disp</span>(vertices);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Bridge IDs in input order:&#x27;</span>); <span class="built_in">disp</span>(ids);</span><br></pre></td></tr></table></figure>
+<p>算法返回的具体顺序可以不同, 但必须满足起终点正确, 相邻边能衔接,
+每条边标识恰用一次. 上例对这几项分别核验. NetworkX
+的欧拉判定将含孤立点的整体图视为不连通,
+因此代码按仅遍历边的任务显式取非孤立部分. [1]</p>
+<p>有向图需要另外检查入度与出度, 不能套用奇度规则.
+对非孤立部分弱连通的有限有向图, 若全部点入度等于出度, 则有欧拉回路;
+若恰有一个点出度比入度多 1, 恰有另一个点入度比出度多 1, 其余平衡,
+则有开放欧拉通路. 更完整的说明见延伸阅读 F.3.</p>
+<h2 id="零费用边与没有边怎样区分">20.8 零费用边与没有边怎样区分?</h2>
+<h3 id="三种矩阵约定分别说明">20.8.1 三种矩阵约定分别说明</h3>
+<p>0-1 邻接矩阵只表示有无联系. 当边上还有时间或费用时, 需要另外保存权值.
+常见的三种约定如下:</p>
+<p>表 20-10 邻接矩阵与权值矩阵的零值约定.</p>
+<div class="line-block">表示 | 有直接边时 | 无直接边时 | 对角线的含义
+|<br />
+: --- | : --- | : --- | : --- |<br />
+简单图的 0-1 邻接矩阵 <span class="math inline">\(A\)</span> | 1 | 0 |
+无自环时为 0 |<br />
+常见软件数值建图矩阵 <span class="math inline">\(B\)</span> | 非零权值 |
+0 | 非零值可能建立自环 |<br />
+本节最短路初始矩阵 <span class="math inline">\(W\)</span> | 边权, 可为 0
+| <span class="math inline">\(+\infty\)</span> | 无自环模型中, 0
+表示原地费用 |</div>
+<p>MATLAB 的 <code>graph(B)</code>, <code>digraph(B)</code>
+按数值矩阵的非零位置建边, 不能用数值 0 同时区分零权边与无边. [2]
+也不能把下述 <span class="math inline">\(W\)</span>
+不经转换就交给这种接口, 因为其中的无穷是无边标记.</p>
+<p>考虑有向图: 1 到 2 的费用为 0, 2 到 3 的费用为 4, 4
+是必须保存的孤立顶点. 按顺序 1, 2, 3, 4 写成</p>
+<p><span class="math display">\[
+W=\begin{bmatrix}
+0&amp;0&amp;+\infty&amp;+\infty\\
++\infty&amp;0&amp;4&amp;+\infty\\
++\infty&amp;+\infty&amp;0&amp;+\infty\\
++\infty&amp;+\infty&amp;+\infty&amp;0
+\end{bmatrix}.
+\]</span></p>
+<p><span class="math inline">\(W_{12}=0\)</span> 表示真实存在的零费用边,
+<span class="math inline">\(W_{13}=+\infty\)</span> 表示没有 1 到 3
+的直接边. 但经 <span class="math inline">\(1\to2\to3\)</span> 可以到达,
+费用为 4. 对角线为 0 是不移动的费用, 不表示实际增加了自环.</p>
+<h3 id="按存在性规则提取边表">20.8.2 按存在性规则提取边表</h3>
+<p>本例无自环, 非对角线有限元素代表直接边. 逐行逐列查看, 先排除对角线,
+再检查是否有限, 可以保留 1 到 2 的零权边.</p>
+<p><strong>Python: <code>code/zero_matrix_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> inf, isfinite</span><br><span class="line"></span><br><span class="line">nodes = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line">W = [[<span class="number">0</span>, <span class="number">0</span>, inf, inf], [inf, <span class="number">0</span>, <span class="number">4</span>, inf],</span><br><span class="line">     [inf, inf, <span class="number">0</span>, inf], [inf, inf, inf, <span class="number">0</span>]]</span><br><span class="line">edges = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(nodes)):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(nodes)):</span><br><span class="line">        <span class="keyword">if</span> i != j <span class="keyword">and</span> isfinite(W[i][j]):</span><br><span class="line">            edges.append((nodes[i], nodes[j], W[i][j]))</span><br><span class="line">incident_nodes = &#123;v <span class="keyword">for</span> u, v, w <span class="keyword">in</span> edges&#125; | &#123;u <span class="keyword">for</span> u, v, w <span class="keyword">in</span> edges&#125;</span><br><span class="line">isolated = [v <span class="keyword">for</span> v <span class="keyword">in</span> nodes <span class="keyword">if</span> v <span class="keyword">not</span> <span class="keyword">in</span> incident_nodes]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;保留零权的边列表:&quot;</span>, edges)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;孤立顶点:&quot;</span>, isolated)</span><br><span class="line"><span class="keyword">assert</span> edges == [(<span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>), (<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>)]</span><br><span class="line"><span class="keyword">assert</span> isolated == [<span class="number">4</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>code/zero_matrix_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">nodes = <span class="number">1</span>:<span class="number">4</span>;</span><br><span class="line">W = [<span class="number">0</span> <span class="number">0</span> <span class="built_in">inf</span> <span class="built_in">inf</span>; <span class="built_in">inf</span> <span class="number">0</span> <span class="number">4</span> <span class="built_in">inf</span>; <span class="built_in">inf</span> <span class="built_in">inf</span> <span class="number">0</span> <span class="built_in">inf</span>; <span class="built_in">inf</span> <span class="built_in">inf</span> <span class="built_in">inf</span> <span class="number">0</span>];</span><br><span class="line">edges = <span class="built_in">zeros</span>(<span class="number">0</span>,<span class="number">3</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="built_in">numel</span>(nodes)</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="built_in">numel</span>(nodes)</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">i</span> ~= <span class="built_in">j</span> &amp;&amp; <span class="built_in">isfinite</span>(W(<span class="built_in">i</span>,<span class="built_in">j</span>))</span><br><span class="line">            edges(<span class="keyword">end</span>+<span class="number">1</span>,:) = [nodes(<span class="built_in">i</span>),nodes(<span class="built_in">j</span>),W(<span class="built_in">i</span>,<span class="built_in">j</span>)];</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">incident_nodes = unique(<span class="built_in">reshape</span>(edges(:,<span class="number">1</span>:<span class="number">2</span>),[],<span class="number">1</span>));</span><br><span class="line">isolated = setdiff(nodes,incident_nodes);</span><br><span class="line"><span class="built_in">disp</span>(edges); <span class="built_in">disp</span>(isolated);</span><br><span class="line">assert(<span class="built_in">isequal</span>(edges,[<span class="number">1</span> <span class="number">2</span> <span class="number">0</span>; <span class="number">2</span> <span class="number">3</span> <span class="number">4</span>]));</span><br><span class="line">assert(<span class="built_in">isequal</span>(isolated,<span class="number">4</span>));</span><br></pre></td></tr></table></figure>
+<p>输出两条边 <code>(1,2,0)</code> 与 <code>(2,3,4)</code>,
+并保留顶点表中的 4. 顶点表和边表分别保存,
+可防止把未出现在边端中的服务点无意删掉.
+本程序的规则以当前无自环模型为前提; 若真实存在自环, 应另存其存在性,
+不能一律跳过对角线.</p>
+<h3 id="用软件核对零权边与孤立点">20.8.3 用软件核对零权边与孤立点</h3>
+<p><strong>Python: <code>graph_zero_edges.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> networkx <span class="keyword">as</span> nx</span><br><span class="line"></span><br><span class="line">W = np.array([[<span class="number">0.0</span>, <span class="number">0.0</span>, np.inf, np.inf],</span><br><span class="line">              [np.inf, <span class="number">0.0</span>, <span class="number">4.0</span>, np.inf],</span><br><span class="line">              [np.inf, np.inf, <span class="number">0.0</span>, np.inf],</span><br><span class="line">              [np.inf, np.inf, np.inf, <span class="number">0.0</span>]])</span><br><span class="line"><span class="keyword">assert</span> np.<span class="built_in">all</span>(np.diag(W) == <span class="number">0.0</span>)</span><br><span class="line">n = W.shape[<span class="number">0</span>]</span><br><span class="line">G = nx.DiGraph()</span><br><span class="line">G.add_nodes_from(<span class="built_in">range</span>(<span class="number">1</span>, n + <span class="number">1</span>))</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">        <span class="keyword">if</span> i != j <span class="keyword">and</span> np.isfinite(W[i, j]):</span><br><span class="line">            G.add_edge(i + <span class="number">1</span>, j + <span class="number">1</span>, weight=<span class="built_in">float</span>(W[i, j]))</span><br><span class="line"></span><br><span class="line"><span class="keyword">assert</span> G.has_edge(<span class="number">1</span>, <span class="number">2</span>) <span class="keyword">and</span> G[<span class="number">1</span>][<span class="number">2</span>][<span class="string">&quot;weight&quot;</span>] == <span class="number">0.0</span></span><br><span class="line"><span class="keyword">assert</span> G.number_of_nodes() == <span class="number">4</span> <span class="keyword">and</span> G.number_of_edges() == <span class="number">2</span></span><br><span class="line"><span class="keyword">assert</span> G.degree(<span class="number">4</span>) == <span class="number">0</span></span><br><span class="line"><span class="keyword">assert</span> nx.dijkstra_path(G, <span class="number">1</span>, <span class="number">3</span>, weight=<span class="string">&quot;weight&quot;</span>) == [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line"><span class="keyword">assert</span> nx.dijkstra_path_length(G, <span class="number">1</span>, <span class="number">3</span>, weight=<span class="string">&quot;weight&quot;</span>) == <span class="number">4.0</span></span><br><span class="line"><span class="keyword">assert</span> <span class="keyword">not</span> nx.has_path(G, <span class="number">1</span>, <span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">round_trip = nx.to_numpy_array(G, nodelist=[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], nonedge=np.inf)</span><br><span class="line">np.fill_diagonal(round_trip, <span class="number">0.0</span>)</span><br><span class="line"><span class="keyword">assert</span> np.array_equal(round_trip, W)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;零权边保留：&quot;</span>, G[<span class="number">1</span>][<span class="number">2</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;1 到 3 的最短距离：&quot;</span>, nx.dijkstra_path_length(G, <span class="number">1</span>, <span class="number">3</span>, weight=<span class="string">&quot;weight&quot;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;孤立节点：&quot;</span>, <span class="built_in">list</span>(nx.isolates(G)))</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>graph_zero_edges.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">%% 零权边与孤立顶点：使用显式边列表</span></span><br><span class="line">clear; clc;</span><br><span class="line">G = digraph([<span class="number">1</span>,<span class="number">2</span>],[<span class="number">2</span>,<span class="number">3</span>],[<span class="number">0</span>,<span class="number">4</span>],<span class="number">4</span>);</span><br><span class="line">assert(numnodes(G) == <span class="number">4</span> &amp;&amp; numedges(G) == <span class="number">2</span>);</span><br><span class="line">edge_id = findedge(G,<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line">assert(edge_id &gt; <span class="number">0</span> &amp;&amp; G.Edges.Weight(edge_id) == <span class="number">0</span>);</span><br><span class="line">assert(indegree(G,<span class="number">4</span>) == <span class="number">0</span> &amp;&amp; outdegree(G,<span class="number">4</span>) == <span class="number">0</span>);</span><br><span class="line">[route,distance] = shortestpath(G,<span class="number">1</span>,<span class="number">3</span>,<span class="string">&#x27;Method&#x27;</span>,<span class="string">&#x27;positive&#x27;</span>);</span><br><span class="line">assert(<span class="built_in">isequal</span>(route,[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]) &amp;&amp; distance == <span class="number">4</span>);</span><br><span class="line">D = distances(G);</span><br><span class="line">assert(<span class="built_in">isinf</span>(D(<span class="number">1</span>,<span class="number">4</span>)));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;1 到 3 的最短路线：&#x27;</span>); <span class="built_in">disp</span>(route);</span><br><span class="line">fprintf(<span class="string">&#x27;最短距离：%g\n&#x27;</span>,distance);</span><br></pre></td></tr></table></figure>
+<p>Python 先添加全部顶点, 再按规则添加边; MATLAB 直接用显式端点,
+权值和总顶点数建图. 两者均保留零权边和孤立点. Python 转回矩阵时指定
+<code>nonedge=np.inf</code> 和固定顶点顺序, 再恢复对角线原地费用.
+<code>to_numpy_array</code> 默认无边值为 0; 多重图的平行边权默认相加,
+所以转矩阵前必须明确任务所需的聚合方式. [3]</p>
+<p>初始矩阵中的无穷只表示没有直接边. 完成最短路计算后,
+最终距离矩阵中的无穷才表示相应方向不可达.
+对平行边求最短费用时可以保留最小权值, 但这种压缩会丢掉桥梁重数,
+不适合七桥的逐边遍历任务.</p>
+<h2 id="连通全部顶点-与找到一条短路线不同">20.9 连通全部顶点,
+与找到一条短路线不同</h2>
+<h3 id="先判断选出的边是否构成树">20.9.1 先判断选出的边是否构成树</h3>
+<p>树是连通且无圈的无向图. 生成树包含原图全部顶点,
+只选择原图中的一部分边. 对有 <span class="math inline">\(n\)</span>
+个顶点的无向图, 只要已知连通, 恰有 <span
+class="math inline">\(n-1\)</span> 条边就等价于无圈. 仅数出 <span
+class="math inline">\(n-1\)</span> 条边, 却不检查连通, 不能判定为树.</p>
+<p>仍用四顶点图, 此处将权重 3, 8, 9, 2 重新解释为统一单位的非负建设费用,
+不与前面的通行时间混用. 边编号沿用20.3节. 先比较四种候选边集:</p>
+<p>表 20-11 四组建设边的连通性与费用.</p>
+<div class="line-block">选中的边编号 | 覆盖并连通全部四点 | 构成生成树 |
+总费用 |<br />
+: --- | : ---: | : ---: | : ---: |<br />
+4, 1, 2 | 是 | 是 | 13 |<br />
+4, 1, 3 | 是 | 是 | 14 |<br />
+1, 2, 3 | 否, 顶点 4 孤立 | 否 | 20 |<br />
+1, 2, 3, 4 | 是, 但含圈 | 否 | 22 |</div>
+<p><strong>Python: <code>code/tree_check_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">nodes = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line">edges = [(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>), (<span class="number">2</span>, <span class="number">3</span>, <span class="number">8</span>), (<span class="number">3</span>, <span class="number">1</span>, <span class="number">9</span>), (<span class="number">4</span>, <span class="number">1</span>, <span class="number">2</span>)]</span><br><span class="line">candidates = [[<span class="number">4</span>, <span class="number">1</span>, <span class="number">2</span>], [<span class="number">4</span>, <span class="number">1</span>, <span class="number">3</span>], [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]]</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> chosen_ids <span class="keyword">in</span> candidates:</span><br><span class="line">    chosen = [edges[k - <span class="number">1</span>] <span class="keyword">for</span> k <span class="keyword">in</span> chosen_ids]</span><br><span class="line">    reached = &#123;nodes[<span class="number">0</span>]&#125;</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(nodes) - <span class="number">1</span>):</span><br><span class="line">        <span class="keyword">for</span> u, v, w <span class="keyword">in</span> chosen:</span><br><span class="line">            <span class="keyword">if</span> u <span class="keyword">in</span> reached <span class="keyword">or</span> v <span class="keyword">in</span> reached:</span><br><span class="line">                reached.update((u, v))</span><br><span class="line">    connected = <span class="built_in">len</span>(reached) == <span class="built_in">len</span>(nodes)</span><br><span class="line">    is_tree = connected <span class="keyword">and</span> <span class="built_in">len</span>(chosen) == <span class="built_in">len</span>(nodes) - <span class="number">1</span></span><br><span class="line">    cost = <span class="built_in">sum</span>(w <span class="keyword">for</span> u, v, w <span class="keyword">in</span> chosen)</span><br><span class="line">    records.append(<span class="built_in">dict</span>(chosen_ids=chosen_ids, connected=connected,</span><br><span class="line">                        is_tree=is_tree, cost=cost))</span><br><span class="line">    <span class="built_in">print</span>(records[-<span class="number">1</span>])</span><br><span class="line"><span class="keyword">assert</span> [r[<span class="string">&quot;is_tree&quot;</span>] <span class="keyword">for</span> r <span class="keyword">in</span> records] == [<span class="literal">True</span>, <span class="literal">True</span>, <span class="literal">False</span>, <span class="literal">False</span>]</span><br><span class="line"><span class="keyword">assert</span> [r[<span class="string">&quot;cost&quot;</span>] <span class="keyword">for</span> r <span class="keyword">in</span> records] == [<span class="number">13</span>, <span class="number">14</span>, <span class="number">20</span>, <span class="number">22</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB: <code>code/tree_check_step.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">nodes = <span class="number">1</span>:<span class="number">4</span>;</span><br><span class="line">edges = [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span>; <span class="number">2</span> <span class="number">3</span> <span class="number">8</span>; <span class="number">3</span> <span class="number">1</span> <span class="number">9</span>; <span class="number">4</span> <span class="number">1</span> <span class="number">2</span>];</span><br><span class="line">candidates = &#123;[<span class="number">4</span> <span class="number">1</span> <span class="number">2</span>],[<span class="number">4</span> <span class="number">1</span> <span class="number">3</span>],[<span class="number">1</span> <span class="number">2</span> <span class="number">3</span>],[<span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span>]&#125;;</span><br><span class="line">connected = <span class="built_in">false</span>(<span class="number">1</span>,<span class="number">4</span>); is_tree = <span class="built_in">false</span>(<span class="number">1</span>,<span class="number">4</span>); costs = <span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">4</span>);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">numel</span>(candidates)</span><br><span class="line">    chosen = edges(candidates&#123;k&#125;,:);</span><br><span class="line">    reached = <span class="built_in">false</span>(<span class="number">1</span>,<span class="built_in">numel</span>(nodes)); reached(<span class="number">1</span>) = <span class="built_in">true</span>;</span><br><span class="line">    <span class="keyword">for</span> pass = <span class="number">1</span>:<span class="built_in">numel</span>(nodes)<span class="number">-1</span></span><br><span class="line">        <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="built_in">size</span>(chosen,<span class="number">1</span>)</span><br><span class="line">            u = chosen(<span class="built_in">j</span>,<span class="number">1</span>); v = chosen(<span class="built_in">j</span>,<span class="number">2</span>);</span><br><span class="line">            <span class="keyword">if</span> reached(u) || reached(v)</span><br><span class="line">                reached([u,v]) = <span class="built_in">true</span>;</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    connected(k) = all(reached);</span><br><span class="line">    is_tree(k) = connected(k) &amp;&amp; <span class="built_in">size</span>(chosen,<span class="number">1</span>)==<span class="built_in">numel</span>(nodes)<span class="number">-1</span>;</span><br><span class="line">    costs(k) = sum(chosen(:,<span class="number">3</span>));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(connected); <span class="built_in">disp</span>(is_tree); <span class="built_in">disp</span>(costs);</span><br><span class="line">assert(<span class="built_in">isequal</span>(is_tree,logical([<span class="number">1</span> <span class="number">1</span> <span class="number">0</span> <span class="number">0</span>])));</span><br><span class="line">assert(<span class="built_in">isequal</span>(costs,[<span class="number">13</span> <span class="number">14</span> <span class="number">20</span> <span class="number">22</span>]));</span><br></pre></td></tr></table></figure>
+<p>这段程序从顶点 1 出发, 反复把已到达点通过候选边连接的端点加入集合,
+最多进行 <span class="math inline">\(n-1\)</span> 轮.
+对本例给定的无向边集, 这足以检查全部可达点.
+之后把连通条件与边数条件合用. 它在检查四种候选方案,
+没有仅凭两个候选费用的大小就声称已经求出一般图的最优解.</p>
+<h3 id="用小图说明为什么最小费用为-13">20.9.2 用小图说明为什么最小费用为
+13</h3>
+<p>顶点 4 只有边 4—1, 因而任何生成树都必须选择费用为 2 的这条边.
+其余三个点组成三角形, 必须选择其中两条边才能连通, 又不能三条全选形成圈.
+选费用 3 和 8 的两条, 删除费用 9 的边, 就得到本例的最小费用</p>
+<p><span class="math display">\[
+2+3+8=13.
+\]</span></p>
+<p><img src="/images/GraphTheory/GT-3.png" style="width:100%"></p>
+<p>图 20-4 四顶点图的一棵最小生成树. 实线为选择的边, 虚线为删除的边.
+总建设费用为 13. 费用单位由建模任务另行规定.</p>
+<p>若图不连通, 则不存在覆盖全部顶点的生成树;
+某些算法返回的是各分量的最小生成森林. 第 22 章将学习 Kruskal 和 Prim
+算法, 并讨论最优性与唯一性. 延伸阅读 F.7
+保留本例完整优化模型和双语言实现.</p>
+<h3 id="两点之间的最小费用另有目标">20.9.3
+两点之间的最小费用另有目标</h3>
+<p>最短路只要求从指定起点到指定终点, 比较路线上的边权和,
+不要求覆盖全部顶点或全部边. 例如延伸阅读 F.6 的五城市有向图中, 1 到 4
+的最短路线为</p>
+<p><span class="math display">\[
+1\to2\to3\to4,\qquad L=10+5+6=21\ \mathrm{km}.
+\]</span></p>
+<p><img src="/images/GraphTheory/GT-2.png" style="width:100%"></p>
+<p>图 20-5 五城市最短路案例预览. 箭头表示方向, 数字是直接道路距离,
+单位为 km, 橙色路线的总距离为 21 km. 它没有覆盖全图所有道路. 全部边数据,
+初始矩阵, 最终距离矩阵和程序均见延伸阅读 F.6.</p>
+<p>第 21 章将从逐步更新距离入手, 学习适用于非负边权的 Dijkstra 算法,
+再学习计算所有点对距离的 Floyd–Warshall 递推. 若有负权边或负权回路,
+必须检查算法条件以及最短费用是否存在, 不能只照搬函数调用.</p>
+<h2 id="先说明任务-再选择图与算法">20.10 先说明任务, 再选择图与算法</h2>
+<h3 id="一张图可以提出不同问题">20.10.1 一张图可以提出不同问题</h3>
+<p>表 20-12 不同网络任务的结果对象.</p>
+<div class="line-block">任务 | 要核对的对象 | 典型方法或条件 |<br />
+: --- | : --- | : --- |<br />
+从起点能到哪里 | 可达顶点集合 | 按方向做 BFS 或 DFS |<br />
+至少经过几条边 | 起终点之间的边数 | 无权图用 BFS |<br />
+两点间总费用最小 | 一条合法路线的权值和 | 非负权用 Dijkstra 等 |<br />
+全部点对最短距离 | 每个起终点对的距离 | Floyd–Warshall 等, 检查负环
+|<br />
+每条边恰好走一次 | 连续路线与独立边编号 |
+无向图先查非孤立部分连通及奇点数 |<br />
+以最小费用连接全部点 | 覆盖全部顶点的树 | 无向连通图用最小生成树方法
+|</div>
+<p>道路巡检若允许必要的重复走边,
+目标还可能变成在覆盖全部边的前提下使总距离最小,
+这已超出本章的欧拉可行性判定. 不能用两点最短路的答案代替巡检路线.</p>
+<h3 id="写出能让他人核对的图模型">20.10.2 写出能让他人核对的图模型</h3>
+<p>建模报告至少交代: 顶点和边分别表示什么, 有向还是无向,
+是否有平行边或自环, 边权的单位与可加性, 哪些顶点必须保存,
+矩阵行列采用什么顺序, 无边用什么标记. 然后说明目标,
+算法条件和结果检验方式.</p>
+<p>检查路线时, 逐段回到原边表核对方向与权值; 检查欧拉通路时,
+再核对每个边编号恰用一次; 检查生成树时, 再核对全部顶点,
+连通性与无圈条件. 图画得连成一片, 并不能替代这些检查.</p>
+<p>本章短程序使用已声明的固定合法数据, 以便逐步理解. 改用新数据时,
+应检查端点是否在顶点表中, 矩阵是否方阵, 行列顺序是否一致,
+缺失值和无穷的约定是否正确, 重复边是否应保留, 边权是否满足算法条件.
+浮点费用宜按适当容差比较, 不应照搬整数例子的精确相等断言.</p>
+<h3 id="练习">20.10.3 练习</h3>
+<ol type="1">
+<li>在20.1节的图中增加边 2—4. 不运行程序, 写出新的度数, 边数与度数和;
+再修改计数程序核对.</li>
+<li>按顶点顺序 4, 1, 2, 3 重写20.2节的邻接矩阵.
+它与原矩阵为何数值排列不同, 却表示同一张图?</li>
+<li>检查 <span class="math inline">\(4\to1\to2\to3\to1\)</span>
+是否为游走, 迹, 路径或圈. 计算通行时间,
+说明顶点重复与边重复有何区别.</li>
+<li>从顶点 2 对无向四顶点图做 BFS, 写出各层. 若改从 4 出发并删去边 4—1,
+有哪些点不可达? 全图有几个分量?</li>
+<li>对20.5节的有向图, 补一条 <span class="math inline">\(1\to4\)</span>
+后重新计算入度与出度. 是否变为强连通? 仅凭度数表能否作出这个结论?</li>
+<li>在原七桥图中删去一座 A—B 桥, 判断是否存在欧拉通路, 并说明起终点.
+再考虑分别增加 A—B, C—D 两座桥的情形.</li>
+<li>给20.7节的八桥模型再加入一个孤立顶点 E. 分别讨论只要求走完全部桥,
+和还要求访问全部五块陆地时的可行性. 为什么需要先说明任务?</li>
+<li>用20.8节的矩阵说明 <span class="math inline">\(W_{12}=0\)</span>,
+<span class="math inline">\(W_{13}=+\infty\)</span>, <span
+class="math inline">\(W_{44}=0\)</span> 的不同含义. 写出边表,
+说明为何不能把所有数值 0 都当作无边.</li>
+<li>在四顶点建设图中, 把边 1—3 的费用从 9 改为 1.
+手算新的最小生成树和费用.
+为什么选择三角形内的三条边不能连接全部四点?</li>
+<li>某服务网络提出三项任务: 单次从甲到乙费用最小, 每段通道恰查一次,
+选择建设边使所有服务点连通且总费用最小. 分别写出图数据需要保留什么,
+结果应怎样核验. 若出现零权边, 平行边或孤立点, 各会影响哪些步骤?</li>
+</ol>
+<p>参考解答见配套 <code>ExerciseHints.md</code>. 延伸阅读 F.11
+还保留原有6道练习, 其中五城市最短路与有向欧拉判定可在第 21 章后回顾.</p>
+<p>配套阅读与实验: <a
+href="../reading/20/Index.md">本章资料索引</a>.</p>
+<h2 id="参考资料">参考资料</h2>
+<p>[1] NetworkX 官方文档与实现: <a
+target="_blank" rel="noopener" href="https://networkx.org/documentation/stable/_modules/networkx/algorithms/euler.html">Eulerian
+algorithms</a>, 关于图类型, 欧拉判定与孤立顶点处理. [2] MathWorks
+官方文档: <a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/matlab/ref/graph.html">graph</a>,
+<a
+target="_blank" rel="noopener" href="https://www.mathworks.com/help/matlab/ref/digraph.html">digraph</a>,
+关于矩阵输入, 边表与平行边. [3] NetworkX 官方文档: <a
+target="_blank" rel="noopener" href="https://networkx.org/documentation/stable/reference/generated/networkx.convert_matrix.to_numpy_array.html">to_numpy_array</a>,
+关于顶点顺序, 无边值与平行边聚合.</p>
+<p>配套 <code>GraphTheoryFurtherReading.md</code>
+完整保留原有11节的理论, 证明, 优化模型, 12段程序与6道练习, 包括 Euler
+历史资料, Hierholzer 构造, 五城市 Dijkstra 与 Floyd–Warshall,
+最小生成树, 图对象与矩阵转换. 可按学习进度查阅,
+不必在第一次认识顶点与边时同时掌握全部算法.</p>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

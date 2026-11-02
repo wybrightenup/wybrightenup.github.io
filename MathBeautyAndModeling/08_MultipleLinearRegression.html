@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="第 8 章 多元线性回归: 把多个变量放进同一个模型 前两章用一个解释变量预测一个响应. 现在一条记录里有四项解释信息, 需要怎样放在一起? 系数为负表示什么? 增加或删除变量以后, 怎样判断预测有没有改善? 本章先代入一条销售记录, 再逐行组织输入并拟合. 随后用水泥数据认识共线性, 每次删一列后重新拟合, 最后检查留一验证中的筛选应该使用哪些记录. 8.1 一条记录里的四项信">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/MathBeautyAndModeling/08_MultipleLinearRegression.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="第 8 章 多元线性回归: 把多个变量放进同一个模型 前两章用一个解释变量预测一个响应. 现在一条记录里有四项解释信息, 需要怎样放在一起? 系数为负表示什么? 增加或删除变量以后, 怎样判断预测有没有改善? 本章先代入一条销售记录, 再逐行组织输入并拟合. 随后用水泥数据认识共线性, 每次删一列后重新拟合, 最后检查留一验证中的筛选应该使用哪些记录. 8.1 一条记录里的四项信">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/MultipleLinearRegression/DesignRow.png">
+<meta property="og:image" content="http://example.com/images/MultipleLinearRegression/MLR-4.png">
+<meta property="og:image" content="http://example.com/images/MultipleLinearRegression/MLR-5.png">
+<meta property="og:image" content="http://example.com/images/MultipleLinearRegression/MLR-6.png">
+<meta property="og:image" content="http://example.com/images/MultipleLinearRegression/MLR-7.png">
+<meta property="og:image" content="http://example.com/images/MultipleLinearRegression/MLR-8.png">
+<meta property="article:published_time" content="2026-11-02T02:53:08.153Z">
+<meta property="article:modified_time" content="2026-10-31T09:20:34.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/MultipleLinearRegression/DesignRow.png">
+
+
+<link rel="canonical" href="http://example.com/MathBeautyAndModeling/08_MultipleLinearRegression">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/MathBeautyAndModeling/08_MultipleLinearRegression.html","path":"MathBeautyAndModeling/08_MultipleLinearRegression.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-8-%E7%AB%A0-%E5%A4%9A%E5%85%83%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92-%E6%8A%8A%E5%A4%9A%E4%B8%AA%E5%8F%98%E9%87%8F%E6%94%BE%E8%BF%9B%E5%90%8C%E4%B8%80%E4%B8%AA%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">第 8 章
+多元线性回归: 把多个变量放进同一个模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E6%9D%A1%E8%AE%B0%E5%BD%95%E9%87%8C%E7%9A%84%E5%9B%9B%E9%A1%B9%E4%BF%A1%E6%81%AF-%E6%80%8E%E6%A0%B7%E5%85%B1%E5%90%8C%E4%BA%A7%E7%94%9F%E4%B8%80%E4%B8%AA%E9%A2%84%E6%B5%8B"><span class="nav-number">1.1.</span> <span class="nav-text">8.1
+一条记录里的四项信息, 怎样共同产生一个预测</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E6%98%8E%E7%A1%AE%E5%90%84%E5%88%97%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.1.</span> <span class="nav-text">8.1.1 先明确各列是什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E8%AF%95%E7%AE%97%E4%B8%80%E4%B8%AA%E5%80%99%E9%80%89%E5%85%B3%E7%B3%BB"><span class="nav-number">1.1.2.</span> <span class="nav-text">8.1.2 先试算一个候选关系</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E4%B8%80%E8%A1%8C%E8%BE%93%E5%85%A5%E5%88%B0%E8%AE%BE%E8%AE%A1%E7%9F%A9%E9%98%B5"><span class="nav-number">1.2.</span> <span class="nav-text">8.2 从一行输入到设计矩阵</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E6%95%B0-1-%E6%94%BE%E5%9C%A8%E6%9C%80%E5%89%8D%E9%9D%A2"><span class="nav-number">1.2.1.</span> <span class="nav-text">8.2.1 常数 1 放在最前面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E5%8F%AA%E6%98%AF%E6%8A%8A%E8%BF%99%E4%BA%9B%E8%A1%8C%E5%86%99%E5%9C%A8%E4%B8%80%E8%B5%B7"><span class="nav-number">1.2.2.</span> <span class="nav-text">8.2.2 矩阵只是把这些行写在一起</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8C%E6%97%B6%E5%AF%BB%E6%89%BE%E4%BA%94%E4%B8%AA%E7%B3%BB%E6%95%B0"><span class="nav-number">1.3.</span> <span class="nav-text">8.3 同时寻找五个系数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E7%9B%AE%E6%A0%87%E6%B2%BF%E7%94%A8%E4%B8%8A%E4%B8%80%E7%AB%A0"><span class="nav-number">1.3.1.</span> <span class="nav-text">8.3.1 最小二乘目标沿用上一章</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E6%B1%82%E7%B3%BB%E6%95%B0-%E5%86%8D%E6%A0%B8%E5%AF%B9%E4%B8%80%E8%A1%8C%E6%8B%9F%E5%90%88%E5%80%BC"><span class="nav-number">1.3.2.</span> <span class="nav-text">8.3.2 先求系数, 再核对一行拟合值</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E7%9C%8B%E6%8B%9F%E5%90%88%E8%AF%AF%E5%B7%AE-%E5%86%8D%E8%AF%BB%E7%B3%BB%E6%95%B0%E6%A3%80%E9%AA%8C"><span class="nav-number">1.4.</span> <span class="nav-text">8.4 先看拟合误差, 再读系数检验</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%86%E6%AF%8F%E4%B8%80%E8%A1%8C%E7%9A%84%E6%AE%8B%E5%B7%AE%E9%83%BD%E7%AE%97%E5%87%BA%E6%9D%A5"><span class="nav-number">1.4.1.</span> <span class="nav-text">8.4.1 将每一行的残差都算出来</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E7%9C%8B%E5%8C%BA%E9%97%B4%E4%B9%8B%E5%89%8D-%E6%98%8E%E7%A1%AE%E6%8E%A8%E6%96%AD%E6%9D%A1%E4%BB%B6"><span class="nav-number">1.4.2.</span> <span class="nav-text">8.4.2 在看区间之前, 明确推断条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC-16-%E6%9D%A1%E6%98%AF%E6%A0%B8%E6%9F%A5%E7%BA%BF%E7%B4%A2"><span class="nav-number">1.4.3.</span> <span class="nav-text">8.4.3 第 16 条是核查线索</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B0%E8%BE%93%E5%85%A5%E4%BB%8D%E6%98%AF%E4%B8%80%E8%A1%8C-%E4%B8%A4%E7%A7%8D%E9%A2%84%E6%B5%8B%E5%AF%B9%E8%B1%A1%E4%BB%8D%E8%A6%81%E5%8C%BA%E5%88%86"><span class="nav-number">1.5.</span> <span class="nav-text">8.5 新输入仍是一行,
+两种预测对象仍要区分</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E5%9B%9B%E4%B8%AA%E8%A7%A3%E9%87%8A%E5%8F%98%E9%87%8F%E7%9A%84%E5%9D%87%E5%80%BC%E5%A4%84%E8%AF%95%E7%AE%97"><span class="nav-number">1.5.1.</span> <span class="nav-text">8.5.1
+在四个解释变量的均值处试算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%89%E8%AF%BB-%E4%B8%8A%E4%B8%80%E7%AB%A0%E7%9A%84%E4%BD%8D%E7%BD%AE%E9%87%8F%E6%80%8E%E6%A0%B7%E6%8E%A8%E5%B9%BF"><span class="nav-number">1.5.2.</span> <span class="nav-text">8.5.2 选读:
+上一章的位置量怎样推广</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B0%B4%E6%B3%A5%E6%A1%88%E4%BE%8B-%E6%8B%9F%E5%90%88%E5%BE%88%E5%A5%BD-%E5%8D%95%E4%B8%AA%E7%B3%BB%E6%95%B0%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BB%8D%E4%B8%8D%E7%A8%B3%E5%AE%9A"><span class="nav-number">1.6.</span> <span class="nav-text">8.6 水泥案例:
+拟合很好, 单个系数为什么仍不稳定</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E8%AF%BB%E6%AF%94%E4%BE%8B%E6%95%B0%E6%8D%AE"><span class="nav-number">1.6.1.</span> <span class="nav-text">8.6.1 先读比例数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E5%85%B6%E4%BD%99%E4%B8%89%E5%88%97%E9%A2%84%E6%B5%8B%E5%85%B6%E4%B8%AD%E4%B8%80%E5%88%97"><span class="nav-number">1.6.2.</span> <span class="nav-text">8.6.2 用其余三列预测其中一列</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AF%8F%E6%AC%A1%E5%88%A0%E4%B8%80%E5%88%97%E5%90%8E-%E9%83%BD%E8%A6%81%E9%87%8D%E6%96%B0%E6%8B%9F%E5%90%88"><span class="nav-number">1.7.</span> <span class="nav-text">8.7 每次删一列后, 都要重新拟合</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E6%8A%8A%E4%B8%89%E6%AC%A1%E8%AE%A1%E7%AE%97%E9%80%90%E6%AD%A5%E5%81%9A%E5%87%BA%E6%9D%A5"><span class="nav-number">1.7.1.</span> <span class="nav-text">8.7.1 先把三次计算逐步做出来</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E6%B4%81%E5%80%99%E9%80%89%E4%B8%8D%E7%AD%89%E4%BA%8E%E5%B7%B2%E9%AA%8C%E8%AF%81%E7%9A%84%E6%9C%80%E4%BC%98%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.7.2.</span> <span class="nav-text">8.7.2
+简洁候选不等于已验证的最优模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E8%A7%A3%E9%87%8A%E6%96%B9%E5%90%91%E5%AF%B9%E5%BA%94%E4%B8%80%E5%BC%A0%E5%B9%B3%E9%9D%A2"><span class="nav-number">1.7.3.</span> <span class="nav-text">8.7.3 两个解释方向对应一张平面</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%95%99%E5%87%BA%E4%B8%80%E6%9D%A1%E4%BB%A5%E5%90%8E-%E7%AD%9B%E9%80%89%E4%B9%9F%E5%8F%AA%E8%83%BD%E7%9C%8B%E5%85%B6%E4%BD%99%E8%AE%B0%E5%BD%95"><span class="nav-number">1.8.</span> <span class="nav-text">8.8 留出一条以后,
+筛选也只能看其余记录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E5%AE%8C%E6%95%B4%E5%81%9A%E4%B8%80%E6%8A%98"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.8.1 先完整做一折</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%8D%E6%8A%8A%E5%90%8C%E4%B8%80%E5%8A%A8%E4%BD%9C%E8%BD%AE%E6%B5%81%E5%81%9A%E5%8D%81%E4%B8%89%E6%AC%A1"><span class="nav-number">1.8.2.</span> <span class="nav-text">8.8.2 再把同一动作轮流做十三次</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9E%E5%88%B0%E8%A7%A3%E9%87%8A%E4%B8%8E%E6%8A%A5%E5%91%8A"><span class="nav-number">1.9.</span> <span class="nav-text">8.9 回到解释与报告</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%89%8B%E6%94%B9%E5%8F%98%E6%9D%A1%E4%BB%B6"><span class="nav-number">1.9.1.</span> <span class="nav-text">8.9.1 动手改变条件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.10.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="第-8-章-多元线性回归-把多个变量放进同一个模型">第 8 章
+多元线性回归: 把多个变量放进同一个模型</h1>
+<p>前两章用一个解释变量预测一个响应. 现在一条记录里有四项解释信息,
+需要怎样放在一起? 系数为负表示什么? 增加或删除变量以后,
+怎样判断预测有没有改善?</p>
+<p>本章先代入一条销售记录, 再逐行组织输入并拟合.
+随后用水泥数据认识共线性, 每次删一列后重新拟合,
+最后检查留一验证中的筛选应该使用哪些记录.</p>
+<h2 id="一条记录里的四项信息-怎样共同产生一个预测">8.1
+一条记录里的四项信息, 怎样共同产生一个预测</h2>
+<h3 id="先明确各列是什么">8.1.1 先明确各列是什么</h3>
+<p>下列 20 组记录用于教学计算, 缺少可核验的企业调查来源. y 为销售量,
+单位是千立方米. 四项解释变量分别为推销开支 x1, 实际账目数 x2,
+同类商品竞争数 x3 与地区销售潜力 x4.</p>
+<p>四项指标的具体单位和统计口径未明确.
+因而本例只讨论给定记录尺度上的计算关联, 不直接把系数用于业务决策.
+实际研究需先核对货币单位, 计数范围与潜力指标的测算方法.</p>
+<p>表 8-1 销售案例的二十条记录.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">编号</th>
+<th style="text-align: right;">x1</th>
+<th style="text-align: right;">x2</th>
+<th style="text-align: right;">x3</th>
+<th style="text-align: right;">x4</th>
+<th style="text-align: right;">y</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5.5</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">79.3</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2.5</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">200.1</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">67</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">163.2</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">200.1</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">38</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">146</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">2.9</td>
+<td style="text-align: right;">71</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">177.7</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">30.9</td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">291.9</td>
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">42</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">160</td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">6.5</td>
+<td style="text-align: right;">73</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">339.4</td>
+</tr>
+<tr>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">5.5</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">159.6</td>
+</tr>
+<tr>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">86.3</td>
+</tr>
+<tr>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">237.5</td>
+</tr>
+<tr>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">39</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">107.2</td>
+</tr>
+<tr>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">3.5</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">155</td>
+</tr>
+<tr>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">70</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">201.4</td>
+</tr>
+<tr>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">100.2</td>
+</tr>
+<tr>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">135.8</td>
+</tr>
+<tr>
+<td style="text-align: right;">19</td>
+<td style="text-align: right;">7.5</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">223.3</td>
+</tr>
+<tr>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">195</td>
+</tr>
+</tbody>
+</table>
+<p>每一行的五个数属于同一条记录, 不能把各列分别排序后重新配对.</p>
+<h3 id="先试算一个候选关系">8.1.2 先试算一个候选关系</h3>
+<p>为看清运算, 先试</p>
+<p><span class="math display">\[
+\widehat y=200-x_1+3x_2-20x_3+0.5x_4.
+\]</span></p>
+<p>这组整数与简单小数系数只是试算用的候选, 尚未由最小二乘求出. 对第 1
+条, 依次计算四项贡献并加上截距:</p>
+<p><span class="math display">\[
+\widehat y=200-5.5+3\times31-20\times10+0.5\times8=91.5.
+\]</span></p>
+<p>实际响应为 79.3, 残差是 <span
+class="math inline">\(79.3-91.5=-12.2\)</span>.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">x1 = <span class="number">5.5</span></span><br><span class="line">x2 = <span class="number">31</span></span><br><span class="line">x3 = <span class="number">10</span></span><br><span class="line">x4 = <span class="number">8</span></span><br><span class="line">y = <span class="number">79.3</span></span><br><span class="line">prediction = <span class="number">200</span> - x1 + <span class="number">3</span>*x2 - <span class="number">20</span>*x3 + <span class="number">0.5</span>*x4</span><br><span class="line">residual = y - prediction</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;candidate prediction =&quot;</span>, prediction)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;candidate residual =&quot;</span>, residual)</span><br></pre></td></tr></table></figure>
+<p>一个预测仍然只输出一个销售量, 增加的是解释信息的列数.
+接下来要使用全部二十条记录, 同时选择五个系数, 使残差平方和尽量小.</p>
+<h2 id="从一行输入到设计矩阵">8.2 从一行输入到设计矩阵</h2>
+<h3 id="常数-1-放在最前面">8.2.1 常数 1 放在最前面</h3>
+<p>将第 1 条的四个输入前面加上 1, 得到设计行</p>
+<p><span class="math display">\[
+(1,5.5,31,10,8).
+\]</span></p>
+<p>它依次与截距和四个斜率相乘. 若不放这个 1, 程序就没有独立的截距项.
+响应 79.3 单独保存, 不放进解释变量中.</p>
+<p>下面先用普通列表逐行整理, 暂时不求系数.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">data = [</span><br><span class="line">    [<span class="number">5.5</span>, <span class="number">31</span>, <span class="number">10</span>, <span class="number">8</span>, <span class="number">79.3</span>],</span><br><span class="line">    [<span class="number">2.5</span>, <span class="number">55</span>, <span class="number">8</span>, <span class="number">6</span>, <span class="number">200.1</span>],</span><br><span class="line">    [<span class="number">8</span>, <span class="number">67</span>, <span class="number">12</span>, <span class="number">9</span>, <span class="number">163.2</span>],</span><br><span class="line">    [<span class="number">3</span>, <span class="number">50</span>, <span class="number">7</span>, <span class="number">16</span>, <span class="number">200.1</span>],</span><br><span class="line">    [<span class="number">3</span>, <span class="number">38</span>, <span class="number">8</span>, <span class="number">15</span>, <span class="number">146</span>],</span><br><span class="line">    [<span class="number">2.9</span>, <span class="number">71</span>, <span class="number">12</span>, <span class="number">17</span>, <span class="number">177.7</span>],</span><br><span class="line">    [<span class="number">8</span>, <span class="number">30</span>, <span class="number">12</span>, <span class="number">8</span>, <span class="number">30.9</span>],</span><br><span class="line">    [<span class="number">9</span>, <span class="number">56</span>, <span class="number">5</span>, <span class="number">10</span>, <span class="number">291.9</span>],</span><br><span class="line">    [<span class="number">4</span>, <span class="number">42</span>, <span class="number">8</span>, <span class="number">4</span>, <span class="number">160</span>],</span><br><span class="line">    [<span class="number">6.5</span>, <span class="number">73</span>, <span class="number">5</span>, <span class="number">16</span>, <span class="number">339.4</span>],</span><br><span class="line">    [<span class="number">5.5</span>, <span class="number">60</span>, <span class="number">11</span>, <span class="number">7</span>, <span class="number">159.6</span>],</span><br><span class="line">    [<span class="number">5</span>, <span class="number">44</span>, <span class="number">12</span>, <span class="number">12</span>, <span class="number">86.3</span>],</span><br><span class="line">    [<span class="number">6</span>, <span class="number">50</span>, <span class="number">6</span>, <span class="number">6</span>, <span class="number">237.5</span>],</span><br><span class="line">    [<span class="number">5</span>, <span class="number">39</span>, <span class="number">10</span>, <span class="number">4</span>, <span class="number">107.2</span>],</span><br><span class="line">    [<span class="number">3.5</span>, <span class="number">55</span>, <span class="number">10</span>, <span class="number">4</span>, <span class="number">155</span>],</span><br><span class="line">    [<span class="number">8</span>, <span class="number">70</span>, <span class="number">6</span>, <span class="number">14</span>, <span class="number">201.4</span>],</span><br><span class="line">    [<span class="number">6</span>, <span class="number">40</span>, <span class="number">11</span>, <span class="number">6</span>, <span class="number">100.2</span>],</span><br><span class="line">    [<span class="number">4</span>, <span class="number">50</span>, <span class="number">11</span>, <span class="number">8</span>, <span class="number">135.8</span>],</span><br><span class="line">    [<span class="number">7.5</span>, <span class="number">62</span>, <span class="number">9</span>, <span class="number">13</span>, <span class="number">223.3</span>],</span><br><span class="line">    [<span class="number">7</span>, <span class="number">59</span>, <span class="number">9</span>, <span class="number">11</span>, <span class="number">195</span>],</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">design = []</span><br><span class="line">response = []</span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> data:</span><br><span class="line">    design.append([<span class="number">1</span>, row[<span class="number">0</span>], row[<span class="number">1</span>], row[<span class="number">2</span>], row[<span class="number">3</span>]])</span><br><span class="line">    response.append(row[<span class="number">4</span>])</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;number of rows =&quot;</span>, <span class="built_in">len</span>(design))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;number of design columns =&quot;</span>, <span class="built_in">len</span>(design[<span class="number">0</span>]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;first design row =&quot;</span>, design[<span class="number">0</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;first response =&quot;</span>, response[<span class="number">0</span>])</span><br></pre></td></tr></table></figure>
+<p><code>row[0]</code> 至 <code>row[3]</code> 取四个解释值,
+<code>row[4]</code> 取响应. 输出说明设计共有 20 行, 每行 5 项.
+原始解释数组有四列, 设计矩阵则有五列.</p>
+<h3 id="矩阵只是把这些行写在一起">8.2.2 矩阵只是把这些行写在一起</h3>
+<p>所有设计行组成</p>
+<p><span class="math display">\[
+X=\begin{pmatrix}
+1&amp;5.5&amp;31&amp;10&amp;8\\
+1&amp;2.5&amp;55&amp;8&amp;6\\
+\vdots&amp;\vdots&amp;\vdots&amp;\vdots&amp;\vdots\\
+1&amp;7&amp;59&amp;9&amp;11
+\end{pmatrix}.
+\]</span></p>
+<p>响应与参数列向量写为</p>
+<p><span class="math display">\[
+\boldsymbol y=(y_1,\ldots,y_{20})^{\mathsf T},\qquad
+\boldsymbol\beta=(\beta_0,\beta_1,\beta_2,\beta_3,\beta_4)^{\mathsf T}.
+\]</span></p>
+<p><span class="math inline">\(X\boldsymbol\beta\)</span>
+就是把"每行对应项相乘再相加"对二十行各做一次. 四个解释变量加截距,
+共需估计五个参数. 残差自由度为 <span
+class="math inline">\(20-5=15\)</span>.</p>
+<p>列顺序有实际含义. 按 x1, x2, x3, x4 拟合后, 新输入也必须按这个顺序,
+不能只保证个数相同.</p>
+<h2 id="同时寻找五个系数">8.3 同时寻找五个系数</h2>
+<h3 id="最小二乘目标沿用上一章">8.3.1 最小二乘目标沿用上一章</h3>
+<p>四变量模型为</p>
+<p><span class="math display">\[
+Y_i=\beta_0+\beta_1x_{i1}+\beta_2x_{i2}
++\beta_3x_{i3}+\beta_4x_{i4}+\varepsilon_i.
+\]</span></p>
+<p>下标 i 表示记录, 第二个下标表示该记录的第几个解释变量.
+若给定全部解释信息时误差均值为零, 右边的确定部分描述条件平均销售量.</p>
+<p>要解的仍是无约束最小二乘:</p>
+<p><span class="math display">\[
+\min_{\boldsymbol\beta}\
+\sum\limits_{i=1}^{20}
+\left(y_i-\beta_0-\sum\limits_{j=1}^{4}\beta_jx_{ij}\right)^2
+=\|\boldsymbol y-X\boldsymbol\beta\|_2^2.
+\]</span></p>
+<p>记录已经给定, 五个系数一起改变. 没有另外设置系数符号或上下界约束.
+系数能唯一确定还要求设计列彼此线性独立, 也就是设计矩阵满列秩.
+仅有二十行多于五列, 并不足以自动保证这一点.</p>
+<h3 id="先求系数-再核对一行拟合值">8.3.2 先求系数, 再核对一行拟合值</h3>
+<p>NumPy 的最小二乘函数接受上面建立的二维输入, 返回系数等结果.
+<code>[0]</code> 取系数数组, 顺序与五列一致[1].</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">data = [</span><br><span class="line">    [<span class="number">5.5</span>, <span class="number">31</span>, <span class="number">10</span>, <span class="number">8</span>, <span class="number">79.3</span>],</span><br><span class="line">    [<span class="number">2.5</span>, <span class="number">55</span>, <span class="number">8</span>, <span class="number">6</span>, <span class="number">200.1</span>],</span><br><span class="line">    [<span class="number">8</span>, <span class="number">67</span>, <span class="number">12</span>, <span class="number">9</span>, <span class="number">163.2</span>],</span><br><span class="line">    [<span class="number">3</span>, <span class="number">50</span>, <span class="number">7</span>, <span class="number">16</span>, <span class="number">200.1</span>],</span><br><span class="line">    [<span class="number">3</span>, <span class="number">38</span>, <span class="number">8</span>, <span class="number">15</span>, <span class="number">146</span>],</span><br><span class="line">    [<span class="number">2.9</span>, <span class="number">71</span>, <span class="number">12</span>, <span class="number">17</span>, <span class="number">177.7</span>],</span><br><span class="line">    [<span class="number">8</span>, <span class="number">30</span>, <span class="number">12</span>, <span class="number">8</span>, <span class="number">30.9</span>],</span><br><span class="line">    [<span class="number">9</span>, <span class="number">56</span>, <span class="number">5</span>, <span class="number">10</span>, <span class="number">291.9</span>],</span><br><span class="line">    [<span class="number">4</span>, <span class="number">42</span>, <span class="number">8</span>, <span class="number">4</span>, <span class="number">160</span>],</span><br><span class="line">    [<span class="number">6.5</span>, <span class="number">73</span>, <span class="number">5</span>, <span class="number">16</span>, <span class="number">339.4</span>],</span><br><span class="line">    [<span class="number">5.5</span>, <span class="number">60</span>, <span class="number">11</span>, <span class="number">7</span>, <span class="number">159.6</span>],</span><br><span class="line">    [<span class="number">5</span>, <span class="number">44</span>, <span class="number">12</span>, <span class="number">12</span>, <span class="number">86.3</span>],</span><br><span class="line">    [<span class="number">6</span>, <span class="number">50</span>, <span class="number">6</span>, <span class="number">6</span>, <span class="number">237.5</span>],</span><br><span class="line">    [<span class="number">5</span>, <span class="number">39</span>, <span class="number">10</span>, <span class="number">4</span>, <span class="number">107.2</span>],</span><br><span class="line">    [<span class="number">3.5</span>, <span class="number">55</span>, <span class="number">10</span>, <span class="number">4</span>, <span class="number">155</span>],</span><br><span class="line">    [<span class="number">8</span>, <span class="number">70</span>, <span class="number">6</span>, <span class="number">14</span>, <span class="number">201.4</span>],</span><br><span class="line">    [<span class="number">6</span>, <span class="number">40</span>, <span class="number">11</span>, <span class="number">6</span>, <span class="number">100.2</span>],</span><br><span class="line">    [<span class="number">4</span>, <span class="number">50</span>, <span class="number">11</span>, <span class="number">8</span>, <span class="number">135.8</span>],</span><br><span class="line">    [<span class="number">7.5</span>, <span class="number">62</span>, <span class="number">9</span>, <span class="number">13</span>, <span class="number">223.3</span>],</span><br><span class="line">    [<span class="number">7</span>, <span class="number">59</span>, <span class="number">9</span>, <span class="number">11</span>, <span class="number">195</span>],</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">design = []</span><br><span class="line">response = []</span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> data:</span><br><span class="line">    design.append([<span class="number">1</span>, row[<span class="number">0</span>], row[<span class="number">1</span>], row[<span class="number">2</span>], row[<span class="number">3</span>]])</span><br><span class="line">    response.append(row[<span class="number">4</span>])</span><br><span class="line"></span><br><span class="line">beta = np.linalg.lstsq(design, response, rcond=<span class="literal">None</span>)[<span class="number">0</span>]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;coefficients, intercept first =&quot;</span>, beta)</span><br><span class="line">prediction = <span class="number">0.0</span></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(beta)):</span><br><span class="line">    prediction = prediction + beta[j] * design[<span class="number">0</span>][j]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;first fitted value =&quot;</span>, <span class="built_in">round</span>(prediction, <span class="number">6</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;first residual =&quot;</span>, <span class="built_in">round</span>(response[<span class="number">0</span>] - prediction, <span class="number">6</span>))</span><br></pre></td></tr></table></figure>
+<p>程序得到</p>
+<p><span class="math display">\[
+\widehat y\approx191.9158-0.7719x_1+3.1725x_2
+-19.6811x_3-0.4501x_4.
+\]</span></p>
+<p>第 1 条的拟合值为 85.604501, 残差为 -6.304501. 与候选关系相比,
+系数改变了, 该点的残差也改变了. 最小二乘优化的是全部残差平方和,
+不保证每一个点都比任意候选关系更接近.</p>
+<p><img src="/images/MultipleLinearRegression/DesignRow.png" style="width:100%"></p>
+<p>图 8-1 一行设计输入怎样产生一个拟合值. 五列分别与五个系数相乘再相加.
+图中系数与分项作显示舍入, 总和与残差按完整精度计算.</p>
+<p>更一般的正规方程, QR 分解与标准误推导保留在进一步阅读中.
+实际程序使用稳定的最小二乘函数, 不手工求 <span
+class="math inline">\(X^{\mathsf T}X\)</span> 的逆.</p>
+<h2 id="先看拟合误差-再读系数检验">8.4 先看拟合误差, 再读系数检验</h2>
+<h3 id="将每一行的残差都算出来">8.4.1 将每一行的残差都算出来</h3>
+<p>上一段只核对第 1 条. 下面把同一运算放进外层循环, 对全部记录算残差,
+再累计 SSE 和均值基线 SST.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> math</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">data = [</span><br><span class="line">    [<span class="number">5.5</span>, <span class="number">31</span>, <span class="number">10</span>, <span class="number">8</span>, <span class="number">79.3</span>],</span><br><span class="line">    [<span class="number">2.5</span>, <span class="number">55</span>, <span class="number">8</span>, <span class="number">6</span>, <span class="number">200.1</span>],</span><br><span class="line">    [<span class="number">8</span>, <span class="number">67</span>, <span class="number">12</span>, <span class="number">9</span>, <span class="number">163.2</span>],</span><br><span class="line">    [<span class="number">3</span>, <span class="number">50</span>, <span class="number">7</span>, <span class="number">16</span>, <span class="number">200.1</span>],</span><br><span class="line">    [<span class="number">3</span>, <span class="number">38</span>, <span class="number">8</span>, <span class="number">15</span>, <span class="number">146</span>],</span><br><span class="line">    [<span class="number">2.9</span>, <span class="number">71</span>, <span class="number">12</span>, <span class="number">17</span>, <span class="number">177.7</span>],</span><br><span class="line">    [<span class="number">8</span>, <span class="number">30</span>, <span class="number">12</span>, <span class="number">8</span>, <span class="number">30.9</span>],</span><br><span class="line">    [<span class="number">9</span>, <span class="number">56</span>, <span class="number">5</span>, <span class="number">10</span>, <span class="number">291.9</span>],</span><br><span class="line">    [<span class="number">4</span>, <span class="number">42</span>, <span class="number">8</span>, <span class="number">4</span>, <span class="number">160</span>],</span><br><span class="line">    [<span class="number">6.5</span>, <span class="number">73</span>, <span class="number">5</span>, <span class="number">16</span>, <span class="number">339.4</span>],</span><br><span class="line">    [<span class="number">5.5</span>, <span class="number">60</span>, <span class="number">11</span>, <span class="number">7</span>, <span class="number">159.6</span>],</span><br><span class="line">    [<span class="number">5</span>, <span class="number">44</span>, <span class="number">12</span>, <span class="number">12</span>, <span class="number">86.3</span>],</span><br><span class="line">    [<span class="number">6</span>, <span class="number">50</span>, <span class="number">6</span>, <span class="number">6</span>, <span class="number">237.5</span>],</span><br><span class="line">    [<span class="number">5</span>, <span class="number">39</span>, <span class="number">10</span>, <span class="number">4</span>, <span class="number">107.2</span>],</span><br><span class="line">    [<span class="number">3.5</span>, <span class="number">55</span>, <span class="number">10</span>, <span class="number">4</span>, <span class="number">155</span>],</span><br><span class="line">    [<span class="number">8</span>, <span class="number">70</span>, <span class="number">6</span>, <span class="number">14</span>, <span class="number">201.4</span>],</span><br><span class="line">    [<span class="number">6</span>, <span class="number">40</span>, <span class="number">11</span>, <span class="number">6</span>, <span class="number">100.2</span>],</span><br><span class="line">    [<span class="number">4</span>, <span class="number">50</span>, <span class="number">11</span>, <span class="number">8</span>, <span class="number">135.8</span>],</span><br><span class="line">    [<span class="number">7.5</span>, <span class="number">62</span>, <span class="number">9</span>, <span class="number">13</span>, <span class="number">223.3</span>],</span><br><span class="line">    [<span class="number">7</span>, <span class="number">59</span>, <span class="number">9</span>, <span class="number">11</span>, <span class="number">195</span>],</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">design = []</span><br><span class="line">response = []</span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> data:</span><br><span class="line">    design.append([<span class="number">1</span>, row[<span class="number">0</span>], row[<span class="number">1</span>], row[<span class="number">2</span>], row[<span class="number">3</span>]])</span><br><span class="line">    response.append(row[<span class="number">4</span>])</span><br><span class="line"></span><br><span class="line">beta = np.linalg.lstsq(design, response, rcond=<span class="literal">None</span>)[<span class="number">0</span>]</span><br><span class="line">n = <span class="built_in">len</span>(response)</span><br><span class="line">p = <span class="built_in">len</span>(beta)</span><br><span class="line">mean_y = <span class="built_in">sum</span>(response) / n</span><br><span class="line">SSE = <span class="number">0.0</span></span><br><span class="line">SST = <span class="number">0.0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">    prediction = <span class="number">0.0</span></span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(p):</span><br><span class="line">        prediction = prediction + design[i][j] * beta[j]</span><br><span class="line">    residual = response[i] - prediction</span><br><span class="line">    SSE = SSE + residual**<span class="number">2</span></span><br><span class="line">    SST = SST + (response[i] - mean_y)**<span class="number">2</span></span><br><span class="line">    <span class="built_in">print</span>(i + <span class="number">1</span>, <span class="built_in">round</span>(prediction, <span class="number">6</span>), <span class="built_in">round</span>(residual, <span class="number">6</span>))</span><br><span class="line">training_rmse = math.sqrt(SSE / n)</span><br><span class="line">s = math.sqrt(SSE / (n - p))</span><br><span class="line">r_squared = <span class="number">1</span> - SSE / SST</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;residual degrees of freedom =&quot;</span>, n - p)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;SSE =&quot;</span>, <span class="built_in">round</span>(SSE, <span class="number">6</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;training RMSE =&quot;</span>, <span class="built_in">round</span>(training_rmse, <span class="number">6</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;s =&quot;</span>, <span class="built_in">round</span>(s, <span class="number">6</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;R squared =&quot;</span>, <span class="built_in">round</span>(r_squared, <span class="number">6</span>))</span><br></pre></td></tr></table></figure>
+<p>本例训练 R² 为 0.903353, 训练 RMSE 为 21.988367 千立方米.
+误差标准差估计 <span
+class="math inline">\(s=\sqrt{SSE/(n-p)}=25.389979\)</span>, 其中 n=20,
+p=5, 分母为 15. 与第 7 章一样, 训练 RMSE 和 s 的用途不同.</p>
+<p>R² 描述相对于均值基线减少的训练平方误差, 不是每一次预测成功的概率.
+多加变量会扩大可拟合的模型空间, 在相同数据上训练 SSE 不会上升,
+这并不保证新观测预测改善.</p>
+<h3 id="在看区间之前-明确推断条件">8.4.2 在看区间之前, 明确推断条件</h3>
+<p>最小二乘求系数不要求正态误差. 随后的经典有限样本 t/F 检验与区间,
+进一步假定给定全部解释变量后, 误差均值为零, 相互独立,
+同方差并服从正态分布. 解释变量本身不需要正态.</p>
+<p>Python 的 statsmodels 提供 <code>OLS</code> 拟合对象, 可直接取系数,
+区间和检验结果[2]. 它不自动添加截距, 所以这里继续传入已经有首列 1
+的设计行.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> statsmodels.api <span class="keyword">as</span> sm</span><br><span class="line"></span><br><span class="line">data = [</span><br><span class="line">    [<span class="number">5.5</span>, <span class="number">31</span>, <span class="number">10</span>, <span class="number">8</span>, <span class="number">79.3</span>],</span><br><span class="line">    [<span class="number">2.5</span>, <span class="number">55</span>, <span class="number">8</span>, <span class="number">6</span>, <span class="number">200.1</span>],</span><br><span class="line">    [<span class="number">8</span>, <span class="number">67</span>, <span class="number">12</span>, <span class="number">9</span>, <span class="number">163.2</span>],</span><br><span class="line">    [<span class="number">3</span>, <span class="number">50</span>, <span class="number">7</span>, <span class="number">16</span>, <span class="number">200.1</span>],</span><br><span class="line">    [<span class="number">3</span>, <span class="number">38</span>, <span class="number">8</span>, <span class="number">15</span>, <span class="number">146</span>],</span><br><span class="line">    [<span class="number">2.9</span>, <span class="number">71</span>, <span class="number">12</span>, <span class="number">17</span>, <span class="number">177.7</span>],</span><br><span class="line">    [<span class="number">8</span>, <span class="number">30</span>, <span class="number">12</span>, <span class="number">8</span>, <span class="number">30.9</span>],</span><br><span class="line">    [<span class="number">9</span>, <span class="number">56</span>, <span class="number">5</span>, <span class="number">10</span>, <span class="number">291.9</span>],</span><br><span class="line">    [<span class="number">4</span>, <span class="number">42</span>, <span class="number">8</span>, <span class="number">4</span>, <span class="number">160</span>],</span><br><span class="line">    [<span class="number">6.5</span>, <span class="number">73</span>, <span class="number">5</span>, <span class="number">16</span>, <span class="number">339.4</span>],</span><br><span class="line">    [<span class="number">5.5</span>, <span class="number">60</span>, <span class="number">11</span>, <span class="number">7</span>, <span class="number">159.6</span>],</span><br><span class="line">    [<span class="number">5</span>, <span class="number">44</span>, <span class="number">12</span>, <span class="number">12</span>, <span class="number">86.3</span>],</span><br><span class="line">    [<span class="number">6</span>, <span class="number">50</span>, <span class="number">6</span>, <span class="number">6</span>, <span class="number">237.5</span>],</span><br><span class="line">    [<span class="number">5</span>, <span class="number">39</span>, <span class="number">10</span>, <span class="number">4</span>, <span class="number">107.2</span>],</span><br><span class="line">    [<span class="number">3.5</span>, <span class="number">55</span>, <span class="number">10</span>, <span class="number">4</span>, <span class="number">155</span>],</span><br><span class="line">    [<span class="number">8</span>, <span class="number">70</span>, <span class="number">6</span>, <span class="number">14</span>, <span class="number">201.4</span>],</span><br><span class="line">    [<span class="number">6</span>, <span class="number">40</span>, <span class="number">11</span>, <span class="number">6</span>, <span class="number">100.2</span>],</span><br><span class="line">    [<span class="number">4</span>, <span class="number">50</span>, <span class="number">11</span>, <span class="number">8</span>, <span class="number">135.8</span>],</span><br><span class="line">    [<span class="number">7.5</span>, <span class="number">62</span>, <span class="number">9</span>, <span class="number">13</span>, <span class="number">223.3</span>],</span><br><span class="line">    [<span class="number">7</span>, <span class="number">59</span>, <span class="number">9</span>, <span class="number">11</span>, <span class="number">195</span>],</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">design = []</span><br><span class="line">response = []</span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> data:</span><br><span class="line">    design.append([<span class="number">1</span>, row[<span class="number">0</span>], row[<span class="number">1</span>], row[<span class="number">2</span>], row[<span class="number">3</span>]])</span><br><span class="line">    response.append(row[<span class="number">4</span>])</span><br><span class="line"></span><br><span class="line">model = sm.OLS(response, design, missing=<span class="string">&quot;raise&quot;</span>).fit()</span><br><span class="line">intervals = model.conf_int(alpha=<span class="number">0.05</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;parameter, estimate, lower, upper, p&quot;</span>)</span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(model.params)):</span><br><span class="line">    <span class="built_in">print</span>(j, <span class="built_in">round</span>(model.params[j], <span class="number">6</span>), <span class="built_in">round</span>(intervals[j][<span class="number">0</span>], <span class="number">6</span>),</span><br><span class="line">          <span class="built_in">round</span>(intervals[j][<span class="number">1</span>], <span class="number">6</span>), <span class="string">f&quot;<span class="subst">&#123;model.pvalues[j]:<span class="number">.6</span>g&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;overall F =&quot;</span>, <span class="built_in">round</span>(model.fvalue, <span class="number">6</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;overall p =&quot;</span>, <span class="string">f&quot;<span class="subst">&#123;model.f_pvalue:<span class="number">.6</span>g&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p><code>params</code> 按列保存系数. <code>conf_int</code>
+的每行对应一个参数, 两项依次为区间下限和上限; <code>pvalues</code>
+为各系数双侧检验的 p 值. 第 0 项是截距.</p>
+<p>表 8-2 销售模型的系数推断.</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th style="text-align: right;">估计值</th>
+<th>95% 区间</th>
+<th style="text-align: right;">双侧 p 值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>截距</td>
+<td style="text-align: right;">191.9158</td>
+<td>[103.1071, 280.7245]</td>
+<td style="text-align: right;">0.000343</td>
+</tr>
+<tr>
+<td>x1</td>
+<td style="text-align: right;">-0.7719</td>
+<td>[-7.1445, 5.6007]</td>
+<td style="text-align: right;">0.799781</td>
+</tr>
+<tr>
+<td>x2</td>
+<td style="text-align: right;">3.1725</td>
+<td>[2.0640, 4.2809]</td>
+<td style="text-align: right;">0.000020</td>
+</tr>
+<tr>
+<td>x3</td>
+<td style="text-align: right;">-19.6811</td>
+<td>[-25.1651, -14.1972]</td>
+<td style="text-align: right;">0.00000149</td>
+</tr>
+<tr>
+<td>x4</td>
+<td style="text-align: right;">-0.4501</td>
+<td>[-3.7284, 2.8283]</td>
+<td style="text-align: right;">0.773818</td>
+</tr>
+</tbody>
+</table>
+<p>整体 F(4, 15)=35.050911, p 约为 <span
+class="math inline">\(1.9038\times10^{-7}\)</span>.
+它检验四个斜率是否同时为零. 单个系数检验则问控制其余入模变量后,
+该项是否还有额外线性关联.</p>
+<p>因此整体显著不等于四项分别显著. 本例 x2, x3 的条件系数有较强统计证据,
+x1, x4 的证据不足, 不能据此证明后两项没有实际意义.</p>
+<p>x3 的负号表示其余三个入模指标取值相同时的拟合变化,
+不自动表示改变竞争的因果效果. 四个指标尺度不同,
+也不能仅按系数绝对值排列重要性.</p>
+<h3 id="第-16-条是核查线索">8.4.3 第 16 条是核查线索</h3>
+<p>程序打印的第 16 条残差约为 -82.0245.
+沿用上一章的删除后尺度作显式诊断, 其区间为 [-94.9983, -69.0506], 不含零.
+这类区间用于观测筛查, 不用于预测未来销售量.</p>
+<p><img src="/images/MultipleLinearRegression/MLR-4.png" style="width:100%"></p>
+<p>图 8-2 销售残差与显式逐点诊断区间. 红色标记第 16 条.
+完整双语诊断程序保留在进一步阅读, 本章主分析使用全部二十条.</p>
+<p>应核查测量口径, 记录差错或特殊条件. 图形和提示不能单独证明该条错误,
+也不能证明误差假设成立; 不应只为改善指标直接删点.</p>
+<h2 id="新输入仍是一行-两种预测对象仍要区分">8.5 新输入仍是一行,
+两种预测对象仍要区分</h2>
+<h3 id="在四个解释变量的均值处试算">8.5.1
+在四个解释变量的均值处试算</h3>
+<p>把四列均值组成一个输入组合, 对应设计行为</p>
+<p><span class="math display">\[
+(1,5.495,52.1,9.1,9.7).
+\]</span></p>
+<p>这里不是新增真实地区, 只是一个计算位置. 下面逐列求均值,
+再把这一行交给预测接口[3].</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> statsmodels.api <span class="keyword">as</span> sm</span><br><span class="line"></span><br><span class="line">data = [</span><br><span class="line">    [<span class="number">5.5</span>, <span class="number">31</span>, <span class="number">10</span>, <span class="number">8</span>, <span class="number">79.3</span>],</span><br><span class="line">    [<span class="number">2.5</span>, <span class="number">55</span>, <span class="number">8</span>, <span class="number">6</span>, <span class="number">200.1</span>],</span><br><span class="line">    [<span class="number">8</span>, <span class="number">67</span>, <span class="number">12</span>, <span class="number">9</span>, <span class="number">163.2</span>],</span><br><span class="line">    [<span class="number">3</span>, <span class="number">50</span>, <span class="number">7</span>, <span class="number">16</span>, <span class="number">200.1</span>],</span><br><span class="line">    [<span class="number">3</span>, <span class="number">38</span>, <span class="number">8</span>, <span class="number">15</span>, <span class="number">146</span>],</span><br><span class="line">    [<span class="number">2.9</span>, <span class="number">71</span>, <span class="number">12</span>, <span class="number">17</span>, <span class="number">177.7</span>],</span><br><span class="line">    [<span class="number">8</span>, <span class="number">30</span>, <span class="number">12</span>, <span class="number">8</span>, <span class="number">30.9</span>],</span><br><span class="line">    [<span class="number">9</span>, <span class="number">56</span>, <span class="number">5</span>, <span class="number">10</span>, <span class="number">291.9</span>],</span><br><span class="line">    [<span class="number">4</span>, <span class="number">42</span>, <span class="number">8</span>, <span class="number">4</span>, <span class="number">160</span>],</span><br><span class="line">    [<span class="number">6.5</span>, <span class="number">73</span>, <span class="number">5</span>, <span class="number">16</span>, <span class="number">339.4</span>],</span><br><span class="line">    [<span class="number">5.5</span>, <span class="number">60</span>, <span class="number">11</span>, <span class="number">7</span>, <span class="number">159.6</span>],</span><br><span class="line">    [<span class="number">5</span>, <span class="number">44</span>, <span class="number">12</span>, <span class="number">12</span>, <span class="number">86.3</span>],</span><br><span class="line">    [<span class="number">6</span>, <span class="number">50</span>, <span class="number">6</span>, <span class="number">6</span>, <span class="number">237.5</span>],</span><br><span class="line">    [<span class="number">5</span>, <span class="number">39</span>, <span class="number">10</span>, <span class="number">4</span>, <span class="number">107.2</span>],</span><br><span class="line">    [<span class="number">3.5</span>, <span class="number">55</span>, <span class="number">10</span>, <span class="number">4</span>, <span class="number">155</span>],</span><br><span class="line">    [<span class="number">8</span>, <span class="number">70</span>, <span class="number">6</span>, <span class="number">14</span>, <span class="number">201.4</span>],</span><br><span class="line">    [<span class="number">6</span>, <span class="number">40</span>, <span class="number">11</span>, <span class="number">6</span>, <span class="number">100.2</span>],</span><br><span class="line">    [<span class="number">4</span>, <span class="number">50</span>, <span class="number">11</span>, <span class="number">8</span>, <span class="number">135.8</span>],</span><br><span class="line">    [<span class="number">7.5</span>, <span class="number">62</span>, <span class="number">9</span>, <span class="number">13</span>, <span class="number">223.3</span>],</span><br><span class="line">    [<span class="number">7</span>, <span class="number">59</span>, <span class="number">9</span>, <span class="number">11</span>, <span class="number">195</span>],</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">design = []</span><br><span class="line">response = []</span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> data:</span><br><span class="line">    design.append([<span class="number">1</span>, row[<span class="number">0</span>], row[<span class="number">1</span>], row[<span class="number">2</span>], row[<span class="number">3</span>]])</span><br><span class="line">    response.append(row[<span class="number">4</span>])</span><br><span class="line"></span><br><span class="line">model = sm.OLS(response, design, missing=<span class="string">&quot;raise&quot;</span>).fit()</span><br><span class="line">new_row = [<span class="number">1</span>]</span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>):</span><br><span class="line">    total = <span class="number">0.0</span></span><br><span class="line">    <span class="keyword">for</span> row <span class="keyword">in</span> data:</span><br><span class="line">        total = total + row[j]</span><br><span class="line">    new_row.append(total / <span class="built_in">len</span>(data))</span><br><span class="line">prediction = model.get_prediction([new_row]).summary_frame(alpha=<span class="number">0.05</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;new design row =&quot;</span>, new_row)</span><br><span class="line"><span class="built_in">print</span>(prediction[[<span class="string">&quot;mean&quot;</span>, <span class="string">&quot;mean_ci_lower&quot;</span>, <span class="string">&quot;mean_ci_upper&quot;</span>,</span><br><span class="line">                  <span class="string">&quot;obs_ci_lower&quot;</span>, <span class="string">&quot;obs_ci_upper&quot;</span>]])</span><br></pre></td></tr></table></figure>
+<p><code>[new_row]</code> 表示只有一条记录的二维输入. 返回表中
+<code>mean_ci_lower/upper</code> 对应条件平均的区间,
+<code>obs_ci_lower/upper</code> 对应新观测区间.</p>
+<p>表 8-3 解释变量均值处的两种区间.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">点预测</th>
+<th>均值 95% 区间</th>
+<th>新观测 95% 区间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">169.495000</td>
+<td>[157.393968, 181.596032]</td>
+<td>[114.041106, 224.948894]</td>
+</tr>
+</tbody>
+</table>
+<p>单位均为千立方米. 新观测区间更宽,
+因为还计入同机制新地区响应自身的波动.
+置信水平描述重复构造区间的覆盖性质, 不表示这一均值区间包含 95%
+的地区响应.</p>
+<h3 id="选读-上一章的位置量怎样推广">8.5.2 选读:
+上一章的位置量怎样推广</h3>
+<p>设新设计列向量为 <span class="math inline">\(\boldsymbol
+z=(1,x_1^*,\ldots,x_k^*)^{\mathsf T}\)</span>, 理论上令 <span
+class="math inline">\(C=(X^{\mathsf T}X)^{-1}\)</span>. 则</p>
+<p><span class="math display">\[
+\widehat y^*=\boldsymbol z^{\mathsf T}\widehat{\boldsymbol\beta},\qquad
+h_0=\boldsymbol z^{\mathsf T}C\boldsymbol z.
+\]</span></p>
+<p>两种半宽仍为 <span
+class="math inline">\(t_{1-\alpha/2,n-p}s\sqrt{h_0}\)</span> 与 <span
+class="math inline">\(t_{1-\alpha/2,n-p}s\sqrt{1+h_0}\)</span>. 这里的 C
+汇总了全部设计行提供的信息, 实际求解可用 QR 三角方程完成,
+不必显式求正规方程矩阵的逆.</p>
+<p>在本例均值组合处 <span class="math inline">\(h_0=1/n=0.05\)</span>,
+点预测等于响应样本均值 169.495. 这是含截距最小二乘的代数性质,
+不证明模型已适合现实部署.</p>
+<p>多元预测还要核查输入组合是否受已有数据支持. 各变量分别都在取值范围内,
+也不保证它们拼成的新组合合理.</p>
+<h2 id="水泥案例-拟合很好-单个系数为什么仍不稳定">8.6 水泥案例:
+拟合很好, 单个系数为什么仍不稳定</h2>
+<h3 id="先读比例数据">8.6.1 先读比例数据</h3>
+<p>经典水泥数据给出 13 组观测, 四项 x 为活性成分比例的百分数数值, y
+为凝固放热量, 单位 cal/g[4]. 输入 7 表示 7%, 不是 0.07.</p>
+<p>表 8-4 水泥成分与放热量.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">编号</th>
+<th style="text-align: right;">x1</th>
+<th style="text-align: right;">x2</th>
+<th style="text-align: right;">x3</th>
+<th style="text-align: right;">x4</th>
+<th style="text-align: right;">y</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">78.5</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">74.3</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">104.3</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">47</td>
+<td style="text-align: right;">87.6</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">33</td>
+<td style="text-align: right;">95.9</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">109.2</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">71</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">102.7</td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">72.5</td>
+</tr>
+<tr>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">54</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">93.1</td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">47</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">115.9</td>
+</tr>
+<tr>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">34</td>
+<td style="text-align: right;">83.8</td>
+</tr>
+<tr>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">66</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">113.3</td>
+</tr>
+<tr>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">68</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">109.4</td>
+</tr>
+</tbody>
+</table>
+<p>四项合计在 95% 至 99% 之间, 接近常数. 设计矩阵仍满列秩,
+但近似线性依赖很强. 系数虽然能求出,
+各成分的单独关联却不容易稳定地区分.</p>
+<p>四变量拟合为</p>
+<p><span class="math display">\[
+\widehat y\approx62.4054+1.5511x_1+0.5102x_2
++0.1019x_3-0.1441x_4.
+\]</span></p>
+<p>整体 R²=0.982376, F(4, 8)=111.479172, p 约为 <span
+class="math inline">\(4.7562\times10^{-7}\)</span>. 但四个斜率 p 值为
+0.070822, 0.500901, 0.895923, 0.844071, 都大于 0.05.</p>
+<p><img src="/images/MultipleLinearRegression/MLR-5.png" style="width:100%"></p>
+<p>图 8-3 水泥完整模型的四个斜率及逐个 95% 区间. 区间均跨零,
+与整体显著并不矛盾. 截距没有放入这张斜率图.</p>
+<p>几列可以联合提供大量响应信息, 却反复提供相近信息,
+使模型难以分别分配贡献. 高训练拟合不自动意味着每个系数都容易解释.</p>
+<h3 id="用其余三列预测其中一列">8.6.2 用其余三列预测其中一列</h3>
+<p>检查 x1 时, 暂时把 x1 当作辅助响应, 用 x2, x3, x4 和截距预测它.
+若已经能预测得很准, x1 提供的新信息就较少. 对四列轮流做同样的事.</p>
+<p>记第 j 个辅助回归的判定系数为 <span
+class="math inline">\(R_j^2\)</span>, 定义</p>
+<p><span class="math display">\[
+VIF_j=\frac1{1-R_j^2}.
+\]</span></p>
+<p>下面明确建立每一次辅助回归的输入, 不直接把这个动作藏进通用函数.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> statsmodels.api <span class="keyword">as</span> sm</span><br><span class="line"></span><br><span class="line">data = [</span><br><span class="line">    [<span class="number">7</span>, <span class="number">26</span>, <span class="number">6</span>, <span class="number">60</span>, <span class="number">78.5</span>],</span><br><span class="line">    [<span class="number">1</span>, <span class="number">29</span>, <span class="number">15</span>, <span class="number">52</span>, <span class="number">74.3</span>],</span><br><span class="line">    [<span class="number">11</span>, <span class="number">56</span>, <span class="number">8</span>, <span class="number">20</span>, <span class="number">104.3</span>],</span><br><span class="line">    [<span class="number">11</span>, <span class="number">31</span>, <span class="number">8</span>, <span class="number">47</span>, <span class="number">87.6</span>],</span><br><span class="line">    [<span class="number">7</span>, <span class="number">52</span>, <span class="number">6</span>, <span class="number">33</span>, <span class="number">95.9</span>],</span><br><span class="line">    [<span class="number">11</span>, <span class="number">55</span>, <span class="number">9</span>, <span class="number">22</span>, <span class="number">109.2</span>],</span><br><span class="line">    [<span class="number">3</span>, <span class="number">71</span>, <span class="number">17</span>, <span class="number">6</span>, <span class="number">102.7</span>],</span><br><span class="line">    [<span class="number">1</span>, <span class="number">31</span>, <span class="number">22</span>, <span class="number">44</span>, <span class="number">72.5</span>],</span><br><span class="line">    [<span class="number">2</span>, <span class="number">54</span>, <span class="number">18</span>, <span class="number">22</span>, <span class="number">93.1</span>],</span><br><span class="line">    [<span class="number">21</span>, <span class="number">47</span>, <span class="number">4</span>, <span class="number">26</span>, <span class="number">115.9</span>],</span><br><span class="line">    [<span class="number">1</span>, <span class="number">40</span>, <span class="number">23</span>, <span class="number">34</span>, <span class="number">83.8</span>],</span><br><span class="line">    [<span class="number">11</span>, <span class="number">66</span>, <span class="number">9</span>, <span class="number">12</span>, <span class="number">113.3</span>],</span><br><span class="line">    [<span class="number">10</span>, <span class="number">68</span>, <span class="number">8</span>, <span class="number">12</span>, <span class="number">109.4</span>],</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">vif_values = []</span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>):</span><br><span class="line">    target = []</span><br><span class="line">    design = []</span><br><span class="line">    <span class="keyword">for</span> row <span class="keyword">in</span> data:</span><br><span class="line">        target.append(row[j])</span><br><span class="line">        design_row = [<span class="number">1</span>]</span><br><span class="line">        <span class="keyword">for</span> column <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>):</span><br><span class="line">            <span class="keyword">if</span> column != j:</span><br><span class="line">                design_row.append(row[column])</span><br><span class="line">        design.append(design_row)</span><br><span class="line">    auxiliary = sm.OLS(target, design, missing=<span class="string">&quot;raise&quot;</span>).fit()</span><br><span class="line">    vif = <span class="number">1</span> / (<span class="number">1</span> - auxiliary.rsquared)</span><br><span class="line">    vif_values.append(vif)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;x&quot;</span> + <span class="built_in">str</span>(j + <span class="number">1</span>), <span class="string">&quot;VIF =&quot;</span>, <span class="built_in">round</span>(vif, <span class="number">6</span>))</span><br></pre></td></tr></table></figure>
+<p>四项 VIF 约为 38.496211, 254.423166, 46.868386, 282.512865.
+较大数值与严重共线性相符[5]. 这里用的是其余三列共同提供的信息,
+不能只套两个解释变量时的两两相关简式.</p>
+<p>VIF 不自动决定应删除哪项. 标准化也不会消除真实的信息重叠.
+若四项每行严格合计为 100, 则常数列等于它们之和除以 100,
+五列设计矩阵将不再独立, 需要结合配方含义重新参数化.</p>
+<h2 id="每次删一列后-都要重新拟合">8.7 每次删一列后, 都要重新拟合</h2>
+<h3 id="先把三次计算逐步做出来">8.7.1 先把三次计算逐步做出来</h3>
+<p>本例采用一个探索性规则: 保留截距, 每轮找斜率中最大的 p 值;
+若超过事先给定的删除阈值 0.10, 删对应变量后重新拟合.</p>
+<p>全样本的三步为:</p>
+<p>表 8-5 后向剔除的逐轮动作.</p>
+<table>
+<thead>
+<tr>
+<th>当前变量</th>
+<th>当轮最大的斜率 p 值</th>
+<th>动作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>x1, x2, x3, x4</td>
+<td>x3: 0.895923</td>
+<td>删 x3</td>
+</tr>
+<tr>
+<td>x1, x2, x4</td>
+<td>x4: 0.205395</td>
+<td>删 x4</td>
+</tr>
+<tr>
+<td>x1, x2</td>
+<td>约 <span class="math inline">\(2.6922\times10^{-7}\)</span></td>
+<td>停止</td>
+</tr>
+</tbody>
+</table>
+<p>下面把这三组列直接列出来, 重现每一步重新拟合. Python 的 [0, 1, 3]
+对应原变量 x1, x2, x4, 不是把 x4 改名为 x3.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> math</span><br><span class="line"><span class="keyword">import</span> statsmodels.api <span class="keyword">as</span> sm</span><br><span class="line"></span><br><span class="line">data = [</span><br><span class="line">    [<span class="number">7</span>, <span class="number">26</span>, <span class="number">6</span>, <span class="number">60</span>, <span class="number">78.5</span>],</span><br><span class="line">    [<span class="number">1</span>, <span class="number">29</span>, <span class="number">15</span>, <span class="number">52</span>, <span class="number">74.3</span>],</span><br><span class="line">    [<span class="number">11</span>, <span class="number">56</span>, <span class="number">8</span>, <span class="number">20</span>, <span class="number">104.3</span>],</span><br><span class="line">    [<span class="number">11</span>, <span class="number">31</span>, <span class="number">8</span>, <span class="number">47</span>, <span class="number">87.6</span>],</span><br><span class="line">    [<span class="number">7</span>, <span class="number">52</span>, <span class="number">6</span>, <span class="number">33</span>, <span class="number">95.9</span>],</span><br><span class="line">    [<span class="number">11</span>, <span class="number">55</span>, <span class="number">9</span>, <span class="number">22</span>, <span class="number">109.2</span>],</span><br><span class="line">    [<span class="number">3</span>, <span class="number">71</span>, <span class="number">17</span>, <span class="number">6</span>, <span class="number">102.7</span>],</span><br><span class="line">    [<span class="number">1</span>, <span class="number">31</span>, <span class="number">22</span>, <span class="number">44</span>, <span class="number">72.5</span>],</span><br><span class="line">    [<span class="number">2</span>, <span class="number">54</span>, <span class="number">18</span>, <span class="number">22</span>, <span class="number">93.1</span>],</span><br><span class="line">    [<span class="number">21</span>, <span class="number">47</span>, <span class="number">4</span>, <span class="number">26</span>, <span class="number">115.9</span>],</span><br><span class="line">    [<span class="number">1</span>, <span class="number">40</span>, <span class="number">23</span>, <span class="number">34</span>, <span class="number">83.8</span>],</span><br><span class="line">    [<span class="number">11</span>, <span class="number">66</span>, <span class="number">9</span>, <span class="number">12</span>, <span class="number">113.3</span>],</span><br><span class="line">    [<span class="number">10</span>, <span class="number">68</span>, <span class="number">8</span>, <span class="number">12</span>, <span class="number">109.4</span>],</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> columns <span class="keyword">in</span> [[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">0</span>, <span class="number">1</span>, <span class="number">3</span>], [<span class="number">0</span>, <span class="number">1</span>]]:</span><br><span class="line">    design = []</span><br><span class="line">    response = []</span><br><span class="line">    <span class="keyword">for</span> row <span class="keyword">in</span> data:</span><br><span class="line">        design_row = [<span class="number">1</span>]</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> columns:</span><br><span class="line">            design_row.append(row[j])</span><br><span class="line">        design.append(design_row)</span><br><span class="line">        response.append(row[<span class="number">4</span>])</span><br><span class="line">    model = sm.OLS(response, design, missing=<span class="string">&quot;raise&quot;</span>).fit()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;original variable numbers =&quot;</span>, [j + <span class="number">1</span> <span class="keyword">for</span> j <span class="keyword">in</span> columns])</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;coefficients =&quot;</span>, model.params)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;slope p values =&quot;</span>, model.pvalues[<span class="number">1</span>:])</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;SSE =&quot;</span>, <span class="built_in">round</span>(model.ssr, <span class="number">6</span>))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;s =&quot;</span>, <span class="built_in">round</span>(math.sqrt(model.mse_resid), <span class="number">6</span>))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;training RMSE =&quot;</span>, <span class="built_in">round</span>(math.sqrt(model.ssr / <span class="built_in">len</span>(data)), <span class="number">6</span>))</span><br></pre></td></tr></table></figure>
+<p>打印的 <code>ssr</code> 是 statsmodels 的残差平方和, 对应本章 SSE;
+它不是本章记为 SSR 的回归平方和.</p>
+<p>不能根据完整模型四个暂时不显著的 p 值一次删除四列.
+删除一列会改变其他系数所比较的条件信息, 系数, 标准误和 p 值都需重新计算.
+自动后向剔除的完整双语程序保留在进一步阅读.</p>
+<h3 id="简洁候选不等于已验证的最优模型">8.7.2
+简洁候选不等于已验证的最优模型</h3>
+<p>候选二元方程为</p>
+<p><span class="math display">\[
+\widehat y\approx52.5773+1.4683x_1+0.6623x_2.
+\]</span></p>
+<p><img src="/images/MultipleLinearRegression/MLR-6.png" style="width:100%"></p>
+<p>图 8-4 二元候选的两个斜率与普通区间.
+图中没有画两个不同试加入模型的系数.
+区间未校正同一数据筛选带来的不确定性.</p>
+<p>选出模型以后直接使用普通区间和 p 值, 会忽略选择过程.
+这些结果适合描述本次探索, 不能当作已校正筛选影响的正式推断.
+后向剔除也不保证找到全局最优模型或保留全部真实因素.</p>
+<p>表 8-6 完整模型与二变量候选的训练指标.</p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th style="text-align: right;">四变量完整模型</th>
+<th style="text-align: right;">二变量候选</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>残差自由度</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr>
+<td>SSE</td>
+<td style="text-align: right;">47.863639</td>
+<td style="text-align: right;">57.904483</td>
+</tr>
+<tr>
+<td>训练 RMSE</td>
+<td style="text-align: right;">1.918807</td>
+<td style="text-align: right;">2.110495</td>
+</tr>
+<tr>
+<td>s</td>
+<td style="text-align: right;">2.446008</td>
+<td style="text-align: right;">2.406335</td>
+</tr>
+</tbody>
+</table>
+<p>删列后 SSE 增大, 训练 RMSE 也增大; 自由度增加却使 s 略降. 不能把 s
+的下降当作预测已改善的证据.</p>
+<p>两个模型的整体 F 都是与只有截距的模型比较, 不能用谁的整体 F 更大判优.
+若事先指定同时删除 x3, x4, 可作嵌套比较; 本例 F(2, 8)=0.839121,
+p=0.466847. 具体公式与程序保留在进一步阅读. 这里的删除限制来自数据筛选,
+比较应作探索性阅读.</p>
+<h3 id="两个解释方向对应一张平面">8.7.3 两个解释方向对应一张平面</h3>
+<p><img src="/images/MultipleLinearRegression/MLR-7.png" style="width:100%"></p>
+<p>图 8-5 二元候选的拟合平面与观测.
+两个斜率对应平面在两个解释方向的倾斜, 竖直线段为残差.
+平面只在观测点凸包内绘制.</p>
+<p>平面图不会使其他成分的影响消失, 也不表示所有配方可行.
+比例约束和条件解释仍需结合实际背景.</p>
+<h2 id="留出一条以后-筛选也只能看其余记录">8.8 留出一条以后,
+筛选也只能看其余记录</h2>
+<h3 id="先完整做一折">8.8.1 先完整做一折</h3>
+<p>若先用全部十三条选出 x1, x2, 再声称轮流留一条验证,
+被留出响应已经影响了选变量.
+这不能独立评价"从四列开始筛选并拟合"的流程.</p>
+<p>先只做一轮: 留出编号 3, 用其余十二条执行同样的 0.10 规则, 最后预测第
+3 条. 程序中的 <code>leave=2</code> 是从 0 开始的下标.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> statsmodels.api <span class="keyword">as</span> sm</span><br><span class="line"></span><br><span class="line">data = [</span><br><span class="line">    [<span class="number">7</span>, <span class="number">26</span>, <span class="number">6</span>, <span class="number">60</span>, <span class="number">78.5</span>],</span><br><span class="line">    [<span class="number">1</span>, <span class="number">29</span>, <span class="number">15</span>, <span class="number">52</span>, <span class="number">74.3</span>],</span><br><span class="line">    [<span class="number">11</span>, <span class="number">56</span>, <span class="number">8</span>, <span class="number">20</span>, <span class="number">104.3</span>],</span><br><span class="line">    [<span class="number">11</span>, <span class="number">31</span>, <span class="number">8</span>, <span class="number">47</span>, <span class="number">87.6</span>],</span><br><span class="line">    [<span class="number">7</span>, <span class="number">52</span>, <span class="number">6</span>, <span class="number">33</span>, <span class="number">95.9</span>],</span><br><span class="line">    [<span class="number">11</span>, <span class="number">55</span>, <span class="number">9</span>, <span class="number">22</span>, <span class="number">109.2</span>],</span><br><span class="line">    [<span class="number">3</span>, <span class="number">71</span>, <span class="number">17</span>, <span class="number">6</span>, <span class="number">102.7</span>],</span><br><span class="line">    [<span class="number">1</span>, <span class="number">31</span>, <span class="number">22</span>, <span class="number">44</span>, <span class="number">72.5</span>],</span><br><span class="line">    [<span class="number">2</span>, <span class="number">54</span>, <span class="number">18</span>, <span class="number">22</span>, <span class="number">93.1</span>],</span><br><span class="line">    [<span class="number">21</span>, <span class="number">47</span>, <span class="number">4</span>, <span class="number">26</span>, <span class="number">115.9</span>],</span><br><span class="line">    [<span class="number">1</span>, <span class="number">40</span>, <span class="number">23</span>, <span class="number">34</span>, <span class="number">83.8</span>],</span><br><span class="line">    [<span class="number">11</span>, <span class="number">66</span>, <span class="number">9</span>, <span class="number">12</span>, <span class="number">113.3</span>],</span><br><span class="line">    [<span class="number">10</span>, <span class="number">68</span>, <span class="number">8</span>, <span class="number">12</span>, <span class="number">109.4</span>],</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">leave = <span class="number">2</span></span><br><span class="line">threshold = <span class="number">0.10</span></span><br><span class="line">training = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(data)):</span><br><span class="line">    <span class="keyword">if</span> i != leave:</span><br><span class="line">        training.append(data[i])</span><br><span class="line">columns = [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    design = []</span><br><span class="line">    response = []</span><br><span class="line">    <span class="keyword">for</span> row <span class="keyword">in</span> training:</span><br><span class="line">        design_row = [<span class="number">1</span>]</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> columns:</span><br><span class="line">            design_row.append(row[j])</span><br><span class="line">        design.append(design_row)</span><br><span class="line">        response.append(row[<span class="number">4</span>])</span><br><span class="line">    model = sm.OLS(response, design, missing=<span class="string">&quot;raise&quot;</span>).fit()</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> columns:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    slope_p = <span class="built_in">list</span>(model.pvalues[<span class="number">1</span>:])</span><br><span class="line">    largest_p = <span class="built_in">max</span>(slope_p)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;current variables =&quot;</span>, [j + <span class="number">1</span> <span class="keyword">for</span> j <span class="keyword">in</span> columns],</span><br><span class="line">          <span class="string">&quot;largest p =&quot;</span>, <span class="built_in">round</span>(largest_p, <span class="number">6</span>))</span><br><span class="line">    <span class="keyword">if</span> largest_p &lt;= threshold:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    position = slope_p.index(largest_p)</span><br><span class="line">    columns.pop(position)</span><br><span class="line">prediction = model.params[<span class="number">0</span>]</span><br><span class="line"><span class="keyword">for</span> position <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(columns)):</span><br><span class="line">    j = columns[position]</span><br><span class="line">    prediction = prediction + model.params[position + <span class="number">1</span>] * data[leave][j]</span><br><span class="line">error = data[leave][<span class="number">4</span>] - prediction</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;left-out case number =&quot;</span>, leave + <span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;retained variables =&quot;</span>, [j + <span class="number">1</span> <span class="keyword">for</span> j <span class="keyword">in</span> columns])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;prediction =&quot;</span>, <span class="built_in">round</span>(prediction, <span class="number">6</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;held-out error =&quot;</span>, <span class="built_in">round</span>(error, <span class="number">6</span>))</span><br></pre></td></tr></table></figure>
+<p><code>training</code> 先建立好, 后面的每次拟合都只接收十二条响应.
+<code>while</code> 每轮重新拟合, 根据当轮结果决定删列或停止.
+<code>columns</code> 保存原变量下标; 参数位置则随当前模型变化.</p>
+<p>这一折先删 x2, 最后保留 x1, x3, x4. 对被留出的第 3 条, 预测为
+107.554231, 误差为 -3.254231 cal/g. 它没有照搬全样本的 x1, x2,
+正好说明筛选应在当轮训练数据里重做.</p>
+<h3 id="再把同一动作轮流做十三次">8.8.2 再把同一动作轮流做十三次</h3>
+<p>每折依次留出一条, 同时评价固定四变量流程与训练折内筛选流程,
+结果为:</p>
+<p>表 8-7 两个建模流程的留一误差.</p>
+<table>
+<thead>
+<tr>
+<th>被评价的流程</th>
+<th style="text-align: right;">留一 RMSE(cal/g)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>每折固定四变量再拟合</td>
+<td style="text-align: right;">2.913451</td>
+</tr>
+<tr>
+<td>每折在训练记录中筛选再拟合</td>
+<td style="text-align: right;">3.061710</td>
+</tr>
+</tbody>
+</table>
+<p>完整十三折的 Python/MATLAB 程序在进一步阅读中保留.
+各折平方误差平均后再开方, 不是把绝对误差平均.</p>
+<p><img src="/images/MultipleLinearRegression/MLR-8.png" style="width:100%"></p>
+<p>图 8-6 同一留一划分评价两个流程. 右侧蓝色表示对应训练折保留该变量,
+行号为当轮被留出的记录. 十一折选 x1, x2, 留出第 3 条和第 8
+条时选择不同.</p>
+<p>在本组小样本与此规则下, 筛选流程的留一误差没有更低.
+这不是两个流程性能差异的显著性检验, 也不能推断筛选总是更差.</p>
+<p>若还根据同一份留一结果反复改阈值, 最终方案需外层验证或另留测试数据.
+预处理若属于预测流程, 也应在训练折内做;
+时间与群组记录还需采用相应划分.</p>
+<h2 id="回到解释与报告">8.9 回到解释与报告</h2>
+<p>销售例说明, 多列联合显著与单列条件关联是不同问题. 水泥例说明,
+较高训练拟合, 简洁方程和筛选后的显著结果, 都不能单独证明预测改善.</p>
+<p>报告应交代列的含义与单位, 截距与列顺序, 入模条件, 数据支持范围,
+推断假设和验证对象. 诊断提示另行核查,
+全样本主结果与敏感性比较分别说明.</p>
+<p>下一章将讨论弯曲关系. 增加解释变量与改变关系形式是两个问题;
+有些曲线只需变换解释输入, 有些则需非线性参数求解.</p>
+<h3 id="动手改变条件">8.9.1 动手改变条件</h3>
+<ol type="1">
+<li>核对第 1 条在候选关系和最小二乘关系下的预测与残差.
+为什么不能只看这一条就比较全部训练拟合?</li>
+<li>写出第 1 条设计行, 数清原始解释列和参数数目. 重复加一列全 1 会怎样?
+新预测行若交换 x2, x3 而系数顺序不变, 结果是否仍正确?</li>
+<li>在四列均值处预测, 核对结果等于响应均值. 区分系数区间,
+均值区间与新观测区间; 这个均值组合是否代表一个新增真实地区?</li>
+<li>用辅助回归复算四项 VIF. 再把第四列改为 <span
+class="math inline">\(100-x_1-x_2-x_3\)</span>, 保留截距,
+解释矩阵秩和系数唯一性如何变化.</li>
+<li>比较水泥完整与候选模型的 SSE, 训练 RMSE 和 s.
+为什么删除变量后两个误差尺度可能朝不同方向变化?</li>
+<li>将单折阈值预先改为 0.05, 比较留出第 3 条时的选择.
+若只改变被留出的响应, 当轮选列和预测值应该改变吗?</li>
+<li>(选做) 在完整十三折程序中预先比较 0.10 与 0.05 两个规则,
+检查各折选列与 RMSE. 为什么不能根据这份结果不断调阈值,
+然后再称它为独立的最终验证?</li>
+</ol>
+<p>配套阅读与实验: <a
+href="../reading/08/Index.md">本章资料索引</a>.</p>
+<h2 id="参考资料">参考资料</h2>
+<p>[1] NumPy Developers. <a
+target="_blank" rel="noopener" href="https://numpy.org/doc/2.3/reference/generated/numpy.linalg.lstsq.html">lstsq</a>.</p>
+<p>[2] statsmodels Developers. <a
+target="_blank" rel="noopener" href="https://www.statsmodels.org/stable/generated/statsmodels.regression.linear_model.OLS.html">OLS</a>.</p>
+<p>[3] statsmodels Developers. <a
+target="_blank" rel="noopener" href="https://www.statsmodels.org/stable/generated/statsmodels.regression.linear_model.RegressionResults.get_prediction.html">get_prediction</a>.</p>
+<p>[4] R MASS. <a
+target="_blank" rel="noopener" href="https://stat.ethz.ch/R-manual/R-patched/library/MASS/html/cement.html">Heat
+Evolved by Setting Cements</a>.</p>
+<p>[5] statsmodels Developers. <a
+target="_blank" rel="noopener" href="https://www.statsmodels.org/stable/generated/statsmodels.stats.outliers_influence.variance_inflation_factor.html">variance_inflation_factor</a>.</p>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

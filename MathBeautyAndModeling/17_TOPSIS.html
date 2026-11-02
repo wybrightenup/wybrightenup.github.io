@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="第 17 章 逼近理想解排序法(TOPSIS): 比较方案与理想解的接近程度 学校比较几个照明改造方案, 一个节电更多, 一个维护更省时. 两种优点的单位不同, 不能直接相加. 我们可以先规定每项指标的评价方向和尺度, 再把每个方案放到同一个坐标系中, 比较它与两个参照点的距离. 这就是本章要学习的TOPSIS. 它是Technique for Order Preference by">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/MathBeautyAndModeling/17_TOPSIS.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="第 17 章 逼近理想解排序法(TOPSIS): 比较方案与理想解的接近程度 学校比较几个照明改造方案, 一个节电更多, 一个维护更省时. 两种优点的单位不同, 不能直接相加. 我们可以先规定每项指标的评价方向和尺度, 再把每个方案放到同一个坐标系中, 比较它与两个参照点的距离. 这就是本章要学习的TOPSIS. 它是Technique for Order Preference by">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/TOPSIS/TOPSIS-Steps.png">
+<meta property="og:image" content="http://example.com/images/TOPSIS/TOPSIS-1.png">
+<meta property="og:image" content="http://example.com/images/TOPSIS/TOPSIS-2.png">
+<meta property="og:image" content="http://example.com/images/TOPSIS/TOPSIS-3.png">
+<meta property="og:image" content="http://example.com/images/TOPSIS/TOPSIS-4.png">
+<meta property="article:published_time" content="2026-11-02T02:53:08.640Z">
+<meta property="article:modified_time" content="2026-10-31T09:20:34.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/TOPSIS/TOPSIS-Steps.png">
+
+
+<link rel="canonical" href="http://example.com/MathBeautyAndModeling/17_TOPSIS">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/MathBeautyAndModeling/17_TOPSIS.html","path":"MathBeautyAndModeling/17_TOPSIS.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-17-%E7%AB%A0-%E9%80%BC%E8%BF%91%E7%90%86%E6%83%B3%E8%A7%A3%E6%8E%92%E5%BA%8F%E6%B3%95topsis-%E6%AF%94%E8%BE%83%E6%96%B9%E6%A1%88%E4%B8%8E%E7%90%86%E6%83%B3%E8%A7%A3%E7%9A%84%E6%8E%A5%E8%BF%91%E7%A8%8B%E5%BA%A6"><span class="nav-number">1.</span> <span class="nav-text">第
+17 章 逼近理想解排序法(TOPSIS): 比较方案与理想解的接近程度</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E7%AE%97%E4%B8%80%E5%88%97-%E6%8A%8A%E7%BB%B4%E6%8A%A4%E5%B7%A5%E6%97%B6%E6%94%BE%E5%88%B0%E7%BB%9F%E4%B8%80%E5%B0%BA%E5%BA%A6%E4%B8%8A"><span class="nav-number">1.1.</span> <span class="nav-text">17.1 先算一列:
+把维护工时放到统一尺度上</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%98%8E%E7%A1%AE%E8%BF%99%E6%AC%A1%E6%AF%94%E8%BE%83%E5%9B%9E%E7%AD%94%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98"><span class="nav-number">1.1.1.</span> <span class="nav-text">17.1.1 明确这次比较回答什么问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E7%BB%9F%E4%B8%80%E6%96%B9%E5%90%91-%E5%86%8D%E7%BB%9F%E4%B8%80%E5%B0%BA%E5%BA%A6"><span class="nav-number">1.1.2.</span> <span class="nav-text">17.1.2 先统一方向, 再统一尺度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A9%E7%A8%8B%E5%BA%8F%E7%85%A7%E7%9D%80%E6%89%8B%E7%AE%97%E5%81%9A"><span class="nav-number">1.1.3.</span> <span class="nav-text">17.1.3 让程序照着手算做</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%8D%E7%AE%97%E4%B8%80%E4%B8%AA%E6%96%B9%E6%A1%88-b%E7%A6%BB%E4%B8%A4%E4%B8%AA%E7%90%86%E6%83%B3%E7%82%B9%E5%90%84%E6%9C%89%E5%A4%9A%E8%BF%9C"><span class="nav-number">1.2.</span> <span class="nav-text">17.2 再算一个方案:
+B离两个理想点各有多远</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E5%90%8C%E4%B8%80%E5%9D%90%E6%A0%87%E4%B8%AD%E6%89%BE%E5%8F%82%E7%85%A7%E7%82%B9"><span class="nav-number">1.2.1.</span> <span class="nav-text">17.2.1 在同一坐标中找参照点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E5%9D%90%E6%A0%87%E5%B7%AE%E7%9A%84%E5%B9%B3%E6%96%B9%E7%9B%B8%E5%8A%A0-%E5%86%8D%E5%BC%80%E5%B9%B3%E6%96%B9"><span class="nav-number">1.2.2.</span> <span class="nav-text">17.2.2 两个坐标差的平方相加,
+再开平方</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E5%90%8C%E6%A0%B7%E7%9A%84%E8%AE%A1%E7%AE%97%E9%87%8D%E5%A4%8D%E4%B8%89%E6%AC%A1-%E5%86%8D%E6%94%B9%E5%86%99%E6%88%90%E6%95%B0%E7%BB%84%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.3.</span> <span class="nav-text">17.3
+把同样的计算重复三次, 再改写成数组程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%AA%E7%8E%AF%E9%87%8D%E5%A4%8D%E7%9A%84%E6%98%AF%E5%93%AA%E4%B8%AA%E7%AE%97%E5%BC%8F"><span class="nav-number">1.3.1.</span> <span class="nav-text">17.3.1 循环重复的是哪个算式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E5%86%99%E6%B3%95%E5%8E%8B%E7%BC%A9%E4%BA%86%E9%87%8D%E5%A4%8D-%E6%B2%A1%E6%9C%89%E6%8D%A2%E7%AE%97%E6%B3%95"><span class="nav-number">1.3.2.</span> <span class="nav-text">17.3.2 数组写法压缩了重复,
+没有换算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E5%85%A5%E7%9B%AE%E6%A0%87%E5%80%BC%E4%B8%8E%E7%90%86%E6%83%B3%E5%8C%BA%E9%97%B4-%E5%85%88%E6%8A%8A%E5%81%8F%E5%A5%BD%E8%AF%B4%E6%B8%85%E6%A5%9A"><span class="nav-number">1.4.</span> <span class="nav-text">17.4 加入目标值与理想区间,
+先把偏好说清楚</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E7%B1%BB%E6%8C%87%E6%A0%87%E5%88%86%E5%88%AB%E8%A1%A8%E8%BE%BE%E4%BB%80%E4%B9%88"><span class="nav-number">1.4.1.</span> <span class="nav-text">17.4.1 四类指标分别表达什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%90%E5%88%97%E6%A0%B8%E5%AF%B9%E8%BD%AC%E6%8D%A2%E7%9A%84%E4%B8%AD%E9%97%B4%E9%87%8F"><span class="nav-number">1.4.2.</span> <span class="nav-text">17.4.2 逐列核对转换的中间量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E4%B8%80%E8%88%AC%E5%85%AC%E5%BC%8F%E4%B8%B2%E8%B5%B7%E6%96%B9%E5%90%91-%E5%B0%BA%E5%BA%A6-%E6%9D%83%E9%87%8D%E4%B8%8E%E8%B7%9D%E7%A6%BB"><span class="nav-number">1.5.</span> <span class="nav-text">17.5 用一般公式串起方向,
+尺度, 权重与距离</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E4%B8%AA%E9%87%8F%E4%BE%9D%E6%AC%A1%E6%89%BF%E6%8B%85%E4%BB%80%E4%B9%88%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.5.1.</span> <span class="nav-text">17.5.1 六个量依次承担什么任务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9D%90%E6%A0%87%E4%B9%98w-%E8%B7%9D%E7%A6%BB%E5%B9%B3%E6%96%B9%E4%B8%AD%E5%B0%B1%E5%87%BA%E7%8E%B0w%E7%9A%84%E5%B9%B3%E6%96%B9"><span class="nav-number">1.5.2.</span> <span class="nav-text">17.5.2 坐标乘w,
+距离平方中就出现w的平方</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9E%E5%88%B0%E5%9B%9B%E6%8C%87%E6%A0%87%E6%A1%88%E4%BE%8B-%E6%9F%A5%E7%9C%8B%E4%B8%AD%E9%97%B4%E9%87%8F-%E5%86%8D%E8%A7%A3%E9%87%8A%E6%8E%92%E5%BA%8F"><span class="nav-number">1.6.</span> <span class="nav-text">17.6 回到四指标案例:
+查看中间量, 再解释排序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E6%AC%A1%E8%B0%83%E7%94%A8%E5%AE%8C%E6%95%B4%E5%87%BD%E6%95%B0"><span class="nav-number">1.6.1.</span> <span class="nav-text">17.6.1 一次调用完整函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%99%E6%AC%A1%E6%AF%94%E8%BE%83%E7%9A%84%E6%98%AF%E5%9B%9B%E4%B8%AA%E6%8C%87%E6%A0%87"><span class="nav-number">1.6.2.</span> <span class="nav-text">17.6.2 这次比较的是四个指标</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A5%E4%B8%8A%E7%AC%AC-16-%E7%AB%A0-%E5%90%8C%E4%B8%80%E6%89%B9%E6%95%B0%E6%8D%AE%E6%94%B9%E7%94%A8%E7%86%B5%E6%9D%83"><span class="nav-number">1.7.</span> <span class="nav-text">17.7 接上第 16 章:
+同一批数据改用熵权</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%86%B5%E6%9D%83%E8%B4%9F%E8%B4%A3%E7%BB%99%E6%9D%83%E9%87%8D-topsis%E8%B4%9F%E8%B4%A3%E7%BB%BC%E5%90%88%E6%8E%92%E5%BA%8F"><span class="nav-number">1.7.1.</span> <span class="nav-text">17.7.1 熵权负责给权重,
+TOPSIS负责综合排序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E6%95%B0%E5%88%97-%E9%9B%B6%E6%9D%83%E9%87%8D%E4%B8%8E%E5%B9%B6%E5%88%97-%E5%88%86%E5%88%AB%E6%80%8E%E6%A0%B7%E5%A4%84%E7%90%86"><span class="nav-number">1.8.</span> <span class="nav-text">17.8 常数列, 零权重与并列,
+分别怎样处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E5%88%97%E4%B8%8D%E8%83%BD%E5%8C%BA%E5%88%86-%E4%B8%8D%E7%AD%89%E4%BA%8E%E6%95%B4%E4%B8%AA%E9%97%AE%E9%A2%98%E4%B8%8D%E8%83%BD%E5%8C%BA%E5%88%86"><span class="nav-number">1.8.1.</span> <span class="nav-text">17.8.1 一列不能区分,
+不等于整个问题不能区分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E5%87%BD%E6%95%B0%E6%AF%94%E7%9F%AD%E7%A8%8B%E5%BA%8F%E5%A4%9A%E6%A3%80%E6%9F%A5%E4%BB%80%E4%B9%88"><span class="nav-number">1.8.2.</span> <span class="nav-text">17.8.2
+完整函数比短程序多检查什么</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8%E7%BB%99%E5%87%BA%E7%AC%AC%E4%B8%80%E5%90%8D%E5%89%8D-%E6%A3%80%E6%9F%A5%E7%BB%93%E6%9E%9C%E4%BC%9A%E6%80%8E%E6%A0%B7%E5%8F%98%E5%8C%96"><span class="nav-number">1.9.</span> <span class="nav-text">17.9 在给出第一名前,
+检查结果会怎样变化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E8%A7%84%E5%AE%9A%E4%B8%80%E6%9D%A1%E6%9D%83%E9%87%8D%E8%B0%83%E6%95%B4%E8%B7%AF%E5%BE%84"><span class="nav-number">1.9.1.</span> <span class="nav-text">17.9.1 先规定一条权重调整路径</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%80%99%E9%80%89%E9%9B%86%E5%90%88%E5%8F%98%E5%8C%96%E6%98%AF%E5%8F%A6%E4%B8%80%E4%B8%AA%E5%AE%9E%E9%AA%8C"><span class="nav-number">1.9.2.</span> <span class="nav-text">17.9.2 候选集合变化是另一个实验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%98%E8%A6%81%E5%90%8C%E6%97%B6%E7%9C%8B%E4%B8%A4%E4%B8%AA%E8%B7%9D%E7%A6%BB"><span class="nav-number">1.9.3.</span> <span class="nav-text">17.9.3 还要同时看两个距离</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E6%8E%92%E5%BA%8F%E5%86%99%E6%88%90%E6%9C%89%E6%9D%A1%E4%BB%B6%E7%9A%84%E7%BB%93%E8%AE%BA"><span class="nav-number">1.10.</span> <span class="nav-text">17.10 把排序写成有条件的结论</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%8E%E6%A0%B7%E6%8A%A5%E5%91%8A%E6%9C%AC%E7%AB%A0%E7%9A%84%E7%85%A7%E6%98%8E%E6%A1%88%E4%BE%8B"><span class="nav-number">1.10.1.</span> <span class="nav-text">17.10.1 怎样报告本章的照明案例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%83%E4%B9%A0"><span class="nav-number">1.10.2.</span> <span class="nav-text">17.10.2 练习</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%A7%E7%BB%AD%E9%98%85%E8%AF%BB"><span class="nav-number">1.10.3.</span> <span class="nav-text">17.10.3 继续阅读</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.11.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="第-17-章-逼近理想解排序法topsis-比较方案与理想解的接近程度">第
+17 章 逼近理想解排序法(TOPSIS): 比较方案与理想解的接近程度</h1>
+<p>学校比较几个照明改造方案, 一个节电更多, 一个维护更省时.
+两种优点的单位不同, 不能直接相加.
+我们可以先规定每项指标的评价方向和尺度, 再把每个方案放到同一个坐标系中,
+比较它与两个参照点的距离.</p>
+<p>这就是本章要学习的TOPSIS. 它是Technique for Order Preference by
+Similarity to an Ideal Solution的缩写, 通常译为逼近理想解排序法,
+也称优劣解距离法. 本章采用Hwang与Yoon于1981年系统介绍的方法框架[1],
+并明确使用本书约定的正向化与加权路线.</p>
+<p>第 15 章AHP从成对判断得到权重, 第 16 章熵权法从数据差异构造权重.
+本章接着回答: 权重已给定后, 怎样综合多个指标比较方案? 我们先算一列,
+再算一个方案, 接着让程序重复同样的步骤.
+Python与MATLAB采用同一数据和公式, 初学时可先选择一种语言.</p>
+<h2 id="先算一列-把维护工时放到统一尺度上">17.1 先算一列:
+把维护工时放到统一尺度上</h2>
+<h3 id="明确这次比较回答什么问题">17.1.1 明确这次比较回答什么问题</h3>
+<p>学校准备比较三个照明改造方案. 以下均为教学模拟数据,
+假设三个方案都满足必要的安全与使用要求.</p>
+<p>表 17-1 照明方案的两个原始指标.</p>
+<div class="line-block">方案 | 年节电量(万千瓦时) | 年维护工时(小时)
+|<br />
+: ---: | ---: | ---: |<br />
+A | 9 | 10 |<br />
+B | 8 | 7 |<br />
+C | 6 | 3 |</div>
+<p>A节电最多, C维护工时最少, B处在两者之间. 先不要给出第一名,
+而要说明两件事: 节电量按越大越好处理, 维护工时按越小越好处理;
+本次暂时让两项指标等权.</p>
+<p>预算上限, 安全条件和质量底线应先检查. 如果一个方案不满足必要条件,
+不能靠另一项高分弥补后继续参与比较.
+TOPSIS用于比较已经进入候选集合的可行方案.</p>
+<p>原始评价矩阵记为A, 每行是一个方案, 每列是一项指标.
+它与AHP的成对判断矩阵含义不同. 为方便统一取最大值,
+本章先把各列转成非负且越大越好的数, 记为X.</p>
+<h3 id="先统一方向-再统一尺度">17.1.2 先统一方向, 再统一尺度</h3>
+<p>节电量保留9, 8, 6. 维护工时用本组最大工时10减原值, 得到</p>
+<p><span class="math display">\[
+(10-10,10-7,10-3)^{\mathsf T}=(0,3,7)^{\mathsf T}.
+\]</span></p>
+<p>转换后的7表示C在这组维护工时比较中较有利, 不再是C的真实工时.
+0只表示当前规则下本组相对较差, 不表示方案没有价值. 此时</p>
+<p><span class="math display">\[
+X=\begin{pmatrix}9&amp;0\\8&amp;3\\6&amp;7\end{pmatrix}.
+\]</span></p>
+<p>现在只看第二列. 把0, 3, 7的平方相加, 再开平方,
+得到这一列的向量长度</p>
+<p><span class="math display">\[
+L_2=\sqrt{0^2+3^2+7^2}=\sqrt{58}\approx7.615773.
+\]</span></p>
+<p>把每个数除以同一个长度:</p>
+<p><span class="math display">\[
+\boldsymbol
+z_2=\left(0,\frac3{\sqrt{58}},\frac7{\sqrt{58}}\right)^{\mathsf T}
+\approx(0,0.393919,0.919145)^{\mathsf T}.
+\]</span></p>
+<p>这叫向量标准化. 它保留该列的大小顺序, 并使整列平方和为1.
+这里不是让各项之和为1, 也不是规定最大值一定等于1.
+例如0.919145仍小于1.</p>
+<h3 id="让程序照着手算做">17.1.3 让程序照着手算做</h3>
+<p>下面只用一列已经正向化的数据, 每一步都对应刚才的算式.
+数据固定为有效的非零列, 暂时不加入通用输入检查.</p>
+<p><strong>code/normalize_column_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> sqrt</span><br><span class="line"></span><br><span class="line"><span class="comment"># Maintenance hours 10, 7, 3 become benefit values 0, 3, 7.</span></span><br><span class="line">x = [<span class="number">0.0</span>, <span class="number">3.0</span>, <span class="number">7.0</span>]</span><br><span class="line">squared_sum = <span class="number">0.0</span></span><br><span class="line"><span class="keyword">for</span> value <span class="keyword">in</span> x:</span><br><span class="line">    squared_sum += value * value</span><br><span class="line">length = sqrt(squared_sum)</span><br><span class="line">z = []</span><br><span class="line"><span class="keyword">for</span> value <span class="keyword">in</span> x:</span><br><span class="line">    z.append(value / length)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Squared sum and length:&#x27;</span>, squared_sum, length)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Normalized column:&#x27;</span>, z)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Sum of squares:&#x27;</span>, <span class="built_in">sum</span>(value * value <span class="keyword">for</span> value <span class="keyword">in</span> z))</span><br></pre></td></tr></table></figure>
+<p><strong>code/normalize_column_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">x = [<span class="number">0</span>,<span class="number">3</span>,<span class="number">7</span>];</span><br><span class="line">squaredSum = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="built_in">numel</span>(x)</span><br><span class="line">    squaredSum = squaredSum+x(<span class="built_in">i</span>)*x(<span class="built_in">i</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">columnLength = <span class="built_in">sqrt</span>(squaredSum);</span><br><span class="line">z = <span class="built_in">zeros</span>(<span class="built_in">size</span>(x));</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="built_in">numel</span>(x)</span><br><span class="line">    z(<span class="built_in">i</span>) = x(<span class="built_in">i</span>)/columnLength;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Squared sum and length:&#x27;</span>); <span class="built_in">disp</span>([squaredSum,columnLength]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Normalized column:&#x27;</span>); <span class="built_in">disp</span>(z);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Sum of squares:&#x27;</span>); <span class="built_in">disp</span>(sum(z.^<span class="number">2</span>));</span><br></pre></td></tr></table></figure>
+<p><code>squared_sum</code>对应58, <code>length</code>对应平方根,
+第二个循环把各数除以同一个分母. MATLAB中的
+<code>columnLength</code>承担相同任务.
+输出平方和可能为0.9999999999999998, 这是双精度舍入,
+不能因此判定公式错误.</p>
+<p>对第一列同样处理, 长度为 <span
+class="math inline">\(\sqrt{9^2+8^2+6^2}=\sqrt{181}\)</span>,
+标准化矩阵为</p>
+<p>表 17-2 两列向量标准化结果.</p>
+<div class="line-block">方案 | 节电量标准化值 | 维护优势标准化值 |<br />
+: ---: | ---: | ---: |<br />
+A | 0.668965 | 0.000000 |<br />
+B | 0.594635 | 0.393919 |<br />
+C | 0.445976 | 0.919145 |</div>
+<p>下文用Z表示这个矩阵. X负责统一方向, Z负责按列统一尺度,
+二者各有任务.</p>
+<h2 id="再算一个方案-b离两个理想点各有多远">17.2 再算一个方案:
+B离两个理想点各有多远</h2>
+<h3 id="在同一坐标中找参照点">17.2.1 在同一坐标中找参照点</h3>
+<p>暂取权重 <span class="math inline">\(\boldsymbol w=(1/2,1/2)^{\mathsf
+T}\)</span>. 本章把每列标准化坐标乘以该列权重, 得到加权矩阵 <span
+class="math inline">\(V=Z/2\)</span>. 对B有</p>
+<p><span class="math display">\[
+\boldsymbol
+v_B=\left(\frac4{\sqrt{181}},\frac{1.5}{\sqrt{58}}\right)^{\mathsf T}
+\approx(0.297318,0.196960)^{\mathsf T}.
+\]</span></p>
+<p>在V中逐列找最大值, 得到正理想点; 逐列找最小值, 得到负理想点:</p>
+<p><span class="math display">\[
+\boldsymbol
+v^+=\left(\frac{4.5}{\sqrt{181}},\frac{3.5}{\sqrt{58}}\right)^{\mathsf
+T},
+\qquad
+\boldsymbol v^-=\left(\frac3{\sqrt{181}},0\right)^{\mathsf T}.
+\]</span></p>
+<p>正理想点的节电坐标来自A, 维护优势坐标来自C. 它将各项较好表现拼在一起,
+不必是现实中存在的方案. 负理想点同理.
+两点都相对于当前候选集合和规则形成, 不能解释成绝对的最好或最差水平.</p>
+<h3 id="两个坐标差的平方相加-再开平方">17.2.2 两个坐标差的平方相加,
+再开平方</h3>
+<p>从B到正理想点的距离为</p>
+<p><span class="math display">\[
+D_B^+=\frac12\sqrt{\left(\frac{8-9}{\sqrt{181}}\right)^2+
+\left(\frac{3-7}{\sqrt{58}}\right)^2}
+=\frac12\sqrt{\frac1{181}+\frac{16}{58}}\approx0.265230.
+\]</span></p>
+<p>从B到负理想点的距离为</p>
+<p><span class="math display">\[
+D_B^-=\frac12\sqrt{\left(\frac{8-6}{\sqrt{181}}\right)^2+
+\left(\frac{3-0}{\sqrt{58}}\right)^2}
+=\frac12\sqrt{\frac4{181}+\frac9{58}}\approx0.210518.
+\]</span></p>
+<p>TOPSIS再计算相对贴近度</p>
+<p><span class="math display">\[
+S_B=\frac{D_B^-}{D_B^++D_B^-}
+\approx\frac{0.210518}{0.265230+0.210518}\approx0.442500.
+\]</span></p>
+<p>分子是到负理想点的距离. 在另一个距离固定时, 越远离负理想点, 得分越大;
+越接近正理想点, 得分也越大. 比较不同方案时, 两个距离会一起变化,
+需要比较完整比值.</p>
+<p><strong>code/one_plan_distance_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> sqrt</span><br><span class="line"></span><br><span class="line">energy_length = sqrt(<span class="number">9</span>**<span class="number">2</span> + <span class="number">8</span>**<span class="number">2</span> + <span class="number">6</span>**<span class="number">2</span>)</span><br><span class="line">maintenance_length = sqrt(<span class="number">0</span>**<span class="number">2</span> + <span class="number">3</span>**<span class="number">2</span> + <span class="number">7</span>**<span class="number">2</span>)</span><br><span class="line">v_B = [<span class="number">0.5</span> * <span class="number">8</span> / energy_length, <span class="number">0.5</span> * <span class="number">3</span> / maintenance_length]</span><br><span class="line">ideal = [<span class="number">0.5</span> * <span class="number">9</span> / energy_length, <span class="number">0.5</span> * <span class="number">7</span> / maintenance_length]</span><br><span class="line">anti_ideal = [<span class="number">0.5</span> * <span class="number">6</span> / energy_length, <span class="number">0.0</span>]</span><br><span class="line">dp_B = sqrt((v_B[<span class="number">0</span>] - ideal[<span class="number">0</span>])**<span class="number">2</span> + (v_B[<span class="number">1</span>] - ideal[<span class="number">1</span>])**<span class="number">2</span>)</span><br><span class="line">dn_B = sqrt((v_B[<span class="number">0</span>] - anti_ideal[<span class="number">0</span>])**<span class="number">2</span></span><br><span class="line">            + (v_B[<span class="number">1</span>] - anti_ideal[<span class="number">1</span>])**<span class="number">2</span>)</span><br><span class="line">score_B = dn_B / (dp_B + dn_B)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Weighted B:&#x27;</span>, v_B)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Ideal and anti-ideal:&#x27;</span>, ideal, anti_ideal)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;B distances +, -:&#x27;</span>, dp_B, dn_B)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;B closeness:&#x27;</span>, score_B)</span><br></pre></td></tr></table></figure>
+<p><strong>code/one_plan_distance_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">energyLength = <span class="built_in">sqrt</span>(<span class="number">9</span>^<span class="number">2</span>+<span class="number">8</span>^<span class="number">2</span>+<span class="number">6</span>^<span class="number">2</span>);</span><br><span class="line">maintenanceLength = <span class="built_in">sqrt</span>(<span class="number">0</span>^<span class="number">2</span>+<span class="number">3</span>^<span class="number">2</span>+<span class="number">7</span>^<span class="number">2</span>);</span><br><span class="line">vB = [<span class="number">0.5</span>*<span class="number">8</span>/energyLength,<span class="number">0.5</span>*<span class="number">3</span>/maintenanceLength];</span><br><span class="line">ideal = [<span class="number">0.5</span>*<span class="number">9</span>/energyLength,<span class="number">0.5</span>*<span class="number">7</span>/maintenanceLength];</span><br><span class="line">antiIdeal = [<span class="number">0.5</span>*<span class="number">6</span>/energyLength,<span class="number">0</span>];</span><br><span class="line">dpB = <span class="built_in">sqrt</span>((vB(<span class="number">1</span>)-ideal(<span class="number">1</span>))^<span class="number">2</span>+(vB(<span class="number">2</span>)-ideal(<span class="number">2</span>))^<span class="number">2</span>);</span><br><span class="line">dnB = <span class="built_in">sqrt</span>((vB(<span class="number">1</span>)-antiIdeal(<span class="number">1</span>))^<span class="number">2</span>+(vB(<span class="number">2</span>)-antiIdeal(<span class="number">2</span>))^<span class="number">2</span>);</span><br><span class="line">scoreB = dnB/(dpB+dnB);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Weighted B:&#x27;</span>); <span class="built_in">disp</span>(vB);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Ideal and anti-ideal:&#x27;</span>); <span class="built_in">disp</span>([ideal;antiIdeal]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;B distances +, -:&#x27;</span>); <span class="built_in">disp</span>([dpB,dnB]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;B closeness:&#x27;</span>); <span class="built_in">disp</span>(scoreB);</span><br></pre></td></tr></table></figure>
+<p>程序里的 <code>dp_B</code>和 <code>dn_B</code>分别保存两个距离,
+<code>score_B</code>保存贴近度. 输出为0.442499737附近.
+计算使用未舍入数值, 表格只在显示时保留若干小数.</p>
+<p><img src="/images/TOPSIS/TOPSIS-Steps.png" style="width:100%"></p>
+<p>图 17-1 从一列标准化到B的两个距离</p>
+<p>左图显示0, 3, 7除以同一个长度后的值. 右图使用 <span
+class="math inline">\(V=Z/2\)</span> 的加权坐标,
+两条虚线分别连接B与两个理想点, 下方列出这一步的距离和贴近度.
+图形中的距离尺度与本节算式一致.</p>
+<h2 id="把同样的计算重复三次-再改写成数组程序">17.3
+把同样的计算重复三次, 再改写成数组程序</h2>
+<h3 id="循环重复的是哪个算式">17.3.1 循环重复的是哪个算式</h3>
+<p>算A和C时, 标准化分母, 权重和两个理想点都保持不变, 只替换当前行的坐标.
+不能每次只取一个方案重新标准化, 也不能每算一行就换一组参照点.</p>
+<p>下面的外层循环逐个处理方案, 内层循环把两项坐标差的平方累加.
+Python前两段列表表达式只是把按列取值的重复操作写短, 与逐项循环相同.</p>
+<p><strong>code/rank_plans_loop. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> sqrt</span><br><span class="line"></span><br><span class="line">X = [[<span class="number">9.0</span>, <span class="number">0.0</span>], [<span class="number">8.0</span>, <span class="number">3.0</span>], [<span class="number">6.0</span>, <span class="number">7.0</span>]]</span><br><span class="line">w = [<span class="number">0.5</span>, <span class="number">0.5</span>]</span><br><span class="line">lengths = [sqrt(<span class="built_in">sum</span>(row[j]**<span class="number">2</span> <span class="keyword">for</span> row <span class="keyword">in</span> X)) <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>)]</span><br><span class="line">V = []</span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> X:</span><br><span class="line">    V.append([w[j] * row[j] / lengths[j] <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>)])</span><br><span class="line">ideal = [<span class="built_in">max</span>(row[j] <span class="keyword">for</span> row <span class="keyword">in</span> V) <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>)]</span><br><span class="line">anti_ideal = [<span class="built_in">min</span>(row[j] <span class="keyword">for</span> row <span class="keyword">in</span> V) <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>)]</span><br><span class="line">dp, dn, scores = [], [], []</span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> V:</span><br><span class="line">    plus_square, minus_square = <span class="number">0.0</span>, <span class="number">0.0</span></span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>):</span><br><span class="line">        plus_square += (row[j] - ideal[j])**<span class="number">2</span></span><br><span class="line">        minus_square += (row[j] - anti_ideal[j])**<span class="number">2</span></span><br><span class="line">    dp.append(sqrt(plus_square))</span><br><span class="line">    dn.append(sqrt(minus_square))</span><br><span class="line">    scores.append(dn[-<span class="number">1</span>] / (dp[-<span class="number">1</span>] + dn[-<span class="number">1</span>]))</span><br><span class="line">names = [<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;C&#x27;</span>]</span><br><span class="line">order = <span class="built_in">sorted</span>(<span class="built_in">range</span>(<span class="number">3</span>), key=<span class="keyword">lambda</span> i: -scores[i])</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> order:</span><br><span class="line">    <span class="built_in">print</span>(names[i], dp[i], dn[i], scores[i])</span><br></pre></td></tr></table></figure>
+<p><strong>code/rank_plans_loop. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">X = [<span class="number">9</span>,<span class="number">0</span>;<span class="number">8</span>,<span class="number">3</span>;<span class="number">6</span>,<span class="number">7</span>]; w = [<span class="number">0.5</span>,<span class="number">0.5</span>];</span><br><span class="line">lengths = <span class="built_in">sqrt</span>(sum(X.^<span class="number">2</span>,<span class="number">1</span>)); V = <span class="built_in">zeros</span>(<span class="number">3</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">        V(<span class="built_in">i</span>,<span class="built_in">j</span>) = w(<span class="built_in">j</span>)*X(<span class="built_in">i</span>,<span class="built_in">j</span>)/lengths(<span class="built_in">j</span>);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">ideal = <span class="built_in">max</span>(V,[],<span class="number">1</span>); antiIdeal = <span class="built_in">min</span>(V,[],<span class="number">1</span>);</span><br><span class="line">dp = <span class="built_in">zeros</span>(<span class="number">3</span>,<span class="number">1</span>); dn = <span class="built_in">zeros</span>(<span class="number">3</span>,<span class="number">1</span>); scores = <span class="built_in">zeros</span>(<span class="number">3</span>,<span class="number">1</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    plusSquare = <span class="number">0</span>; minusSquare = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">        plusSquare = plusSquare+(V(<span class="built_in">i</span>,<span class="built_in">j</span>)-ideal(<span class="built_in">j</span>))^<span class="number">2</span>;</span><br><span class="line">        minusSquare = minusSquare+(V(<span class="built_in">i</span>,<span class="built_in">j</span>)-antiIdeal(<span class="built_in">j</span>))^<span class="number">2</span>;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    dp(<span class="built_in">i</span>) = <span class="built_in">sqrt</span>(plusSquare); dn(<span class="built_in">i</span>) = <span class="built_in">sqrt</span>(minusSquare);</span><br><span class="line">    scores(<span class="built_in">i</span>) = dn(<span class="built_in">i</span>)/(dp(<span class="built_in">i</span>)+dn(<span class="built_in">i</span>));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">[~,order] = <span class="built_in">sort</span>(scores,<span class="string">&#x27;descend&#x27;</span>); names = &#123;<span class="string">&#x27;A&#x27;</span>,<span class="string">&#x27;B&#x27;</span>,<span class="string">&#x27;C&#x27;</span>&#125;;</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    <span class="built_in">i</span> = order(k);</span><br><span class="line">    fprintf(<span class="string">&#x27;%s %.9f %.9f %.9f\n&#x27;</span>,names&#123;<span class="built_in">i</span>&#125;,dp(<span class="built_in">i</span>),dn(<span class="built_in">i</span>),scores(<span class="built_in">i</span>));</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>表 17-3 两个理想距离与贴近度.</p>
+<div class="line-block">方案 | <span
+class="math inline">\(D_i^+\)</span> | <span
+class="math inline">\(D_i^-\)</span> | <span
+class="math inline">\(S_i\)</span> |<br />
+: ---: | ---: | ---: | ---: |<br />
+A | 0.459573 | 0.111494 | 0.195238 |<br />
+B | 0.265230 | 0.210518 | 0.442500 |<br />
+C | 0.111494 | 0.459573 | 0.804762 |</div>
+<p>按贴近度从大到小排列, 得到 <span
+class="math inline">\(C&gt;B&gt;A\)</span>.
+这只回答当前两指标和等权假设下的问题. C并非每项都最好,
+节电量仍低于A和B.</p>
+<p>排序程序返回的下标要与方案名称配对. Python从0开始编号,
+MATLAB从1开始编号, 不要把下标本身误作名次或方案名称.</p>
+<h3 id="数组写法压缩了重复-没有换算法">17.3.2 数组写法压缩了重复,
+没有换算法</h3>
+<p>有了逐项计算的基础, 再读下面的原入门程序. 它从原始数据开始,
+一次完成同样的两指标计算.</p>
+<p><strong>topsis_quick. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># Columns: energy saving and maintenance hours.</span></span><br><span class="line">A = np.array([[<span class="number">9</span>,<span class="number">10</span>],[<span class="number">8</span>,<span class="number">7</span>],[<span class="number">6</span>,<span class="number">3</span>]], dtype=<span class="built_in">float</span>)</span><br><span class="line">X = A.copy()</span><br><span class="line">X[:,<span class="number">1</span>] = A[:,<span class="number">1</span>].<span class="built_in">max</span>()-A[:,<span class="number">1</span>]</span><br><span class="line">Z = X/np.linalg.norm(X,axis=<span class="number">0</span>)</span><br><span class="line">V = Z/<span class="number">2</span>  <span class="comment"># Equal weights: 1/2 for each coordinate.</span></span><br><span class="line">ideal,anti_ideal = V.<span class="built_in">max</span>(axis=<span class="number">0</span>),V.<span class="built_in">min</span>(axis=<span class="number">0</span>)</span><br><span class="line">dp = np.linalg.norm(V-ideal,axis=<span class="number">1</span>)</span><br><span class="line">dn = np.linalg.norm(V-anti_ideal,axis=<span class="number">1</span>)</span><br><span class="line">score = dn/(dp+dn)</span><br><span class="line">names = np.array([<span class="string">&#x27;A&#x27;</span>,<span class="string">&#x27;B&#x27;</span>,<span class="string">&#x27;C&#x27;</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Transformed values:&#x27;</span>,X,sep=<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Normalized values:&#x27;</span>,Z,sep=<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Scores:&#x27;</span>,score)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Ranking:&#x27;</span>,<span class="string">&#x27; &gt; &#x27;</span>.join(names[np.argsort(-score,kind=<span class="string">&#x27;stable&#x27;</span>)]))</span><br></pre></td></tr></table></figure>
+<p><strong>topsis_quick. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">A = [<span class="number">9</span>,<span class="number">10</span>;<span class="number">8</span>,<span class="number">7</span>;<span class="number">6</span>,<span class="number">3</span>];</span><br><span class="line">X = A; X(:,<span class="number">2</span>) = <span class="built_in">max</span>(A(:,<span class="number">2</span>))-A(:,<span class="number">2</span>);</span><br><span class="line">Z = X./<span class="built_in">sqrt</span>(sum(X.^<span class="number">2</span>,<span class="number">1</span>));</span><br><span class="line">V = Z/<span class="number">2</span>;</span><br><span class="line">ideal = <span class="built_in">max</span>(V,[],<span class="number">1</span>); antiIdeal = <span class="built_in">min</span>(V,[],<span class="number">1</span>);</span><br><span class="line">dp = <span class="built_in">sqrt</span>(sum((V-ideal).^<span class="number">2</span>,<span class="number">2</span>)); dn = <span class="built_in">sqrt</span>(sum((V-antiIdeal).^<span class="number">2</span>,<span class="number">2</span>));</span><br><span class="line">score = dn./(dp+dn);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Transformed values:&#x27;</span>); <span class="built_in">disp</span>(X);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Normalized values:&#x27;</span>); <span class="built_in">disp</span>(Z);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Scores:&#x27;</span>); <span class="built_in">disp</span>(score.&#x27;);</span><br><span class="line">[~,order] = <span class="built_in">sort</span>(score,<span class="string">&#x27;descend&#x27;</span>); names = &#123;<span class="string">&#x27;A&#x27;</span>,<span class="string">&#x27;B&#x27;</span>,<span class="string">&#x27;C&#x27;</span>&#125;;</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Ranking:&#x27;</span>); <span class="built_in">disp</span>(names(order));</span><br></pre></td></tr></table></figure>
+<p>Python的 <code>axis=0</code>沿方案方向逐列计算, 用于列范数与理想值;
+<code>axis=1</code>沿指标方向逐行汇总, 用于每个方案的距离.
+MATLAB对应维度1和2.
+<code>V-ideal</code>把同一个参照行与所有方案逐行相减,
+对应前面循环中反复使用同一组理想坐标.</p>
+<p>等权时所有坐标共同乘以1/2, 两个距离也共同乘以1/2, 贴近度不变.
+若用Z直接手算, 距离是表中距离的2倍,
+不能把Z尺度与V尺度的距离混在同一张结果表中.</p>
+<p><img src="/images/TOPSIS/TOPSIS-1.png" style="width:100%"></p>
+<p>图 17-2 两指标位置与当前排序</p>
+<p>左图保留原图的Z坐标, 图上距离为本章两指标V尺度距离的2倍.
+右图得分与表格一致. 图 17-1和本图使用的坐标尺度不同,
+坐标轴与图题已经分别说明.</p>
+<h2 id="加入目标值与理想区间-先把偏好说清楚">17.4 加入目标值与理想区间,
+先把偏好说清楚</h2>
+<h3 id="四类指标分别表达什么">17.4.1 四类指标分别表达什么</h3>
+<p>现在增加照度设定值与采样周期. 单位依次为万千瓦时, 小时, 勒克斯, 毫秒.
+目标值165和理想区间 <span class="math inline">\([90,100]\)</span>
+均为教学设定, 不是通用照明或控制标准.</p>
+<p>表 17-4 照明方案的四个原始指标.</p>
+<div class="line-block">方案 | 节电量 | 维护工时 | 照度设定值 | 采样周期
+|<br />
+: ---: | ---: | ---: | ---: | ---: |<br />
+A | 9 | 10 | 175 | 120 |<br />
+B | 8 | 7 | 164 | 80 |<br />
+C | 6 | 3 | 157 | 90 |</div>
+<p>四列依次为效益型, 成本型, 目标值型和区间型. 假设采样过密增加处理负担,
+过疏影响及时识别变化, 因而采用区间偏好. 实际项目是否需要这一指标,
+应由使用目标决定.</p>
+<p>对一列原值 <span class="math inline">\(a_i\)</span>,
+本章采用以下非负正向化规则:</p>
+<p>表 17-5 四类指标的正向化规则.</p>
+<div class="line-block">类型 | 正向化规则 | 应先说明的条件 |<br />
+: --- | : --- | : --- |<br />
+效益型 | <span class="math inline">\(x_i=a_i\)</span> | 原值非负,
+在适用范围内越大越好 |<br />
+成本型 | <span class="math inline">\(x_i=a_{\max}-a_i\)</span> |
+采用本组最大值减原值的路线 |<br />
+目标值型 | 按偏离目标值的距离折减 | 目标为 <span
+class="math inline">\(a^*\)</span>, 两侧等距给同样惩罚 |<br />
+区间型 | 区间内取1, 区间外按距离折减 | 理想区间为 <span
+class="math inline">\([\alpha,\beta]\)</span>, <span
+class="math inline">\(\alpha\leqslant\beta\)</span> |</div>
+<p>目标值型先算 <span class="math inline">\(g_i=|a_i-a^*|\)</span>, 再令
+<span class="math inline">\(M=\max_i g_i\)</span>. 当 <span
+class="math inline">\(M&gt;0\)</span> 时, 取 <span
+class="math inline">\(x_i=1-g_i/M\)</span>. 如果全部恰好等于目标, 即
+<span class="math inline">\(M=0\)</span>, 则统一取1. 本例偏差为10, 1, 8,
+最大偏差为10, 转换结果为0, 0.9, 0.2.</p>
+<p>区间型先求到理想区间的距离</p>
+<p><span class="math display">\[
+g_i=\begin{cases}
+\alpha-a_i,&amp;a_i&lt;\alpha,\\
+0,&amp;\alpha\leqslant a_i\leqslant\beta,\\
+a_i-\beta,&amp;a_i&gt;\beta.
+\end{cases}
+\]</span></p>
+<p>同样取 <span class="math inline">\(M=\max_i g_i\)</span>. 当 <span
+class="math inline">\(M&gt;0\)</span> 时, <span
+class="math inline">\(x_i=1-g_i/M\)</span>; 全部在区间内时, <span
+class="math inline">\(M=0\)</span>, 统一取1. 本例到 <span
+class="math inline">\([90,100]\)</span> 的距离为20, 10, 0, 得到0, 0.5,
+1. 落在区间端点也算区间内.</p>
+<h3 id="逐列核对转换的中间量">17.4.2 逐列核对转换的中间量</h3>
+<p>下面的短程序只处理这组既定数据, 两个尺度10和20均大于0.
+通用函数对全部达到目标或全部在区间内的情形另有分支,
+不向分母添加任意小量.</p>
+<p><strong>code/four_transforms_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">A = np.array([[<span class="number">9</span>, <span class="number">10</span>, <span class="number">175</span>, <span class="number">120</span>], [<span class="number">8</span>, <span class="number">7</span>, <span class="number">164</span>, <span class="number">80</span>],</span><br><span class="line">              [<span class="number">6</span>, <span class="number">3</span>, <span class="number">157</span>, <span class="number">90</span>]], dtype=<span class="built_in">float</span>)</span><br><span class="line">X = np.zeros_like(A)</span><br><span class="line">X[:, <span class="number">0</span>] = A[:, <span class="number">0</span>]</span><br><span class="line">X[:, <span class="number">1</span>] = A[:, <span class="number">1</span>].<span class="built_in">max</span>() - A[:, <span class="number">1</span>]</span><br><span class="line">target_gap = np.<span class="built_in">abs</span>(A[:, <span class="number">2</span>] - <span class="number">165</span>)</span><br><span class="line">target_scale = target_gap.<span class="built_in">max</span>()</span><br><span class="line">X[:, <span class="number">2</span>] = <span class="number">1</span> - target_gap / target_scale</span><br><span class="line">outside = np.maximum(np.maximum(<span class="number">90</span> - A[:, <span class="number">3</span>], A[:, <span class="number">3</span>] - <span class="number">100</span>), <span class="number">0</span>)</span><br><span class="line">interval_scale = outside.<span class="built_in">max</span>()</span><br><span class="line">X[:, <span class="number">3</span>] = <span class="number">1</span> - outside / interval_scale</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Target deviations:&#x27;</span>, target_gap)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Distances outside interval:&#x27;</span>, outside)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Transformed X:&#x27;</span>, X, sep=<span class="string">&#x27;\n&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>code/four_transforms_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">A = [<span class="number">9</span>,<span class="number">10</span>,<span class="number">175</span>,<span class="number">120</span>;<span class="number">8</span>,<span class="number">7</span>,<span class="number">164</span>,<span class="number">80</span>;<span class="number">6</span>,<span class="number">3</span>,<span class="number">157</span>,<span class="number">90</span>];</span><br><span class="line">X = <span class="built_in">zeros</span>(<span class="built_in">size</span>(A));</span><br><span class="line">X(:,<span class="number">1</span>) = A(:,<span class="number">1</span>);</span><br><span class="line">X(:,<span class="number">2</span>) = <span class="built_in">max</span>(A(:,<span class="number">2</span>))-A(:,<span class="number">2</span>);</span><br><span class="line">targetGap = <span class="built_in">abs</span>(A(:,<span class="number">3</span>)<span class="number">-165</span>); targetScale = <span class="built_in">max</span>(targetGap);</span><br><span class="line">X(:,<span class="number">3</span>) = <span class="number">1</span>-targetGap/targetScale;</span><br><span class="line">outside = <span class="built_in">max</span>(<span class="built_in">max</span>(<span class="number">90</span>-A(:,<span class="number">4</span>),A(:,<span class="number">4</span>)<span class="number">-100</span>),<span class="number">0</span>);</span><br><span class="line">intervalScale = <span class="built_in">max</span>(outside);</span><br><span class="line">X(:,<span class="number">4</span>) = <span class="number">1</span>-outside/intervalScale;</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Target deviations:&#x27;</span>); <span class="built_in">disp</span>(targetGap.&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Distances outside interval:&#x27;</span>); <span class="built_in">disp</span>(outside.&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Transformed X:&#x27;</span>); <span class="built_in">disp</span>(X);</span><br></pre></td></tr></table></figure>
+<p>得到</p>
+<p><span class="math display">\[
+X=\begin{pmatrix}9&amp;0&amp;0&amp;0\\8&amp;3&amp;0.9&amp;0.5\\6&amp;7&amp;0.2&amp;1\end{pmatrix}.
+\]</span></p>
+<p>第三和第四列已经成为无量纲满意度. 175转为0不表示照度为0,
+只表示在本次目标与样本尺度下偏差最大. 若目标两侧风险不对称,
+或存在固定工程容差, 应另设有依据的评价函数,
+不能机械套用本组最大偏差.</p>
+<p><img src="/images/TOPSIS/TOPSIS-2.png" style="width:100%"></p>
+<p>图 17-3 四类指标在当前样本尺度下的转换</p>
+<p>曲线使用本次确定的目标, 区间与最大偏差, 并标出A, B, C.
+新增方案若改变最大值或最大偏差, 这些相对转换也可能改变.
+所以正向化本身就是模型设定的一部分.</p>
+<h2 id="用一般公式串起方向-尺度-权重与距离">17.5 用一般公式串起方向,
+尺度, 权重与距离</h2>
+<h3 id="六个量依次承担什么任务">17.5.1 六个量依次承担什么任务</h3>
+<p>设有n个方案, m项指标. 原始矩阵为 <span
+class="math inline">\(A=(a_{ij})_{n\times m}\)</span>, 正向化矩阵为
+<span class="math inline">\(X=(x_{ij})_{n\times m}\)</span>.
+在可用的非零列上定义</p>
+<p><span class="math display">\[
+L_j=\sqrt{\sum\limits_{k=1}^{n}x_{kj}^2},\qquad
+z_{ij}=\frac{x_{ij}}{L_j}.
+\]</span></p>
+<p>给定非负权重 <span class="math inline">\(\boldsymbol
+w=(w_1,\ldots,w_m)^{\mathsf T}\)</span>, 且 <span
+class="math inline">\(\sum\limits_{j=1}^{m}w_j=1\)</span>,
+按列形成加权坐标</p>
+<p><span class="math display">\[
+v_{ij}=w_jz_{ij}.
+\]</span></p>
+<p>由于各指标均已转成越大越好, 两个理想值为</p>
+<p><span class="math display">\[
+v_j^+=\max_i v_{ij},\qquad v_j^-=\min_i v_{ij}.
+\]</span></p>
+<p>两个理想向量分别为 <span class="math inline">\(\boldsymbol
+v^+=(v_1^+,\ldots,v_m^+)^{\mathsf T}\)</span> 与 <span
+class="math inline">\(\boldsymbol v^-=(v_1^-,\ldots,v_m^-)^{\mathsf
+T}\)</span>. 对每行计算</p>
+<p><span class="math display">\[
+D_i^+=\sqrt{\sum\limits_{j=1}^{m}(v_{ij}-v_j^+)^2},\qquad
+D_i^-=\sqrt{\sum\limits_{j=1}^{m}(v_{ij}-v_j^-)^2},
+\]</span></p>
+<p><span class="math display">\[
+S_i=\frac{D_i^-}{D_i^++D_i^-},\qquad D_i^++D_i^-&gt;0.
+\]</span></p>
+<p>表 17-6 TOPSIS 中间量与程序变量.</p>
+<div class="line-block">记号 | 任务 | 对应程序变量 |<br />
+: ---: | : --- | : --- |<br />
+A | 记录原始数据与单位 | <code>A</code> |<br />
+X | 统一评价方向 | <code>X</code> |<br />
+Z | 按列标准化 | <code>Z</code> |<br />
+V | 形成加权坐标 | <code>V</code> |<br />
+<span class="math inline">\(D_i^+,D_i^-\)</span> | 量出到两点的距离 |
+<code>dp, dn</code>或 <code>d_plus, d_minus</code> |<br />
+<span class="math inline">\(S_i\)</span> | 综合两个距离进行比较 |
+<code>score</code>或 <code>scores</code> |</div>
+<p>两个距离非负, 所以在分母大于0时, <span
+class="math inline">\(0\leqslant S_i\leqslant1\)</span>.
+得分1表示在有作用的加权坐标上达到正理想点, 得分0表示达到负理想点.
+若某项权重为0, 该项被忽略, 不能据此判断它的原始表现.</p>
+<p>向量标准化对整列乘以同一正数不变, 因为分子和列长度同乘该数.
+因而正比例单位换算不会改变结果, 目标和区间端点也必须同步换单位.
+整列加常数一般会改变标准化结果. 标准化也不保证各列极差或方差相同,
+不会自动消除异常值与重复指标.</p>
+<h3 id="坐标乘w-距离平方中就出现w的平方">17.5.2 坐标乘w,
+距离平方中就出现w的平方</h3>
+<p>本章与第 16 章采用同一约定:</p>
+<p><span class="math display">\[
+(D_i^\pm)^2=\sum\limits_{j=1}^{m}w_j^2(z_{ij}-z_j^\pm)^2.
+\]</span></p>
+<p>它来自先算 <span class="math inline">\(v_{ij}=w_jz_{ij}\)</span>
+再求欧氏距离. 如果另一种程序直接在平方差前乘 <span
+class="math inline">\(w_j\)</span>, 那么等价于坐标先乘 <span
+class="math inline">\(\sqrt{w_j}\)</span>, 形成的是另一种距离约定.</p>
+<p>下面固定同一X, Z与非等权向量 <span
+class="math inline">\((0.2,0.2,0.4,0.2)^{\mathsf T}\)</span>,
+只更换这一步, 查看结果.</p>
+<p><strong>code/weight_conventions_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">X = np.array([[<span class="number">9</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>], [<span class="number">8</span>, <span class="number">3</span>, <span class="number">0.9</span>, <span class="number">0.5</span>], [<span class="number">6</span>, <span class="number">7</span>, <span class="number">0.2</span>, <span class="number">1</span>]])</span><br><span class="line">Z = X / np.linalg.norm(X, axis=<span class="number">0</span>)</span><br><span class="line">w = np.array([<span class="number">0.2</span>, <span class="number">0.2</span>, <span class="number">0.4</span>, <span class="number">0.2</span>])</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> name, factors <span class="keyword">in</span> [(<span class="string">&#x27;Coordinates times w&#x27;</span>, w),</span><br><span class="line">                      (<span class="string">&#x27;Coordinates times sqrt(w)&#x27;</span>, np.sqrt(w))]:</span><br><span class="line">    V = Z * factors</span><br><span class="line">    dp = np.linalg.norm(V - V.<span class="built_in">max</span>(axis=<span class="number">0</span>), axis=<span class="number">1</span>)</span><br><span class="line">    dn = np.linalg.norm(V - V.<span class="built_in">min</span>(axis=<span class="number">0</span>), axis=<span class="number">1</span>)</span><br><span class="line">    scores = dn / (dp + dn)</span><br><span class="line">    records.append(<span class="built_in">dict</span>(name=name, V=V, dp=dp, dn=dn, scores=scores))</span><br><span class="line">    <span class="built_in">print</span>(name, scores)</span><br></pre></td></tr></table></figure>
+<p><strong>code/weight_conventions_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">X = [<span class="number">9</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>;<span class="number">8</span>,<span class="number">3</span>,<span class="number">0.9</span>,<span class="number">0.5</span>;<span class="number">6</span>,<span class="number">7</span>,<span class="number">0.2</span>,<span class="number">1</span>];</span><br><span class="line">Z = X./<span class="built_in">sqrt</span>(sum(X.^<span class="number">2</span>,<span class="number">1</span>)); w = [<span class="number">0.2</span>,<span class="number">0.2</span>,<span class="number">0.4</span>,<span class="number">0.2</span>];</span><br><span class="line">factors = [w;<span class="built_in">sqrt</span>(w)]; records = cell(<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">    V = Z.*factors(k,:);</span><br><span class="line">    dp = <span class="built_in">sqrt</span>(sum((V-<span class="built_in">max</span>(V,[],<span class="number">1</span>)).^<span class="number">2</span>,<span class="number">2</span>));</span><br><span class="line">    dn = <span class="built_in">sqrt</span>(sum((V-<span class="built_in">min</span>(V,[],<span class="number">1</span>)).^<span class="number">2</span>,<span class="number">2</span>));</span><br><span class="line">    scores = dn./(dp+dn);</span><br><span class="line">    records&#123;k&#125; = struct(<span class="string">&#x27;V&#x27;</span>,V,<span class="string">&#x27;dp&#x27;</span>,dp,<span class="string">&#x27;dn&#x27;</span>,dn,<span class="string">&#x27;scores&#x27;</span>,scores);</span><br><span class="line">    fprintf(<span class="string">&#x27;Convention %d, scores: &#x27;</span>,k); <span class="built_in">disp</span>(scores.&#x27;);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>坐标乘w时, B约为0.746830; 坐标乘 <span class="math inline">\(\sqrt
+w\)</span> 时, B约为0.685318. 本例第一名相同, 分数已经不同,
+一般不能保证排序相同. 等权时二者只差一个共同坐标因子, 得分恰好相同,
+所以不能只用等权案例检查两套程序是否实现同一种加权公式.</p>
+<h2 id="回到四指标案例-查看中间量-再解释排序">17.6 回到四指标案例:
+查看中间量, 再解释排序</h2>
+<h3 id="一次调用完整函数">17.6.1 一次调用完整函数</h3>
+<p>四列X的长度依次为 <span
+class="math inline">\(\sqrt{181},\sqrt{58},\sqrt{0.85},\sqrt{1.25}\)</span>.
+例如B的第三列为 <span
+class="math inline">\(0.9/\sqrt{0.85}\approx0.976187\)</span>.
+全部标准化结果如下:</p>
+<p>表 17-7 四指标的标准化矩阵.</p>
+<div class="line-block">方案 | <span
+class="math inline">\(z_{i1}\)</span> | <span
+class="math inline">\(z_{i2}\)</span> | <span
+class="math inline">\(z_{i3}\)</span> | <span
+class="math inline">\(z_{i4}\)</span> |<br />
+: ---: | ---: | ---: | ---: | ---: |<br />
+A | 0.668965 | 0.000000 | 0.000000 | 0.000000 |<br />
+B | 0.594635 | 0.393919 | 0.976187 | 0.447214 |<br />
+C | 0.445976 | 0.919145 | 0.216930 | 0.894427 |</div>
+<p>原配套 <code>positivize</code>函数一次处理一列,
+<code>topsis</code>函数串起全部步骤. 把它们与下列案例脚本放在同一目录.
+完整的Python和MATLAB函数, 输入检查与数值缩放说明保存在<a
+href="../reading/17/TOPSISFurtherReading.md">补充阅读F.2与F.5</a>,
+已有源文件也全部保留.</p>
+<p>本例类型编号1, 2, 3, 4分别对应前节四类规则, 参数顺序与指标列顺序一致.
+不需要参数的位置使用Python的 <code>None</code> 或MATLAB的空数组.
+不传权重时函数默认等权.</p>
+<p><strong>topsis_demo. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> topsis <span class="keyword">import</span> topsis</span><br><span class="line"></span><br><span class="line">A = np.array([[<span class="number">9</span>,<span class="number">10</span>,<span class="number">175</span>,<span class="number">120</span>],[<span class="number">8</span>,<span class="number">7</span>,<span class="number">164</span>,<span class="number">80</span>],[<span class="number">6</span>,<span class="number">3</span>,<span class="number">157</span>,<span class="number">90</span>]], dtype=<span class="built_in">float</span>)</span><br><span class="line">r = topsis(A,[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>],[<span class="literal">None</span>,<span class="literal">None</span>,<span class="number">165</span>,(<span class="number">90</span>,<span class="number">100</span>)])</span><br><span class="line">names = np.array([<span class="string">&#x27;A&#x27;</span>,<span class="string">&#x27;B&#x27;</span>,<span class="string">&#x27;C&#x27;</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Transformed values:&#x27;</span>,r[<span class="string">&#x27;X&#x27;</span>],sep=<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Normalized values:&#x27;</span>,r[<span class="string">&#x27;Z&#x27;</span>],sep=<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Weights:&#x27;</span>,r[<span class="string">&#x27;weights&#x27;</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Distances +, -:&#x27;</span>,r[<span class="string">&#x27;d_plus&#x27;</span>],r[<span class="string">&#x27;d_minus&#x27;</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Scores:&#x27;</span>,r[<span class="string">&#x27;score&#x27;</span>])</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Ranking:&#x27;</span>,<span class="string">&#x27; &gt; &#x27;</span>.join(names[r[<span class="string">&#x27;order&#x27;</span>]]))</span><br></pre></td></tr></table></figure>
+<p><strong>topsis_demo. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">A = [<span class="number">9</span>,<span class="number">10</span>,<span class="number">175</span>,<span class="number">120</span>;<span class="number">8</span>,<span class="number">7</span>,<span class="number">164</span>,<span class="number">80</span>;<span class="number">6</span>,<span class="number">3</span>,<span class="number">157</span>,<span class="number">90</span>];</span><br><span class="line">r = topsis(A,[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>],&#123;[],[],<span class="number">165</span>,[<span class="number">90</span>,<span class="number">100</span>]&#125;);</span><br><span class="line">names = &#123;<span class="string">&#x27;A&#x27;</span>,<span class="string">&#x27;B&#x27;</span>,<span class="string">&#x27;C&#x27;</span>&#125;;</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Transformed values:&#x27;</span>); <span class="built_in">disp</span>(r.X);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Normalized values:&#x27;</span>); <span class="built_in">disp</span>(r.Z);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Weights:&#x27;</span>); <span class="built_in">disp</span>(r.weights);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Distances +, -:&#x27;</span>); <span class="built_in">disp</span>([r.d_plus,r.d_minus]);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Scores:&#x27;</span>); <span class="built_in">disp</span>(r.score.&#x27;);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Ranking:&#x27;</span>); <span class="built_in">disp</span>(names(r.order));</span><br></pre></td></tr></table></figure>
+<p>函数返回原值, 中间矩阵, 权重, 距离与排序, 可以沿着数学步骤核对,
+无需为了查看X改写算法. 自定义权重可用非负相对数值, 程序会按比例归一化,
+全0权重则报错.</p>
+<h3 id="这次比较的是四个指标">17.6.2 这次比较的是四个指标</h3>
+<p>以下距离统一在 <span class="math inline">\(V=Z/4\)</span> 中计算:</p>
+<p>表 17-8 四指标等权距离与排序.</p>
+<div class="line-block">方案 | <span
+class="math inline">\(D_i^+\)</span> | <span
+class="math inline">\(D_i^-\)</span> | <span
+class="math inline">\(S_i\)</span> | 名次 |<br />
+: ---: | ---: | ---: | ---: | ---: |<br />
+A | 0.402940 | 0.055747 | 0.121536 | 3 |<br />
+B | 0.173455 | 0.288337 | 0.624387 | 1 |<br />
+C | 0.197831 | 0.325181 | 0.621747 | 2 |</div>
+<p>排序成为 <span class="math inline">\(B&gt;C&gt;A\)</span>.
+B在照度目标满意度上更好, C在维护工时与采样区间满意度上更好.
+新增两项评价因素改变了问题, 与两指标的 <span
+class="math inline">\(C&gt;B&gt;A\)</span> 并不矛盾.
+节电量也不是只由照度设定值决定, 各方案还可能采用不同设备和控制策略.</p>
+<p>B比C只高约0.002640. 贴近度不是获选概率,
+乘以100也不会自动成为百分制成绩. 再把得分除以总和只是另加的展示处理,
+不是TOPSIS必要步骤. 是否建议优先采用B,
+还需要检查参数与数据变化的影响.</p>
+<h2 id="接上第-16-章-同一批数据改用熵权">17.7 接上第 16 章:
+同一批数据改用熵权</h2>
+<h3 id="熵权负责给权重-topsis负责综合排序">17.7.1 熵权负责给权重,
+TOPSIS负责综合排序</h3>
+<p>继续使用相同X与Z. 按第 16 章的列比例, 归一化熵和差异系数计算,
+得到</p>
+<p><span class="math display">\[
+\boldsymbol w_{\mathrm{entropy}}\approx
+(0.008565,0.307162,0.393265,0.291008)^{\mathsf T}.
+\]</span></p>
+<p>这里保持指标方向, 目标, 区间, 正向化规则,
+标准化与坐标加权公式全部相同, 只把等权换成熵权.
+这样才能把两组输出的差别归于这次权重更换.</p>
+<p>下面从这组非退化X直接复算熵权, 再分别形成加权坐标.
+0比例的熵项按连续延拓取0, 不能计算 <code>log(0)</code>; 本例没有常数列,
+差异系数之和大于0. 常数列与全部无差异时的完整处理见第 16 章,
+此短程序不替代通用输入检查.</p>
+<p><strong>code/entropy_bridge_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">X = np.array([[<span class="number">9</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>], [<span class="number">8</span>, <span class="number">3</span>, <span class="number">0.9</span>, <span class="number">0.5</span>], [<span class="number">6</span>, <span class="number">7</span>, <span class="number">0.2</span>, <span class="number">1</span>]])</span><br><span class="line">P = X / X.<span class="built_in">sum</span>(axis=<span class="number">0</span>)</span><br><span class="line">terms = np.zeros_like(P)</span><br><span class="line">positive = P &gt; <span class="number">0</span></span><br><span class="line">terms[positive] = -P[positive] * np.log(P[positive])</span><br><span class="line">E = terms.<span class="built_in">sum</span>(axis=<span class="number">0</span>) / np.log(X.shape[<span class="number">0</span>])</span><br><span class="line">d = <span class="number">1</span> - E</span><br><span class="line">entropy_w = d / d.<span class="built_in">sum</span>()</span><br><span class="line">Z = X / np.linalg.norm(X, axis=<span class="number">0</span>)</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> name, w <span class="keyword">in</span> [(<span class="string">&#x27;Equal&#x27;</span>, np.ones(<span class="number">4</span>) / <span class="number">4</span>), (<span class="string">&#x27;Entropy&#x27;</span>, entropy_w)]:</span><br><span class="line">    V = Z * w</span><br><span class="line">    dp = np.linalg.norm(V - V.<span class="built_in">max</span>(axis=<span class="number">0</span>), axis=<span class="number">1</span>)</span><br><span class="line">    dn = np.linalg.norm(V - V.<span class="built_in">min</span>(axis=<span class="number">0</span>), axis=<span class="number">1</span>)</span><br><span class="line">    scores = dn / (dp + dn)</span><br><span class="line">    records.append(<span class="built_in">dict</span>(name=name, w=w, V=V, dp=dp, dn=dn, scores=scores))</span><br><span class="line">    <span class="built_in">print</span>(name, <span class="string">&#x27;weights:&#x27;</span>, w, <span class="string">&#x27;scores:&#x27;</span>, scores)</span><br></pre></td></tr></table></figure>
+<p><strong>code/entropy_bridge_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">X = [<span class="number">9</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>;<span class="number">8</span>,<span class="number">3</span>,<span class="number">0.9</span>,<span class="number">0.5</span>;<span class="number">6</span>,<span class="number">7</span>,<span class="number">0.2</span>,<span class="number">1</span>];</span><br><span class="line">P = X./sum(X,<span class="number">1</span>); terms = <span class="built_in">zeros</span>(<span class="built_in">size</span>(P)); positive = P&gt;<span class="number">0</span>;</span><br><span class="line">terms(positive) = -P(positive).*<span class="built_in">log</span>(P(positive));</span><br><span class="line">E = sum(terms,<span class="number">1</span>)/<span class="built_in">log</span>(<span class="built_in">size</span>(X,<span class="number">1</span>)); d = <span class="number">1</span>-E;</span><br><span class="line">entropyW = d/sum(d); Z = X./<span class="built_in">sqrt</span>(sum(X.^<span class="number">2</span>,<span class="number">1</span>));</span><br><span class="line">weights = [<span class="built_in">ones</span>(<span class="number">1</span>,<span class="number">4</span>)/<span class="number">4</span>;entropyW]; records = cell(<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">    w = weights(k,:); V = Z.*w;</span><br><span class="line">    dp = <span class="built_in">sqrt</span>(sum((V-<span class="built_in">max</span>(V,[],<span class="number">1</span>)).^<span class="number">2</span>,<span class="number">2</span>));</span><br><span class="line">    dn = <span class="built_in">sqrt</span>(sum((V-<span class="built_in">min</span>(V,[],<span class="number">1</span>)).^<span class="number">2</span>,<span class="number">2</span>));</span><br><span class="line">    scores = dn./(dp+dn);</span><br><span class="line">    records&#123;k&#125; = struct(<span class="string">&#x27;w&#x27;</span>,w,<span class="string">&#x27;V&#x27;</span>,V,<span class="string">&#x27;dp&#x27;</span>,dp,<span class="string">&#x27;dn&#x27;</span>,dn,<span class="string">&#x27;scores&#x27;</span>,scores);</span><br><span class="line">    fprintf(<span class="string">&#x27;Method %d, weights: &#x27;</span>,k); <span class="built_in">disp</span>(w);</span><br><span class="line">    <span class="built_in">disp</span>(<span class="string">&#x27;Scores:&#x27;</span>); <span class="built_in">disp</span>(scores.&#x27;);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>表 17-9 等权与熵权的同路线比较.</p>
+<div class="line-block">权重来源 | A贴近度 | B贴近度 | C贴近度 | 排序
+|<br />
+: --- | ---: | ---: | ---: | : ---: |<br />
+等权 | 0.121536 | 0.624387 | 0.621747 | B&gt;C&gt;A |<br />
+熵权 | 0.003505 | 0.671149 | 0.568478 | B&gt;C&gt;A |</div>
+<p>当前两种权重下第一名相同, 不说明所有合理权重都支持同一个结论.
+节电量熵权小, 只说明这列在所选数据与处理方式下的差异较小,
+不代表节电在实际项目中不重要.</p>
+<p>AHP权重同样可以传入TOPSIS, 但必须来自这里相同含义和顺序的四项指标. 第
+15 章另一案例的指标体系不同, 不能因为都有四个权重就直接搬过来.
+如果要组合主观权重与熵权, 还需解释组合规则与参数依据.</p>
+<h2 id="常数列-零权重与并列-分别怎样处理">17.8 常数列, 零权重与并列,
+分别怎样处理</h2>
+<h3 id="一列不能区分-不等于整个问题不能区分">17.8.1 一列不能区分,
+不等于整个问题不能区分</h3>
+<p>全零列没有可除的非零范数. 非零常数列虽然能标准化, 各方案坐标却相同,
+到两个理想值的差都为0, 对距离不作贡献.
+本章通用函数把常数列标准化坐标置0, 作为统一处理约定.
+不要把这一约定误读成非零常数列数学上不能除以范数.</p>
+<p>零权重列也不贡献距离. 程序中的
+<code>active</code>同时要求该列有差异且权重大于0, 只对这些列做标准化.
+如果仍有其他有效列, 可以继续计算.</p>
+<p>下面第一组X有一列变化, 两列常数. B与C的有效坐标完全相同, 所以并列.
+第二组X的所有列都相同, 则整个问题没有可用差异.</p>
+<p><strong>code/constant_tie_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">cases = [np.array([[<span class="number">1</span>, <span class="number">5</span>, <span class="number">0</span>], [<span class="number">2</span>, <span class="number">5</span>, <span class="number">0</span>], [<span class="number">2</span>, <span class="number">5</span>, <span class="number">0</span>]], dtype=<span class="built_in">float</span>),</span><br><span class="line">         np.array([[<span class="number">2</span>, <span class="number">5</span>, <span class="number">0</span>], [<span class="number">2</span>, <span class="number">5</span>, <span class="number">0</span>], [<span class="number">2</span>, <span class="number">5</span>, <span class="number">0</span>]], dtype=<span class="built_in">float</span>)]</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> X <span class="keyword">in</span> cases:</span><br><span class="line">    w = np.ones(<span class="number">3</span>) / <span class="number">3</span></span><br><span class="line">    active = (np.ptp(X, axis=<span class="number">0</span>) &gt; <span class="number">0</span>) &amp; (w &gt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> active.<span class="built_in">any</span>():</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;No weighted criterion distinguishes the alternatives.&#x27;</span>)</span><br><span class="line">        records.append(<span class="built_in">dict</span>(active=active, scores=<span class="literal">None</span>))</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    Z = np.zeros_like(X)</span><br><span class="line">    Z[:, active] = X[:, active] / np.linalg.norm(X[:, active], axis=<span class="number">0</span>)</span><br><span class="line">    V = Z * w</span><br><span class="line">    dp = np.linalg.norm(V - V.<span class="built_in">max</span>(axis=<span class="number">0</span>), axis=<span class="number">1</span>)</span><br><span class="line">    dn = np.linalg.norm(V - V.<span class="built_in">min</span>(axis=<span class="number">0</span>), axis=<span class="number">1</span>)</span><br><span class="line">    scores = dn / (dp + dn)</span><br><span class="line">    records.append(<span class="built_in">dict</span>(active=active, Z=Z, scores=scores))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;Active columns:&#x27;</span>, active)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;Scores A, B, C:&#x27;</span>, scores, <span class="string">&#x27;; B and C tie.&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>code/constant_tie_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">cases = &#123;[<span class="number">1</span>,<span class="number">5</span>,<span class="number">0</span>;<span class="number">2</span>,<span class="number">5</span>,<span class="number">0</span>;<span class="number">2</span>,<span class="number">5</span>,<span class="number">0</span>],[<span class="number">2</span>,<span class="number">5</span>,<span class="number">0</span>;<span class="number">2</span>,<span class="number">5</span>,<span class="number">0</span>;<span class="number">2</span>,<span class="number">5</span>,<span class="number">0</span>]&#125;;</span><br><span class="line">records = cell(<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">    X = cases&#123;k&#125;; w = <span class="built_in">ones</span>(<span class="number">1</span>,<span class="number">3</span>)/<span class="number">3</span>;</span><br><span class="line">    active = (<span class="built_in">max</span>(X,[],<span class="number">1</span>)&gt;<span class="built_in">min</span>(X,[],<span class="number">1</span>)) &amp; (w&gt;<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> ~any(active)</span><br><span class="line">        <span class="built_in">disp</span>(<span class="string">&#x27;No weighted criterion distinguishes the alternatives.&#x27;</span>);</span><br><span class="line">        records&#123;k&#125; = struct(<span class="string">&#x27;active&#x27;</span>,active,<span class="string">&#x27;scores&#x27;</span>,[]);</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    Z = <span class="built_in">zeros</span>(<span class="built_in">size</span>(X));</span><br><span class="line">    Z(:,active) = X(:,active)./<span class="built_in">sqrt</span>(sum(X(:,active).^<span class="number">2</span>,<span class="number">1</span>));</span><br><span class="line">    V = Z.*w;</span><br><span class="line">    dp = <span class="built_in">sqrt</span>(sum((V-<span class="built_in">max</span>(V,[],<span class="number">1</span>)).^<span class="number">2</span>,<span class="number">2</span>));</span><br><span class="line">    dn = <span class="built_in">sqrt</span>(sum((V-<span class="built_in">min</span>(V,[],<span class="number">1</span>)).^<span class="number">2</span>,<span class="number">2</span>));</span><br><span class="line">    scores = dn./(dp+dn);</span><br><span class="line">    records&#123;k&#125; = struct(<span class="string">&#x27;active&#x27;</span>,active,<span class="string">&#x27;Z&#x27;</span>,Z,<span class="string">&#x27;scores&#x27;</span>,scores);</span><br><span class="line">    <span class="built_in">disp</span>(<span class="string">&#x27;Active columns:&#x27;</span>); <span class="built_in">disp</span>(active);</span><br><span class="line">    <span class="built_in">disp</span>(<span class="string">&#x27;Scores A, B, C; B and C tie:&#x27;</span>); <span class="built_in">disp</span>(scores.&#x27;);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>第一组贴近度为 <span class="math inline">\((0,1,1)^{\mathsf
+T}\)</span>, 应报告 <span class="math inline">\(B=C&gt;A\)</span>.
+得分1只是相对于当前有效坐标达到正理想点, 不是宣布现实方案完美.
+程序即使按输入顺序显示B再显示C, 也不能写成B严格优于C.</p>
+<p>第二组的两个理想点重合, 两个距离都为0. 此时贴近度分母为0,
+应报告当前模型无法区分. 不向分母加任意小量,
+不把0/0指定为0.5后给出名次.</p>
+<h3 id="完整函数比短程序多检查什么">17.8.2
+完整函数比短程序多检查什么</h3>
+<p>通用 <code>topsis</code>检查矩阵为非空二维有限实数数组, 至少两个方案,
+类型与参数数量等于列数, 权重有限非负且不能全0. 效益型含负数时,
+应先说明合适的转换, 不随意平移. 目标或区间参数缺失时明确报错.</p>
+<p>有效列先除以列最大值, 再除以缩放后的向量长度, 与直接按列标准化相同,
+但可以减少大数平方溢出. 权重同样先按最大值缩放再求和归一化.
+这些是保留比例的数值处理, 不改变评价公式;
+极端尺度和极小权重仍可能受到双精度限制.</p>
+<p>删除常数列后, 若其余权重共同乘以一个正数, 两个距离也共同乘以该数,
+贴近度不变. 删除一个有区分度的指标则一般会改变距离结构,
+不能套用这个结论.</p>
+<h2 id="在给出第一名前-检查结果会怎样变化">17.9 在给出第一名前,
+检查结果会怎样变化</h2>
+<h3 id="先规定一条权重调整路径">17.9.1 先规定一条权重调整路径</h3>
+<p>把照度目标权重记为t, 其余三项均分剩余权重:</p>
+<p><span class="math display">\[
+\boldsymbol
+w(t)=\left(\frac{1-t}{3},\frac{1-t}{3},t,\frac{1-t}{3}\right)^{\mathsf
+T},
+\qquad0\leqslant t\leqslant1.
+\]</span></p>
+<p>此路径上 <span class="math inline">\(t=0.25\)</span> 对应等权.
+下列程序只对五个已声明的t逐次重复TOPSIS, X与Z保持不变,
+并额外打印B减C的得分差. 正数表示B领先, 负数表示C领先.</p>
+<p><strong>code/weight_path_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">X = np.array([[<span class="number">9</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>], [<span class="number">8</span>, <span class="number">3</span>, <span class="number">0.9</span>, <span class="number">0.5</span>], [<span class="number">6</span>, <span class="number">7</span>, <span class="number">0.2</span>, <span class="number">1</span>]])</span><br><span class="line">Z = X / np.linalg.norm(X, axis=<span class="number">0</span>)</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> [<span class="number">0.20</span>, <span class="number">0.24</span>, <span class="number">0.25</span>, <span class="number">0.26</span>, <span class="number">0.30</span>]:</span><br><span class="line">    w = np.array([(<span class="number">1</span> - t) / <span class="number">3</span>, (<span class="number">1</span> - t) / <span class="number">3</span>, t, (<span class="number">1</span> - t) / <span class="number">3</span>])</span><br><span class="line">    V = Z * w</span><br><span class="line">    dp = np.linalg.norm(V - V.<span class="built_in">max</span>(axis=<span class="number">0</span>), axis=<span class="number">1</span>)</span><br><span class="line">    dn = np.linalg.norm(V - V.<span class="built_in">min</span>(axis=<span class="number">0</span>), axis=<span class="number">1</span>)</span><br><span class="line">    scores = dn / (dp + dn)</span><br><span class="line">    records.append(<span class="built_in">dict</span>(t=t, w=w, scores=scores))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;t, scores, B-C:&#x27;</span>, t, scores, scores[<span class="number">1</span>] - scores[<span class="number">2</span>])</span><br></pre></td></tr></table></figure>
+<p><strong>code/weight_path_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">X = [<span class="number">9</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>;<span class="number">8</span>,<span class="number">3</span>,<span class="number">0.9</span>,<span class="number">0.5</span>;<span class="number">6</span>,<span class="number">7</span>,<span class="number">0.2</span>,<span class="number">1</span>];</span><br><span class="line">Z = X./<span class="built_in">sqrt</span>(sum(X.^<span class="number">2</span>,<span class="number">1</span>)); grid = [<span class="number">0.20</span>,<span class="number">0.24</span>,<span class="number">0.25</span>,<span class="number">0.26</span>,<span class="number">0.30</span>];</span><br><span class="line">records = cell(<span class="number">1</span>,<span class="built_in">numel</span>(grid));</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">numel</span>(grid)</span><br><span class="line">    t = grid(k); w = [(<span class="number">1</span>-t)/<span class="number">3</span>,(<span class="number">1</span>-t)/<span class="number">3</span>,t,(<span class="number">1</span>-t)/<span class="number">3</span>];</span><br><span class="line">    V = Z.*w;</span><br><span class="line">    dp = <span class="built_in">sqrt</span>(sum((V-<span class="built_in">max</span>(V,[],<span class="number">1</span>)).^<span class="number">2</span>,<span class="number">2</span>));</span><br><span class="line">    dn = <span class="built_in">sqrt</span>(sum((V-<span class="built_in">min</span>(V,[],<span class="number">1</span>)).^<span class="number">2</span>,<span class="number">2</span>)); scores = dn./(dp+dn);</span><br><span class="line">    records&#123;k&#125; = struct(<span class="string">&#x27;t&#x27;</span>,t,<span class="string">&#x27;w&#x27;</span>,w,<span class="string">&#x27;scores&#x27;</span>,scores);</span><br><span class="line">    fprintf(<span class="string">&#x27;t %.2f, scores and B-C: &#x27;</span>,t);</span><br><span class="line">    <span class="built_in">disp</span>([scores.&#x27;,scores(<span class="number">2</span>)-scores(<span class="number">3</span>)]);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>表 17-10 照度权重路径上的领先变化.</p>
+<div class="line-block">t | B贴近度 | C贴近度 | B-C | 第一名 |<br />
+---: | ---: | ---: | ---: | : ---: |<br />
+0.20 | 0.579372 | 0.678866 | -0.099494 | C |<br />
+0.24 | 0.615403 | 0.632997 | -0.017594 | C |<br />
+0.25 | 0.624387 | 0.621747 | 0.002640 | B |<br />
+0.26 | 0.633318 | 0.610604 | 0.022715 | B |<br />
+0.30 | 0.668212 | 0.567238 | 0.100973 | B |</div>
+<p><img src="/images/TOPSIS/TOPSIS-3.png" style="width:100%"></p>
+<p>图 17-4 四指标结果与题定权重路径的敏感性</p>
+<p>沿这条路径, B与C的交点约为 <span
+class="math inline">\(t_*=0.248690925422\)</span>,
+此时贴近度约0.623213656489. 从0.25改为0.24就改变第一名,
+因而当前等权结论对这条路径较敏感.</p>
+<p>初学时先理解表中符号变化. 若要更精确定位交点, 可阅读<a
+href="../reading/17/TOPSISFurtherReading.md">补充阅读F.6</a>中保留的完整二分程序.
+它在本例已检查的区间 <span class="math inline">\([0.20,0.30]\)</span>
+上逐次保留含交点的一半, 不等待两个浮点数恰好相等.
+不同数据可能有多个交点或没有交点, 不应直接照搬区间与分支.</p>
+<h3 id="候选集合变化是另一个实验">17.9.2 候选集合变化是另一个实验</h3>
+<p>现在另取两个无量纲效益指标, 固定等权, A, B, C分别为 <span
+class="math inline">\((4,3)^{\mathsf T}\)</span>, <span
+class="math inline">\((3,4)^{\mathsf T}\)</span>, <span
+class="math inline">\((2,5)^{\mathsf T}\)</span>. 再加入D, 其数据为
+<span class="math inline">\((1,1)^{\mathsf T}\)</span>.
+D的两项都低于原来三个方案, 原方案的数值和权重均不变.</p>
+<p><strong>code/candidate_set_step. py</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># Two benefit criteria with fixed equal weights; all data are illustrative.</span></span><br><span class="line">original = np.array([[<span class="number">4</span>, <span class="number">3</span>], [<span class="number">3</span>, <span class="number">4</span>], [<span class="number">2</span>, <span class="number">5</span>]], dtype=<span class="built_in">float</span>)</span><br><span class="line">expanded = np.vstack([original, [<span class="number">1</span>, <span class="number">1</span>]])</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> X <span class="keyword">in</span> [original, expanded]:</span><br><span class="line">    Z = X / np.linalg.norm(X, axis=<span class="number">0</span>)</span><br><span class="line">    V = Z / <span class="number">2</span></span><br><span class="line">    ideal, anti_ideal = V.<span class="built_in">max</span>(axis=<span class="number">0</span>), V.<span class="built_in">min</span>(axis=<span class="number">0</span>)</span><br><span class="line">    dp = np.linalg.norm(V - ideal, axis=<span class="number">1</span>)</span><br><span class="line">    dn = np.linalg.norm(V - anti_ideal, axis=<span class="number">1</span>)</span><br><span class="line">    scores = dn / (dp + dn)</span><br><span class="line">    records.append(<span class="built_in">dict</span>(X=X, Z=Z, ideal=ideal, anti_ideal=anti_ideal,</span><br><span class="line">                        scores=scores))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;Candidate count:&#x27;</span>, <span class="built_in">len</span>(X), <span class="string">&#x27;scores:&#x27;</span>, scores)</span><br></pre></td></tr></table></figure>
+<p><strong>code/candidate_set_step. m</strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">original = [<span class="number">4</span>,<span class="number">3</span>;<span class="number">3</span>,<span class="number">4</span>;<span class="number">2</span>,<span class="number">5</span>]; expanded = [original;<span class="number">1</span>,<span class="number">1</span>];</span><br><span class="line">cases = &#123;original,expanded&#125;; records = cell(<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">    X = cases&#123;k&#125;; Z = X./<span class="built_in">sqrt</span>(sum(X.^<span class="number">2</span>,<span class="number">1</span>)); V = Z/<span class="number">2</span>;</span><br><span class="line">    ideal = <span class="built_in">max</span>(V,[],<span class="number">1</span>); antiIdeal = <span class="built_in">min</span>(V,[],<span class="number">1</span>);</span><br><span class="line">    dp = <span class="built_in">sqrt</span>(sum((V-ideal).^<span class="number">2</span>,<span class="number">2</span>));</span><br><span class="line">    dn = <span class="built_in">sqrt</span>(sum((V-antiIdeal).^<span class="number">2</span>,<span class="number">2</span>)); scores = dn./(dp+dn);</span><br><span class="line">    records&#123;k&#125; = struct(<span class="string">&#x27;X&#x27;</span>,X,<span class="string">&#x27;Z&#x27;</span>,Z,<span class="string">&#x27;ideal&#x27;</span>,ideal, ...</span><br><span class="line">        <span class="string">&#x27;anti_ideal&#x27;</span>,antiIdeal,<span class="string">&#x27;scores&#x27;</span>,scores);</span><br><span class="line">    fprintf(<span class="string">&#x27;Candidate count %d, scores: &#x27;</span>,<span class="built_in">size</span>(X,<span class="number">1</span>)); <span class="built_in">disp</span>(scores.&#x27;);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>表 17-11 候选集合变化与排序逆转.</p>
+<div class="line-block">候选范围 | A | B | C | D | 排序 |<br />
+: --- | ---: | ---: | ---: | ---: | : ---: |<br />
+A, B, C | 0.567673 | 0.500000 | 0.432327 | 未参与 | A&gt;B&gt;C |<br />
+A, B, C, D | 0.687166 | 0.707522 | 0.617351 | 0.000000 |
+B&gt;A&gt;C&gt;D |</div>
+<p>加入D以后, 列范数从 <span
+class="math inline">\(\sqrt{29},\sqrt{50}\)</span> 变为 <span
+class="math inline">\(\sqrt{30},\sqrt{51}\)</span>,
+原方案的标准化坐标改变, 负理想参照也改变. A与B的相对次序因此颠倒.
+这是一例候选集合变化带来的排序逆转[2], 不是本节前面的权重调整.
+本例全部为效益型, 没有叠加样本依赖的成本或目标转换.</p>
+<p>这个独立构造的小例子说明, 分数是当前比较系统中的相对结果.
+若分年度或分批次分别确定尺度与参照点, 不宜直接比较贴近度大小.
+需要长期跟踪时, 应另行论证固定尺度与参照标准的方案,
+并检查其适用范围.</p>
+<h3 id="还要同时看两个距离">17.9.3 还要同时看两个距离</h3>
+<p>贴近度更大, 不一定单独离正理想点更近. 在补充阅读F.7的四点例子中,
+P到正理想点的原坐标距离为0.8, Q为0.707107, 但P更远离负理想点,
+贴近度约0.560392, 高于Q的0.5.</p>
+<p><img src="/images/TOPSIS/TOPSIS-4.png" style="width:100%"></p>
+<p>图 17-5 单个正理想距离不能替代贴近度</p>
+<p>图中参照点由全部四个点形成, 距离采用原无量纲坐标. 两列范数相同,
+标准化再等权只引入共同距离因子, 因而图示贴近度与TOPSIS一致.
+完整坐标与推导均保留在补充阅读.</p>
+<p>此外还应检查有依据的数据误差, 指标重复或相关性,
+异常值与偏好转换的选择.
+最大值减成本与直接对成本列取最小值为正理想值的路线, 归一化分母通常不同,
+也可能得到不同排序.
+两种路线的完整程序和第一名改变的例子保存在补充阅读F.7,
+计算前应固定整套路线.</p>
+<h2 id="把排序写成有条件的结论">17.10 把排序写成有条件的结论</h2>
+<h3 id="怎样报告本章的照明案例">17.10.1 怎样报告本章的照明案例</h3>
+<p>一段可核对的结论可以写成: 在三个方案均满足必要条件的前提下, 对节电量,
+维护工时, 照度目标和采样区间四项指标采用本章正向化, 向量标准化,
+等权坐标加权与欧氏距离, 得到B, C, A的顺序. B与C仅相差约0.002640,
+沿照度权重变化的题定路径, 从0.25改为0.24会改变第一名,
+建议补充权重依据和数据误差分析后再作推荐.</p>
+<p>报告时要让读者能找到候选范围, 指标单位与方向, 目标及区间,
+转换与标准化规则, 权重来源, 两个距离, 得分和敏感性结果.
+相关或重复指标可能重复强调同一方面, 综合补偿也不能代替硬约束检查.</p>
+<p>本章的核心计算可以沿着六个量复述: 从A读出原数据, 用X统一方向,
+用Z统一列尺度, 用V表达权重, 求两个距离, 再求贴近度.
+能从其中一列和一行开始复算, 才便于判断结果是否符合所声明的问题.</p>
+<h3 id="练习">17.10.2 练习</h3>
+<ol type="1">
+<li>对维护正向值0, 3, 7手算列长度和三个标准化值,
+说明为什么平方和为1而总和不一定为1. 将原工时全部换成分钟,
+按同一路线重新计算, 检查标准化列是否改变.</li>
+<li>只用本章两指标, 手算A到两个理想点的距离与贴近度. 若改用Z坐标,
+两个距离与贴近度各怎样变化?</li>
+<li>把 <code>rank_plans_loop</code>中的内层循环逐项展开, 核对B的一行.
+再与数组程序输出比较, 说明Python的两个
+<code>axis</code>和MATLAB的两个维度分别对应哪种计算.</li>
+<li>照度目标165, 原值175, 164, 157; 采样理想区间 <span
+class="math inline">\([90,100]\)</span>, 原值120, 80, 90.
+先写出偏差或区间外距离, 再正向化. 如果所有值都达标,
+怎样处理分母为0的情形?</li>
+<li>用 <span class="math inline">\((0.2,0.2,0.4,0.2)^{\mathsf
+T}\)</span> 复核两种权重约定的得分. 从坐标表达式推导平方距离中的系数,
+说明为什么只检查等权数据不足以发现混用.</li>
+<li>复算等权与熵权两组结果. 说明这次比较保持了哪些条件,
+为什么不能把低熵权直接解释成现实中不重要. 若改用AHP,
+应先核对哪两项指标信息?</li>
+<li>在第17.8节的第一组X中, 把常数列删除, 对剩余权重重新归一化.
+检查贴近度与距离如何变化. 再构造全部有权重的列都为常数的情形,
+说明应怎样报告.</li>
+<li>沿题定权重路径检查0.24和0.25处的B-C符号, 再用保留的二分程序定位交点.
+如果改为只与另一项交换权重, 原交点是否仍适用? 说明理由.</li>
+<li>复核加入D前后的两个列范数, 正负理想点与得分. 原方案数值和权重不变,
+为什么相对名次仍可能改变? 这与权重敏感性有什么不同?</li>
+<li>为校园节水或社区阅读服务设计评价体系. 先列硬约束, 再明确可比较指标,
+数据来源, 方向和权重依据. 报告两个距离与贴近度,
+至少完成一种有根据的敏感性实验, 并说明未纳入因素对建议的影响.</li>
+</ol>
+<h3 id="继续阅读">17.10.3 继续阅读</h3>
+<p>首次学习可先完成17.1至17.4的手算和短程序, 再用17.5的公式整理已有步骤.
+需要设置新案例时, 阅读<a
+href="../reading/17/TOPSISFurtherReading.md">TOPSIS补充阅读</a>中的完整转换函数与求解函数.
+该文件提供完整理论说明, 12个完整代码块, 四幅配图与8道练习.</p>
+<p>配套阅读与实验: <a
+href="../reading/17/Index.md">本章资料索引</a>.</p>
+<h2 id="参考资料">参考资料</h2>
+<p>[1] HWANG C L, YOON K. Multiple Attribute Decision Making: Methods
+and Applications - A State-of-the-Art Survey[M]. Berlin, Heidelberg:
+Springer, 1981. DOI: <a
+target="_blank" rel="noopener" href="https://doi.org/10.1007/978-3-642-48318-9">10.1007/978-3-642-48318-9</a>.</p>
+<p>[2] GARCÍA-CASCALES M S, LAMATA M T. On rank reversal and TOPSIS
+method[J]. Mathematical and Computer Modelling, 2012, 56(5-6): 123-132.
+DOI: <a target="_blank" rel="noopener" href="https://doi.org/10.1016/j.mcm.2011.12.022">10.1016/j.
+mcm.2011.12.022</a>. 第17.9节的两指标小例子为本次独立构造与复算,
+不是该文案例的转录.</p>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

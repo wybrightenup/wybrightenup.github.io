@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="第 29 章 启发式算法: 在复杂解空间中搜索较优方案 一辆配送车要访问若干社区服务点, 最后返回服务站. 先别急着选择算法, 拿四个点算一条路线: 每个点有没有访问, 回程有没有计入, 总长度是多少? 搜索过程中每产生一条新路线, 都要回到这几个问题. 本章先用四点小例练习一次评价, 一次邻域变化与一次接受判断, 再在同一组十点数据上运行最近邻, 模拟退火, 遗传与蚁群算法. 小例">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/MathBeautyAndModeling/29_HeuristicAlgorithms.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="第 29 章 启发式算法: 在复杂解空间中搜索较优方案 一辆配送车要访问若干社区服务点, 最后返回服务站. 先别急着选择算法, 拿四个点算一条路线: 每个点有没有访问, 回程有没有计入, 总长度是多少? 搜索过程中每产生一条新路线, 都要回到这几个问题. 本章先用四点小例练习一次评价, 一次邻域变化与一次接受判断, 再在同一组十点数据上运行最近邻, 模拟退火, 遗传与蚁群算法. 小例">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/HeuristicAlgorithms/HA-7.png">
+<meta property="og:image" content="http://example.com/images/HeuristicAlgorithms/HA-1.png">
+<meta property="og:image" content="http://example.com/images/HeuristicAlgorithms/HA-2.png">
+<meta property="og:image" content="http://example.com/images/HeuristicAlgorithms/HA-3.png">
+<meta property="og:image" content="http://example.com/images/HeuristicAlgorithms/HA-8.png">
+<meta property="og:image" content="http://example.com/images/HeuristicAlgorithms/HA-4.png">
+<meta property="og:image" content="http://example.com/images/HeuristicAlgorithms/HA-5.png">
+<meta property="og:image" content="http://example.com/images/HeuristicAlgorithms/HA-6.png">
+<meta property="article:published_time" content="2026-11-02T02:53:09.341Z">
+<meta property="article:modified_time" content="2026-10-31T09:20:36.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/HeuristicAlgorithms/HA-7.png">
+
+
+<link rel="canonical" href="http://example.com/MathBeautyAndModeling/29_HeuristicAlgorithms">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://example.com/MathBeautyAndModeling/29_HeuristicAlgorithms.html","path":"MathBeautyAndModeling/29_HeuristicAlgorithms.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | Hexo
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":"all","tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC-29-%E7%AB%A0-%E5%90%AF%E5%8F%91%E5%BC%8F%E7%AE%97%E6%B3%95-%E5%9C%A8%E5%A4%8D%E6%9D%82%E8%A7%A3%E7%A9%BA%E9%97%B4%E4%B8%AD%E6%90%9C%E7%B4%A2%E8%BE%83%E4%BC%98%E6%96%B9%E6%A1%88"><span class="nav-number">1.</span> <span class="nav-text">第 29 章
+启发式算法: 在复杂解空间中搜索较优方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E7%AE%97%E4%B8%80%E6%9D%A1%E9%97%AD%E5%90%88%E8%B7%AF%E7%BA%BF-%E5%9B%9E%E7%A8%8B%E4%B9%9F%E6%98%AF%E7%9B%AE%E6%A0%87%E7%9A%84%E4%B8%80%E9%83%A8%E5%88%86"><span class="nav-number">1.1.</span> <span class="nav-text">29.1 先算一条闭合路线:
+回程也是目标的一部分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%88%E6%A3%80%E6%9F%A5%E5%8F%AF%E8%A1%8C%E6%80%A7-%E5%86%8D%E6%AF%94%E8%BE%83%E5%93%AA%E6%9D%A1%E6%9B%B4%E7%9F%AD"><span class="nav-number">1.2.</span> <span class="nav-text">29.2 先检查可行性,
+再比较哪条更短</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E8%BF%91%E9%82%BB-%E5%85%88%E9%80%89%E4%B8%80%E7%AB%99-%E5%86%8D%E6%8A%8A%E8%BF%99%E4%B8%80%E6%AD%A5%E9%87%8D%E5%A4%8D%E4%B8%8B%E5%8E%BB"><span class="nav-number">1.3.</span> <span class="nav-text">29.3 最近邻: 先选一站,
+再把这一步重复下去</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AA%E5%81%9A%E7%AC%AC%E4%B8%80%E6%AC%A1%E9%80%89%E6%8B%A9"><span class="nav-number">1.3.1.</span> <span class="nav-text">29.3.1 只做第一次选择</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%81%E4%B8%AA%E6%9C%8D%E5%8A%A1%E7%82%B9%E4%BD%BF%E7%94%A8%E5%90%8C%E4%B8%80%E4%BB%BD%E5%9B%BA%E5%AE%9A%E6%95%B0%E6%8D%AE"><span class="nav-number">1.3.2.</span> <span class="nav-text">29.3.2
+十个服务点使用同一份固定数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E6%9C%80%E8%BF%91%E9%82%BB%E5%87%BD%E6%95%B0"><span class="nav-number">1.3.3.</span> <span class="nav-text">29.3.3 完整最近邻函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%A7%E7%94%9F%E9%82%BB%E8%BF%91%E6%96%B9%E6%A1%88-%E5%8F%8D%E5%90%91%E4%B8%80%E4%B8%AA%E7%89%87%E6%AE%B5-%E4%BF%9D%E6%8C%81%E8%AE%BF%E9%97%AE%E7%BC%96%E5%8F%B7%E4%B8%8D%E5%8F%98"><span class="nav-number">1.4.</span> <span class="nav-text">29.4 产生邻近方案:
+反向一个片段, 保持访问编号不变</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E6%8B%9F%E9%80%80%E7%81%AB-%E5%80%99%E9%80%89%E5%8F%98%E9%95%BF%E6%97%B6-%E6%80%8E%E6%A0%B7%E5%86%B3%E5%AE%9A%E6%98%AF%E5%90%A6%E6%8E%A5%E5%8F%97"><span class="nav-number">1.5.</span> <span class="nav-text">29.5 模拟退火: 候选变长时,
+怎样决定是否接受</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E5%81%9A%E4%B8%80%E6%AC%A1%E6%95%B0%E5%80%BC%E5%88%A4%E6%96%AD"><span class="nav-number">1.5.1.</span> <span class="nav-text">29.5.1 先做一次数值判断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E7%BB%83%E4%B9%A0%E8%AE%B0%E5%BD%95-%E5%BD%93%E5%89%8D%E5%80%BC%E5%8F%AF%E4%BB%A5%E4%B8%8A%E5%8D%87-%E5%8E%86%E5%8F%B2%E6%9C%80%E5%A5%BD%E5%80%BC%E4%B8%8D%E8%83%BD%E4%B8%A2"><span class="nav-number">1.5.2.</span> <span class="nav-text">29.5.2 先练习记录:
+当前值可以上升, 历史最好值不能丢</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E9%80%80%E7%81%AB%E5%87%BD%E6%95%B0%E5%86%8D%E6%8A%8A%E8%BF%99%E4%BA%9B%E6%93%8D%E4%BD%9C%E8%BF%9E%E8%B5%B7%E6%9D%A5"><span class="nav-number">1.5.3.</span> <span class="nav-text">29.5.3
+完整退火函数再把这些操作连起来</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95%E7%9A%84%E4%BA%A4%E5%8F%89-%E7%BC%96%E5%8F%B7%E4%B8%8D%E8%83%BD%E9%87%8D%E5%A4%8D%E6%88%96%E9%81%97%E6%BC%8F"><span class="nav-number">1.6.</span> <span class="nav-text">29.6 遗传算法的交叉:
+编号不能重复或遗漏</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B2%BE%E8%8B%B1%E4%BF%9D%E7%95%99-%E7%88%B6%E4%BB%A3%E6%9C%80%E5%A5%BD%E8%B7%AF%E7%BA%BF%E6%80%8E%E6%A0%B7%E7%BB%A7%E7%BB%AD%E7%95%99%E4%B8%8B"><span class="nav-number">1.7.</span> <span class="nav-text">29.7 精英保留:
+父代最好路线怎样继续留下</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%9A%81%E7%BE%A4%E7%9A%84%E4%B8%8B%E4%B8%80%E7%AB%99-%E5%85%88%E7%AE%97%E6%9D%83%E9%87%8D-%E5%86%8D%E5%BD%92%E4%B8%80%E5%8C%96%E4%B8%BA%E6%A6%82%E7%8E%87"><span class="nav-number">1.8.</span> <span class="nav-text">29.8 蚁群的下一站:
+先算权重, 再归一化为概率</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E6%AC%A1%E9%80%89%E6%8B%A9%E5%8F%AF%E4%BB%A5%E6%89%8B%E7%AE%97"><span class="nav-number">1.8.1.</span> <span class="nav-text">29.8.1 一次选择可以手算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E8%88%AC%E8%BD%AC%E7%A7%BB%E8%A7%84%E5%88%99"><span class="nav-number">1.8.2.</span> <span class="nav-text">29.8.2 一般转移规则</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%8C%E6%88%90%E4%B8%80%E6%9D%A1%E8%B7%AF%E7%BA%BF%E5%90%8E-%E6%80%8E%E6%A0%B7%E6%9B%B4%E6%96%B0%E4%BF%A1%E6%81%AF%E7%B4%A0"><span class="nav-number">1.9.</span> <span class="nav-text">29.9 完成一条路线后,
+怎样更新信息素</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E7%AE%97%E4%B8%80%E5%8F%AA%E8%9A%82%E8%9A%81%E7%9A%84%E4%B8%80%E8%BD%AE"><span class="nav-number">1.9.1.</span> <span class="nav-text">29.9.1 先算一只蚂蚁的一轮</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%9D%E7%95%99%E7%8E%87-%E6%8C%A5%E5%8F%91%E7%8E%87%E4%B8%8E%E5%BC%BA%E5%8C%96%E8%A7%84%E5%88%99%E8%A6%81%E8%AF%B4%E6%B8%85"><span class="nav-number">1.9.2.</span> <span class="nav-text">29.9.2 保留率,
+挥发率与强化规则要说清</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E8%BF%90%E8%A1%8C%E4%BB%A5%E5%90%8E-%E6%80%8E%E6%A0%B7%E5%88%A4%E6%96%AD%E7%BB%93%E6%9E%9C%E8%B4%A8%E9%87%8F"><span class="nav-number">1.10.</span> <span class="nav-text">29.10 完整运行以后,
+怎样判断结果质量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E4%B8%A4%E7%A7%8D%E7%B2%BE%E7%A1%AE%E7%AE%97%E6%B3%95%E5%BB%BA%E7%AB%8B%E5%8D%81%E7%82%B9%E5%B0%8F%E5%AE%9E%E4%BE%8B%E7%9A%84%E5%9F%BA%E5%87%86"><span class="nav-number">1.10.1.</span> <span class="nav-text">29.10.1
+用两种精确算法建立十点小实例的基准</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E8%AF%95%E9%AA%8C%E5%85%A5%E5%8F%A3"><span class="nav-number">1.10.2.</span> <span class="nav-text">29.10.2 完整试验入口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E6%AF%94%E8%BE%83%E6%9C%AC%E6%AC%A1%E7%BB%93%E6%9E%9C-%E5%86%8D%E8%AF%B4%E6%98%8E%E9%A2%84%E7%AE%97"><span class="nav-number">1.10.3.</span> <span class="nav-text">29.10.3 先比较本次结果,
+再说明预算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E5%A4%8D%E8%AF%95%E9%AA%8C%E6%8F%AD%E7%A4%BA%E7%9A%84%E6%98%AF%E8%BF%99%E4%B8%AA%E5%AE%9E%E4%BE%8B%E4%B8%8A%E7%9A%84%E9%9A%8F%E6%9C%BA%E5%B7%AE%E5%BC%82"><span class="nav-number">1.10.4.</span> <span class="nav-text">29.10.4
+重复试验揭示的是这个实例上的随机差异</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E7%BB%93%E6%9E%9C%E4%B8%8E%E7%BB%A7%E7%BB%AD%E9%98%85%E8%AF%BB"><span class="nav-number">1.10.5.</span> <span class="nav-text">29.10.5 检查结果与继续阅读</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%AD%A5%E7%BB%83%E4%B9%A0"><span class="nav-number">1.10.6.</span> <span class="nav-text">29.10.6 分步练习</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.11.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h1 id="第-29-章-启发式算法-在复杂解空间中搜索较优方案">第 29 章
+启发式算法: 在复杂解空间中搜索较优方案</h1>
+<p>一辆配送车要访问若干社区服务点, 最后返回服务站. 先别急着选择算法,
+拿四个点算一条路线: 每个点有没有访问, 回程有没有计入, 总长度是多少?
+搜索过程中每产生一条新路线, 都要回到这几个问题.</p>
+<p>本章先用四点小例练习一次评价, 一次邻域变化与一次接受判断,
+再在同一组十点数据上运行最近邻, 模拟退火, 遗传与蚁群算法.
+小例用于手算操作, 十点实例用于完整试验,
+两者的长度不混在同一张比较表中.</p>
+<h2 id="先算一条闭合路线-回程也是目标的一部分">29.1 先算一条闭合路线:
+回程也是目标的一部分</h2>
+<p>地点 0, 1, 2, 3 的教学坐标依次为 <span
+class="math inline">\((0,0)\)</span>, <span
+class="math inline">\((3,0)\)</span>, <span
+class="math inline">\((3,4)\)</span>, <span
+class="math inline">\((0,4)\)</span>, 单位为 km. 两点间使用直线距离,
+暂不考虑道路绕行. 路线按 <span
+class="math inline">\(0\to1\to2\to3\to0\)</span> 访问.</p>
+<p>表 29-1 四点闭合路线的逐段距离.</p>
+<table>
+<thead>
+<tr>
+<th>路段</th>
+<th><span class="math inline">\(0\to1\)</span></th>
+<th><span class="math inline">\(1\to2\)</span></th>
+<th><span class="math inline">\(2\to3\)</span></th>
+<th><span class="math inline">\(3\to0\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>距离(km)</td>
+<td>3</td>
+<td>4</td>
+<td>3</td>
+<td>4</td>
+</tr>
+</tbody>
+</table>
+<p>前三段合计 10, 加回程才是完整长度 14. 程序只保存编号
+<code>[0,1,2,3]</code>, 最后一条边由循环接回首项, 不再把 0
+重复存进路线列表.</p>
+<p><strong>Python · <code>step01_closed_length.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> hypot</span><br><span class="line">points = [(<span class="number">0.</span>,<span class="number">0.</span>),(<span class="number">3.</span>,<span class="number">0.</span>),(<span class="number">3.</span>,<span class="number">4.</span>),(<span class="number">0.</span>,<span class="number">4.</span>)]</span><br><span class="line">route = [<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]</span><br><span class="line">edges = <span class="built_in">list</span>(<span class="built_in">zip</span>(route,route[<span class="number">1</span>:]+route[:<span class="number">1</span>]))</span><br><span class="line">lengths = []</span><br><span class="line"><span class="keyword">for</span> a,b <span class="keyword">in</span> edges:</span><br><span class="line">    distance = hypot(points[a][<span class="number">0</span>]-points[b][<span class="number">0</span>],points[a][<span class="number">1</span>]-points[b][<span class="number">1</span>])</span><br><span class="line">    lengths.append(distance)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;edge:&quot;</span>, (a,b), <span class="string">&quot;distance:&quot;</span>, distance)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;open path:&quot;</span>, <span class="built_in">sum</span>(lengths[:-<span class="number">1</span>]), <span class="string">&quot;closed tour:&quot;</span>, <span class="built_in">sum</span>(lengths))</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB · <code>step01_closed_length.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">points = [<span class="number">0</span>,<span class="number">0</span>;<span class="number">3</span>,<span class="number">0</span>;<span class="number">3</span>,<span class="number">4</span>;<span class="number">0</span>,<span class="number">4</span>];</span><br><span class="line">route = [<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]; n = <span class="built_in">numel</span>(route); lengths = <span class="built_in">zeros</span>(<span class="number">1</span>,n);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:n</span><br><span class="line">    a = route(k); b = route(<span class="built_in">mod</span>(k,n)+<span class="number">1</span>);</span><br><span class="line">    lengths(k) = <span class="built_in">hypot</span>(points(a+<span class="number">1</span>,<span class="number">1</span>)-points(b+<span class="number">1</span>,<span class="number">1</span>),points(a+<span class="number">1</span>,<span class="number">2</span>)-points(b+<span class="number">1</span>,<span class="number">2</span>));</span><br><span class="line">    fprintf(<span class="string">&#x27;edge: %d -&gt; %d, distance: %g\n&#x27;</span>,a,b,lengths(k));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">fprintf(<span class="string">&#x27;open path: %g, closed tour: %g\n&#x27;</span>,sum(lengths(<span class="number">1</span>:<span class="keyword">end</span><span class="number">-1</span>)),sum(lengths));</span><br></pre></td></tr></table></figure>
+<p>Python 的 <code>route[1:]+route[:1]</code> 把每个地点配到下一个地点,
+最后一项配到起点. MATLAB 使用 <code>mod(k,n)+1</code> 找下一位置.
+路线中保存的地点编号从 0 开始, MATLAB 在读取坐标或距离矩阵时才加 1.</p>
+<p><img src="/images/HeuristicAlgorithms/HA-7.png" style="width:100%"></p>
+<p>图 29-1 四点路线的四段距离与求和. 橙色表示最后返回服务站的路段,
+漏掉它就算成了另一种目标.</p>
+<h2 id="先检查可行性-再比较哪条更短">29.2 先检查可行性,
+再比较哪条更短</h2>
+<p>比较 <code>[0,1,2,3]</code>, <code>[0,1,3,2]</code> 和
+<code>[0,1,2]</code>. 前两条都访问四点并回到起点, 长度分别为 14 和 16.
+第三条遗漏地点 3, 不应因它经过的边少就给它较好排名.</p>
+<p><strong>Python · <code>step02_feasible_routes.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> hypot</span><br><span class="line">points = [(<span class="number">0.</span>,<span class="number">0.</span>),(<span class="number">3.</span>,<span class="number">0.</span>),(<span class="number">3.</span>,<span class="number">4.</span>),(<span class="number">0.</span>,<span class="number">4.</span>)]</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">score</span>(<span class="params">route</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">sum</span>(hypot(points[a][<span class="number">0</span>]-points[b][<span class="number">0</span>],points[a][<span class="number">1</span>]-points[b][<span class="number">1</span>])</span><br><span class="line">               <span class="keyword">for</span> a,b <span class="keyword">in</span> <span class="built_in">zip</span>(route,route[<span class="number">1</span>:]+route[:<span class="number">1</span>]))</span><br><span class="line">routes = [[<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>],[<span class="number">0</span>,<span class="number">1</span>,<span class="number">3</span>,<span class="number">2</span>],[<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>]]</span><br><span class="line">valid_scores = []</span><br><span class="line"><span class="keyword">for</span> route <span class="keyword">in</span> routes:</span><br><span class="line">    valid = route[<span class="number">0</span>] == <span class="number">0</span> <span class="keyword">and</span> <span class="built_in">sorted</span>(route) == <span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">4</span>))</span><br><span class="line">    <span class="keyword">if</span> valid:</span><br><span class="line">        value = score(route)</span><br><span class="line">        valid_scores.append(value)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;route:&quot;</span>, route, <span class="string">&quot;feasible:&quot;</span>, valid, <span class="string">&quot;length:&quot;</span>, value)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;route:&quot;</span>, route, <span class="string">&quot;feasible:&quot;</span>, valid, <span class="string">&quot;not ranked&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;best among the listed feasible routes:&quot;</span>, <span class="built_in">min</span>(valid_scores))</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB · <code>step02_feasible_routes.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">points = [<span class="number">0</span>,<span class="number">0</span>;<span class="number">3</span>,<span class="number">0</span>;<span class="number">3</span>,<span class="number">4</span>;<span class="number">0</span>,<span class="number">4</span>];</span><br><span class="line">routes = &#123;[<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>],[<span class="number">0</span>,<span class="number">1</span>,<span class="number">3</span>,<span class="number">2</span>],[<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>]&#125;; valid_scores = [];</span><br><span class="line"><span class="keyword">for</span> r = <span class="number">1</span>:<span class="built_in">numel</span>(routes)</span><br><span class="line">    route = routes&#123;r&#125;; valid = route(<span class="number">1</span>)==<span class="number">0</span> &amp;&amp; <span class="built_in">isequal</span>(<span class="built_in">sort</span>(route),<span class="number">0</span>:<span class="number">3</span>);</span><br><span class="line">    <span class="built_in">disp</span>(<span class="string">&#x27;route:&#x27;</span>); <span class="built_in">disp</span>(route);</span><br><span class="line">    <span class="keyword">if</span> valid</span><br><span class="line">        value = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">numel</span>(route)</span><br><span class="line">            a = route(k); b = route(<span class="built_in">mod</span>(k,<span class="built_in">numel</span>(route))+<span class="number">1</span>);</span><br><span class="line">            value = value+<span class="built_in">hypot</span>(points(a+<span class="number">1</span>,<span class="number">1</span>)-points(b+<span class="number">1</span>,<span class="number">1</span>), ...</span><br><span class="line">                points(a+<span class="number">1</span>,<span class="number">2</span>)-points(b+<span class="number">1</span>,<span class="number">2</span>));</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">        valid_scores(<span class="keyword">end</span>+<span class="number">1</span>) = value;</span><br><span class="line">        fprintf(<span class="string">&#x27;feasible: 1, length: %g\n&#x27;</span>,value);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="built_in">disp</span>(<span class="string">&#x27;feasible: 0, not ranked&#x27;</span>);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">fprintf(<span class="string">&#x27;best among listed feasible routes: %g\n&#x27;</span>,<span class="built_in">min</span>(valid_scores));</span><br></pre></td></tr></table></figure>
+<p>本例的可行性检查为: 从 0 展示, 且编号恰好组成 0 至 3 的排列.
+同一问题的所有算法应使用同一个闭合长度, 也应遵守同一组访问条件.
+"短但漏点"的路线不是有效改进.</p>
+<p>只在这几条路线中取最小值, 得到的是已列候选的最好值.
+要说它是整个问题的最优值, 还需要完整搜索或有效的最优性证据.
+后面的十点主试验会另设精确基准.</p>
+<h2 id="最近邻-先选一站-再把这一步重复下去">29.3 最近邻: 先选一站,
+再把这一步重复下去</h2>
+<h3 id="只做第一次选择">29.3.1 只做第一次选择</h3>
+<p>在四点例子中, 当前在 0, 未访问编号为 1, 2, 3. 距离依次为 3, 5, 4,
+所以最近的是 1. 到达后, 要把它从未访问集合中删除.</p>
+<p><strong>Python · <code>step03_nearest_choice.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> hypot</span><br><span class="line">points = [(<span class="number">0.</span>,<span class="number">0.</span>),(<span class="number">3.</span>,<span class="number">0.</span>),(<span class="number">3.</span>,<span class="number">4.</span>),(<span class="number">0.</span>,<span class="number">4.</span>)]</span><br><span class="line">current = <span class="number">0</span></span><br><span class="line">unused = &#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125;</span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">sorted</span>(unused):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;candidate:&quot;</span>, j, <span class="string">&quot;distance:&quot;</span>,</span><br><span class="line">          hypot(points[current][<span class="number">0</span>]-points[j][<span class="number">0</span>],points[current][<span class="number">1</span>]-points[j][<span class="number">1</span>]))</span><br><span class="line">chosen = <span class="built_in">min</span>(unused,key=<span class="keyword">lambda</span> j:(hypot(points[current][<span class="number">0</span>]-points[j][<span class="number">0</span>],</span><br><span class="line">                                      points[current][<span class="number">1</span>]-points[j][<span class="number">1</span>]),j))</span><br><span class="line">route = [current,chosen]</span><br><span class="line">unused.remove(chosen)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;partial route:&quot;</span>, route, <span class="string">&quot;remaining:&quot;</span>, <span class="built_in">sorted</span>(unused))</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB · <code>step03_nearest_choice.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">points = [<span class="number">0</span>,<span class="number">0</span>;<span class="number">3</span>,<span class="number">0</span>;<span class="number">3</span>,<span class="number">4</span>;<span class="number">0</span>,<span class="number">4</span>];</span><br><span class="line">current = <span class="number">0</span>; unused = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]; distances = <span class="built_in">zeros</span>(<span class="built_in">size</span>(unused));</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">numel</span>(unused)</span><br><span class="line">    <span class="built_in">j</span> = unused(k);</span><br><span class="line">    distances(k) = <span class="built_in">hypot</span>(points(current+<span class="number">1</span>,<span class="number">1</span>)-points(<span class="built_in">j</span>+<span class="number">1</span>,<span class="number">1</span>), ...</span><br><span class="line">        points(current+<span class="number">1</span>,<span class="number">2</span>)-points(<span class="built_in">j</span>+<span class="number">1</span>,<span class="number">2</span>));</span><br><span class="line">    fprintf(<span class="string">&#x27;candidate: %d, distance: %g\n&#x27;</span>,<span class="built_in">j</span>,distances(k));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">[~,index] = <span class="built_in">min</span>(distances); chosen = unused(index);</span><br><span class="line">route = [current,chosen]; unused(index) = [];</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;partial route:&#x27;</span>); <span class="built_in">disp</span>(route); <span class="built_in">disp</span>(<span class="string">&#x27;remaining:&#x27;</span>); <span class="built_in">disp</span>(unused);</span><br></pre></td></tr></table></figure>
+<p>接下来从新位置重新比较剩余地点, 直到未访问集合为空, 再返回起点.
+距离相同的候选按较小编号优先, 可以明确并列规则. 四点小例中这条规则得到
+14, 但不能据此认为最近邻对所有实例都最优.</p>
+<h3 id="十个服务点使用同一份固定数据">29.3.2
+十个服务点使用同一份固定数据</h3>
+<p>完整试验采用以下教学模拟坐标, 地点 0 为服务站.
+假定任意两点可直线通行, 双向代价相同, 每点访问一次, 不考虑容量与时间窗.
+它不是实际道路测量数据.</p>
+<p>表 29-2 十点完整试验的固定坐标.</p>
+<table>
+<thead>
+<tr>
+<th>地点</th>
+<th>横坐标(km)</th>
+<th>纵坐标(km)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>11.911988</td>
+<td>96.462642</td>
+</tr>
+<tr>
+<td>1</td>
+<td>10.833318</td>
+<td>2.330884</td>
+</tr>
+<tr>
+<td>2</td>
+<td>35.510785</td>
+<td>71.449568</td>
+</tr>
+<tr>
+<td>3</td>
+<td>72.009188</td>
+<td>83.892784</td>
+</tr>
+<tr>
+<td>4</td>
+<td>28.574504</td>
+<td>90.788250</td>
+</tr>
+<tr>
+<td>5</td>
+<td>66.410660</td>
+<td>87.742988</td>
+</tr>
+<tr>
+<td>6</td>
+<td>82.776098</td>
+<td>97.172961</td>
+</tr>
+<tr>
+<td>7</td>
+<td>41.055614</td>
+<td>61.860176</td>
+</tr>
+<tr>
+<td>8</td>
+<td>7.718521</td>
+<td>84.438058</td>
+</tr>
+<tr>
+<td>9</td>
+<td>81.381522</td>
+<td>30.577223</td>
+</tr>
+</tbody>
+</table>
+<p>两点距离为</p>
+<p><span class="math display">\[
+d_{ij}=\sqrt{(x_i-x_j)^2+(y_i-y_j)^2}.
+\]</span></p>
+<p>这些数先组成距离矩阵 <span class="math inline">\(D=(d_{ij})\)</span>.
+不在运行不同算法时重新抽取坐标. Python 数据文件和 MATLAB 数据函数如下;
+Python 公共函数 <code>distance_matrix</code> 位于同目录的
+<code>tsp_common.py</code>, 完整定义也收入
+<code>TSPCommon.md</code>.</p>
+<p><strong>Python · <code>tsp_data.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;&quot;Fixed simulated coordinates in km; depot ID is 0.&quot;&quot;&quot;</span></span><br><span class="line">POINTS = [[<span class="number">11.911988</span>,<span class="number">96.462642</span>], [<span class="number">10.833318</span>,<span class="number">2.330884</span>],</span><br><span class="line">          [<span class="number">35.510785</span>,<span class="number">71.449568</span>], [<span class="number">72.009188</span>,<span class="number">83.892784</span>],</span><br><span class="line">          [<span class="number">28.574504</span>,<span class="number">90.788250</span>], [<span class="number">66.410660</span>,<span class="number">87.742988</span>],</span><br><span class="line">          [<span class="number">82.776098</span>,<span class="number">97.172961</span>], [<span class="number">41.055614</span>,<span class="number">61.860176</span>],</span><br><span class="line">          [<span class="number">7.718521</span>,<span class="number">84.438058</span>], [<span class="number">81.381522</span>,<span class="number">30.577223</span>]]</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB · <code>tspData.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[points,D]</span> = <span class="title">tspData</span><span class="params">()</span></span></span><br><span class="line">    points = [<span class="number">11.911988</span>,<span class="number">96.462642</span>;<span class="number">10.833318</span>,<span class="number">2.330884</span>; ...</span><br><span class="line">        <span class="number">35.510785</span>,<span class="number">71.449568</span>;<span class="number">72.009188</span>,<span class="number">83.892784</span>;<span class="number">28.574504</span>,<span class="number">90.788250</span>; ...</span><br><span class="line">        <span class="number">66.410660</span>,<span class="number">87.742988</span>;<span class="number">82.776098</span>,<span class="number">97.172961</span>;<span class="number">41.055614</span>,<span class="number">61.860176</span>; ...</span><br><span class="line">        <span class="number">7.718521</span>,<span class="number">84.438058</span>;<span class="number">81.381522</span>,<span class="number">30.577223</span>];</span><br><span class="line">    n = <span class="built_in">size</span>(points,<span class="number">1</span>); D = <span class="built_in">zeros</span>(n);</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:n</span><br><span class="line">        <span class="keyword">for</span> <span class="built_in">j</span> = <span class="built_in">i</span>+<span class="number">1</span>:n</span><br><span class="line">            D(<span class="built_in">i</span>,<span class="built_in">j</span>) = <span class="built_in">hypot</span>(points(<span class="built_in">i</span>,<span class="number">1</span>)-points(<span class="built_in">j</span>,<span class="number">1</span>),points(<span class="built_in">i</span>,<span class="number">2</span>)-points(<span class="built_in">j</span>,<span class="number">2</span>));</span><br><span class="line">            D(<span class="built_in">j</span>,<span class="built_in">i</span>) = D(<span class="built_in">i</span>,<span class="built_in">j</span>);</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>令访问顺序为 <span
+class="math inline">\(\boldsymbol\pi=(\pi_0,\ldots,\pi_{n-1})^{\mathsf
+T}\)</span>, 定义闭合端点 <span
+class="math inline">\(\pi_n=\pi_0\)</span>. 完整模型如下,
+排列条件保证每个地点恰好一次:</p>
+<p><span class="math display">\[
+\begin{gathered}
+\min_{\boldsymbol\pi}\ L(\boldsymbol\pi)
+=\sum\limits_{r=0}^{n-1}d_{\pi_r,\pi_{r+1}}
+\\[4pt]
+\left\{\begin{aligned}
+\pi_0&amp;=0,\\
+\pi_n&amp;=\pi_0,\\
+\pi_r&amp;\in\{0,1,\ldots,n-1\},\quad r=0,\ldots,n-1,\\
+\pi_r&amp;\ne\pi_s,\quad 0\leqslant r&lt;s\leqslant n-1.
+\end{aligned}\right.
+\end{gathered}
+\]</span></p>
+<p>模型是旅行商问题, 简称 TSP. 这里的历史名称对应闭合访问模型,
+同样可用于配送和巡检. 若道路有向, 有不可达边或时间窗, 要重新说明约束,
+不能继续无条件使用本章对称距离程序. [3]</p>
+<h3 id="完整最近邻函数">29.3.3 完整最近邻函数</h3>
+<p><strong>Python · <code>tsp_greedy.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tsp_common <span class="keyword">import</span> validate_matrix,rotate_to_zero</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">greedy</span>(<span class="params">start, D</span>):</span><br><span class="line">    validate_matrix(D)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">type</span>(start) <span class="keyword">is</span> <span class="keyword">not</span> <span class="built_in">int</span> <span class="keyword">or</span> <span class="keyword">not</span> <span class="number">0</span> &lt;= start &lt; <span class="built_in">len</span>(D):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;Invalid start vertex&#x27;</span>)</span><br><span class="line">    route = [start]</span><br><span class="line">    unused = <span class="built_in">set</span>(<span class="built_in">range</span>(<span class="built_in">len</span>(D)))</span><br><span class="line">    unused.remove(start)</span><br><span class="line">    <span class="keyword">while</span> unused:</span><br><span class="line">        nxt = <span class="built_in">min</span>(unused, key=<span class="keyword">lambda</span> j: (D[route[-<span class="number">1</span>]][j], j))</span><br><span class="line">        route.append(nxt)</span><br><span class="line">        unused.remove(nxt)</span><br><span class="line">    <span class="keyword">return</span> rotate_to_zero(route)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB · <code>greedyTSP.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">route</span> = <span class="title">greedyTSP</span><span class="params">(start,D)</span></span></span><br><span class="line">    validateTSP(D); n = <span class="built_in">size</span>(D,<span class="number">1</span>);</span><br><span class="line">    assert(<span class="built_in">isscalar</span>(start) &amp;&amp; start==<span class="built_in">floor</span>(start) &amp;&amp; start&gt;=<span class="number">0</span> &amp;&amp; start&lt;n);</span><br><span class="line">    route = start; unused = setdiff(<span class="number">0</span>:n<span class="number">-1</span>,start);</span><br><span class="line">    <span class="keyword">while</span> ~<span class="built_in">isempty</span>(unused)</span><br><span class="line">        [~,index] = <span class="built_in">min</span>(D(route(<span class="keyword">end</span>)+<span class="number">1</span>,unused+<span class="number">1</span>));</span><br><span class="line">        route(<span class="keyword">end</span>+<span class="number">1</span>) = unused(index);</span><br><span class="line">        unused(index) = [];</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    route = rotateToZero(route);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>函数每一步只追加未访问地点, 完成后把同一个环路循环移位到 0 开始展示.
+改变展示起点不会改变边和总长度; 改变构造起点则可能改变选择过程.</p>
+<p>从 0 构造的十点最近邻路线长约 363.022974 km, 从 2
+构造后移位展示的路线长约 371.591147 km.
+最近的一步未必给出最短的整体环路.
+具体调用和与其他算法一起运行的入口放在第 10 节.</p>
+<p><img src="/images/HeuristicAlgorithms/HA-1.png" style="width:100%"></p>
+<p>图 29-2 十点主试验的四份路线. 编号顺序,
+两个构造起点的最近邻路线与精确基准均使用相同坐标与范围.
+它们与前两节的四点数据分开比较.</p>
+<h2 id="产生邻近方案-反向一个片段-保持访问编号不变">29.4 产生邻近方案:
+反向一个片段, 保持访问编号不变</h2>
+<p>有了当前路线, 可以改变其中一部分得到候选. 先用六个编号演示位置操作:
+将 <code>[0,1,2,3,4,5]</code> 中编号 1, 2, 3 所在的连续片段反向, 得到
+<code>[0,3,2,1,4,5]</code>.</p>
+<p><strong>Python · <code>step04_reverse_move.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">route = [<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]</span><br><span class="line">original = route.copy()</span><br><span class="line">candidate = route.copy()</span><br><span class="line">candidate[<span class="number">1</span>:<span class="number">4</span>] = candidate[<span class="number">1</span>:<span class="number">4</span>][::-<span class="number">1</span>]</span><br><span class="line"><span class="keyword">assert</span> route == original</span><br><span class="line"><span class="keyword">assert</span> candidate[<span class="number">0</span>] == <span class="number">0</span> <span class="keyword">and</span> <span class="built_in">sorted</span>(candidate) == <span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">6</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;parent:&quot;</span>, route)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;candidate:&quot;</span>, candidate)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB · <code>step04_reverse_move.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">route = [<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]; original = route;</span><br><span class="line">candidate = route; candidate(<span class="number">2</span>:<span class="number">4</span>) = <span class="built_in">fliplr</span>(candidate(<span class="number">2</span>:<span class="number">4</span>));</span><br><span class="line">assert(<span class="built_in">isequal</span>(route,original));</span><br><span class="line">assert(candidate(<span class="number">1</span>)==<span class="number">0</span> &amp;&amp; <span class="built_in">isequal</span>(<span class="built_in">sort</span>(candidate),<span class="number">0</span>:<span class="number">5</span>));</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;parent:&#x27;</span>); <span class="built_in">disp</span>(route); <span class="built_in">disp</span>(<span class="string">&#x27;candidate:&#x27;</span>); <span class="built_in">disp</span>(candidate);</span><br></pre></td></tr></table></figure>
+<p>Python 切片 <code>[1:4]</code> 表示位置 1, 2, 3, 右端位置 4 不取.
+MATLAB 对应位置 2 至 4. 这里改变的是访问位置,
+不在编号本身上做加减运算.</p>
+<p>反向后编号不增不减, 所以保持排列可行, 但路线是否更短必须重新计算.
+候选用新列表保存, 原路线保留供后续接受或拒绝. 这个六编号例子只说明算子,
+没有给它另算一个能与十点结果混比的长度.</p>
+<p>交换位置, 反向片段, 搬移片段都可设计成邻域. 邻域决定一步能走向哪里,
+接受规则决定是否真的走过去, 两项任务应分别讲清.</p>
+<h2 id="模拟退火-候选变长时-怎样决定是否接受">29.5 模拟退火: 候选变长时,
+怎样决定是否接受</h2>
+<h3 id="先做一次数值判断">29.5.1 先做一次数值判断</h3>
+<p>当前路线长 360 km, 候选长 370 km, 长度增加量 <span
+class="math inline">\(\Delta=10\)</span>. 若只接受不变差的候选,
+这一步就会被拒绝. 模拟退火在正温度 <span
+class="math inline">\(T\)</span> 下, 允许按一定概率接受较差候选,
+给离开局部较好区域保留机会. [1]</p>
+<p>本章采用的接受概率为</p>
+<p><span class="math display">\[
+P_{\mathrm{accept}}=\begin{cases}
+1,&amp;\Delta\leqslant0,\\
+\mathrm{e}^{-\Delta/T},&amp;\Delta&gt;0.
+\end{cases}
+\]</span></p>
+<p>当 <span class="math inline">\(T=20\)</span>, 概率约为 0.606531; 当
+<span class="math inline">\(T=1\)</span>, 概率约为 0.0000454. 取一次
+<span class="math inline">\([0,1)\)</span> 上的均匀随机数 <span
+class="math inline">\(u\)</span>, 只有 <span
+class="math inline">\(u&lt;P_{\mathrm{accept}}\)</span> 才接受.
+为便于逐项核对, 下列程序固定试用 <span
+class="math inline">\(u=0.2\)</span> 与 <span
+class="math inline">\(u=0.8\)</span>.</p>
+<p><strong>Python · <code>step05_acceptance.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> exp</span><br><span class="line"><span class="keyword">for</span> temperature <span class="keyword">in</span> [<span class="number">20.</span>,<span class="number">1.</span>]:</span><br><span class="line">    <span class="keyword">for</span> delta <span class="keyword">in</span> [-<span class="number">5.</span>,<span class="number">0.</span>,<span class="number">10.</span>]:</span><br><span class="line">        probability = <span class="number">1.</span> <span class="keyword">if</span> delta &lt;= <span class="number">0</span> <span class="keyword">else</span> exp(-delta/temperature)</span><br><span class="line">        <span class="keyword">for</span> u <span class="keyword">in</span> [<span class="number">.2</span>,<span class="number">.8</span>]:</span><br><span class="line">            accept = u &lt; probability</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;temperature:&quot;</span>, temperature, <span class="string">&quot;delta:&quot;</span>, delta,</span><br><span class="line">                  <span class="string">&quot;probability:&quot;</span>, probability, <span class="string">&quot;u:&quot;</span>, u, <span class="string">&quot;accept:&quot;</span>, accept)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB · <code>step05_acceptance.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line"><span class="keyword">for</span> temperature = [<span class="number">20</span>,<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">for</span> delta = [<span class="number">-5</span>,<span class="number">0</span>,<span class="number">10</span>]</span><br><span class="line">        <span class="keyword">if</span> delta &lt;= <span class="number">0</span>, probability = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">else</span>, probability = <span class="built_in">exp</span>(-delta/temperature); <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">for</span> u = [<span class="number">.2</span>,<span class="number">.8</span>]</span><br><span class="line">            accept = u &lt; probability;</span><br><span class="line">            fprintf(<span class="string">&#x27;T: %g, delta: %g, probability: %.9f, u: %.1f, accept: %d\n&#x27;</span>, ...</span><br><span class="line">                temperature,delta,probability,u,accept);</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>在温度 20 时, 增长 10 的候选会被 <span
+class="math inline">\(u=0.2\)</span> 接受, 被 <span
+class="math inline">\(u=0.8\)</span> 拒绝. 更短或等长候选的接受概率为 1.
+高温与低温改变的是接受倾向, 并不是保证一定找到最优的开关.</p>
+<p><span class="math inline">\(\Delta/T\)</span> 应无量纲,
+温度数值须匹配目标值尺度. 如果把长度单位由 km 改为 m, 增量扩大 1000 倍,
+保持相同接受倾向时温度也要按相同比例调整. 温度是算法参数,
+不是物理摄氏度.</p>
+<h3 id="先练习记录-当前值可以上升-历史最好值不能丢">29.5.2 先练习记录:
+当前值可以上升, 历史最好值不能丢</h3>
+<p>再回到四点数据. 初始路线长 18, 后续依次接受长度 14, 16, 18 的路线.
+为了只观察记录逻辑, 下面把这三条都设为已经通过接受判断,
+不把它冒充一段随机退火轨迹.</p>
+<p><strong>Python · <code>step06_current_and_best.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> hypot</span><br><span class="line">points = [(<span class="number">0.</span>,<span class="number">0.</span>),(<span class="number">3.</span>,<span class="number">0.</span>),(<span class="number">3.</span>,<span class="number">4.</span>),(<span class="number">0.</span>,<span class="number">4.</span>)]</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">score</span>(<span class="params">route</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">sum</span>(hypot(points[a][<span class="number">0</span>]-points[b][<span class="number">0</span>],points[a][<span class="number">1</span>]-points[b][<span class="number">1</span>])</span><br><span class="line">               <span class="keyword">for</span> a,b <span class="keyword">in</span> <span class="built_in">zip</span>(route,route[<span class="number">1</span>:]+route[:<span class="number">1</span>]))</span><br><span class="line">current = [<span class="number">0</span>,<span class="number">2</span>,<span class="number">1</span>,<span class="number">3</span>]</span><br><span class="line">best = current.copy()</span><br><span class="line">best_value = score(best)</span><br><span class="line">current_history = [score(current)]</span><br><span class="line">best_history = [best_value]</span><br><span class="line">accepted_routes = [[<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>],[<span class="number">0</span>,<span class="number">1</span>,<span class="number">3</span>,<span class="number">2</span>],[<span class="number">0</span>,<span class="number">2</span>,<span class="number">1</span>,<span class="number">3</span>]]</span><br><span class="line"><span class="keyword">for</span> candidate <span class="keyword">in</span> accepted_routes:</span><br><span class="line">    current = candidate.copy()</span><br><span class="line">    value = score(current)</span><br><span class="line">    <span class="keyword">if</span> value &lt; best_value:</span><br><span class="line">        best = current.copy()</span><br><span class="line">        best_value = value</span><br><span class="line">    current_history.append(value)</span><br><span class="line">    best_history.append(best_value)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;current:&quot;</span>, current, <span class="string">&quot;length:&quot;</span>, value, <span class="string">&quot;historical best:&quot;</span>, best_value)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;current history:&quot;</span>, current_history, <span class="string">&quot;best history:&quot;</span>, best_history)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;return historical best:&quot;</span>, best, <span class="string">&quot;length:&quot;</span>, best_value)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB · <code>step06_current_and_best.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">points = [<span class="number">0</span>,<span class="number">0</span>;<span class="number">3</span>,<span class="number">0</span>;<span class="number">3</span>,<span class="number">4</span>;<span class="number">0</span>,<span class="number">4</span>];</span><br><span class="line">current = [<span class="number">0</span>,<span class="number">2</span>,<span class="number">1</span>,<span class="number">3</span>]; best = current;</span><br><span class="line">D = <span class="built_in">zeros</span>(<span class="number">4</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="number">4</span></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="number">4</span>, D(<span class="built_in">i</span>,<span class="built_in">j</span>) = <span class="built_in">hypot</span>(points(<span class="built_in">i</span>,<span class="number">1</span>)-points(<span class="built_in">j</span>,<span class="number">1</span>),points(<span class="built_in">i</span>,<span class="number">2</span>)-points(<span class="built_in">j</span>,<span class="number">2</span>)); <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">score = @(r) sum(D(<span class="built_in">sub2ind</span>([<span class="number">4</span>,<span class="number">4</span>],r+<span class="number">1</span>,r([<span class="number">2</span>:<span class="keyword">end</span>,<span class="number">1</span>])+<span class="number">1</span>)));</span><br><span class="line">best_value = score(best); current_history = best_value; best_history = best_value;</span><br><span class="line">accepted_routes = [<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>;<span class="number">0</span>,<span class="number">1</span>,<span class="number">3</span>,<span class="number">2</span>;<span class="number">0</span>,<span class="number">2</span>,<span class="number">1</span>,<span class="number">3</span>];</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">size</span>(accepted_routes,<span class="number">1</span>)</span><br><span class="line">    current = accepted_routes(k,:); value = score(current);</span><br><span class="line">    <span class="keyword">if</span> value &lt; best_value, best = current; best_value = value; <span class="keyword">end</span></span><br><span class="line">    current_history(<span class="keyword">end</span>+<span class="number">1</span>) = value; best_history(<span class="keyword">end</span>+<span class="number">1</span>) = best_value;</span><br><span class="line">    fprintf(<span class="string">&#x27;current length: %g, historical best: %g\n&#x27;</span>,value,best_value);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;current history:&#x27;</span>); <span class="built_in">disp</span>(current_history); <span class="built_in">disp</span>(<span class="string">&#x27;best history:&#x27;</span>); <span class="built_in">disp</span>(best_history);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;return historical best:&#x27;</span>); <span class="built_in">disp</span>(best); fprintf(<span class="string">&#x27;length: %g\n&#x27;</span>,best_value);</span><br></pre></td></tr></table></figure>
+<p>当前长度依次为 18, 14, 16, 18; 历史最好值依次为 18, 14, 14, 14.
+运行结束时当前路线长 18, 但应返回曾经找到的 14 及其路线副本.
+只记最后一次相对当前路线的改进, 可能把更早的好结果丢掉.</p>
+<h3 id="完整退火函数再把这些操作连起来">29.5.3
+完整退火函数再把这些操作连起来</h3>
+<p>十点主试验从最近邻路线开始, 每次随机反向非起点片段, 初温 20, 每步乘
+0.999, 共尝试 10000 次. 下列函数把邻域, 接受和历史记录合在一起,
+各任务仍能逐行辨认.</p>
+<p><strong>Python · <code>tsp_sa.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> math,random</span><br><span class="line"><span class="keyword">from</span> tsp_common <span class="keyword">import</span> validate_matrix,nonnegative_integer,length,reverse_segment</span><br><span class="line"><span class="keyword">from</span> tsp_greedy <span class="keyword">import</span> greedy</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">simulated_annealing</span>(<span class="params">D, seed=<span class="number">11</span>, iterations=<span class="number">10000</span>, temperature=<span class="number">20</span>, cooling=<span class="number">0.999</span></span>):</span><br><span class="line">    validate_matrix(D)</span><br><span class="line">    nonnegative_integer(iterations, <span class="string">&#x27;iterations&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> math.isfinite(temperature) <span class="keyword">or</span> temperature &lt;= <span class="number">0</span> <span class="keyword">or</span> (<span class="keyword">not</span> math.isfinite(cooling)) <span class="keyword">or</span> (<span class="keyword">not</span> <span class="number">0</span> &lt; cooling &lt; <span class="number">1</span>):</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&#x27;Invalid cooling settings&#x27;</span>)</span><br><span class="line">    rng = random.Random(seed)</span><br><span class="line">    current = greedy(<span class="number">0</span>, D)</span><br><span class="line">    current_value = length(current, D)</span><br><span class="line">    best = current.copy()</span><br><span class="line">    best_value = current_value</span><br><span class="line">    current_history = [current_value]</span><br><span class="line">    best_history = [best_value]</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(iterations):</span><br><span class="line">        candidate = reverse_segment(current, rng)</span><br><span class="line">        value = length(candidate, D)</span><br><span class="line">        delta = value - current_value</span><br><span class="line">        <span class="keyword">if</span> delta &lt;= <span class="number">0</span> <span class="keyword">or</span> (temperature &gt; <span class="number">0</span> <span class="keyword">and</span> rng.random() &lt; math.exp(-delta / temperature)):</span><br><span class="line">            current = candidate</span><br><span class="line">            current_value = value</span><br><span class="line">        <span class="keyword">if</span> current_value &lt; best_value:</span><br><span class="line">            best = current.copy()</span><br><span class="line">            best_value = current_value</span><br><span class="line">        temperature *= cooling</span><br><span class="line">        current_history.append(current_value)</span><br><span class="line">        best_history.append(best_value)</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">dict</span>(route=best, length=best_value, current_history=current_history, best_history=best_history, evaluations=iterations + <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB · <code>simulatedAnnealing.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">result</span> = <span class="title">simulatedAnnealing</span><span class="params">(D,seed,iterations,temperature,cooling)</span></span></span><br><span class="line">    <span class="keyword">if</span> nargin&lt;<span class="number">2</span>, seed=<span class="number">11</span>; <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">if</span> nargin&lt;<span class="number">3</span>, iterations=<span class="number">10000</span>; <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">if</span> nargin&lt;<span class="number">4</span>, temperature=<span class="number">20</span>; <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">if</span> nargin&lt;<span class="number">5</span>, cooling=<span class="number">.999</span>; <span class="keyword">end</span></span><br><span class="line">    validateTSP(D);</span><br><span class="line">    validateattributes(iterations,&#123;<span class="string">&#x27;numeric&#x27;</span>&#125;,&#123;<span class="string">&#x27;scalar&#x27;</span>,<span class="string">&#x27;integer&#x27;</span>,<span class="string">&#x27;nonnegative&#x27;</span>,<span class="string">&#x27;finite&#x27;</span>&#125;);</span><br><span class="line">    assert(<span class="built_in">isscalar</span>(temperature) &amp;&amp; <span class="built_in">isfinite</span>(temperature) &amp;&amp; temperature&gt;<span class="number">0</span>);</span><br><span class="line">    assert(<span class="built_in">isscalar</span>(cooling) &amp;&amp; <span class="built_in">isfinite</span>(cooling) &amp;&amp; cooling&gt;<span class="number">0</span> &amp;&amp; cooling&lt;<span class="number">1</span>);</span><br><span class="line">    stream = RandStream(<span class="string">&#x27;mt19937ar&#x27;</span>,<span class="string">&#x27;Seed&#x27;</span>,seed);</span><br><span class="line">    current = greedyTSP(<span class="number">0</span>,D); currentValue = tspLength(current,D);</span><br><span class="line">    best = current; bestValue = currentValue;</span><br><span class="line">    currentHistory = <span class="built_in">zeros</span>(<span class="number">1</span>,iterations+<span class="number">1</span>); bestHistory = currentHistory;</span><br><span class="line">    currentHistory(<span class="number">1</span>)=currentValue; bestHistory(<span class="number">1</span>)=bestValue;</span><br><span class="line">    <span class="keyword">for</span> k = <span class="number">1</span>:iterations</span><br><span class="line">        candidate = reverseSegment(current,stream);</span><br><span class="line">        value = tspLength(candidate,D); delta = value-currentValue;</span><br><span class="line">        <span class="keyword">if</span> delta&lt;=<span class="number">0</span> || (temperature&gt;<span class="number">0</span> &amp;&amp; <span class="built_in">rand</span>(stream)&lt;<span class="built_in">exp</span>(-delta/temperature))</span><br><span class="line">            current=candidate; currentValue=value;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">if</span> currentValue&lt;bestValue, best=current; bestValue=currentValue; <span class="keyword">end</span></span><br><span class="line">        temperature = temperature*cooling;</span><br><span class="line">        currentHistory(k+<span class="number">1</span>)=currentValue; bestHistory(k+<span class="number">1</span>)=bestValue;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    result = struct(<span class="string">&#x27;route&#x27;</span>,best,<span class="string">&#x27;length&#x27;</span>,bestValue, ...</span><br><span class="line">        <span class="string">&#x27;current_history&#x27;</span>,currentHistory,<span class="string">&#x27;best_history&#x27;</span>,bestHistory, ...</span><br><span class="line">        <span class="string">&#x27;evaluations&#x27;</span>,iterations+<span class="number">1</span>);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>每次搜索建立自己的随机数发生器, 不依赖其他算法此前抽取了多少随机数.
+原程序对浮点温度下溢为零作保护, 此时只接受不变差候选.
+这项保护解决除零问题, 不提供新的全局最优保证.</p>
+<p><img src="/images/HeuristicAlgorithms/HA-2.png" style="width:100%"></p>
+<p>图 29-3 十点退火示范的接受概率与实际轨迹. 当前值允许上升,
+历史最好值只能不增. 图中平台与本次达到基准的事实,
+都不能代替一般最优性证明.</p>
+<h2 id="遗传算法的交叉-编号不能重复或遗漏">29.6 遗传算法的交叉:
+编号不能重复或遗漏</h2>
+<p>遗传算法同时维护多条候选路线, 组成种群. 一条路线为一个个体.
+先不讨论整代搜索, 只看两条父代怎样生成合法后代.</p>
+<p>父代为 <code>[0,1,2,3,4,5]</code> 与 <code>[0,3,5,1,4,2]</code>.
+从父代一取出片段 <code>[1,2,3]</code>, 在父代二中读取这些编号的相对顺序,
+得到 <code>[3,1,2]</code>.</p>
+<p><strong>Python ·
+<code>step07_feasible_crossover.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">parent1 = [<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]</span><br><span class="line">parent2 = [<span class="number">0</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">1</span>,<span class="number">4</span>,<span class="number">2</span>]</span><br><span class="line">segment = parent1[<span class="number">1</span>:<span class="number">4</span>]</span><br><span class="line">incoming = [v <span class="keyword">for</span> v <span class="keyword">in</span> parent2 <span class="keyword">if</span> v <span class="keyword">in</span> segment]</span><br><span class="line">child1 = parent1[:<span class="number">1</span>]+parent1[<span class="number">4</span>:]+incoming</span><br><span class="line">child2 = [v <span class="keyword">for</span> v <span class="keyword">in</span> parent2 <span class="keyword">if</span> v <span class="keyword">not</span> <span class="keyword">in</span> segment]+segment</span><br><span class="line"><span class="keyword">for</span> child <span class="keyword">in</span> [child1,child2]:</span><br><span class="line">    <span class="keyword">assert</span> child[<span class="number">0</span>] == <span class="number">0</span> <span class="keyword">and</span> <span class="built_in">sorted</span>(child) == <span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">6</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;segment:&quot;</span>, segment, <span class="string">&quot;order in parent2:&quot;</span>, incoming)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;children:&quot;</span>, child1, child2)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;parents retained:&quot;</span>, parent1, parent2)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB ·
+<code>step07_feasible_crossover.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">parent1 = [<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]; parent2 = [<span class="number">0</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">1</span>,<span class="number">4</span>,<span class="number">2</span>];</span><br><span class="line">segment = parent1(<span class="number">2</span>:<span class="number">4</span>); incoming = parent2(<span class="built_in">ismember</span>(parent2,segment));</span><br><span class="line">child1 = [parent1(<span class="number">1</span>),parent1(<span class="number">5</span>:<span class="keyword">end</span>),incoming];</span><br><span class="line">child2 = [parent2(~<span class="built_in">ismember</span>(parent2,segment)),segment];</span><br><span class="line">children = [child1;child2];</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">    assert(children(k,<span class="number">1</span>)==<span class="number">0</span> &amp;&amp; <span class="built_in">isequal</span>(<span class="built_in">sort</span>(children(k,:)),<span class="number">0</span>:<span class="number">5</span>));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;segment:&#x27;</span>); <span class="built_in">disp</span>(segment); <span class="built_in">disp</span>(<span class="string">&#x27;order in parent2:&#x27;</span>); <span class="built_in">disp</span>(incoming);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;children:&#x27;</span>); <span class="built_in">disp</span>(children); <span class="built_in">disp</span>(<span class="string">&#x27;parents retained:&#x27;</span>); <span class="built_in">disp</span>([parent1;parent2]);</span><br></pre></td></tr></table></figure>
+<p>第一条后代把父代一未取出的部分 <code>[0,4,5]</code> 与
+<code>[3,1,2]</code> 拼起来. 第二条从父代二删去同一组编号, 将剩余
+<code>[0,5,4]</code> 与原片段 <code>[1,2,3]</code> 拼起来.</p>
+<p>取出集合与剩余集合不重叠, 合起来仍覆盖全部编号, 所以后代保持排列.
+起点 0 不在片段中, 仍位于首项. 这是一种片段重排设计,
+不等同于把两条字符串任意截断后拼接, 也不声称比其他排列交叉更优.</p>
+<p>交叉后的路线仍需评价. 六编号例子只展示算子可行性,
+十点试验仍使用原固定数据. 交叉与片段反向变异的完整随机实现见进阶阅读
+F.5.4.</p>
+<h2 id="精英保留-父代最好路线怎样继续留下">29.7 精英保留:
+父代最好路线怎样继续留下</h2>
+<p>交叉和变异不保证每条后代都变好. 一种明确的生存规则是:
+把未改动父代与新后代一起按闭合长度排序, 再保留规定数量的最短路线.</p>
+<p>下面用四点路线, 父代长度 14 与 16, 后代长度 18 与 14,
+从四条中保留两条. 反向环路可能同长,
+这里允许它们作为不同排列同时出现.</p>
+<p><strong>Python · <code>step08_elite_selection.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> hypot</span><br><span class="line">points = [(<span class="number">0.</span>,<span class="number">0.</span>),(<span class="number">3.</span>,<span class="number">0.</span>),(<span class="number">3.</span>,<span class="number">4.</span>),(<span class="number">0.</span>,<span class="number">4.</span>)]</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">score</span>(<span class="params">route</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">sum</span>(hypot(points[a][<span class="number">0</span>]-points[b][<span class="number">0</span>],points[a][<span class="number">1</span>]-points[b][<span class="number">1</span>])</span><br><span class="line">               <span class="keyword">for</span> a,b <span class="keyword">in</span> <span class="built_in">zip</span>(route,route[<span class="number">1</span>:]+route[:<span class="number">1</span>]))</span><br><span class="line">parents = [[<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>],[<span class="number">0</span>,<span class="number">1</span>,<span class="number">3</span>,<span class="number">2</span>]]</span><br><span class="line">offspring = [[<span class="number">0</span>,<span class="number">2</span>,<span class="number">1</span>,<span class="number">3</span>],[<span class="number">0</span>,<span class="number">3</span>,<span class="number">2</span>,<span class="number">1</span>]]</span><br><span class="line">ranked = <span class="built_in">sorted</span>(parents+offspring,key=<span class="keyword">lambda</span> route:(score(route),route))</span><br><span class="line">survivors = [route.copy() <span class="keyword">for</span> route <span class="keyword">in</span> ranked[:<span class="number">2</span>]]</span><br><span class="line"><span class="keyword">for</span> route <span class="keyword">in</span> ranked:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;candidate:&quot;</span>, route, <span class="string">&quot;length:&quot;</span>, score(route))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;survivors:&quot;</span>, survivors)</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">min</span>(<span class="built_in">map</span>(score,survivors)) &lt;= <span class="built_in">min</span>(<span class="built_in">map</span>(score,parents))</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB · <code>step08_elite_selection.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">points = [<span class="number">0</span>,<span class="number">0</span>;<span class="number">3</span>,<span class="number">0</span>;<span class="number">3</span>,<span class="number">4</span>;<span class="number">0</span>,<span class="number">4</span>];</span><br><span class="line">parents = [<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>;<span class="number">0</span>,<span class="number">1</span>,<span class="number">3</span>,<span class="number">2</span>]; offspring = [<span class="number">0</span>,<span class="number">2</span>,<span class="number">1</span>,<span class="number">3</span>;<span class="number">0</span>,<span class="number">3</span>,<span class="number">2</span>,<span class="number">1</span>];</span><br><span class="line">pool = [parents;offspring]; scores = <span class="built_in">zeros</span>(<span class="number">4</span>,<span class="number">1</span>);</span><br><span class="line"><span class="keyword">for</span> r = <span class="number">1</span>:<span class="number">4</span></span><br><span class="line">    route = pool(r,:);</span><br><span class="line">    <span class="keyword">for</span> k = <span class="number">1</span>:<span class="number">4</span></span><br><span class="line">        a = route(k); b = route(<span class="built_in">mod</span>(k,<span class="number">4</span>)+<span class="number">1</span>);</span><br><span class="line">        scores(r) = scores(r)+<span class="built_in">hypot</span>(points(a+<span class="number">1</span>,<span class="number">1</span>)-points(b+<span class="number">1</span>,<span class="number">1</span>), ...</span><br><span class="line">            points(a+<span class="number">1</span>,<span class="number">2</span>)-points(b+<span class="number">1</span>,<span class="number">2</span>));</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">ranked = <span class="built_in">sortrows</span>([scores,pool]); survivors = ranked(<span class="number">1</span>:<span class="number">2</span>,<span class="number">2</span>:<span class="keyword">end</span>);</span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;length and route:&#x27;</span>); <span class="built_in">disp</span>(ranked); <span class="built_in">disp</span>(<span class="string">&#x27;survivors:&#x27;</span>); <span class="built_in">disp</span>(survivors);</span><br><span class="line">assert(ranked(<span class="number">1</span>,<span class="number">1</span>) &lt;= <span class="built_in">min</span>(scores(<span class="number">1</span>:<span class="number">2</span>)));</span><br></pre></td></tr></table></figure>
+<p>保留的最好长度不会比父代最好值更大, 因为旧的最好父代仍在候选池中.
+如果先把唯一的最好父代原地变异而没有备份, 就没有这个理由.
+精英保留保证的是已找到的最好值不丢失, 不是保证下一代一定找到更优值.</p>
+<p>本章完整实现还允许自配对与重复个体. 它便于教学, 也可能减少多样性.
+若变异函数返回新列表, 必须把返回值写回后代集合,
+仅给循环临时变量重新赋值不会替换原集合中的路线.</p>
+<p><img src="/images/HeuristicAlgorithms/HA-3.png" style="width:100%"></p>
+<p>图 29-4 六编号的交叉与十点遗传试验的历史最好曲线.
+两部分分别检查可行重组与实际搜索结果,
+不把六编号算子当作完整十点试验.</p>
+<p>完整十点遗传算法使用 10 条保留个体, 初始先评价 100 条随机路线,
+每代有序配对最多产生 200 条后代. 原示范交叉概率为 1, 变异概率 0.1, 共 10
+代, 完整评价数为 <span
+class="math inline">\(100+10\times200=2100\)</span>. 排序,
+交叉与变异还有额外工作, 不能只数代数.</p>
+<h2 id="蚁群的下一站-先算权重-再归一化为概率">29.8 蚁群的下一站:
+先算权重, 再归一化为概率</h2>
+<h3 id="一次选择可以手算">29.8.1 一次选择可以手算</h3>
+<p>在四点例子中, 当前位于 0, 未访问点 1, 2, 3 的距离为 3, 5, 4.
+若三条边的信息素都为 0.2, 距离启发信息取倒数, 且两个指数都为 1,
+未归一化权重为 <span class="math inline">\(0.2/3\)</span>, <span
+class="math inline">\(0.2/5\)</span>, <span
+class="math inline">\(0.2/4\)</span>.</p>
+<p>权重不是概率, 先除以权重总和. 结果为</p>
+<p><span class="math display">\[
+(P_1,P_2,P_3)^{\mathsf T}
+=\left(\frac{20}{47},\frac{12}{47},\frac{15}{47}\right)^{\mathsf T}.
+\]</span></p>
+<p><strong>Python ·
+<code>step09_transition_probabilities.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> hypot</span><br><span class="line">points = [(<span class="number">0.</span>,<span class="number">0.</span>),(<span class="number">3.</span>,<span class="number">0.</span>),(<span class="number">3.</span>,<span class="number">4.</span>),(<span class="number">0.</span>,<span class="number">4.</span>)]</span><br><span class="line">current = <span class="number">0</span></span><br><span class="line">candidates = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]</span><br><span class="line">distances = [hypot(points[current][<span class="number">0</span>]-points[j][<span class="number">0</span>],</span><br><span class="line">                   points[current][<span class="number">1</span>]-points[j][<span class="number">1</span>]) <span class="keyword">for</span> j <span class="keyword">in</span> candidates]</span><br><span class="line">tau = [<span class="number">.2</span>,<span class="number">.2</span>,<span class="number">.2</span>]</span><br><span class="line">weights = [t/d <span class="keyword">for</span> t,d <span class="keyword">in</span> <span class="built_in">zip</span>(tau,distances)]</span><br><span class="line">probabilities = [w/<span class="built_in">sum</span>(weights) <span class="keyword">for</span> w <span class="keyword">in</span> weights]</span><br><span class="line"><span class="keyword">for</span> j,d,p <span class="keyword">in</span> <span class="built_in">zip</span>(candidates,distances,probabilities):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;candidate:&quot;</span>, j, <span class="string">&quot;distance:&quot;</span>, d, <span class="string">&quot;probability:&quot;</span>, p)</span><br><span class="line">u = <span class="number">.5</span></span><br><span class="line">cumulative = <span class="number">0.</span></span><br><span class="line"><span class="keyword">for</span> j,p <span class="keyword">in</span> <span class="built_in">zip</span>(candidates,probabilities):</span><br><span class="line">    cumulative += p</span><br><span class="line">    <span class="keyword">if</span> u &lt; cumulative:</span><br><span class="line">        chosen = j</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;fixed illustrative u:&quot;</span>, u, <span class="string">&quot;chosen:&quot;</span>, chosen)</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB ·
+<code>step09_transition_probabilities.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">points = [<span class="number">0</span>,<span class="number">0</span>;<span class="number">3</span>,<span class="number">0</span>;<span class="number">3</span>,<span class="number">4</span>;<span class="number">0</span>,<span class="number">4</span>];</span><br><span class="line">current = <span class="number">0</span>; candidates = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]; tau = [<span class="number">.2</span>,<span class="number">.2</span>,<span class="number">.2</span>];</span><br><span class="line">distances = <span class="built_in">zeros</span>(<span class="number">1</span>,<span class="number">3</span>);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    <span class="built_in">j</span> = candidates(k);</span><br><span class="line">    distances(k) = <span class="built_in">hypot</span>(points(current+<span class="number">1</span>,<span class="number">1</span>)-points(<span class="built_in">j</span>+<span class="number">1</span>,<span class="number">1</span>), ...</span><br><span class="line">        points(current+<span class="number">1</span>,<span class="number">2</span>)-points(<span class="built_in">j</span>+<span class="number">1</span>,<span class="number">2</span>));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">weights = tau./distances; probabilities = weights/sum(weights);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    fprintf(<span class="string">&#x27;candidate: %d, distance: %g, probability: %.9f\n&#x27;</span>, ...</span><br><span class="line">        candidates(k),distances(k),probabilities(k));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">u = <span class="number">.5</span>; index = <span class="built_in">find</span>(u&lt;cumsum(probabilities),<span class="number">1</span>); chosen = candidates(index);</span><br><span class="line">fprintf(<span class="string">&#x27;fixed illustrative u: %.1f, chosen: %d\n&#x27;</span>,u,chosen);</span><br></pre></td></tr></table></figure>
+<p>概率之和为 1. 最近的点 1 概率最高, 但并不是每次都选它.
+为了看清累积区间, 程序把一次均匀随机数的取值固定成 0.5: 它落入点 2
+对应的区间, 因而这次选择距离为 5 的点.</p>
+<p>确定下一站后, 将它从未访问集合中删除, 再从新位置重新计算概率.
+这保证逐步构造的路线不会重复地点, 但最后仍须接回起点.</p>
+<h3 id="一般转移规则">29.8.2 一般转移规则</h3>
+<p>记信息素为 <span class="math inline">\(\tau_{ij}\)</span>,
+距离启发信息为 <span class="math inline">\(\eta_{ij}=1/d_{ij}\)</span>,
+尚未访问集合为 <span class="math inline">\(J_i\)</span>. 则</p>
+<p><span class="math display">\[
+P_{ij}=\begin{cases}
+\dfrac{\tau_{ij}^{\alpha}\eta_{ij}^{\beta}}
+{\sum\limits_{u\in J_i}\tau_{iu}^{\alpha}\eta_{iu}^{\beta}},&amp;j\in
+J_i,\\
+0,&amp;j\notin J_i.
+\end{cases}
+\]</span></p>
+<p><span class="math inline">\(\alpha\)</span> 和 <span
+class="math inline">\(\beta\)</span> 调节两类信息的作用. 信息素相同时,
+距离仍影响概率. 蚁群借鉴群体信息交流形成搜索方法, 不逐细节模拟真实蚂蚁,
+也不是每次确定性选择信息素最多的边. [2]</p>
+<h2 id="完成一条路线后-怎样更新信息素">29.9 完成一条路线后,
+怎样更新信息素</h2>
+<h3 id="先算一只蚂蚁的一轮">29.9.1 先算一只蚂蚁的一轮</h3>
+<p>四点闭合路线 <span class="math inline">\(0\to1\to2\to3\to0\)</span>
+长 14. 取强化尺度 <span class="math inline">\(Q=10\)</span>,
+旧信息素非对角元素均为 0.2, 旧值保留率为 0.4.
+对这条完整路线经过的每条边, 都加入同样的 <span
+class="math inline">\(Q/L=10/14\)</span>.</p>
+<p><strong>Python · <code>step10_pheromone_update.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> hypot</span><br><span class="line">points = [(<span class="number">0.</span>,<span class="number">0.</span>),(<span class="number">3.</span>,<span class="number">0.</span>),(<span class="number">3.</span>,<span class="number">4.</span>),(<span class="number">0.</span>,<span class="number">4.</span>)]</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">score</span>(<span class="params">route</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">sum</span>(hypot(points[a][<span class="number">0</span>]-points[b][<span class="number">0</span>],points[a][<span class="number">1</span>]-points[b][<span class="number">1</span>])</span><br><span class="line">               <span class="keyword">for</span> a,b <span class="keyword">in</span> <span class="built_in">zip</span>(route,route[<span class="number">1</span>:]+route[:<span class="number">1</span>]))</span><br><span class="line">n = <span class="number">4</span></span><br><span class="line">route = [<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]</span><br><span class="line">value = score(route)</span><br><span class="line">retention, Q = <span class="number">.4</span>, <span class="number">10.</span></span><br><span class="line">tau = [[<span class="number">.2</span> <span class="keyword">if</span> i != j <span class="keyword">else</span> <span class="number">0.</span> <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(n)] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n)]</span><br><span class="line">delta = [[<span class="number">0.</span>]*n <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(n)]</span><br><span class="line"><span class="keyword">for</span> i,j <span class="keyword">in</span> <span class="built_in">zip</span>(route,route[<span class="number">1</span>:]+route[:<span class="number">1</span>]):</span><br><span class="line">    delta[i][j] += Q/value</span><br><span class="line">    delta[j][i] += Q/value</span><br><span class="line">updated = [[retention*tau[i][j]+delta[i][j] <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(n)] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n)]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;closed length:&quot;</span>, value, <span class="string">&quot;same deposit on each used edge:&quot;</span>, Q/value)</span><br><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> updated:</span><br><span class="line">    <span class="built_in">print</span>(row)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;used edge 0-1:&quot;</span>, updated[<span class="number">0</span>][<span class="number">1</span>], <span class="string">&quot;unused edge 0-2:&quot;</span>, updated[<span class="number">0</span>][<span class="number">2</span>])</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB · <code>step10_pheromone_update.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">points = [<span class="number">0</span>,<span class="number">0</span>;<span class="number">3</span>,<span class="number">0</span>;<span class="number">3</span>,<span class="number">4</span>;<span class="number">0</span>,<span class="number">4</span>];</span><br><span class="line">n = <span class="number">4</span>; route = [<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]; value = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:n</span><br><span class="line">    <span class="built_in">i</span> = route(k); <span class="built_in">j</span> = route(<span class="built_in">mod</span>(k,n)+<span class="number">1</span>);</span><br><span class="line">    value = value+<span class="built_in">hypot</span>(points(<span class="built_in">i</span>+<span class="number">1</span>,<span class="number">1</span>)-points(<span class="built_in">j</span>+<span class="number">1</span>,<span class="number">1</span>),points(<span class="built_in">i</span>+<span class="number">1</span>,<span class="number">2</span>)-points(<span class="built_in">j</span>+<span class="number">1</span>,<span class="number">2</span>));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">retention = <span class="number">.4</span>; Q = <span class="number">10</span>; tau = <span class="number">.2</span>*(<span class="built_in">ones</span>(n)-<span class="built_in">eye</span>(n)); delta = <span class="built_in">zeros</span>(n);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:n</span><br><span class="line">    <span class="built_in">i</span> = route(k)+<span class="number">1</span>; <span class="built_in">j</span> = route(<span class="built_in">mod</span>(k,n)+<span class="number">1</span>)+<span class="number">1</span>;</span><br><span class="line">    delta(<span class="built_in">i</span>,<span class="built_in">j</span>) = delta(<span class="built_in">i</span>,<span class="built_in">j</span>)+Q/value; delta(<span class="built_in">j</span>,<span class="built_in">i</span>) = delta(<span class="built_in">j</span>,<span class="built_in">i</span>)+Q/value;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">updated = retention*tau+delta;</span><br><span class="line">fprintf(<span class="string">&#x27;closed length: %g, deposit on each used edge: %.9f\n&#x27;</span>,value,Q/value);</span><br><span class="line"><span class="built_in">disp</span>(updated);</span><br><span class="line">fprintf(<span class="string">&#x27;used edge 0-1: %.9f, unused edge 0-2: %.9f\n&#x27;</span>,updated(<span class="number">1</span>,<span class="number">2</span>),updated(<span class="number">1</span>,<span class="number">3</span>));</span><br></pre></td></tr></table></figure>
+<p>使用边 <span class="math inline">\(0\leftrightarrow1\)</span>
+的新信息素约为 <span
+class="math inline">\(0.4\times0.2+10/14=0.794286\)</span>. 未使用边
+<span class="math inline">\(0\leftrightarrow2\)</span> 没有新增量,
+只留下 <span class="math inline">\(0.4\times0.2=0.08\)</span>.
+距离对称时同时更新两个方向, 对角线保持 0.</p>
+<p><img src="/images/HeuristicAlgorithms/HA-8.png" style="width:100%"></p>
+<p>图 29-5 四点例子的一次转移概率和一只蚂蚁完成后的信息素.
+左图是下一站的概率, 右图是完整路线评价后的新矩阵, 两种对象不能混用.</p>
+<h3 id="保留率-挥发率与强化规则要说清">29.9.2 保留率,
+挥发率与强化规则要说清</h3>
+<p>保留率为 0.4, 意味着旧值挥发掉 0.6. 记挥发率为 <span
+class="math inline">\(\rho\)</span>, 多只蚂蚁完成后可写为</p>
+<p><span class="math display">\[
+\tau_{ij}^{\mathrm{new}}=(1-\rho)\tau_{ij}^{\mathrm{old}}
++\sum\limits_{a=1}^{m}\Delta\tau_{ij}^{(a)},
+\]</span></p>
+<p><span class="math display">\[
+\Delta\tau_{ij}^{(a)}=\begin{cases}
+Q/L_a,&amp;\text{蚂蚁 }a\text{ 的环路使用边 }\{i,j\},\\
+0,&amp;\text{否则}.
+\end{cases}
+\]</span></p>
+<p>这里按整条环路长度强化, 同一只蚂蚁在所用各边增加相同数值. 如果改为
+<span class="math inline">\(Q/d_{ij}\)</span>,
+就变成按单边长度强化的另一规则. 完整程序用 <code>deposit='tour'</code>
+表示主例整路强化, 用 <code>deposit='edge'</code> 保留局部强化变体,
+二者的结果和公式应分开.</p>
+<p>主例每代所有蚂蚁都使用更新前的同一矩阵,
+全部完成后统一挥发并加上本代增量. 这与边构造边立即更新是不同的时序.
+完整双语言程序见进阶阅读 F.6.4.</p>
+<p><img src="/images/HeuristicAlgorithms/HA-4.png" style="width:100%"></p>
+<p>图 29-6 十点主试验的初始及第 1, 5, 10 代信息素, 各面板共用色标.
+边的信息素高只是搜索状态, 不证明它属于全局最优环路.</p>
+<p><img src="/images/HeuristicAlgorithms/HA-5.png" style="width:100%"></p>
+<p>图 29-7 十点蚁群的历史最好曲线与返回路线. 平台并不代表已经全局最优,
+这次示范结果仍略长于精确基准.</p>
+<h2 id="完整运行以后-怎样判断结果质量">29.10 完整运行以后,
+怎样判断结果质量</h2>
+<h3 id="用两种精确算法建立十点小实例的基准">29.10.1
+用两种精确算法建立十点小实例的基准</h3>
+<p>固定起点后有 <span class="math inline">\(9!=362880\)</span>
+个访问排列. 本例距离对称, 一条环路反向后长度相同, 因而只需评价 <span
+class="math inline">\(9!/2=181440\)</span> 条去除反向重复的环路.
+这减少重复方向, 没有消除阶乘增长.</p>
+<p>完整枚举得到最短长度约 <strong>342.922073 km</strong>.
+一条达到该值的路线为</p>
+<p><span class="math display">\[
+0\to4\to5\to6\to3\to9\to1\to7\to2\to8\to0.
+\]</span></p>
+<p>另用子集动态规划独立核对, 2304 个集合/终点状态得到同样长度.
+完整枚举程序见进阶阅读 F.2.4, 子集递推与代码见
+<code>ExactTSPBaseline.md</code>, 它也承接上一章的状态设计.
+距离仍以浮点计算, 六位小数不是严格区间证书.</p>
+<p>TSP 优化是 NP-hard 问题. 规模变大时,
+可以根据结构和资源使用或组合精确方法, 近似方法与启发式方法,
+不应说"大问题只能用启发式". 最优值未知时也可利用有效界与已知好解评价,
+但不能把已知最好值自动称作已证明最优值.</p>
+<h3 id="完整试验入口">29.10.2 完整试验入口</h3>
+<p>把配套文件放在同一目录. 下列入口固定十点坐标, 先求精确基准,
+再运行示范参数, 最后用种子 0 至 19 重复三种随机算法.
+三种算法都调用相同的闭合长度与可行性检查.</p>
+<p><strong>Python · <code>run_example.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pathlib <span class="keyword">import</span> Path</span><br><span class="line"><span class="keyword">import</span> json,time,statistics</span><br><span class="line"><span class="keyword">from</span> tsp_data <span class="keyword">import</span> POINTS</span><br><span class="line"><span class="keyword">from</span> tsp_common <span class="keyword">import</span> distance_matrix,length</span><br><span class="line"><span class="keyword">from</span> tsp_greedy <span class="keyword">import</span> greedy</span><br><span class="line"><span class="keyword">from</span> tsp_exact <span class="keyword">import</span> exhaustive</span><br><span class="line"><span class="keyword">from</span> tsp_sa <span class="keyword">import</span> simulated_annealing</span><br><span class="line"><span class="keyword">from</span> tsp_ga <span class="keyword">import</span> genetic_algorithm</span><br><span class="line"><span class="keyword">from</span> tsp_aco <span class="keyword">import</span> ant_colony</span><br><span class="line">ROOT = Path(__file__).resolve().parent</span><br><span class="line">D = distance_matrix(POINTS)</span><br><span class="line">start = time.perf_counter()</span><br><span class="line">exact = exhaustive(D)</span><br><span class="line">exact[<span class="string">&#x27;seconds&#x27;</span>] = time.perf_counter()-start</span><br><span class="line">results = <span class="built_in">dict</span>(points=POINTS,exact=exact,</span><br><span class="line">    greedy=[<span class="built_in">dict</span>(start=i,route=greedy(i,D),length=length(greedy(i,D),D)) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)])</span><br><span class="line"><span class="keyword">for</span> name,solver <span class="keyword">in</span> [(<span class="string">&#x27;sa&#x27;</span>,simulated_annealing),(<span class="string">&#x27;ga&#x27;</span>,genetic_algorithm),(<span class="string">&#x27;aco&#x27;</span>,ant_colony)]:</span><br><span class="line">    start = time.perf_counter()</span><br><span class="line">    answer = solver(D)</span><br><span class="line">    answer[<span class="string">&#x27;seconds&#x27;</span>] = time.perf_counter()-start</span><br><span class="line">    answer[<span class="string">&#x27;gap_percent&#x27;</span>] = <span class="number">100</span>*(answer[<span class="string">&#x27;length&#x27;</span>]/exact[<span class="string">&#x27;length&#x27;</span>]-<span class="number">1</span>)</span><br><span class="line">    results[name] = answer</span><br><span class="line">results[<span class="string">&#x27;aco_edge&#x27;</span>] = ant_colony(D,deposit=<span class="string">&#x27;edge&#x27;</span>)</span><br><span class="line">results[<span class="string">&#x27;repeat&#x27;</span>] = &#123;&#125;</span><br><span class="line"><span class="keyword">for</span> name,solver <span class="keyword">in</span> [(<span class="string">&#x27;sa&#x27;</span>,simulated_annealing),(<span class="string">&#x27;ga&#x27;</span>,genetic_algorithm),(<span class="string">&#x27;aco&#x27;</span>,ant_colony)]:</span><br><span class="line">    values = [solver(D,seed=seed)[<span class="string">&#x27;length&#x27;</span>] <span class="keyword">for</span> seed <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">20</span>)]</span><br><span class="line">    results[<span class="string">&#x27;repeat&#x27;</span>][name] = <span class="built_in">dict</span>(seeds=<span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">20</span>)),lengths=values,</span><br><span class="line">        best=<span class="built_in">min</span>(values),mean=statistics.mean(values),worst=<span class="built_in">max</span>(values),</span><br><span class="line">        std=statistics.pstdev(values),</span><br><span class="line">        optimal_hits=<span class="built_in">sum</span>(<span class="built_in">abs</span>(v-exact[<span class="string">&#x27;length&#x27;</span>])&lt;<span class="number">1e-9</span> <span class="keyword">for</span> v <span class="keyword">in</span> values))</span><br><span class="line">(ROOT/<span class="string">&#x27;results.json&#x27;</span>).write_text(json.dumps(results,indent=<span class="number">2</span>)+<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Exact:&#x27;</span>,exact)</span><br><span class="line"><span class="keyword">for</span> key <span class="keyword">in</span> [<span class="string">&#x27;sa&#x27;</span>,<span class="string">&#x27;ga&#x27;</span>,<span class="string">&#x27;aco&#x27;</span>]:</span><br><span class="line">    <span class="built_in">print</span>(key,results[key][<span class="string">&#x27;length&#x27;</span>],<span class="string">&#x27;evaluations&#x27;</span>,results[key][<span class="string">&#x27;evaluations&#x27;</span>],results[<span class="string">&#x27;repeat&#x27;</span>][key])</span><br></pre></td></tr></table></figure>
+<p><strong>MATLAB · <code>run_examples.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">[points,D]=tspData(); <span class="comment">%#ok&lt;ASGLU&gt;</span></span><br><span class="line">exact=exhaustiveTSP(D);</span><br><span class="line">assert(exact.evaluations==<span class="number">181440</span>);</span><br><span class="line">assert(<span class="built_in">abs</span>(exact.<span class="built_in">length</span><span class="number">-342.922073</span>)&lt;<span class="number">1e-6</span>);</span><br><span class="line">sa=simulatedAnnealing(D); ga=geneticTSP(D); aco=antColonyTSP(D);</span><br><span class="line">results=&#123;sa,ga,aco&#125;; names=&#123;<span class="string">&#x27;SA&#x27;</span>,<span class="string">&#x27;GA&#x27;</span>,<span class="string">&#x27;ACO&#x27;</span>&#125;;</span><br><span class="line"><span class="keyword">for</span> k=<span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    answer=results&#123;k&#125;;</span><br><span class="line">    assert(<span class="built_in">abs</span>(tspLength(answer.route,D)-answer.<span class="built_in">length</span>)&lt;<span class="number">1e-8</span>);</span><br><span class="line">    assert(answer.route(<span class="number">1</span>)==<span class="number">0</span> &amp;&amp; answer.<span class="built_in">length</span>&gt;=exact.<span class="built_in">length</span><span class="number">-1e-8</span>);</span><br><span class="line">    assert(all(diff(answer.best_history)&lt;=<span class="number">1e-8</span>));</span><br><span class="line">    fprintf(<span class="string">&#x27;%s: %.9f km, gap %.6f%%, evaluations %d\n&#x27;</span>, ...</span><br><span class="line">        names&#123;k&#125;,answer.<span class="built_in">length</span>,<span class="number">100</span>*(answer.<span class="built_in">length</span>/exact.<span class="built_in">length</span><span class="number">-1</span>),answer.evaluations);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">repeat=<span class="built_in">zeros</span>(<span class="number">20</span>,<span class="number">3</span>);</span><br><span class="line"><span class="keyword">for</span> seed=<span class="number">0</span>:<span class="number">19</span></span><br><span class="line">    a=simulatedAnnealing(D,seed); b=geneticTSP(D,seed); c=antColonyTSP(D,seed);</span><br><span class="line">    repeat(seed+<span class="number">1</span>,:)=[a.<span class="built_in">length</span>,b.<span class="built_in">length</span>,c.<span class="built_in">length</span>];</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Columns: SA, GA, ACO; rows: seeds 0..19&#x27;</span>); <span class="built_in">disp</span>(repeat);</span><br><span class="line">save(<span class="string">&#x27;matlab_results.mat&#x27;</span>,<span class="string">&#x27;exact&#x27;</span>,<span class="string">&#x27;sa&#x27;</span>,<span class="string">&#x27;ga&#x27;</span>,<span class="string">&#x27;aco&#x27;</span>,<span class="string">&#x27;repeat&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<p>Python 实际结果写入 <code>results.json</code>, 包括路线,
+当前/最好曲线, 信息素快照和重复结果. MATLAB 写入自己的
+<code>matlab_results.mat</code>. 两种语言使用各自的随机流,
+相同数字种子不要求产生相同轨迹. 下列数值与图像来自配套 Python
+程序的一次示范运行. 程序验证的范围见全书统校说明.</p>
+<h3 id="先比较本次结果-再说明预算">29.10.3 先比较本次结果,
+再说明预算</h3>
+<p>表 29-3 一次示范的长度与评价预算.</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>方法</th>
+<th>示范长度(km)</th>
+<th>相对精确值差距</th>
+<th>完整路线评价数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>精确枚举</td>
+<td>342.922073</td>
+<td>0</td>
+<td>181440</td>
+</tr>
+<tr>
+<td>最近邻, 构造起点 0</td>
+<td>363.022974</td>
+<td>5.861653%</td>
+<td>1 次完整长度, 另有距离比较</td>
+</tr>
+<tr>
+<td>模拟退火, 种子 11</td>
+<td>342.922073</td>
+<td>0</td>
+<td>10001</td>
+</tr>
+<tr>
+<td>遗传算法, 种子 22</td>
+<td>342.922073</td>
+<td>0</td>
+<td>2100</td>
+</tr>
+<tr>
+<td>蚁群整路强化, 种子 33</td>
+<td>343.306132</td>
+<td>0.111996%</td>
+<td>100</td>
+</tr>
+</tbody>
+</table>
+<p>差距为 <span class="math inline">\(100(L-L^*)/L^*\)</span>, 只有基准
+<span class="math inline">\(L^*\)</span> 已被确认时,
+才能把它称为相对最优差距. 一万步退火, 十代遗传和十代蚁群使用的预算不同.
+完整路线评价之外, 还有邻域生成, 路线构造, 交叉, 排序与矩阵更新等开销,
+不按迭代数字给三类算法排普遍名次.</p>
+<h3 id="重复试验揭示的是这个实例上的随机差异">29.10.4
+重复试验揭示的是这个实例上的随机差异</h3>
+<p>表 29-4 二十个种子的结果汇总.</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr>
+<th>算法</th>
+<th>最好长度</th>
+<th>平均长度</th>
+<th>最差长度</th>
+<th>总体标准差</th>
+<th>20 次达到本例最优</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>模拟退火</td>
+<td>342.922073</td>
+<td>342.922073</td>
+<td>342.922073</td>
+<td>0.000000</td>
+<td>20</td>
+</tr>
+<tr>
+<td>遗传算法</td>
+<td>342.922073</td>
+<td>344.316862</td>
+<td>351.216016</td>
+<td>2.624790</td>
+<td>14</td>
+</tr>
+<tr>
+<td>蚁群</td>
+<td>342.922073</td>
+<td>349.964412</td>
+<td>365.388297</td>
+<td>5.848387</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>这里固定实例和算法参数, 只改变种子. 标准差是这 20
+个结果的描述性总体标准差, 不是对未知总体波动的精确说明.
+达到最优按与基准差不超过约定浮点容差判断. 完整协议见
+<code>ExperimentProtocol.md</code>.</p>
+<p><img src="/images/HeuristicAlgorithms/HA-6.png" style="width:100%"></p>
+<p>图 29-8 同一十点实例, 当前参数下的 20 个种子. 三图共用差距纵轴范围.
+示范种子的一次成功, 或这 20 次都成功,
+均不能保证下一次或其他实例仍然如此.</p>
+<p>更全面的试验应使用多组实例, 可比较的预算, 记录失败与波动,
+并将参数调节和最终评价分开. 换实例与只换搜索种子回答的是不同问题.</p>
+<h3 id="检查结果与继续阅读">29.10.5 检查结果与继续阅读</h3>
+<ol type="1">
+<li>先回代每个地点恰好一次与回程边, 再看长度是否更短.</li>
+<li>检查新算子保持排列, 是否改动了需要保留的父代或历史最好路线.</li>
+<li>区分当前值和历史最好值, 检查最终路线与记录长度一致.</li>
+<li>对随机方法说明种子, 参数, 停止条件与实际评价预算.</li>
+<li>区分找到一个好解, 达到本例精确基准, 与获得一般最优保证.</li>
+<li>检查距离, 通行, 容量和服务要求是否与实际任务相符.</li>
+</ol>
+<p>启发式是利用问题结构或搜索规则寻找较好可行解的方法. 模拟退火,
+遗传和蚁群属于可迁移到多类问题的元启发式框架, 仍需为具体问题设计表示,
+算子和约束处理. 有限预算的结果通常不带一般全局最优保证.
+曲线平台是运行现象, 不能当作证明.</p>
+<p>表 29-5 启发式算法的配套阅读.</p>
+<table>
+<thead>
+<tr>
+<th>进一步阅读</th>
+<th>配套位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>相邻组合优化问题, 模型条件与精确枚举</td>
+<td>进阶阅读 F.1, F.2</td>
+</tr>
+<tr>
+<td>完整贪心和退火, 邻域与参数</td>
+<td>进阶阅读 F.3, F.4</td>
+</tr>
+<tr>
+<td>遗传交叉, 变异与精英实现</td>
+<td>进阶阅读 F.5</td>
+</tr>
+<tr>
+<td>蚁群概率, 信息素与两个强化变体</td>
+<td>进阶阅读 F.6</td>
+</tr>
+<tr>
+<td>公共验证与闭合长度函数</td>
+<td><code>TSPCommon.md</code></td>
+</tr>
+<tr>
+<td>子集动态规划独立基准</td>
+<td><code>ExactTSPBaseline.md</code></td>
+</tr>
+<tr>
+<td>固定协议与重复试验</td>
+<td><code>ExperimentProtocol.md</code></td>
+</tr>
+</tbody>
+</table>
+<p>本章完成了全书最后一章的学习. 从一个具体问题出发, 明确数据和约束,
+选择可承担的求解方法, 再用原目标回代和证据解释结果,
+是前面各类模型都需要完成的工作.</p>
+<h3 id="分步练习">29.10.6 分步练习</h3>
+<ol type="1">
+<li>四点闭合路线为何为 14 而不是 10? 若程序把终点 0 又存入排列,
+可行性检查为什么需要重新考虑?</li>
+<li><code>[0,1,2]</code> 经过的路段可能较少,
+为什么不能与四点完整路线一起按短者优先排名?</li>
+<li>当前在 0, 未访问点距离为 3, 5, 4, 最近邻先选谁?
+下一步为何要重新从新位置计算?</li>
+<li>将六编号路线位置 1 至 3 反向, 分别写出 Python 切片和 MATLAB 位置,
+核对编号是否仍完整.</li>
+<li>当前长 360, 候选长 370, 温度 20, 若 u=0.2 或 0.8, 是否接受? 长度换为
+m 后怎样保持同一概率?</li>
+<li>当前长度依次为 18, 14, 16, 18, 历史最好曲线怎样记录?
+最后应返回哪份路线?</li>
+<li>从两个父代取出编号 1, 2, 3, 为什么本章重组后仍是排列?
+普通拼接可能发生什么?</li>
+<li>父代最短长度 14, 后代都为 16 或 18. 父代与后代共同选最短者,
+是否会丢掉 14? 若先改坏父代又会怎样?</li>
+<li>四点例子的三种转移概率是多少? 固定 u=0.5 为什么会选到距离 5
+的点?</li>
+<li>一只蚂蚁走完长度 14 的环路, Q=10, 保留率 0.4, 旧值 0.2.
+求使用边与未使用边的新值, 并说明 20 次到达最优为何仍不是一般保证.</li>
+</ol>
+<p>进阶阅读 F.9 另有五道练习, 练习提示见
+<code>ExerciseHints.md</code>.</p>
+<p>配套阅读与实验: <a
+href="../reading/29/Index.md">本章资料索引</a>.</p>
+<h2 id="参考资料">参考资料</h2>
+<p>[1] Kirkpatrick S, Gelatt C D, Vecchi M P. Optimization by Simulated
+Annealing. Science, 1983, 220(4598): 671-680.
+https://doi.org/10.1126/science.220.4598.671.</p>
+<p>[2] Dorigo M, Maniezzo V, Colorni A. Ant System: Optimization by a
+Colony of Cooperating Agents. IEEE Transactions on Systems, Man, and
+Cybernetics, Part B, 1996, 26(1): 29-41.
+https://doi.org/10.1109/3477.484436.</p>
+<p>[3] Google OR-Tools. Traveling Salesperson Problem.
+https://developers.google.com/optimization/routing/tsp.</p>
+
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

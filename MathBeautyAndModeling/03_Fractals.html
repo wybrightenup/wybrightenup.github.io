@@ -34,8 +34,8 @@
 <meta property="og:image" content="http://example.com/images/Fractals/Fractal-Orbits.png">
 <meta property="og:image" content="http://example.com/images/Fractals/Fractal-Mandelbrot.png">
 <meta property="og:image" content="http://example.com/images/Fractals/Fractal-IterationBudget.png">
-<meta property="article:published_time" content="2026-11-02T02:53:07.901Z">
-<meta property="article:modified_time" content="2026-10-31T09:20:34.000Z">
+<meta property="article:published_time" content="2026-11-02T07:34:28.653Z">
+<meta property="article:modified_time" content="2026-11-02T07:34:28.653Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/Fractals/Fractal-KochFirstStep.png">
@@ -335,30 +335,88 @@ class="math inline">\(100/3\)</span> 的小折线.</p>
 <code>pen.left(angle)</code>. 这与之前两层循环先完成内层,
 再执行外层转向的顺序相同.</p>
 <p>表 3-1 递归调用与最底层动作数.</p>
-<div class="line-block">调用 | 每个直接子任务 | 最底层前进次数 |<br />
-: --- | : --- | : ---: |<br />
-<code>koch(pen, 300, 0)</code> | 不再拆分 | 1 |<br />
-<code>koch(pen, 300, 1)</code> | <code>koch(pen, 100, 0)</code>, 共 4 个
-| 4 |<br />
-<code>koch(pen, 300, 2)</code> | <code>koch(pen, 100, 1)</code>, 共 4 个
-| 16 |<br />
-<code>koch(pen, 300, 3)</code> | <code>koch(pen, 100, 2)</code>, 共 4 个
-| 64 |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">调用</th>
+<th style="text-align: center;">每个直接子任务</th>
+<th style="text-align: center;">最底层前进次数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><code>koch(pen, 300, 0)</code></td>
+<td style="text-align: center;">不再拆分</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>koch(pen, 300, 1)</code></td>
+<td style="text-align: center;"><code>koch(pen, 100, 0)</code>, 共 4
+个</td>
+<td style="text-align: center;">4</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>koch(pen, 300, 2)</code></td>
+<td style="text-align: center;"><code>koch(pen, 100, 1)</code>, 共 4
+个</td>
+<td style="text-align: center;">16</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>koch(pen, 300, 3)</code></td>
+<td style="text-align: center;"><code>koch(pen, 100, 2)</code>, 共 4
+个</td>
+<td style="text-align: center;">64</td>
+</tr>
+</tbody>
+</table>
 <p>每次深入调用, <code>level</code> 都减一; 到 0 时停止拆分.
 小任务结束以后, 程序会回到上一层继续完成剩余任务, 并非整个程序立即结束.
 本章的 <code>level</code> 取非负整数.</p>
 <h3 id="画出来以后-再算有多长">3.2.4 画出来以后, 再算有多长</h3>
 <p>先只看前几级:</p>
 <p>表 3-2 科赫曲线的线段数量与长度.</p>
-<div class="line-block">级数 | 小线段数量 | 每段长度 | 总长度 |<br />
-: ---: | : ---: | : ---: | : ---: |<br />
-0 | 1 | 1 | 1 |<br />
-1 | 4 | <span class="math inline">\(1/3\)</span> | <span
-class="math inline">\(4/3\)</span> |<br />
-2 | 16 | <span class="math inline">\(1/9\)</span> | <span
-class="math inline">\(16/9\)</span> |<br />
-3 | 64 | <span class="math inline">\(1/27\)</span> | <span
-class="math inline">\(64/27\)</span> |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">级数</th>
+<th style="text-align: center;">小线段数量</th>
+<th style="text-align: center;">每段长度</th>
+<th style="text-align: center;">总长度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;"><span
+class="math inline">\(1/3\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(4/3\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">16</td>
+<td style="text-align: center;"><span
+class="math inline">\(1/9\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(16/9\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">64</td>
+<td style="text-align: center;"><span
+class="math inline">\(1/27\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(64/27\)</span></td>
+</tr>
+</tbody>
+</table>
 <p>每做一轮, 数量乘以 4, 每段长度除以 3. 因而初始长度为 1 时, 第 <span
 class="math inline">\(n\)</span> 级满足</p>
 <p><span class="math display">\[
@@ -538,17 +596,44 @@ class="math inline">\(c\)</span> 始终不变.</p>
 <p>一条越来越大, 一条在两个数之间来回. 规则没有改变, 只是参数不同,
 结果就很不一样. 这一串依次产生的数叫作轨道.</p>
 <p>表 3-4 四个实参数的迭代轨道.</p>
-<div class="line-block">参数 <span class="math inline">\(c\)</span> | 从
-0 开始的前几项 | 观察 |<br />
-: ---: | : --- | : --- |<br />
-0 | <span class="math inline">\(0,0,0,0,\ldots\)</span> | 一直不变
-|<br />
-<span class="math inline">\(-1\)</span> | <span
-class="math inline">\(0,-1,0,-1,\ldots\)</span> | 来回重复 |<br />
-<span class="math inline">\(-2\)</span> | <span
-class="math inline">\(0,-2,2,2,\ldots\)</span> | 后来保持为 2 |<br />
-1 | <span class="math inline">\(0,1,2,5,26,\ldots\)</span> | 越来越大
-|</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">参数 <span
+class="math inline">\(c\)</span></th>
+<th style="text-align: center;">从 0 开始的前几项</th>
+<th style="text-align: center;">观察</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;"><span
+class="math inline">\(0,0,0,0,\ldots\)</span></td>
+<td style="text-align: center;">一直不变</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(-1\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(0,-1,0,-1,\ldots\)</span></td>
+<td style="text-align: center;">来回重复</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(-2\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(0,-2,2,2,\ldots\)</span></td>
+<td style="text-align: center;">后来保持为 2</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><span
+class="math inline">\(0,1,2,5,26,\ldots\)</span></td>
+<td style="text-align: center;">越来越大</td>
+</tr>
+</tbody>
+</table>
 <p><img src="/images/Fractals/Fractal-Orbits.png" style="width:100%"></p>
 <p>图 3-6 四个实参数的前四步轨道. 图中虚线标出 <span
 class="math inline">\(-2\)</span> 与 2, 取值等于 2 并不等于已经逃逸.</p>
@@ -626,20 +711,59 @@ class="math inline">\([-1.5,1.5]\)</span> 分成三行,
 从上到下的中心纵坐标为 <span class="math inline">\(1,0,-1\)</span>.
 这样得到12个参数:</p>
 <p>表 3-5 三行四列网格的复参数.</p>
-<div class="line-block"> | 第0列 | 第1列 | 第2列 | 第3列 |<br />
-: ---: | : ---: | : ---: | : ---: | : ---: |<br />
-第0行 | <span class="math inline">\(-1.5+\mathrm{i}\)</span> | <span
-class="math inline">\(-0.5+\mathrm{i}\)</span> | <span
-class="math inline">\(0.5+\mathrm{i}\)</span> | <span
-class="math inline">\(1.5+\mathrm{i}\)</span> |<br />
-第1行 | <span class="math inline">\(-1.5\)</span> | <span
-class="math inline">\(-0.5\)</span> | <span
-class="math inline">\(0.5\)</span> | <span
-class="math inline">\(1.5\)</span> |<br />
-第2行 | <span class="math inline">\(-1.5-\mathrm{i}\)</span> | <span
-class="math inline">\(-0.5-\mathrm{i}\)</span> | <span
-class="math inline">\(0.5-\mathrm{i}\)</span> | <span
-class="math inline">\(1.5-\mathrm{i}\)</span> |</div>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;"></th>
+<th style="text-align: center;">第0列</th>
+<th style="text-align: center;">第1列</th>
+<th style="text-align: center;">第2列</th>
+<th style="text-align: center;">第3列</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">第0行</td>
+<td style="text-align: center;"><span
+class="math inline">\(-1.5+\mathrm{i}\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(-0.5+\mathrm{i}\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(0.5+\mathrm{i}\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(1.5+\mathrm{i}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">第1行</td>
+<td style="text-align: center;"><span
+class="math inline">\(-1.5\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(-0.5\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(0.5\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(1.5\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">第2行</td>
+<td style="text-align: center;"><span
+class="math inline">\(-1.5-\mathrm{i}\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(-0.5-\mathrm{i}\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(0.5-\mathrm{i}\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(1.5-\mathrm{i}\)</span></td>
+</tr>
+</tbody>
+</table>
 <p>先选行, 就知道虚部; 再选列, 就知道实部. 两者组合, 就能调用
 <code>escape_steps</code>. 下面先用两层循环打印这张小表, 不涉及颜色.</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">escape_steps</span>(<span class="params">c, max_iter=<span class="number">300</span></span>):</span><br><span class="line">    z = <span class="number">0j</span></span><br><span class="line">    <span class="keyword">for</span> n <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, max_iter + <span class="number">1</span>):</span><br><span class="line">        z = z * z + c</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">abs</span>(z) &gt; <span class="number">2</span>:</span><br><span class="line">            <span class="keyword">return</span> n</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">result = []</span><br><span class="line"><span class="keyword">for</span> y <span class="keyword">in</span> [<span class="number">1</span>, <span class="number">0</span>, -<span class="number">1</span>]:</span><br><span class="line">    one_row = []</span><br><span class="line">    <span class="keyword">for</span> x <span class="keyword">in</span> [-<span class="number">1.5</span>, -<span class="number">0.5</span>, <span class="number">0.5</span>, <span class="number">1.5</span>]:</span><br><span class="line">        c = <span class="built_in">complex</span>(x, y)</span><br><span class="line">        one_row.append(escape_steps(c))</span><br><span class="line">    result.append(one_row)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> one_row <span class="keyword">in</span> result:</span><br><span class="line">    <span class="built_in">print</span>(one_row)</span><br></pre></td></tr></table></figure>
@@ -772,8 +896,6 @@ class="math inline">\(3/4\)</span> 的方法,
 <p>本章的三个构造都使用确定性规则: 条件给定后, 每一步的结果也就确定了.
 下一章将允许单次结果随机变化, 继续观察多次重复以后,
 整体是否仍有可以描述的规律.</p>
-<p>配套阅读与实验: <a
-href="../reading/03/Index.md">本章资料索引</a>.</p>
 <h2 id="参考资料">参考资料</h2>
 <p>[1] Carberry E, Dunn A. Fractals and Dimension. Lecture 11, 18.091,
 MIT OpenCourseWare, 2005. <a

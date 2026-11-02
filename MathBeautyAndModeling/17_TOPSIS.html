@@ -31,8 +31,8 @@
 <meta property="og:image" content="http://example.com/images/TOPSIS/TOPSIS-2.png">
 <meta property="og:image" content="http://example.com/images/TOPSIS/TOPSIS-3.png">
 <meta property="og:image" content="http://example.com/images/TOPSIS/TOPSIS-4.png">
-<meta property="article:published_time" content="2026-11-02T02:53:08.640Z">
-<meta property="article:modified_time" content="2026-10-31T09:20:34.000Z">
+<meta property="article:published_time" content="2026-11-02T07:24:07.977Z">
+<meta property="article:modified_time" content="2026-11-02T07:24:07.977Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/TOPSIS/TOPSIS-Steps.png">
@@ -219,12 +219,32 @@ Python与MATLAB采用同一数据和公式, 初学时可先选择一种语言.</
 <p>学校准备比较三个照明改造方案. 以下均为教学模拟数据,
 假设三个方案都满足必要的安全与使用要求.</p>
 <p>表 17-1 照明方案的两个原始指标.</p>
-<div class="line-block">方案 | 年节电量(万千瓦时) | 年维护工时(小时)
-|<br />
-: ---: | ---: | ---: |<br />
-A | 9 | 10 |<br />
-B | 8 | 7 |<br />
-C | 6 | 3 |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">方案</th>
+<th style="text-align: center;">年节电量(万千瓦时)</th>
+<th style="text-align: center;">年维护工时(小时)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">10</td>
+</tr>
+<tr>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">7</td>
+</tr>
+<tr>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">3</td>
+</tr>
+</tbody>
+</table>
 <p>A节电最多, C维护工时最少, B处在两者之间. 先不要给出第一名,
 而要说明两件事: 节电量按越大越好处理, 维护工时按越小越好处理;
 本次暂时让两项指标等权.</p>
@@ -274,11 +294,32 @@ z_2=\left(0,\frac3{\sqrt{58}},\frac7{\sqrt{58}}\right)^{\mathsf T}
 class="math inline">\(\sqrt{9^2+8^2+6^2}=\sqrt{181}\)</span>,
 标准化矩阵为</p>
 <p>表 17-2 两列向量标准化结果.</p>
-<div class="line-block">方案 | 节电量标准化值 | 维护优势标准化值 |<br />
-: ---: | ---: | ---: |<br />
-A | 0.668965 | 0.000000 |<br />
-B | 0.594635 | 0.393919 |<br />
-C | 0.445976 | 0.919145 |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">方案</th>
+<th style="text-align: center;">节电量标准化值</th>
+<th style="text-align: center;">维护优势标准化值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">0.668965</td>
+<td style="text-align: center;">0.000000</td>
+</tr>
+<tr>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">0.594635</td>
+<td style="text-align: center;">0.393919</td>
+</tr>
+<tr>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">0.445976</td>
+<td style="text-align: center;">0.919145</td>
+</tr>
+</tbody>
+</table>
 <p>下文用Z表示这个矩阵. X负责统一方向, Z负责按列统一尺度,
 二者各有任务.</p>
 <h2 id="再算一个方案-b离两个理想点各有多远">17.2 再算一个方案:
@@ -350,14 +391,39 @@ Python前两段列表表达式只是把按列取值的重复操作写短, 与逐
 <p><strong>code/rank_plans_loop. m</strong></p>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">X = [<span class="number">9</span>,<span class="number">0</span>;<span class="number">8</span>,<span class="number">3</span>;<span class="number">6</span>,<span class="number">7</span>]; w = [<span class="number">0.5</span>,<span class="number">0.5</span>];</span><br><span class="line">lengths = <span class="built_in">sqrt</span>(sum(X.^<span class="number">2</span>,<span class="number">1</span>)); V = <span class="built_in">zeros</span>(<span class="number">3</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">        V(<span class="built_in">i</span>,<span class="built_in">j</span>) = w(<span class="built_in">j</span>)*X(<span class="built_in">i</span>,<span class="built_in">j</span>)/lengths(<span class="built_in">j</span>);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">ideal = <span class="built_in">max</span>(V,[],<span class="number">1</span>); antiIdeal = <span class="built_in">min</span>(V,[],<span class="number">1</span>);</span><br><span class="line">dp = <span class="built_in">zeros</span>(<span class="number">3</span>,<span class="number">1</span>); dn = <span class="built_in">zeros</span>(<span class="number">3</span>,<span class="number">1</span>); scores = <span class="built_in">zeros</span>(<span class="number">3</span>,<span class="number">1</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    plusSquare = <span class="number">0</span>; minusSquare = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">        plusSquare = plusSquare+(V(<span class="built_in">i</span>,<span class="built_in">j</span>)-ideal(<span class="built_in">j</span>))^<span class="number">2</span>;</span><br><span class="line">        minusSquare = minusSquare+(V(<span class="built_in">i</span>,<span class="built_in">j</span>)-antiIdeal(<span class="built_in">j</span>))^<span class="number">2</span>;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    dp(<span class="built_in">i</span>) = <span class="built_in">sqrt</span>(plusSquare); dn(<span class="built_in">i</span>) = <span class="built_in">sqrt</span>(minusSquare);</span><br><span class="line">    scores(<span class="built_in">i</span>) = dn(<span class="built_in">i</span>)/(dp(<span class="built_in">i</span>)+dn(<span class="built_in">i</span>));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">[~,order] = <span class="built_in">sort</span>(scores,<span class="string">&#x27;descend&#x27;</span>); names = &#123;<span class="string">&#x27;A&#x27;</span>,<span class="string">&#x27;B&#x27;</span>,<span class="string">&#x27;C&#x27;</span>&#125;;</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="number">3</span></span><br><span class="line">    <span class="built_in">i</span> = order(k);</span><br><span class="line">    fprintf(<span class="string">&#x27;%s %.9f %.9f %.9f\n&#x27;</span>,names&#123;<span class="built_in">i</span>&#125;,dp(<span class="built_in">i</span>),dn(<span class="built_in">i</span>),scores(<span class="built_in">i</span>));</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
 <p>表 17-3 两个理想距离与贴近度.</p>
-<div class="line-block">方案 | <span
-class="math inline">\(D_i^+\)</span> | <span
-class="math inline">\(D_i^-\)</span> | <span
-class="math inline">\(S_i\)</span> |<br />
-: ---: | ---: | ---: | ---: |<br />
-A | 0.459573 | 0.111494 | 0.195238 |<br />
-B | 0.265230 | 0.210518 | 0.442500 |<br />
-C | 0.111494 | 0.459573 | 0.804762 |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">方案</th>
+<th style="text-align: center;"><span
+class="math inline">\(D_i^+\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(D_i^-\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(S_i\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">0.459573</td>
+<td style="text-align: center;">0.111494</td>
+<td style="text-align: center;">0.195238</td>
+</tr>
+<tr>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">0.265230</td>
+<td style="text-align: center;">0.210518</td>
+<td style="text-align: center;">0.442500</td>
+</tr>
+<tr>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">0.111494</td>
+<td style="text-align: center;">0.459573</td>
+<td style="text-align: center;">0.804762</td>
+</tr>
+</tbody>
+</table>
 <p>按贴近度从大到小排列, 得到 <span
 class="math inline">\(C&gt;B&gt;A\)</span>.
 这只回答当前两指标和等权假设下的问题. C并非每项都最好,
@@ -392,29 +458,87 @@ MATLAB对应维度1和2.
 目标值165和理想区间 <span class="math inline">\([90,100]\)</span>
 均为教学设定, 不是通用照明或控制标准.</p>
 <p>表 17-4 照明方案的四个原始指标.</p>
-<div class="line-block">方案 | 节电量 | 维护工时 | 照度设定值 | 采样周期
-|<br />
-: ---: | ---: | ---: | ---: | ---: |<br />
-A | 9 | 10 | 175 | 120 |<br />
-B | 8 | 7 | 164 | 80 |<br />
-C | 6 | 3 | 157 | 90 |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">方案</th>
+<th style="text-align: center;">节电量</th>
+<th style="text-align: center;">维护工时</th>
+<th style="text-align: center;">照度设定值</th>
+<th style="text-align: center;">采样周期</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">175</td>
+<td style="text-align: center;">120</td>
+</tr>
+<tr>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">164</td>
+<td style="text-align: center;">80</td>
+</tr>
+<tr>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">157</td>
+<td style="text-align: center;">90</td>
+</tr>
+</tbody>
+</table>
 <p>四列依次为效益型, 成本型, 目标值型和区间型. 假设采样过密增加处理负担,
 过疏影响及时识别变化, 因而采用区间偏好. 实际项目是否需要这一指标,
 应由使用目标决定.</p>
 <p>对一列原值 <span class="math inline">\(a_i\)</span>,
 本章采用以下非负正向化规则:</p>
 <p>表 17-5 四类指标的正向化规则.</p>
-<div class="line-block">类型 | 正向化规则 | 应先说明的条件 |<br />
-: --- | : --- | : --- |<br />
-效益型 | <span class="math inline">\(x_i=a_i\)</span> | 原值非负,
-在适用范围内越大越好 |<br />
-成本型 | <span class="math inline">\(x_i=a_{\max}-a_i\)</span> |
-采用本组最大值减原值的路线 |<br />
-目标值型 | 按偏离目标值的距离折减 | 目标为 <span
-class="math inline">\(a^*\)</span>, 两侧等距给同样惩罚 |<br />
-区间型 | 区间内取1, 区间外按距离折减 | 理想区间为 <span
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">类型</th>
+<th style="text-align: center;">正向化规则</th>
+<th style="text-align: center;">应先说明的条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">效益型</td>
+<td style="text-align: center;"><span
+class="math inline">\(x_i=a_i\)</span></td>
+<td style="text-align: center;">原值非负, 在适用范围内越大越好</td>
+</tr>
+<tr>
+<td style="text-align: center;">成本型</td>
+<td style="text-align: center;"><span
+class="math inline">\(x_i=a_{\max}-a_i\)</span></td>
+<td style="text-align: center;">采用本组最大值减原值的路线</td>
+</tr>
+<tr>
+<td style="text-align: center;">目标值型</td>
+<td style="text-align: center;">按偏离目标值的距离折减</td>
+<td style="text-align: center;">目标为 <span
+class="math inline">\(a^*\)</span>, 两侧等距给同样惩罚</td>
+</tr>
+<tr>
+<td style="text-align: center;">区间型</td>
+<td style="text-align: center;">区间内取1, 区间外按距离折减</td>
+<td style="text-align: center;">理想区间为 <span
 class="math inline">\([\alpha,\beta]\)</span>, <span
-class="math inline">\(\alpha\leqslant\beta\)</span> |</div>
+class="math inline">\(\alpha\leqslant\beta\)</span></td>
+</tr>
+</tbody>
+</table>
 <p>目标值型先算 <span class="math inline">\(g_i=|a_i-a^*|\)</span>, 再令
 <span class="math inline">\(M=\max_i g_i\)</span>. 当 <span
 class="math inline">\(M&gt;0\)</span> 时, 取 <span
@@ -490,16 +614,51 @@ D_i^-=\sqrt{\sum\limits_{j=1}^{m}(v_{ij}-v_j^-)^2},
 S_i=\frac{D_i^-}{D_i^++D_i^-},\qquad D_i^++D_i^-&gt;0.
 \]</span></p>
 <p>表 17-6 TOPSIS 中间量与程序变量.</p>
-<div class="line-block">记号 | 任务 | 对应程序变量 |<br />
-: ---: | : --- | : --- |<br />
-A | 记录原始数据与单位 | <code>A</code> |<br />
-X | 统一评价方向 | <code>X</code> |<br />
-Z | 按列标准化 | <code>Z</code> |<br />
-V | 形成加权坐标 | <code>V</code> |<br />
-<span class="math inline">\(D_i^+,D_i^-\)</span> | 量出到两点的距离 |
-<code>dp, dn</code>或 <code>d_plus, d_minus</code> |<br />
-<span class="math inline">\(S_i\)</span> | 综合两个距离进行比较 |
-<code>score</code>或 <code>scores</code> |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">记号</th>
+<th style="text-align: center;">任务</th>
+<th style="text-align: center;">对应程序变量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">记录原始数据与单位</td>
+<td style="text-align: center;"><code>A</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">统一评价方向</td>
+<td style="text-align: center;"><code>X</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">Z</td>
+<td style="text-align: center;">按列标准化</td>
+<td style="text-align: center;"><code>Z</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">V</td>
+<td style="text-align: center;">形成加权坐标</td>
+<td style="text-align: center;"><code>V</code></td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(D_i^+,D_i^-\)</span></td>
+<td style="text-align: center;">量出到两点的距离</td>
+<td style="text-align: center;"><code>dp, dn</code>或
+<code>d_plus, d_minus</code></td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\(S_i\)</span></td>
+<td style="text-align: center;">综合两个距离进行比较</td>
+<td style="text-align: center;"><code>score</code>或
+<code>scores</code></td>
+</tr>
+</tbody>
+</table>
 <p>两个距离非负, 所以在分母大于0时, <span
 class="math inline">\(0\leqslant S_i\leqslant1\)</span>.
 得分1表示在有作用的加权坐标上达到正理想点, 得分0表示达到负理想点.
@@ -538,15 +697,44 @@ class="math inline">\(\sqrt{181},\sqrt{58},\sqrt{0.85},\sqrt{1.25}\)</span>.
 class="math inline">\(0.9/\sqrt{0.85}\approx0.976187\)</span>.
 全部标准化结果如下:</p>
 <p>表 17-7 四指标的标准化矩阵.</p>
-<div class="line-block">方案 | <span
-class="math inline">\(z_{i1}\)</span> | <span
-class="math inline">\(z_{i2}\)</span> | <span
-class="math inline">\(z_{i3}\)</span> | <span
-class="math inline">\(z_{i4}\)</span> |<br />
-: ---: | ---: | ---: | ---: | ---: |<br />
-A | 0.668965 | 0.000000 | 0.000000 | 0.000000 |<br />
-B | 0.594635 | 0.393919 | 0.976187 | 0.447214 |<br />
-C | 0.445976 | 0.919145 | 0.216930 | 0.894427 |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">方案</th>
+<th style="text-align: center;"><span
+class="math inline">\(z_{i1}\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(z_{i2}\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(z_{i3}\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(z_{i4}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">0.668965</td>
+<td style="text-align: center;">0.000000</td>
+<td style="text-align: center;">0.000000</td>
+<td style="text-align: center;">0.000000</td>
+</tr>
+<tr>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">0.594635</td>
+<td style="text-align: center;">0.393919</td>
+<td style="text-align: center;">0.976187</td>
+<td style="text-align: center;">0.447214</td>
+</tr>
+<tr>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">0.445976</td>
+<td style="text-align: center;">0.919145</td>
+<td style="text-align: center;">0.216930</td>
+<td style="text-align: center;">0.894427</td>
+</tr>
+</tbody>
+</table>
 <p>原配套 <code>positivize</code>函数一次处理一列,
 <code>topsis</code>函数串起全部步骤. 把它们与下列案例脚本放在同一目录.
 完整的Python和MATLAB函数, 输入检查与数值缩放说明保存在<a
@@ -565,14 +753,43 @@ href="../reading/17/TOPSISFurtherReading.md">补充阅读F.2与F.5</a>,
 <h3 id="这次比较的是四个指标">17.6.2 这次比较的是四个指标</h3>
 <p>以下距离统一在 <span class="math inline">\(V=Z/4\)</span> 中计算:</p>
 <p>表 17-8 四指标等权距离与排序.</p>
-<div class="line-block">方案 | <span
-class="math inline">\(D_i^+\)</span> | <span
-class="math inline">\(D_i^-\)</span> | <span
-class="math inline">\(S_i\)</span> | 名次 |<br />
-: ---: | ---: | ---: | ---: | ---: |<br />
-A | 0.402940 | 0.055747 | 0.121536 | 3 |<br />
-B | 0.173455 | 0.288337 | 0.624387 | 1 |<br />
-C | 0.197831 | 0.325181 | 0.621747 | 2 |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">方案</th>
+<th style="text-align: center;"><span
+class="math inline">\(D_i^+\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(D_i^-\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(S_i\)</span></th>
+<th style="text-align: center;">名次</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">0.402940</td>
+<td style="text-align: center;">0.055747</td>
+<td style="text-align: center;">0.121536</td>
+<td style="text-align: center;">3</td>
+</tr>
+<tr>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">0.173455</td>
+<td style="text-align: center;">0.288337</td>
+<td style="text-align: center;">0.624387</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">0.197831</td>
+<td style="text-align: center;">0.325181</td>
+<td style="text-align: center;">0.621747</td>
+<td style="text-align: center;">2</td>
+</tr>
+</tbody>
+</table>
 <p>排序成为 <span class="math inline">\(B&gt;C&gt;A\)</span>.
 B在照度目标满意度上更好, C在维护工时与采样区间满意度上更好.
 新增两项评价因素改变了问题, 与两指标的 <span
@@ -604,11 +821,33 @@ TOPSIS负责综合排序</h3>
 <p><strong>code/entropy_bridge_step. m</strong></p>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">X = [<span class="number">9</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>;<span class="number">8</span>,<span class="number">3</span>,<span class="number">0.9</span>,<span class="number">0.5</span>;<span class="number">6</span>,<span class="number">7</span>,<span class="number">0.2</span>,<span class="number">1</span>];</span><br><span class="line">P = X./sum(X,<span class="number">1</span>); terms = <span class="built_in">zeros</span>(<span class="built_in">size</span>(P)); positive = P&gt;<span class="number">0</span>;</span><br><span class="line">terms(positive) = -P(positive).*<span class="built_in">log</span>(P(positive));</span><br><span class="line">E = sum(terms,<span class="number">1</span>)/<span class="built_in">log</span>(<span class="built_in">size</span>(X,<span class="number">1</span>)); d = <span class="number">1</span>-E;</span><br><span class="line">entropyW = d/sum(d); Z = X./<span class="built_in">sqrt</span>(sum(X.^<span class="number">2</span>,<span class="number">1</span>));</span><br><span class="line">weights = [<span class="built_in">ones</span>(<span class="number">1</span>,<span class="number">4</span>)/<span class="number">4</span>;entropyW]; records = cell(<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">    w = weights(k,:); V = Z.*w;</span><br><span class="line">    dp = <span class="built_in">sqrt</span>(sum((V-<span class="built_in">max</span>(V,[],<span class="number">1</span>)).^<span class="number">2</span>,<span class="number">2</span>));</span><br><span class="line">    dn = <span class="built_in">sqrt</span>(sum((V-<span class="built_in">min</span>(V,[],<span class="number">1</span>)).^<span class="number">2</span>,<span class="number">2</span>));</span><br><span class="line">    scores = dn./(dp+dn);</span><br><span class="line">    records&#123;k&#125; = struct(<span class="string">&#x27;w&#x27;</span>,w,<span class="string">&#x27;V&#x27;</span>,V,<span class="string">&#x27;dp&#x27;</span>,dp,<span class="string">&#x27;dn&#x27;</span>,dn,<span class="string">&#x27;scores&#x27;</span>,scores);</span><br><span class="line">    fprintf(<span class="string">&#x27;Method %d, weights: &#x27;</span>,k); <span class="built_in">disp</span>(w);</span><br><span class="line">    <span class="built_in">disp</span>(<span class="string">&#x27;Scores:&#x27;</span>); <span class="built_in">disp</span>(scores.&#x27;);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
 <p>表 17-9 等权与熵权的同路线比较.</p>
-<div class="line-block">权重来源 | A贴近度 | B贴近度 | C贴近度 | 排序
-|<br />
-: --- | ---: | ---: | ---: | : ---: |<br />
-等权 | 0.121536 | 0.624387 | 0.621747 | B&gt;C&gt;A |<br />
-熵权 | 0.003505 | 0.671149 | 0.568478 | B&gt;C&gt;A |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">权重来源</th>
+<th style="text-align: center;">A贴近度</th>
+<th style="text-align: center;">B贴近度</th>
+<th style="text-align: center;">C贴近度</th>
+<th style="text-align: center;">排序</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">等权</td>
+<td style="text-align: center;">0.121536</td>
+<td style="text-align: center;">0.624387</td>
+<td style="text-align: center;">0.621747</td>
+<td style="text-align: center;">B&gt;C&gt;A</td>
+</tr>
+<tr>
+<td style="text-align: center;">熵权</td>
+<td style="text-align: center;">0.003505</td>
+<td style="text-align: center;">0.671149</td>
+<td style="text-align: center;">0.568478</td>
+<td style="text-align: center;">B&gt;C&gt;A</td>
+</tr>
+</tbody>
+</table>
 <p>当前两种权重下第一名相同, 不说明所有合理权重都支持同一个结论.
 节电量熵权小, 只说明这列在所选数据与处理方式下的差异较小,
 不代表节电在实际项目中不重要.</p>
@@ -669,13 +908,54 @@ T},
 <p><strong>code/weight_path_step. m</strong></p>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">X = [<span class="number">9</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>;<span class="number">8</span>,<span class="number">3</span>,<span class="number">0.9</span>,<span class="number">0.5</span>;<span class="number">6</span>,<span class="number">7</span>,<span class="number">0.2</span>,<span class="number">1</span>];</span><br><span class="line">Z = X./<span class="built_in">sqrt</span>(sum(X.^<span class="number">2</span>,<span class="number">1</span>)); grid = [<span class="number">0.20</span>,<span class="number">0.24</span>,<span class="number">0.25</span>,<span class="number">0.26</span>,<span class="number">0.30</span>];</span><br><span class="line">records = cell(<span class="number">1</span>,<span class="built_in">numel</span>(grid));</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="built_in">numel</span>(grid)</span><br><span class="line">    t = grid(k); w = [(<span class="number">1</span>-t)/<span class="number">3</span>,(<span class="number">1</span>-t)/<span class="number">3</span>,t,(<span class="number">1</span>-t)/<span class="number">3</span>];</span><br><span class="line">    V = Z.*w;</span><br><span class="line">    dp = <span class="built_in">sqrt</span>(sum((V-<span class="built_in">max</span>(V,[],<span class="number">1</span>)).^<span class="number">2</span>,<span class="number">2</span>));</span><br><span class="line">    dn = <span class="built_in">sqrt</span>(sum((V-<span class="built_in">min</span>(V,[],<span class="number">1</span>)).^<span class="number">2</span>,<span class="number">2</span>)); scores = dn./(dp+dn);</span><br><span class="line">    records&#123;k&#125; = struct(<span class="string">&#x27;t&#x27;</span>,t,<span class="string">&#x27;w&#x27;</span>,w,<span class="string">&#x27;scores&#x27;</span>,scores);</span><br><span class="line">    fprintf(<span class="string">&#x27;t %.2f, scores and B-C: &#x27;</span>,t);</span><br><span class="line">    <span class="built_in">disp</span>([scores.&#x27;,scores(<span class="number">2</span>)-scores(<span class="number">3</span>)]);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
 <p>表 17-10 照度权重路径上的领先变化.</p>
-<div class="line-block">t | B贴近度 | C贴近度 | B-C | 第一名 |<br />
----: | ---: | ---: | ---: | : ---: |<br />
-0.20 | 0.579372 | 0.678866 | -0.099494 | C |<br />
-0.24 | 0.615403 | 0.632997 | -0.017594 | C |<br />
-0.25 | 0.624387 | 0.621747 | 0.002640 | B |<br />
-0.26 | 0.633318 | 0.610604 | 0.022715 | B |<br />
-0.30 | 0.668212 | 0.567238 | 0.100973 | B |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">t</th>
+<th style="text-align: center;">B贴近度</th>
+<th style="text-align: center;">C贴近度</th>
+<th style="text-align: center;">B-C</th>
+<th style="text-align: center;">第一名</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0.20</td>
+<td style="text-align: center;">0.579372</td>
+<td style="text-align: center;">0.678866</td>
+<td style="text-align: center;">-0.099494</td>
+<td style="text-align: center;">C</td>
+</tr>
+<tr>
+<td style="text-align: center;">0.24</td>
+<td style="text-align: center;">0.615403</td>
+<td style="text-align: center;">0.632997</td>
+<td style="text-align: center;">-0.017594</td>
+<td style="text-align: center;">C</td>
+</tr>
+<tr>
+<td style="text-align: center;">0.25</td>
+<td style="text-align: center;">0.624387</td>
+<td style="text-align: center;">0.621747</td>
+<td style="text-align: center;">0.002640</td>
+<td style="text-align: center;">B</td>
+</tr>
+<tr>
+<td style="text-align: center;">0.26</td>
+<td style="text-align: center;">0.633318</td>
+<td style="text-align: center;">0.610604</td>
+<td style="text-align: center;">0.022715</td>
+<td style="text-align: center;">B</td>
+</tr>
+<tr>
+<td style="text-align: center;">0.30</td>
+<td style="text-align: center;">0.668212</td>
+<td style="text-align: center;">0.567238</td>
+<td style="text-align: center;">0.100973</td>
+<td style="text-align: center;">B</td>
+</tr>
+</tbody>
+</table>
 <p><img src="/images/TOPSIS/TOPSIS-3.png" style="width:100%"></p>
 <p>图 17-4 四指标结果与题定权重路径的敏感性</p>
 <p>沿这条路径, B与C的交点约为 <span
@@ -699,11 +979,36 @@ D的两项都低于原来三个方案, 原方案的数值和权重均不变.</p>
 <p><strong>code/candidate_set_step. m</strong></p>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">original = [<span class="number">4</span>,<span class="number">3</span>;<span class="number">3</span>,<span class="number">4</span>;<span class="number">2</span>,<span class="number">5</span>]; expanded = [original;<span class="number">1</span>,<span class="number">1</span>];</span><br><span class="line">cases = &#123;original,expanded&#125;; records = cell(<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">1</span>:<span class="number">2</span></span><br><span class="line">    X = cases&#123;k&#125;; Z = X./<span class="built_in">sqrt</span>(sum(X.^<span class="number">2</span>,<span class="number">1</span>)); V = Z/<span class="number">2</span>;</span><br><span class="line">    ideal = <span class="built_in">max</span>(V,[],<span class="number">1</span>); antiIdeal = <span class="built_in">min</span>(V,[],<span class="number">1</span>);</span><br><span class="line">    dp = <span class="built_in">sqrt</span>(sum((V-ideal).^<span class="number">2</span>,<span class="number">2</span>));</span><br><span class="line">    dn = <span class="built_in">sqrt</span>(sum((V-antiIdeal).^<span class="number">2</span>,<span class="number">2</span>)); scores = dn./(dp+dn);</span><br><span class="line">    records&#123;k&#125; = struct(<span class="string">&#x27;X&#x27;</span>,X,<span class="string">&#x27;Z&#x27;</span>,Z,<span class="string">&#x27;ideal&#x27;</span>,ideal, ...</span><br><span class="line">        <span class="string">&#x27;anti_ideal&#x27;</span>,antiIdeal,<span class="string">&#x27;scores&#x27;</span>,scores);</span><br><span class="line">    fprintf(<span class="string">&#x27;Candidate count %d, scores: &#x27;</span>,<span class="built_in">size</span>(X,<span class="number">1</span>)); <span class="built_in">disp</span>(scores.&#x27;);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
 <p>表 17-11 候选集合变化与排序逆转.</p>
-<div class="line-block">候选范围 | A | B | C | D | 排序 |<br />
-: --- | ---: | ---: | ---: | ---: | : ---: |<br />
-A, B, C | 0.567673 | 0.500000 | 0.432327 | 未参与 | A&gt;B&gt;C |<br />
-A, B, C, D | 0.687166 | 0.707522 | 0.617351 | 0.000000 |
-B&gt;A&gt;C&gt;D |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">候选范围</th>
+<th style="text-align: center;">A</th>
+<th style="text-align: center;">B</th>
+<th style="text-align: center;">C</th>
+<th style="text-align: center;">D</th>
+<th style="text-align: center;">排序</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">A, B, C</td>
+<td style="text-align: center;">0.567673</td>
+<td style="text-align: center;">0.500000</td>
+<td style="text-align: center;">0.432327</td>
+<td style="text-align: center;">未参与</td>
+<td style="text-align: center;">A&gt;B&gt;C</td>
+</tr>
+<tr>
+<td style="text-align: center;">A, B, C, D</td>
+<td style="text-align: center;">0.687166</td>
+<td style="text-align: center;">0.707522</td>
+<td style="text-align: center;">0.617351</td>
+<td style="text-align: center;">0.000000</td>
+<td style="text-align: center;">B&gt;A&gt;C&gt;D</td>
+</tr>
+</tbody>
+</table>
 <p>加入D以后, 列范数从 <span
 class="math inline">\(\sqrt{29},\sqrt{50}\)</span> 变为 <span
 class="math inline">\(\sqrt{30},\sqrt{51}\)</span>,
@@ -778,8 +1083,6 @@ T}\)</span> 复核两种权重约定的得分. 从坐标表达式推导平方距
 需要设置新案例时, 阅读<a
 href="../reading/17/TOPSISFurtherReading.md">TOPSIS补充阅读</a>中的完整转换函数与求解函数.
 该文件提供完整理论说明, 12个完整代码块, 四幅配图与8道练习.</p>
-<p>配套阅读与实验: <a
-href="../reading/17/Index.md">本章资料索引</a>.</p>
 <h2 id="参考资料">参考资料</h2>
 <p>[1] HWANG C L, YOON K. Multiple Attribute Decision Making: Methods
 and Applications - A State-of-the-Art Survey[M]. Berlin, Heidelberg:

@@ -32,8 +32,8 @@
 <meta property="og:image" content="http://example.com/images/MinimumSpanningTree/prim_cut_step.png">
 <meta property="og:image" content="http://example.com/images/MinimumSpanningTree/prim_steps.png">
 <meta property="og:image" content="http://example.com/images/MinimumSpanningTree/cost_sensitivity.png">
-<meta property="article:published_time" content="2026-11-02T02:53:08.936Z">
-<meta property="article:modified_time" content="2026-10-31T09:20:36.000Z">
+<meta property="article:published_time" content="2026-11-03T00:53:51.641Z">
+<meta property="article:modified_time" content="2026-11-03T00:53:51.641Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/MinimumSpanningTree/candidate_network.png">
@@ -219,18 +219,67 @@ Prim的候选范围是整个已连接集合</span></a><ol class="nav-child"><li 
 不对应实际城市报价. 若把权重解释为线路长度, 还需要单位长度造价相同,
 才能用最小总长度代表最小总费用.</p>
 <p>表 22-1 六城市的十条候选线路.</p>
-<div class="line-block">输入行号 | 候选线路 | 权重 |<br />
-: ---: | : ---: | : ---: |<br />
-1 | 1—2 | 14 |<br />
-2 | 1—3 | 18 |<br />
-3 | 2—3 | 13 |<br />
-4 | 2—4 | 18 |<br />
-5 | 2—5 | 16 |<br />
-6 | 3—4 | 12 |<br />
-7 | 3—5 | 16 |<br />
-8 | 4—5 | 14 |<br />
-9 | 4—6 | 19 |<br />
-10 | 5—6 | 10 |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">输入行号</th>
+<th style="text-align: center;">候选线路</th>
+<th style="text-align: center;">权重</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1—2</td>
+<td style="text-align: center;">14</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1—3</td>
+<td style="text-align: center;">18</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">2—3</td>
+<td style="text-align: center;">13</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">2—4</td>
+<td style="text-align: center;">18</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">2—5</td>
+<td style="text-align: center;">16</td>
+</tr>
+<tr>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">3—4</td>
+<td style="text-align: center;">12</td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">3—5</td>
+<td style="text-align: center;">16</td>
+</tr>
+<tr>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">4—5</td>
+<td style="text-align: center;">14</td>
+</tr>
+<tr>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">4—6</td>
+<td style="text-align: center;">19</td>
+</tr>
+<tr>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">5—6</td>
+<td style="text-align: center;">10</td>
+</tr>
+</tbody>
+</table>
 <p>每条无向边只计一次. 1—2与2—1表示同一条线路. 只能选择候选表中的边;
 图中线条相交但未标出顶点, 不表示新增了一个接线城市.</p>
 <p><img src="/images/MinimumSpanningTree/candidate_network.png" style="width:100%"></p>
@@ -260,13 +309,42 @@ class="math inline">\(n-1\)</span> 条边, 所以六城市生成树有五条边.
 <p>先看三套可行方案, 再看两种容易误判的边集. 行号对应22.1节完整边表,
 输入顺序不等于算法选边顺序.</p>
 <p>表 22-2 候选边集的结构与总权重.</p>
-<div class="line-block">选择的输入行号 | 结构 | 总权重 |<br />
-: --- | : --- | : ---: |<br />
-1, 3, 6, 8, 10 | 连通六点, 五条边, 是生成树 | 63 |<br />
-1, 2, 6, 8, 10 | 是另一棵生成树 | 68 |<br />
-1, 4, 9, 2, 7 | 是另一棵生成树 | 85 |<br />
-1, 2, 3, 6, 8 | 六点中城市6孤立, 其余部分含圈 | 71 |<br />
-全部十条边 | 连通, 但含圈 | 150 |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">选择的输入行号</th>
+<th style="text-align: center;">结构</th>
+<th style="text-align: center;">总权重</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1, 3, 6, 8, 10</td>
+<td style="text-align: center;">连通六点, 五条边, 是生成树</td>
+<td style="text-align: center;">63</td>
+</tr>
+<tr>
+<td style="text-align: center;">1, 2, 6, 8, 10</td>
+<td style="text-align: center;">是另一棵生成树</td>
+<td style="text-align: center;">68</td>
+</tr>
+<tr>
+<td style="text-align: center;">1, 4, 9, 2, 7</td>
+<td style="text-align: center;">是另一棵生成树</td>
+<td style="text-align: center;">85</td>
+</tr>
+<tr>
+<td style="text-align: center;">1, 2, 3, 6, 8</td>
+<td style="text-align: center;">六点中城市6孤立, 其余部分含圈</td>
+<td style="text-align: center;">71</td>
+</tr>
+<tr>
+<td style="text-align: center;">全部十条边</td>
+<td style="text-align: center;">连通, 但含圈</td>
+<td style="text-align: center;">150</td>
+</tr>
+</tbody>
+</table>
 <p><strong>Python:
 <code>candidate_tree_check_step.py</code></strong></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mst_data <span class="keyword">import</span> N, EDGES</span><br><span class="line"></span><br><span class="line">candidates = [[<span class="number">1</span>, <span class="number">3</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">10</span>], [<span class="number">1</span>, <span class="number">2</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">10</span>], [<span class="number">1</span>, <span class="number">4</span>, <span class="number">9</span>, <span class="number">2</span>, <span class="number">7</span>],</span><br><span class="line">              [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">6</span>, <span class="number">8</span>], <span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">1</span>, <span class="number">11</span>))]</span><br><span class="line">records = []</span><br><span class="line"><span class="keyword">for</span> ids <span class="keyword">in</span> candidates:</span><br><span class="line">    chosen = [EDGES[k - <span class="number">1</span>] <span class="keyword">for</span> k <span class="keyword">in</span> ids]</span><br><span class="line">    reached = &#123;<span class="number">1</span>&#125;</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(N - <span class="number">1</span>):</span><br><span class="line">        <span class="keyword">for</span> u, v, weight <span class="keyword">in</span> chosen:</span><br><span class="line">            <span class="keyword">if</span> u <span class="keyword">in</span> reached <span class="keyword">or</span> v <span class="keyword">in</span> reached:</span><br><span class="line">                reached.update((u, v))</span><br><span class="line">    connected = <span class="built_in">len</span>(reached) == N</span><br><span class="line">    is_tree = connected <span class="keyword">and</span> <span class="built_in">len</span>(chosen) == N - <span class="number">1</span></span><br><span class="line">    cost = <span class="built_in">sum</span>(w <span class="keyword">for</span> u, v, w <span class="keyword">in</span> chosen)</span><br><span class="line">    records.append(<span class="built_in">dict</span>(ids=ids, connected=connected, is_tree=is_tree, cost=cost))</span><br><span class="line">    <span class="built_in">print</span>(records[-<span class="number">1</span>])</span><br><span class="line"><span class="keyword">assert</span> [r[<span class="string">&quot;cost&quot;</span>] <span class="keyword">for</span> r <span class="keyword">in</span> records] == [<span class="number">63</span>, <span class="number">68</span>, <span class="number">85</span>, <span class="number">71</span>, <span class="number">150</span>]</span><br><span class="line"><span class="keyword">assert</span> [r[<span class="string">&quot;is_tree&quot;</span>] <span class="keyword">for</span> r <span class="keyword">in</span> records] == [<span class="literal">True</span>, <span class="literal">True</span>, <span class="literal">True</span>, <span class="literal">False</span>, <span class="literal">False</span>]</span><br></pre></td></tr></table></figure>
@@ -326,20 +404,65 @@ class="math inline">\(n-1\)</span> 条边即可停止, 此时连通且无圈.
 完整生成树任务不可行. 返回森林的模式另见22.9节.</p>
 <p>本例推演如下, 每行显示加入后状态:</p>
 <p>表 22-3 Kruskal 的逐边判断.</p>
-<div class="line-block">步骤 | 考察边 | 权重 | 是否加入 | 当前分量 |
-累计权重 |<br />
-: ---: | : ---: | : ---: | : ---: | : ---: | : ---: |<br />
-1 | 5—6 | 10 | 加入 | <span
-class="math inline">\(\{1\},\{2\},\{3\},\{4\},\{5,6\}\)</span> | 10
-|<br />
-2 | 3—4 | 12 | 加入 | <span
-class="math inline">\(\{1\},\{2\},\{3,4\},\{5,6\}\)</span> | 22 |<br />
-3 | 2—3 | 13 | 加入 | <span
-class="math inline">\(\{1\},\{2,3,4\},\{5,6\}\)</span> | 35 |<br />
-4 | 1—2 | 14 | 加入 | <span
-class="math inline">\(\{1,2,3,4\},\{5,6\}\)</span> | 49 |<br />
-5 | 4—5 | 14 | 加入 | <span
-class="math inline">\(\{1,2,3,4,5,6\}\)</span> | 63 |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">步骤</th>
+<th style="text-align: center;">考察边</th>
+<th style="text-align: center;">权重</th>
+<th style="text-align: center;">是否加入</th>
+<th style="text-align: center;">当前分量</th>
+<th style="text-align: center;">累计权重</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">5—6</td>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">加入</td>
+<td style="text-align: center;"><span
+class="math inline">\(\{1\},\{2\},\{3\},\{4\},\{5,6\}\)</span></td>
+<td style="text-align: center;">10</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">3—4</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">加入</td>
+<td style="text-align: center;"><span
+class="math inline">\(\{1\},\{2\},\{3,4\},\{5,6\}\)</span></td>
+<td style="text-align: center;">22</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">2—3</td>
+<td style="text-align: center;">13</td>
+<td style="text-align: center;">加入</td>
+<td style="text-align: center;"><span
+class="math inline">\(\{1\},\{2,3,4\},\{5,6\}\)</span></td>
+<td style="text-align: center;">35</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">1—2</td>
+<td style="text-align: center;">14</td>
+<td style="text-align: center;">加入</td>
+<td style="text-align: center;"><span
+class="math inline">\(\{1,2,3,4\},\{5,6\}\)</span></td>
+<td style="text-align: center;">49</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">4—5</td>
+<td style="text-align: center;">14</td>
+<td style="text-align: center;">加入</td>
+<td style="text-align: center;"><span
+class="math inline">\(\{1,2,3,4,5,6\}\)</span></td>
+<td style="text-align: center;">63</td>
+</tr>
+</tbody>
+</table>
 <p>本例最先考察的五条边恰好都可以加入,
 不代表一般图中只需机械取最便宜的五条.
 前面的标签小程序已经给出了连接同一分量时需要跳过的情形.</p>
@@ -410,20 +533,60 @@ class="math inline">\(d[v]\)</span>. 两者都可逐个选顶点,
 新增城市的邻边只用于改进这些候选, 这与只看最新城市的错误方法不同.
 本例从城市1开始:</p>
 <p>表 22-4 Prim 的跨割选择.</p>
-<div class="line-block">轮次 | 加入前的 <span
-class="math inline">\(U\)</span> | 最轻跨割边 | 新加入城市 | 累计权重
-|<br />
-: ---: | : ---: | : ---: | : ---: | : ---: |<br />
-1 | <span class="math inline">\(\{1\}\)</span> | 1—2(14) | 2 | 14
-|<br />
-2 | <span class="math inline">\(\{1,2\}\)</span> | 2—3(13) | 3 | 27
-|<br />
-3 | <span class="math inline">\(\{1,2,3\}\)</span> | 3—4(12) | 4 | 39
-|<br />
-4 | <span class="math inline">\(\{1,2,3,4\}\)</span> | 4—5(14) | 5 | 53
-|<br />
-5 | <span class="math inline">\(\{1,2,3,4,5\}\)</span> | 5—6(10) | 6 |
-63 |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">轮次</th>
+<th style="text-align: center;">加入前的 <span
+class="math inline">\(U\)</span></th>
+<th style="text-align: center;">最轻跨割边</th>
+<th style="text-align: center;">新加入城市</th>
+<th style="text-align: center;">累计权重</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><span
+class="math inline">\(\{1\}\)</span></td>
+<td style="text-align: center;">1—2(14)</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">14</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;"><span
+class="math inline">\(\{1,2\}\)</span></td>
+<td style="text-align: center;">2—3(13)</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">27</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;"><span
+class="math inline">\(\{1,2,3\}\)</span></td>
+<td style="text-align: center;">3—4(12)</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">39</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;"><span
+class="math inline">\(\{1,2,3,4\}\)</span></td>
+<td style="text-align: center;">4—5(14)</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">53</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;"><span
+class="math inline">\(\{1,2,3,4,5\}\)</span></td>
+<td style="text-align: center;">5—6(10)</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">63</td>
+</tr>
+</tbody>
+</table>
 <p>选边权重为 <span class="math inline">\(14,13,12,14,10\)</span>,
 无须单调递增. Prim只比较每轮的跨割候选,
 Kruskal则按全图权重顺序考察边.</p>
@@ -509,12 +672,29 @@ class="math inline">\(n-1\)</span> 条边的数量约束, 就得到树.
 <h3 id="两种问题的优化对象">22.7.1 两种问题的优化对象</h3>
 <p>在同一组边权上比较两种数学目标:</p>
 <p>表 22-5 生成树与最短路径的目标比较.</p>
-<div class="line-block">任务 | 优化对象 | 六城市例子 |<br />
-: --- | : --- | : --- |<br />
-1到6的最短路径 | 一条路线的权值和 | <span
-class="math inline">\(1\to2\to5\to6\)</span>, 代价40 |<br />
-最小生成树 | 连接全部点的建设边权和 | <span
-class="math inline">\(1—2—3—4—5—6\)</span>, 总权重63 |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">任务</th>
+<th style="text-align: center;">优化对象</th>
+<th style="text-align: center;">六城市例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1到6的最短路径</td>
+<td style="text-align: center;">一条路线的权值和</td>
+<td style="text-align: center;"><span
+class="math inline">\(1\to2\to5\to6\)</span>, 代价40</td>
+</tr>
+<tr>
+<td style="text-align: center;">最小生成树</td>
+<td style="text-align: center;">连接全部点的建设边权和</td>
+<td style="text-align: center;"><span
+class="math inline">\(1—2—3—4—5—6\)</span>, 总权重63</td>
+</tr>
+</tbody>
+</table>
 <p>最小生成树中1到6的唯一路径代价为63, 原图却能走代价40的路线.
 本章比较的是相同权重下两个不同目标;
 实际通信时间等指标需要另行确定相应边权.
@@ -586,16 +766,43 @@ class="math inline">\(c\)</span> 个分量时, 森林边数为</p>
 应另用显式边表保留真实零权边.</p>
 <h3 id="库接口的覆盖范围需要明确">22.9.3 库接口的覆盖范围需要明确</h3>
 <p>表 22-6 库接口对不连通输入的处理.</p>
-<div class="line-block">接口或模式 | 不连通输入的处理 |<br />
-: --- | : --- |<br />
-本章Kruskal默认模式 | 拒绝完整生成树任务 |<br />
-本章Kruskal关闭完整连通要求 | 返回各分量的森林与分量数 |<br />
-本章Prim封装 | 拒绝不连通输入 |<br />
-NetworkX <code>minimum_spanning_tree</code> | 返回各分量的最小生成森林
-|<br />
-MATLAB <code>minspantree</code> 默认 <code>Type='tree'</code> |
-只取根节点所在分量的树边 |<br />
-MATLAB指定 <code>Type='forest'</code> | 求全部分量的最小生成森林 |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">接口或模式</th>
+<th style="text-align: center;">不连通输入的处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">本章Kruskal默认模式</td>
+<td style="text-align: center;">拒绝完整生成树任务</td>
+</tr>
+<tr>
+<td style="text-align: center;">本章Kruskal关闭完整连通要求</td>
+<td style="text-align: center;">返回各分量的森林与分量数</td>
+</tr>
+<tr>
+<td style="text-align: center;">本章Prim封装</td>
+<td style="text-align: center;">拒绝不连通输入</td>
+</tr>
+<tr>
+<td style="text-align: center;">NetworkX
+<code>minimum_spanning_tree</code></td>
+<td style="text-align: center;">返回各分量的最小生成森林</td>
+</tr>
+<tr>
+<td style="text-align: center;">MATLAB <code>minspantree</code> 默认
+<code>Type='tree'</code></td>
+<td style="text-align: center;">只取根节点所在分量的树边</td>
+</tr>
+<tr>
+<td style="text-align: center;">MATLAB指定
+<code>Type='forest'</code></td>
+<td style="text-align: center;">求全部分量的最小生成森林</td>
+</tr>
+</tbody>
+</table>
 <p>MATLAB默认根索引为1, 默认方法为 <code>dense</code>, 即Prim.
 不同接口的默认范围分别核对, 业务要求全部城市互通时先检查整体连通性. [1,
 2] 原有矩阵建图, 零权与森林示例完整保留在配套文件与延伸阅读F.8.</p>
@@ -606,18 +813,51 @@ MATLAB指定 <code>Type='forest'</code> | 求全部分量的最小生成森林 |
 <p>记顶点数为 <span class="math inline">\(n\)</span>, 边数为 <span
 class="math inline">\(m\)</span>. 下表描述不计逐轮快照的主要运算:</p>
 <p>表 22-7 基本实现的时间与存储量.</p>
-<div class="line-block">实现 | 主要时间 | 基本存储 |<br />
-: --- | : --- | : --- |<br />
-全分量标签Kruskal | 排序加至多 <span class="math inline">\(n-1\)</span>
-次全标签改写, <span class="math inline">\(O(m\log m+n^2)\)</span> |
-<span class="math inline">\(O(n+m)\)</span> |<br />
-并查集Kruskal | 常用界 <span class="math inline">\(O(n+m\log
-m)\)</span>, 合并近似线性 | <span class="math inline">\(O(n+m)\)</span>
-|<br />
-扫描Prim | <span class="math inline">\(O(n^2+m)\)</span> | <span
-class="math inline">\(O(n+m)\)</span> |<br />
-堆版Prim | 常用简单图实现 <span class="math inline">\(O((n+m)\log
-n)\)</span> | <span class="math inline">\(O(n+m)\)</span> |</div>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">实现</th>
+<th style="text-align: center;">主要时间</th>
+<th style="text-align: center;">基本存储</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">全分量标签Kruskal</td>
+<td style="text-align: center;">排序加至多 <span
+class="math inline">\(n-1\)</span> 次全标签改写, <span
+class="math inline">\(O(m\log m+n^2)\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(O(n+m)\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">并查集Kruskal</td>
+<td style="text-align: center;">常用界 <span
+class="math inline">\(O(n+m\log m)\)</span>, 合并近似线性</td>
+<td style="text-align: center;"><span
+class="math inline">\(O(n+m)\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">扫描Prim</td>
+<td style="text-align: center;"><span
+class="math inline">\(O(n^2+m)\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(O(n+m)\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">堆版Prim</td>
+<td style="text-align: center;">常用简单图实现 <span
+class="math inline">\(O((n+m)\log n)\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(O(n+m)\)</span></td>
+</tr>
+</tbody>
+</table>
 <p>本章标签Kruskal每次考察候选都保存全标签和已选边, 最坏增加 <span
 class="math inline">\(O(mn)\)</span> 时间与存储; Prim逐轮保存数组,
 额外存储为 <span class="math inline">\(O(n^2)\)</span>.

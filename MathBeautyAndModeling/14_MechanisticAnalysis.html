@@ -35,8 +35,8 @@
 <meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-30.png">
 <meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-Calibration.png">
 <meta property="og:image" content="http://example.com/images/MechanisticModels/Mech-34.png">
-<meta property="article:published_time" content="2026-11-02T02:53:08.446Z">
-<meta property="article:modified_time" content="2026-10-31T09:20:34.000Z">
+<meta property="article:published_time" content="2026-11-03T00:53:51.606Z">
+<meta property="article:modified_time" content="2026-11-03T00:53:51.606Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/MechanisticModels/Mech-Euler.png">
@@ -236,12 +236,36 @@ class="math inline">\(K&gt;0\)</span> 是固定环境下的模型容量. 若当�
 <p>再乘当前数量100, 得到总变化率 <span
 class="math inline">\(f(x)=3.6\)</span>. 注意区分三个量:</p>
 <p>表 14-1 人均增长率与总变化率的单位.</p>
-<div class="line-block">量 | 本例数值 | 单位 |</div>
-<p>|: ---: |: ---: |: ---: | | 当前数量 <span
-class="math inline">\(x\)</span> | 100 | 数量单位 | | 当前总变化率 <span
-class="math inline">\(f(x)\)</span> | 3.6 | 数量单位/时间单位 | |
-时间长度 <span class="math inline">\(h=0.5\)</span> 内的近似变化量 <span
-class="math inline">\(hf(x)\)</span> | 1.8 | 数量单位 |</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">量</th>
+<th style="text-align: center;">本例数值</th>
+<th style="text-align: center;">单位</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">当前数量 <span
+class="math inline">\(x\)</span></td>
+<td style="text-align: center;">100</td>
+<td style="text-align: center;">数量单位</td>
+</tr>
+<tr>
+<td style="text-align: center;">当前总变化率 <span
+class="math inline">\(f(x)\)</span></td>
+<td style="text-align: center;">3.6</td>
+<td style="text-align: center;">数量单位/时间单位</td>
+</tr>
+<tr>
+<td style="text-align: center;">时间长度 <span
+class="math inline">\(h=0.5\)</span> 内的近似变化量 <span
+class="math inline">\(hf(x)\)</span></td>
+<td style="text-align: center;">1.8</td>
+<td style="text-align: center;">数量单位</td>
+</tr>
+</tbody>
+</table>
 <p>因此这一步的近似更新为</p>
 <p><span class="math display">\[
 x_{\mathrm{new}}=100+0.5\times3.6=101.8.
@@ -268,12 +292,39 @@ x_{k+1}=x_k+h\,0.04x_k\left(1-\frac{x_k}{1000}\right).
 <p><strong>code/euler_growth_loop. m</strong></p>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">tableValue = <span class="built_in">zeros</span>(<span class="number">4</span>,<span class="number">3</span>); hs = [<span class="number">2</span>,<span class="number">1</span>,<span class="number">.5</span>,<span class="number">.25</span>];</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">1</span>:<span class="built_in">numel</span>(hs)</span><br><span class="line">    h = hs(<span class="built_in">j</span>); steps = <span class="built_in">round</span>(<span class="number">20</span>/h);</span><br><span class="line">    assert(steps&gt;<span class="number">0</span> &amp;&amp; <span class="built_in">abs</span>(steps*h<span class="number">-20</span>)&lt;<span class="number">1e-12</span>);</span><br><span class="line">    t = (<span class="number">0</span>:steps)&#x27;*h; x = <span class="built_in">zeros</span>(steps+<span class="number">1</span>,<span class="number">1</span>); x(<span class="number">1</span>) = <span class="number">100</span>;</span><br><span class="line">    <span class="keyword">for</span> k = <span class="number">1</span>:steps</span><br><span class="line">        rate = <span class="number">.04</span>*x(k)*(<span class="number">1</span>-x(k)/<span class="number">1000</span>);</span><br><span class="line">        x(k+<span class="number">1</span>) = x(k)+h*rate;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    exact = <span class="number">1000.</span>/(<span class="number">1</span>+<span class="number">9</span>*<span class="built_in">exp</span>(<span class="number">-.04</span>*t));</span><br><span class="line">    tableValue(<span class="built_in">j</span>,:) = [h,x(<span class="keyword">end</span>),<span class="built_in">abs</span>(x(<span class="keyword">end</span>)-exact(<span class="keyword">end</span>))];</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;h, Euler x(20), endpoint absolute error:&#x27;</span>); <span class="built_in">disp</span>(tableValue);</span><br><span class="line">fprintf(<span class="string">&#x27;Exact x(20): %.10f\n&#x27;</span>,exact(<span class="keyword">end</span>));</span><br></pre></td></tr></table></figure>
 <p>表 14-2 Euler 步长与解析误差.</p>
-<div class="line-block">固定步长 <span class="math inline">\(h\)</span>
-| Euler计算的 <span class="math inline">\(x(20)\)</span> |
-与解析值的绝对差 |</div>
-<p>|: ---: |: ---: |: ---: | | 2 | 194.766908 | 3.489990 | | 1 |
-196.480753 | 1.776145 | | 0.5 | 197.360872 | 0.896027 | | 0.25 |
-197.806876 | 0.450023 |</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">固定步长 <span
+class="math inline">\(h\)</span></th>
+<th style="text-align: center;">Euler计算的 <span
+class="math inline">\(x(20)\)</span></th>
+<th style="text-align: center;">与解析值的绝对差</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">194.766908</td>
+<td style="text-align: center;">3.489990</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">196.480753</td>
+<td style="text-align: center;">1.776145</td>
+</tr>
+<tr>
+<td style="text-align: center;">0.5</td>
+<td style="text-align: center;">197.360872</td>
+<td style="text-align: center;">0.896027</td>
+</tr>
+<tr>
+<td style="text-align: center;">0.25</td>
+<td style="text-align: center;">197.806876</td>
+<td style="text-align: center;">0.450023</td>
+</tr>
+</tbody>
+</table>
 <p>本例的解析值为198.256899. 在这组步长下, 步长减半后误差大约减半.
 这是该方法在当前光滑问题上的表现, 不能当作任意模型的精度保证.
 步长过大还可能破坏非负性或稳定性, 不能只凭循环结束就接受结果.</p>
@@ -533,12 +584,39 @@ class="math inline">\(N(1-\alpha/\beta)\)</span>.</p>
 <p><strong>sis. m</strong></p>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">alpha = <span class="number">.06</span>; N = <span class="number">1000</span>;</span><br><span class="line">options = odeset(<span class="string">&#x27;RelTol&#x27;</span>,<span class="number">1e-9</span>,<span class="string">&#x27;AbsTol&#x27;</span>,<span class="number">1e-10</span>,<span class="string">&#x27;MaxStep&#x27;</span>,<span class="number">.5</span>);</span><br><span class="line"><span class="keyword">for</span> <span class="built_in">beta</span> = [<span class="number">.1</span>,<span class="number">.06</span>,<span class="number">.04</span>]</span><br><span class="line">    rhs = @(t,y) [-<span class="built_in">beta</span>*y(<span class="number">1</span>)*y(<span class="number">2</span>)/N+alpha*y(<span class="number">2</span>);<span class="built_in">beta</span>*y(<span class="number">1</span>)*y(<span class="number">2</span>)/N-alpha*y(<span class="number">2</span>)];</span><br><span class="line">    [t,y] = ode45(rhs,<span class="built_in">linspace</span>(<span class="number">0</span>,<span class="number">500</span>,<span class="number">1001</span>),[<span class="number">999</span>;<span class="number">1</span>],options);</span><br><span class="line">    fprintf(<span class="string">&#x27;beta %.2f, R0 %.6f, final S/I %.10f, %.10f\n&#x27;</span>, ...</span><br><span class="line">        <span class="built_in">beta</span>,<span class="built_in">beta</span>/alpha,y(<span class="keyword">end</span>,<span class="number">1</span>),y(<span class="keyword">end</span>,<span class="number">2</span>));</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
 <p>表 14-3 SIS 阈值两侧的条件轨线.</p>
-<div class="line-block"><span class="math inline">\(\beta\)</span> |
-<span class="math inline">\(\mathcal R_0\)</span> | <span
-class="math inline">\(I(500)\)</span> | 当前模型的长期趋势 |</div>
-<p>|: ---: |: ---: |: ---: |: ---: | | 0.10 | 1.6667 | 399.999671 |
-趋于400 | | 0.06 | 1 | 0.970874 | 缓慢趋于0 | | 0.04 | 0.6667 |
-0.0000453 | 趋于0 |</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><span
+class="math inline">\(\beta\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\mathcal
+R_0\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(I(500)\)</span></th>
+<th style="text-align: center;">当前模型的长期趋势</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0.10</td>
+<td style="text-align: center;">1.6667</td>
+<td style="text-align: center;">399.999671</td>
+<td style="text-align: center;">趋于400</td>
+</tr>
+<tr>
+<td style="text-align: center;">0.06</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0.970874</td>
+<td style="text-align: center;">缓慢趋于0</td>
+</tr>
+<tr>
+<td style="text-align: center;">0.04</td>
+<td style="text-align: center;">0.6667</td>
+<td style="text-align: center;">0.0000453</td>
+<td style="text-align: center;">趋于0</td>
+</tr>
+</tbody>
+</table>
 <p>临界时 <span class="math inline">\(I(t)=I_0/[1+(\beta
 I_0/N)t]\)</span>, 按代数速度趋零. 因而500时仍接近1不与长期趋零矛盾.
 非零平衡时感染与恢复流量相等, 也不表示这两种活动停止.</p>
@@ -604,12 +682,72 @@ class="math inline">\(x_0=100,r=0.04,K=1000\)</span>
 的Logistic解析值加上列明的固定小扰动, 保留三位小数. 生成方法见
 <code>data/PracticeDataNotes.md</code>. 这些数不是野外观测.</p>
 <p>表 14-4 Logistic 参数估计的人造数据.</p>
-<div class="line-block">时刻 | 人造观测 | 用途 |</div>
-<p>|: ---: |: ---: |: ---: | | 0 | 100.000 | 拟合 | | 10 | 142.989 |
-拟合 | | 20 | 197.057 | 拟合 | | 30 | 269.987 | 拟合 | | 40 | 354.279 |
-拟合 | | 50 | 451.953 | 拟合 | | 60 | 550.121 | 拟合 | | 70 | 647.191 |
-留出 | | 80 | 730.604 | 留出 | | 90 | 803.224 | 留出 | | 100 | 857.986 |
-留出 |</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">时刻</th>
+<th style="text-align: center;">人造观测</th>
+<th style="text-align: center;">用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">100.000</td>
+<td style="text-align: center;">拟合</td>
+</tr>
+<tr>
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">142.989</td>
+<td style="text-align: center;">拟合</td>
+</tr>
+<tr>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">197.057</td>
+<td style="text-align: center;">拟合</td>
+</tr>
+<tr>
+<td style="text-align: center;">30</td>
+<td style="text-align: center;">269.987</td>
+<td style="text-align: center;">拟合</td>
+</tr>
+<tr>
+<td style="text-align: center;">40</td>
+<td style="text-align: center;">354.279</td>
+<td style="text-align: center;">拟合</td>
+</tr>
+<tr>
+<td style="text-align: center;">50</td>
+<td style="text-align: center;">451.953</td>
+<td style="text-align: center;">拟合</td>
+</tr>
+<tr>
+<td style="text-align: center;">60</td>
+<td style="text-align: center;">550.121</td>
+<td style="text-align: center;">拟合</td>
+</tr>
+<tr>
+<td style="text-align: center;">70</td>
+<td style="text-align: center;">647.191</td>
+<td style="text-align: center;">留出</td>
+</tr>
+<tr>
+<td style="text-align: center;">80</td>
+<td style="text-align: center;">730.604</td>
+<td style="text-align: center;">留出</td>
+</tr>
+<tr>
+<td style="text-align: center;">90</td>
+<td style="text-align: center;">803.224</td>
+<td style="text-align: center;">留出</td>
+</tr>
+<tr>
+<td style="text-align: center;">100</td>
+<td style="text-align: center;">857.986</td>
+<td style="text-align: center;">留出</td>
+</tr>
+</tbody>
+</table>
 <p>预先用0至60的7点拟合, 70至100的4点留出. 将初值100视为已知, 只估计
 <span class="math inline">\(r\)</span> 与 <span
 class="math inline">\(K\)</span>. 在正增长的练习范围内设 <span
@@ -657,13 +795,45 @@ class="math inline">\(K\)</span>就可能难以识别.
 <h2 id="分清四种检查-再解释模型结果">14.9 分清四种检查,
 再解释模型结果</h2>
 <p>表 14-5 机理模型的四个检查层次.</p>
-<div class="line-block">检查层次 | 要回答的问题 | 本章做了什么 |</div>
-<p>|: ---: |: ---|: ---| | 结构 | 单位, 增减项与状态边界是否一致? |
-一步收支, SI/SIS总量, 出生死亡账目 | | 数值 |
-程序是否可靠地求解给定方程? | 解析解, 步长比较, 守恒量与独立积分方法 | |
-参数 | 数据能否区分不同参数? | 人造数据估计练习及早期容量难识别的解释 |
-| 现实 | 未参与建模的实际观测是否支持机制和预测? |
-本章未完成真实数据校准与实证检验 |</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">检查层次</th>
+<th style="text-align: center;">要回答的问题</th>
+<th style="text-align: center;">本章做了什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">结构</td>
+<td style="text-align: center;">单位, 增减项与状态边界是否一致?</td>
+<td style="text-align: center;">一步收支, SI/SIS总量, 出生死亡账目</td>
+</tr>
+<tr>
+<td style="text-align: center;">数值</td>
+<td style="text-align: center;">程序是否可靠地求解给定方程?</td>
+<td style="text-align: center;">解析解, 步长比较,
+守恒量与独立积分方法</td>
+</tr>
+<tr>
+<td style="text-align: center;">参数</td>
+<td style="text-align: center;">数据能否区分不同参数?</td>
+<td
+style="text-align: center;">人造数据估计练习及早期容量难识别的解释</td>
+</tr>
+<tr>
+<td style="text-align: center;">现实</td>
+<td
+style="text-align: center;">未参与建模的实际观测是否支持机制和预测?</td>
+<td style="text-align: center;">本章未完成真实数据校准与实证检验</td>
+</tr>
+</tbody>
+</table>
 <p><img src="/images/MechanisticModels/Mech-34.png" style="width:100%"></p>
 <p>图 14-9 人数收支与守恒量检查的是数值一致性</p>
 <p>左图核对SI/SIS总量, 右图核对捕食模型守恒量的漂移. 检查对象不同,

@@ -32,8 +32,8 @@
 <meta property="og:image" content="http://example.com/images/NonlinearProgramming/NLP-3.png">
 <meta property="og:image" content="http://example.com/images/NonlinearProgramming/NLP-Smoothing.png">
 <meta property="og:image" content="http://example.com/images/NonlinearProgramming/NLP-4.png">
-<meta property="article:published_time" content="2026-11-02T02:53:09.104Z">
-<meta property="article:modified_time" content="2026-10-31T09:20:36.000Z">
+<meta property="article:published_time" content="2026-11-03T00:53:51.655Z">
+<meta property="article:modified_time" content="2026-11-03T00:53:51.655Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/NonlinearProgramming/NLP-1.png">
@@ -294,12 +294,37 @@ c_1(x)=(x_1-1)^2-x_2,\qquad c_2(x)=-2x_1+3x_2-6.
 表示同一可行集合. 这项非负约定只针对所用的字典接口,
 不能推广到所有SciPy约束对象.</p>
 <p>表 25-1 同一不等式的接口符号.</p>
-<div class="line-block">条件 | MATLAB | 本章SciPy字典接口 |<br />
-: --- | : --- | : --- |<br />
-非线性不等式 | 返回c, 要求不大于0 | 返回-c, 要求不小于0 |<br />
-线性上界 | A*x不超过b | 返回b-A@x |<br />
-等式 | Aeq*x=beq或ceq=0 | type为eq, 返回值等于0 |<br />
-变量边界 | lb, ub | bounds |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">条件</th>
+<th style="text-align: center;">MATLAB</th>
+<th style="text-align: center;">本章SciPy字典接口</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">非线性不等式</td>
+<td style="text-align: center;">返回c, 要求不大于0</td>
+<td style="text-align: center;">返回-c, 要求不小于0</td>
+</tr>
+<tr>
+<td style="text-align: center;">线性上界</td>
+<td style="text-align: center;">A*x不超过b</td>
+<td style="text-align: center;">返回b-A@x</td>
+</tr>
+<tr>
+<td style="text-align: center;">等式</td>
+<td style="text-align: center;">Aeq*x=beq或ceq=0</td>
+<td style="text-align: center;">type为eq, 返回值等于0</td>
+</tr>
+<tr>
+<td style="text-align: center;">变量边界</td>
+<td style="text-align: center;">lb, ub</td>
+<td style="text-align: center;">bounds</td>
+</tr>
+</tbody>
+</table>
 <h3 id="用具体点核对残差变号">25.2.2 用具体点核对残差变号</h3>
 <p>下面暂把二元例子的两条限制都计算成残差, 对照变号前后的可行判断.
 正式MATLAB调用中, 线性条件仍通过A, b单独提交, 不重复加入非线性函数.</p>
@@ -361,17 +386,48 @@ MATLAB也要结合 <code>exitflag</code>, <code>output.message</code>
 零梯度为什么还不能宣布最大?</h3>
 <p>原多初值程序在最大化F时观察到:</p>
 <p>表 25-2 不同初值的候选与数学判断.</p>
-<div class="line-block">初值 | 候选点 | 原F值 | 数学判断 |<br />
-: --- | : --- | : --- | : --- |<br />
-<span class="math inline">\((1,1)^{\mathsf T}\)</span> | <span
-class="math inline">\((1,0)^{\mathsf T}\)</span> | -1 | 全局最大点
-|<br />
-<span class="math inline">\((-0.3,1.7)^{\mathsf T}\)</span> | <span
-class="math inline">\((-1/3,16/9)^{\mathsf T}\)</span> | 约-4.358025 |
-较差的局部最大点 |<br />
-<span class="math inline">\((3,4)^{\mathsf T}\)</span> | <span
-class="math inline">\((3,4)^{\mathsf T}\)</span> | -13 | 驻点,
-不是局部最大点 |</div>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">初值</th>
+<th style="text-align: center;">候选点</th>
+<th style="text-align: center;">原F值</th>
+<th style="text-align: center;">数学判断</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\((1,1)^{\mathsf T}\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\((1,0)^{\mathsf T}\)</span></td>
+<td style="text-align: center;">-1</td>
+<td style="text-align: center;">全局最大点</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\((-0.3,1.7)^{\mathsf T}\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\((-1/3,16/9)^{\mathsf T}\)</span></td>
+<td style="text-align: center;">约-4.358025</td>
+<td style="text-align: center;">较差的局部最大点</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\((3,4)^{\mathsf T}\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\((3,4)^{\mathsf T}\)</span></td>
+<td style="text-align: center;">-13</td>
+<td style="text-align: center;">驻点, 不是局部最大点</td>
+</tr>
+</tbody>
+</table>
 <p>表格来自配套Python程序的一次示范运行,
 不规定其他算法或版本必须走同一路径. 完整多初值与随机粗搜见
 <code>quadratic_multistart.py</code>,
@@ -432,14 +488,54 @@ class="math inline">\(-353/81,-1131/256,-1,-13\)</span>. 两边界比较后,
 <h3 id="数据-单位与本例假设">25.5.1 数据, 单位与本例假设</h3>
 <p>两个料场向六个工点供建材, 工点位置单位千米, 每日需求单位吨:</p>
 <p>表 25-3 六个工点的位置与需求.</p>
-<div class="line-block">工点 | 横坐标 | 纵坐标 | 需求 |<br />
-: --- | ---: | ---: | ---: |<br />
-I | 1.25 | 1.25 | 3 |<br />
-II | 8.75 | 0.75 | 5 |<br />
-III | 0.50 | 4.75 | 4 |<br />
-IV | 5.75 | 5.00 | 7 |<br />
-V | 3.00 | 6.50 | 6 |<br />
-VI | 7.25 | 7.75 | 11 |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">工点</th>
+<th style="text-align: center;">横坐标</th>
+<th style="text-align: center;">纵坐标</th>
+<th style="text-align: center;">需求</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">I</td>
+<td style="text-align: center;">1.25</td>
+<td style="text-align: center;">1.25</td>
+<td style="text-align: center;">3</td>
+</tr>
+<tr>
+<td style="text-align: center;">II</td>
+<td style="text-align: center;">8.75</td>
+<td style="text-align: center;">0.75</td>
+<td style="text-align: center;">5</td>
+</tr>
+<tr>
+<td style="text-align: center;">III</td>
+<td style="text-align: center;">0.50</td>
+<td style="text-align: center;">4.75</td>
+<td style="text-align: center;">4</td>
+</tr>
+<tr>
+<td style="text-align: center;">IV</td>
+<td style="text-align: center;">5.75</td>
+<td style="text-align: center;">5.00</td>
+<td style="text-align: center;">7</td>
+</tr>
+<tr>
+<td style="text-align: center;">V</td>
+<td style="text-align: center;">3.00</td>
+<td style="text-align: center;">6.50</td>
+<td style="text-align: center;">6</td>
+</tr>
+<tr>
+<td style="text-align: center;">VI</td>
+<td style="text-align: center;">7.25</td>
+<td style="text-align: center;">7.75</td>
+<td style="text-align: center;">11</td>
+</tr>
+</tbody>
+</table>
 <p>原料场A位于 <span class="math inline">\((5,1)^{\mathsf T}\)</span>,
 B位于 <span class="math inline">\((2,7)^{\mathsf T}\)</span>,
 每日上限各20吨. 总需求36吨, 总能力40吨. 建材允许连续分配,
@@ -609,11 +705,32 @@ class="math inline">\(\varepsilon\)</span> 之间.
 本例变量量级相近时作这种简单演示;
 大尺度混合单位模型应结合缩放选择逐分量步长.</p>
 <p>表 25-4 三类数值参数的含义.</p>
-<div class="line-block">参数 | 作用 | 不能直接解释成什么 |<br />
-: --- | : --- | : --- |<br />
-epsilon | 距离光滑尺度, 本例为千米 | 非凸搜索的全局误差 |<br />
-h | 差分检查的数值步长 | 真实方案应改变的决策量 |<br />
-ftol | SLSQP终止条件中的精度目标 | 坐标误差的统一上界 |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">参数</th>
+<th style="text-align: center;">作用</th>
+<th style="text-align: center;">不能直接解释成什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">epsilon</td>
+<td style="text-align: center;">距离光滑尺度, 本例为千米</td>
+<td style="text-align: center;">非凸搜索的全局误差</td>
+</tr>
+<tr>
+<td style="text-align: center;">h</td>
+<td style="text-align: center;">差分检查的数值步长</td>
+<td style="text-align: center;">真实方案应改变的决策量</td>
+</tr>
+<tr>
+<td style="text-align: center;">ftol</td>
+<td style="text-align: center;">SLSQP终止条件中的精度目标</td>
+<td style="text-align: center;">坐标误差的统一上界</td>
+</tr>
+</tbody>
+</table>
 <h2 id="把可行初值与局部求解接起来">25.8 把可行初值与局部求解接起来</h2>
 <h3 id="原完整联合搜索的四步">25.8.1 原完整联合搜索的四步</h3>
 <p>原Python与MATLAB完整实现保留在 <code>LocationSearch.md</code>, 对应
@@ -714,11 +831,31 @@ Q_{\mathrm{new}}=\begin{pmatrix}
 从候选方案到可靠结论的检查顺序</h2>
 <h3 id="结果检查应回答三个层次">25.10.1 结果检查应回答三个层次</h3>
 <p>表 25-5 非线性求解的三个检查层次.</p>
-<div class="line-block">层次 | 应检查的内容 |<br />
-: --- | : --- |<br />
-模型 | 变量, 单位, 目标, 约束与实际含义是否一致 |<br />
-候选 | 状态, 有限性, 原约束, 边界和原目标是否通过 |<br />
-最优性 | 局部与全局是否分清, 是否有凸性, 解析分析或有效界 |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">层次</th>
+<th style="text-align: center;">应检查的内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">模型</td>
+<td style="text-align: center;">变量, 单位, 目标,
+约束与实际含义是否一致</td>
+</tr>
+<tr>
+<td style="text-align: center;">候选</td>
+<td style="text-align: center;">状态, 有限性, 原约束,
+边界和原目标是否通过</td>
+</tr>
+<tr>
+<td style="text-align: center;">最优性</td>
+<td style="text-align: center;">局部与全局是否分清, 是否有凸性,
+解析分析或有效界</td>
+</tr>
+</tbody>
+</table>
 <p>按以下顺序完成一个新问题:</p>
 <ol type="1">
 <li>写清变量, 数据与单位, 判断哪些量是常数, 哪些量参与决策.</li>
@@ -736,19 +873,55 @@ Q_{\mathrm{new}}=\begin{pmatrix}
 可结合作者公开的凸优化教材继续阅读. [3]</p>
 <h3 id="完整拓展材料的阅读位置">25.10.2 完整拓展材料的阅读位置</h3>
 <p>表 25-6 非线性规划配套拓展索引.</p>
-<div class="line-block">内容 | 位置 |<br />
-: --- | : --- |<br />
-原二元完整证明与初值实验 | 延伸阅读F.1, quadratic_multistart. py/. m
-|<br />
-完整接口与算法选择 | 延伸阅读F.2 |<br />
-运输数据, 矩阵与原固定位置函数 | 延伸阅读F.3, location_data. py,
-shipping. py/. m |<br />
-联合目标, 光滑误差, 解析梯度 | 延伸阅读F.4 |<br />
-完整200组抽样与13初值搜索 | LocationSearch. md |<br />
-106顶点, 几何中位点, 下界与全局结果 | 延伸阅读F.5,
-GlobalLocationVerification. md |<br />
-KKT及适用条件 | OptimalityConditions. md |<br />
-原6题及答案 | 延伸阅读F.7, ExerciseHints. md |</div>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">内容</th>
+<th style="text-align: center;">位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">原二元完整证明与初值实验</td>
+<td style="text-align: center;">延伸阅读F.1, quadratic_multistart. py/.
+m</td>
+</tr>
+<tr>
+<td style="text-align: center;">完整接口与算法选择</td>
+<td style="text-align: center;">延伸阅读F.2</td>
+</tr>
+<tr>
+<td style="text-align: center;">运输数据, 矩阵与原固定位置函数</td>
+<td style="text-align: center;">延伸阅读F.3, location_data. py,
+shipping. py/. m</td>
+</tr>
+<tr>
+<td style="text-align: center;">联合目标, 光滑误差, 解析梯度</td>
+<td style="text-align: center;">延伸阅读F.4</td>
+</tr>
+<tr>
+<td style="text-align: center;">完整200组抽样与13初值搜索</td>
+<td style="text-align: center;">LocationSearch. md</td>
+</tr>
+<tr>
+<td style="text-align: center;">106顶点, 几何中位点, 下界与全局结果</td>
+<td style="text-align: center;">延伸阅读F.5, GlobalLocationVerification.
+md</td>
+</tr>
+<tr>
+<td style="text-align: center;">KKT及适用条件</td>
+<td style="text-align: center;">OptimalityConditions. md</td>
+</tr>
+<tr>
+<td style="text-align: center;">原6题及答案</td>
+<td style="text-align: center;">延伸阅读F.7, ExerciseHints. md</td>
+</tr>
+</tbody>
+</table>
 <p>下一章的多目标规划继续讨论互相冲突的目标与偏好.
 这里先把一个目标的可行性, 候选与最优性层次分清.</p>
 <h3 id="练习">25.10.3 练习</h3>

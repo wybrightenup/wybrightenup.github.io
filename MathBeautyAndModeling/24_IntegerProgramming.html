@@ -32,8 +32,8 @@
 <meta property="og:image" content="http://example.com/images/IntegerProgramming/IP-3.png">
 <meta property="og:image" content="http://example.com/images/IntegerProgramming/IP-AssignmentRows.png">
 <meta property="og:image" content="http://example.com/images/IntegerProgramming/IP-4.png">
-<meta property="article:published_time" content="2026-11-02T02:53:09.044Z">
-<meta property="article:modified_time" content="2026-10-31T09:20:36.000Z">
+<meta property="article:published_time" content="2026-11-03T00:53:51.651Z">
+<meta property="article:modified_time" content="2026-11-03T00:53:51.651Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/IntegerProgramming/IP-VariableTypes.png">
@@ -224,11 +224,32 @@
 每次任务必须完整开展, 可以重复安排同类任务. 不考虑任务之间的时间冲突,
 计划最多用100人时志愿者工时, 总计最多开展20次.</p>
 <p>表 24-1 三类完整实践任务的资源与分值.</p>
-<div class="line-block">任务 | 每次成效分值 | 每次工时 |<br />
-: ---: | : ---: | : ---: |<br />
-A | 20 | 4人时 |<br />
-B | 30 | 8人时 |<br />
-C | 40 | 10人时 |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">任务</th>
+<th style="text-align: center;">每次成效分值</th>
+<th style="text-align: center;">每次工时</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">4人时</td>
+</tr>
+<tr>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">30</td>
+<td style="text-align: center;">8人时</td>
+</tr>
+<tr>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">40</td>
+<td style="text-align: center;">10人时</td>
+</tr>
+</tbody>
+</table>
 <p>成效分值是预先设定的评价指标, 不是真实统计结果.
 人时是参加人数乘工作时长. 设三类任务的次数为 <span
 class="math inline">\(x_1,x_2,x_3\)</span>, 希望总成效最大:</p>
@@ -273,11 +294,32 @@ x\leqslant2.5\)</span> 下最大化 <span class="math inline">\(x\)</span>.
 非负整数只允许0, 1, 2; 二元变量只允许0, 1. 图示的是取值集合,
 不是求解器执行轨迹.</p>
 <p>表 24-2 连续与整数及二元变量的域.</p>
-<div class="line-block">变量含义 | 允许取值 | 应同时声明的条件 |<br />
-: --- | : --- | : --- |<br />
-连续工作时长 | 边界内的实数 | 实数变量及实际边界 |<br />
-完整任务次数 | 边界内的整数 | 整数要求及实际边界 |<br />
-是否选择一件货物 | 0或1 | 整数要求与0至1的边界 |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">变量含义</th>
+<th style="text-align: center;">允许取值</th>
+<th style="text-align: center;">应同时声明的条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">连续工作时长</td>
+<td style="text-align: center;">边界内的实数</td>
+<td style="text-align: center;">实数变量及实际边界</td>
+</tr>
+<tr>
+<td style="text-align: center;">完整任务次数</td>
+<td style="text-align: center;">边界内的整数</td>
+<td style="text-align: center;">整数要求及实际边界</td>
+</tr>
+<tr>
+<td style="text-align: center;">是否选择一件货物</td>
+<td style="text-align: center;">0或1</td>
+<td style="text-align: center;">整数要求与0至1的边界</td>
+</tr>
+</tbody>
+</table>
 <p>只给0至1的边界, 仍允许0.4; 只给整数要求, 仍可能允许2或3.
 下一个程序把资源上限改为0.4作对照,
 并展示"固定为0.5且要求整数"的不可行情形.</p>
@@ -308,13 +350,40 @@ class="math inline">\(21^3=9261\)</span> 个候选, 先按原约束筛选,
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">clear; clc;</span><br><span class="line">best_score=-Inf; practice_solutions=[]; candidate_count=<span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> a=<span class="number">0</span>:<span class="number">20</span></span><br><span class="line">    <span class="keyword">for</span> b=<span class="number">0</span>:<span class="number">20</span></span><br><span class="line">        <span class="keyword">for</span> c=<span class="number">0</span>:<span class="number">20</span></span><br><span class="line">            candidate_count=candidate_count+<span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span> <span class="number">4</span>*a+<span class="number">8</span>*b+<span class="number">10</span>*c&gt;<span class="number">100</span> || a+b+c&gt;<span class="number">20</span>, <span class="keyword">continue</span>; <span class="keyword">end</span></span><br><span class="line">            score=<span class="number">20</span>*a+<span class="number">30</span>*b+<span class="number">40</span>*c;</span><br><span class="line">            <span class="keyword">if</span> score&gt;best_score</span><br><span class="line">                best_score=score; practice_solutions=[a,b,c];</span><br><span class="line">            <span class="keyword">elseif</span> score==best_score</span><br><span class="line">                practice_solutions(<span class="keyword">end</span>+<span class="number">1</span>,:)=[a,b,c];</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="built_in">disp</span>(<span class="string">&#x27;Practice maximum and all optimal solutions:&#x27;</span>); <span class="built_in">disp</span>(best_score); <span class="built_in">disp</span>(practice_solutions);</span><br><span class="line">assert(candidate_count==<span class="number">21</span>^<span class="number">3</span> &amp;&amp; best_score==<span class="number">460</span>);</span><br><span class="line">assert(<span class="built_in">isequal</span>(<span class="built_in">sortrows</span>(practice_solutions),<span class="built_in">sortrows</span>([<span class="number">17</span>,<span class="number">0</span>,<span class="number">3</span>;<span class="number">16</span>,<span class="number">2</span>,<span class="number">2</span>;<span class="number">15</span>,<span class="number">0</span>,<span class="number">4</span>])));</span><br></pre></td></tr></table></figure>
 <p>两种写法都得到最高460分, 且恰有三组方案:</p>
 <p>表 24-3 三组并列整数最优方案.</p>
-<div class="line-block">方案 <span
-class="math inline">\((x_1,x_2,x_3)\)</span> | 工时 | 总次数 | 分值
-|<br />
-: ---: | : ---: | : ---: | : ---: |<br />
-<span class="math inline">\((17,0,3)\)</span> | 98 | 20 | 460 |<br />
-<span class="math inline">\((16,2,2)\)</span> | 100 | 20 | 460 |<br />
-<span class="math inline">\((15,0,4)\)</span> | 100 | 19 | 460 |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">方案 <span
+class="math inline">\((x_1,x_2,x_3)\)</span></th>
+<th style="text-align: center;">工时</th>
+<th style="text-align: center;">总次数</th>
+<th style="text-align: center;">分值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\((17,0,3)\)</span></td>
+<td style="text-align: center;">98</td>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">460</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\((16,2,2)\)</span></td>
+<td style="text-align: center;">100</td>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">460</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span
+class="math inline">\((15,0,4)\)</span></td>
+<td style="text-align: center;">100</td>
+<td style="text-align: center;">19</td>
+<td style="text-align: center;">460</td>
+</tr>
+</tbody>
+</table>
 <p>穷举覆盖了这个模型的全部候选, 因而能确认最优值及全部并列方案.
 对只有若干随意选定候选的比较, 则不能作同样结论. 变量变多或界变大后,
 候选数会迅速增长, 应采用合适的整数算法.</p>
@@ -362,16 +431,49 @@ x\in\mathbb R^n.
 class="math inline">\(Ax\)</span>, 变量界控制 <span
 class="math inline">\(x\)</span>, 二者不能混淆. [1, 2]</p>
 <p>表 24-4 整数规划的双语言数据映射.</p>
-<div class="line-block">数学数据 | SciPy | MATLAB |<br />
-: --- | : --- | : --- |<br />
-最小化目标系数 | <code>c</code> | <code>f</code> |<br />
-整数变量 | <code>integrality</code>逐变量编码 |
-<code>intcon</code>列出位置 |<br />
-一般线性行约束 | <code>LinearConstraint(A,lower,upper)</code> |
-<code>A,b</code>, <code>Aeq,beq</code> |<br />
-变量上下界 | <code>Bounds(lb,ub)</code> | <code>lb,ub</code> |<br />
-解, 最小目标, 终止信息 | <code>x,fun,status,message</code> |
-<code>x,fval,exitflag,output</code> |</div>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">数学数据</th>
+<th style="text-align: center;">SciPy</th>
+<th style="text-align: center;">MATLAB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">最小化目标系数</td>
+<td style="text-align: center;"><code>c</code></td>
+<td style="text-align: center;"><code>f</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">整数变量</td>
+<td style="text-align: center;"><code>integrality</code>逐变量编码</td>
+<td style="text-align: center;"><code>intcon</code>列出位置</td>
+</tr>
+<tr>
+<td style="text-align: center;">一般线性行约束</td>
+<td
+style="text-align: center;"><code>LinearConstraint(A,lower,upper)</code></td>
+<td style="text-align: center;"><code>A,b</code>,
+<code>Aeq,beq</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">变量上下界</td>
+<td style="text-align: center;"><code>Bounds(lb,ub)</code></td>
+<td style="text-align: center;"><code>lb,ub</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">解, 最小目标, 终止信息</td>
+<td style="text-align: center;"><code>x,fun,status,message</code></td>
+<td style="text-align: center;"><code>x,fval,exitflag,output</code></td>
+</tr>
+</tbody>
+</table>
 <p>SciPy本章编码0为普通连续, 1为整数, 不是MATLAB的整数位置列表.
 例如三个变量中第1, 3个为二元, 第2个为自由连续变量: SciPy类型为
 <code>[1,0,1]</code>, MATLAB位置为 <code>[1,3]</code>; 两者都应给第1,
@@ -508,13 +610,51 @@ class="math inline">\((5,3,3)\)</span>, 容量4.
 <p>一辆货车最多载重30吨, 每件货物至多装运一次, 数据如下. 不考虑体积,
 装卸顺序和兼容性; 若实际存在这些限制, 应另外加入.</p>
 <p>表 24-5 十件货物的重量与利润.</p>
-<div class="line-block">物品 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
-|<br />
-: ---: | : ---: | : ---: | : ---: | : ---: | : ---: | : ---: | : ---: |
-: ---: | : ---: | : ---: |<br />
-重量(吨) | 6 | 3 | 4 | 5 | 1 | 2 | 3 | 5 | 4 | 2 |<br />
-利润(元) | 540 | 200 | 180 | 350 | 60 | 150 | 280 | 450 | 320 | 120
-|</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">物品</th>
+<th style="text-align: center;">1</th>
+<th style="text-align: center;">2</th>
+<th style="text-align: center;">3</th>
+<th style="text-align: center;">4</th>
+<th style="text-align: center;">5</th>
+<th style="text-align: center;">6</th>
+<th style="text-align: center;">7</th>
+<th style="text-align: center;">8</th>
+<th style="text-align: center;">9</th>
+<th style="text-align: center;">10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">重量(吨)</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td style="text-align: center;">利润(元)</td>
+<td style="text-align: center;">540</td>
+<td style="text-align: center;">200</td>
+<td style="text-align: center;">180</td>
+<td style="text-align: center;">350</td>
+<td style="text-align: center;">60</td>
+<td style="text-align: center;">150</td>
+<td style="text-align: center;">280</td>
+<td style="text-align: center;">450</td>
+<td style="text-align: center;">320</td>
+<td style="text-align: center;">120</td>
+</tr>
+</tbody>
+</table>
 <p>令 <span class="math inline">\(x_i=1\)</span> 表示选择第 <span
 class="math inline">\(i\)</span> 件, <span
 class="math inline">\(x_i=0\)</span> 表示不选. 重量与利润分别为 <span
@@ -558,13 +698,54 @@ P\leqslant60\sum\limits_{i=1}^{10}w_ix_i
 希望给定成绩之和最小. 表格为教学模拟百米成绩, 单位秒; 模型不计交接,
 出发方式和状态变化.</p>
 <p>表 24-6 五名候选人的四种泳姿成绩.</p>
-<div class="line-block">候选人 | 蝶泳 | 仰泳 | 蛙泳 | 自由泳 |<br />
-: ---: | : ---: | : ---: | : ---: | : ---: |<br />
-甲 | 66.8 | 75.6 | 87.0 | 58.6 |<br />
-乙 | 57.2 | 66.0 | 66.4 | 53.0 |<br />
-丙 | 78.0 | 67.8 | 84.6 | 59.4 |<br />
-丁 | 70.0 | 74.2 | 69.6 | 57.2 |<br />
-戊 | 67.4 | 71.0 | 83.8 | 62.4 |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">候选人</th>
+<th style="text-align: center;">蝶泳</th>
+<th style="text-align: center;">仰泳</th>
+<th style="text-align: center;">蛙泳</th>
+<th style="text-align: center;">自由泳</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">甲</td>
+<td style="text-align: center;">66.8</td>
+<td style="text-align: center;">75.6</td>
+<td style="text-align: center;">87.0</td>
+<td style="text-align: center;">58.6</td>
+</tr>
+<tr>
+<td style="text-align: center;">乙</td>
+<td style="text-align: center;">57.2</td>
+<td style="text-align: center;">66.0</td>
+<td style="text-align: center;">66.4</td>
+<td style="text-align: center;">53.0</td>
+</tr>
+<tr>
+<td style="text-align: center;">丙</td>
+<td style="text-align: center;">78.0</td>
+<td style="text-align: center;">67.8</td>
+<td style="text-align: center;">84.6</td>
+<td style="text-align: center;">59.4</td>
+</tr>
+<tr>
+<td style="text-align: center;">丁</td>
+<td style="text-align: center;">70.0</td>
+<td style="text-align: center;">74.2</td>
+<td style="text-align: center;">69.6</td>
+<td style="text-align: center;">57.2</td>
+</tr>
+<tr>
+<td style="text-align: center;">戊</td>
+<td style="text-align: center;">67.4</td>
+<td style="text-align: center;">71.0</td>
+<td style="text-align: center;">83.8</td>
+<td style="text-align: center;">62.4</td>
+</tr>
+</tbody>
+</table>
 <p>乙在四列均最快, 但同一人不能承担四项. 令 <span
 class="math inline">\(x_{ij}=1\)</span> 表示把人 <span
 class="math inline">\(i\)</span> 指派给泳姿 <span
@@ -607,12 +788,28 @@ S1至S4对应表中四种泳姿.</p>
 <code>repmat(eye(n),1,m)</code>. 不必先记住函数组合,
 先读懂每行究竟加了哪些变量.</p>
 <p>表 24-7 人员指派中的矩阵操作.</p>
-<div class="line-block">操作 | NumPy | MATLAB |<br />
-: --- | : --- | : --- |<br />
-按人展开成绩 | <code>T.ravel(order="C")</code> |
-<code>reshape(T.',1,[]).'</code> |<br />
-还原5行4列方案 | <code>z.reshape(5,4,order="C")</code> |
-<code>reshape(z,4,5)'</code> |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">操作</th>
+<th style="text-align: center;">NumPy</th>
+<th style="text-align: center;">MATLAB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">按人展开成绩</td>
+<td style="text-align: center;"><code>T.ravel(order="C")</code></td>
+<td style="text-align: center;"><code>reshape(T.',1,[]).'</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">还原5行4列方案</td>
+<td
+style="text-align: center;"><code>z.reshape(5,4,order="C")</code></td>
+<td style="text-align: center;"><code>reshape(z,4,5)'</code></td>
+</tr>
+</tbody>
+</table>
 <p>MATLAB的 <code>T(:)</code> 默认按列展开, 不能直接替换表中的按人顺序.
 目标, 约束和还原方式要同步.</p>
 <h3 id="完整milp与专用指派算法对照">24.7.3
@@ -645,13 +842,41 @@ S1至S4对应表中四种泳姿.</p>
 确认约束表达了题意</h3>
 <p>以下 <span class="math inline">\(a,b\)</span> 均为二元变量:</p>
 <p>表 24-8 二元逻辑与线性约束.</p>
-<div class="line-block">题意 | 表达式 |<br />
-: --- | : --- |<br />
-至多选一项 | <span class="math inline">\(a+b\leqslant1\)</span> |<br />
-恰好选一项 | <span class="math inline">\(a+b=1\)</span> |<br />
-至少选一项 | <span class="math inline">\(a+b\geqslant1\)</span> |<br />
-选A必须选B | <span class="math inline">\(a\leqslant b\)</span> |<br />
-两项同选或同不选 | <span class="math inline">\(a=b\)</span> |</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">题意</th>
+<th style="text-align: center;">表达式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">至多选一项</td>
+<td style="text-align: center;"><span
+class="math inline">\(a+b\leqslant1\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">恰好选一项</td>
+<td style="text-align: center;"><span
+class="math inline">\(a+b=1\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">至少选一项</td>
+<td style="text-align: center;"><span
+class="math inline">\(a+b\geqslant1\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">选A必须选B</td>
+<td style="text-align: center;"><span class="math inline">\(a\leqslant
+b\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;">两项同选或同不选</td>
+<td style="text-align: center;"><span
+class="math inline">\(a=b\)</span></td>
+</tr>
+</tbody>
+</table>
 <p>例如科普项目A依赖配套项目B时, <span class="math inline">\(a\leqslant
 b\)</span> 允许 <span class="math inline">\((0,1)\)</span>: 只做B不做A.
 写成等式会额外禁止这一情况. 四种0-1取值可以逐一核对,
@@ -703,14 +928,42 @@ class="math inline">\(q\leqslant10\)</span> 的物理上界,
 <h3 id="找到可行方案与确认最优-分别报告">24.9.1 找到可行方案与确认最优,
 分别报告</h3>
 <p>表 24-9 整数求解的终止状态解释.</p>
-<div class="line-block">情况 | 应报告什么 |<br />
-: --- | : --- |<br />
-已正常达到最优标准 | 方案, 原目标, 回代与适用容差 |<br />
-达到时间或节点限制但已有整数可行解 | 当前方案, 有效界, 间隙与停止原因
-|<br />
-停止时没有找到整数可行解 | 尚未找到, 不能据此断言模型不可行 |<br />
-已证明不可行 | 需求, 资源, 整数条件或逻辑之间存在矛盾 |<br />
-无界或数值失败 | 根据消息检查界, 方向, 缩放和遗漏限制 |</div>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">情况</th>
+<th style="text-align: center;">应报告什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">已正常达到最优标准</td>
+<td style="text-align: center;">方案, 原目标, 回代与适用容差</td>
+</tr>
+<tr>
+<td style="text-align: center;">达到时间或节点限制但已有整数可行解</td>
+<td style="text-align: center;">当前方案, 有效界, 间隙与停止原因</td>
+</tr>
+<tr>
+<td style="text-align: center;">停止时没有找到整数可行解</td>
+<td style="text-align: center;">尚未找到, 不能据此断言模型不可行</td>
+</tr>
+<tr>
+<td style="text-align: center;">已证明不可行</td>
+<td style="text-align: center;">需求, 资源,
+整数条件或逻辑之间存在矛盾</td>
+</tr>
+<tr>
+<td style="text-align: center;">无界或数值失败</td>
+<td style="text-align: center;">根据消息检查界, 方向,
+缩放和遗漏限制</td>
+</tr>
+</tbody>
+</table>
 <p>SciPy正常最优为 <code>status=0</code>, 计算限制为1, 不可行为2,
 无界为3, 其他原因看消息. MATLAB正常最优为 <code>exitflag=1</code>,
 提前停止但已有整数可行点为2, 不能把所有正标志一概当最优.
@@ -752,20 +1005,54 @@ class="math inline">\(10^{-7}\)</span>, 适用于已声明的数据量级.
 </ol>
 <h3 id="完整拓展材料的阅读位置">24.10.2 完整拓展材料的阅读位置</h3>
 <p>表 24-10 整数规划配套拓展索引.</p>
-<div class="line-block">内容 | 文件或位置 |<br />
-: --- | : --- |<br />
-原11节完整模型, 证明, 程序和8题 |
-<code>IntegerProgrammingFurtherReading.md</code>, F.1至F.11 |<br />
-三个案例的独立枚举 | 三个 <code>*_enumeration.py</code> 与对应
-<code>.m</code> |<br />
-按优先级两阶段求解 | 延伸阅读F.4, <code>lexicographic.py</code>,
-<code>lexicographic.m</code> |<br />
-分支, 剪枝, 割与结构 | 延伸阅读F.5 |<br />
-二元乘积精确线性化 | 延伸阅读F.8, <code>binary_product.py</code>,
-<code>binary_product.m</code> |<br />
-带输入检查的复用函数与完整演示 | <code>MilpSolverGuide.md</code> |<br />
-PuLP4.0.0/CBC的原三个完整案例 | <code>PuLPModeling.md</code>,
-<code>requirements_pulp.txt</code> |</div>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">内容</th>
+<th style="text-align: center;">文件或位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">原11节完整模型, 证明, 程序和8题</td>
+<td
+style="text-align: center;"><code>IntegerProgrammingFurtherReading.md</code>,
+F.1至F.11</td>
+</tr>
+<tr>
+<td style="text-align: center;">三个案例的独立枚举</td>
+<td style="text-align: center;">三个 <code>*_enumeration.py</code>
+与对应 <code>.m</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">按优先级两阶段求解</td>
+<td style="text-align: center;">延伸阅读F.4,
+<code>lexicographic.py</code>, <code>lexicographic.m</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">分支, 剪枝, 割与结构</td>
+<td style="text-align: center;">延伸阅读F.5</td>
+</tr>
+<tr>
+<td style="text-align: center;">二元乘积精确线性化</td>
+<td style="text-align: center;">延伸阅读F.8,
+<code>binary_product.py</code>, <code>binary_product.m</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">带输入检查的复用函数与完整演示</td>
+<td style="text-align: center;"><code>MilpSolverGuide.md</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">PuLP4.0.0/CBC的原三个完整案例</td>
+<td style="text-align: center;"><code>PuLPModeling.md</code>,
+<code>requirements_pulp.txt</code></td>
+</tr>
+</tbody>
+</table>
 <p>PuLP是代数建模工具, 主线可只用SciPy完成. PuLP选读固定4.0.0,
 该版本创建变量与读取求解状态的方式不同于3. x, 改版时要成套核对.
 复用函数的严格核验与关闭预处理服务于这些小教学模型,

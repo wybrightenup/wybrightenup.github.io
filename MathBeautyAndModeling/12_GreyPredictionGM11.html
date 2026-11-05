@@ -33,8 +33,8 @@
 <meta property="og:image" content="http://example.com/images/GreyPredictionGM11/GM11-Rolling.png">
 <meta property="og:image" content="http://example.com/images/GreyPredictionGM11/GM11-Forecast.png">
 <meta property="og:image" content="http://example.com/images/GreyPredictionGM11/GM11-Shift.png">
-<meta property="article:published_time" content="2026-11-03T00:53:51.596Z">
-<meta property="article:modified_time" content="2026-11-03T00:53:51.596Z">
+<meta property="article:published_time" content="2026-11-05T02:49:45.823Z">
+<meta property="article:modified_time" content="2026-11-04T07:37:44.000Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/GreyPredictionGM11/GM11-Original.png">
@@ -624,8 +624,7 @@ class="math inline">\(|256-242.509857|/256\approx5.2696\%\)</span>.
 这叫作扩展训练窗口的滚动起点检验. 三种方法使用相同起点,
 每个预测步长都有四个误差.</p>
 <p>将刚才的拟合与还原放进 <code>forecast_prefix</code> 函数,
-再用循环重复. 完整的输入检查与归一化版本保留在进一步阅读;
-这里的简明函数用于给出的有限正值教学数据.</p>
+再用循环重复. 这里的简明函数用于给出的有限正值教学数据.</p>
 <p><strong>rolling_origins_step. py</strong></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">forecast_prefix</span>(<span class="params">train</span>):</span><br><span class="line">    accumulated = np.cumsum(train)</span><br><span class="line">    z = (accumulated[:-<span class="number">1</span>]+accumulated[<span class="number">1</span>:])/<span class="number">2</span></span><br><span class="line">    B = np.column_stack((-z,np.ones(<span class="built_in">len</span>(z))))</span><br><span class="line">    a, u = np.linalg.lstsq(B,train[<span class="number">1</span>:],rcond=<span class="literal">None</span>)[<span class="number">0</span>]</span><br><span class="line">    factor = np.expm1(a)/a <span class="keyword">if</span> a != <span class="number">0</span> <span class="keyword">else</span> <span class="number">1.0</span></span><br><span class="line">    k = np.arange(<span class="built_in">len</span>(train)+<span class="number">1</span>,<span class="built_in">len</span>(train)+<span class="number">4</span>)</span><br><span class="line">    <span class="keyword">return</span> (u-a*train[<span class="number">0</span>])*factor*np.exp(-a*(k-<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">x = np.array([<span class="number">174</span>,<span class="number">179</span>,<span class="number">183</span>,<span class="number">189</span>,<span class="number">207</span>,<span class="number">234</span>,<span class="number">220.5</span>,<span class="number">256</span>,<span class="number">270</span>,<span class="number">285</span>], dtype=<span class="built_in">float</span>)</span><br><span class="line">errors = np.zeros((<span class="number">4</span>,<span class="number">3</span>,<span class="number">3</span>))  <span class="comment"># origin, horizon, method</span></span><br><span class="line">predictions = np.zeros((<span class="number">4</span>,<span class="number">3</span>,<span class="number">3</span>))</span><br><span class="line"><span class="keyword">for</span> row,n <span class="keyword">in</span> <span class="built_in">enumerate</span>([<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>]):</span><br><span class="line">    train = x[:n]</span><br><span class="line">    actual = x[n:n+<span class="number">3</span>]</span><br><span class="line">    h = np.arange(<span class="number">1</span>,<span class="number">4</span>)</span><br><span class="line">    pred = np.column_stack((forecast_prefix(train),np.full(<span class="number">3</span>,train[-<span class="number">1</span>]),</span><br><span class="line">        train[-<span class="number">1</span>]+h*(train[-<span class="number">1</span>]-train[<span class="number">0</span>])/(n-<span class="number">1</span>)))</span><br><span class="line">    predictions[row] = pred</span><br><span class="line">    errors[row] = np.<span class="built_in">abs</span>(actual[:,<span class="literal">None</span>]-pred)/actual[:,<span class="literal">None</span>]</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Origin&quot;</span>,n,<span class="string">&quot;MAPE percentages:&quot;</span>,<span class="number">100</span>*errors[row].mean(axis=<span class="number">0</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;By horizon, GM11 / last / drift (%):\n&quot;</span>,<span class="number">100</span>*errors.mean(axis=<span class="number">0</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;All twelve positions (%):&quot;</span>,<span class="number">100</span>*errors.mean(axis=(<span class="number">0</span>,<span class="number">1</span>)))</span><br></pre></td></tr></table></figure>
 <p><strong>rolling_origins_step. m</strong></p>
@@ -738,8 +737,7 @@ class="math inline">\(n=10\)</span>, 对应区间不同.
 不能用后来新增的数据改变早先训练时的检查口径. 本例均通过参考筛查,
 但通过不等于预测可靠.</p>
 <p>光滑比, 原始级比, 原尺度残差与级比偏差衡量不同方面.
-进一步阅读F.4分别推导并配图说明. 它们都不能代替后续记录上的预测比较,
-经验阈值也不是通用统计保证.</p>
+它们都不能代替后续记录上的预测比较, 经验阈值也不是通用统计保证.</p>
 <h3 id="换单位与加常数不同">12.8.2 换单位与加常数不同</h3>
 <p>将所有原值乘以正常数, 发展系数 <span class="math inline">\(a\)</span>
 不变, <span class="math inline">\(u\)</span> 和预测随同缩放,
@@ -789,8 +787,7 @@ class="math inline">\(n=10\)</span>, 对应区间不同.
 不能直接套用普通回归的区间公式.</p>
 <p>即使输入恰好是指数序列,
 背景值方程估计与连续响应还原的组合也未必零误差.
-进一步阅读与补充程序展示了这一点. 把模型的近似与适用条件写清楚,
-比把一条平滑曲线当成确定未来更有用.</p>
+把模型的近似与适用条件写清楚, 比把一条平滑曲线当成确定未来更有用.</p>
 <h2 id="写出一段完整结论-再核对计算">12.9 写出一段完整结论,
 再核对计算</h2>
 <p>本例可以这样报告: 使用给定等间隔正值教学序列,
@@ -820,11 +817,7 @@ u怎样对应? 背景值估计误差最小, 是否意味着连续响应还原误
 再与加1000后减回的结果比较.
 为什么通过级比区间不能证明原尺度预测已改善?</li>
 </ol>
-<p>完整归一化函数, 常数序列与数值边界,
-原诊断推导和全部原练习保留在进一步阅读中. 下一章学习ARIMA时间序列模型,
-继续检查趋势, 时间边界和留出预测.</p>
-<p>配套阅读与实验: <a
-href="../reading/12/Index.md">本章资料索引</a>.</p>
+<p>下一章学习ARIMA时间序列模型, 继续检查趋势, 时间边界和留出预测.</p>
 <h2 id="参考资料">参考资料</h2>
 <p>[1] DENG J L. Control problems of grey systems[J]. Systems &amp;
 Control Letters, 1982, 1(5): 288-294. DOI:

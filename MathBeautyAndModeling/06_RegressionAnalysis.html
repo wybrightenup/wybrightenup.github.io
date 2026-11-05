@@ -32,8 +32,8 @@
 <meta property="og:image" content="http://example.com/images/RegressionAnalysis/height_diagnostics.png">
 <meta property="og:image" content="http://example.com/images/RegressionAnalysis/multiple_fit.png">
 <meta property="og:image" content="http://example.com/images/RegressionAnalysis/curve_fit.png">
-<meta property="article:published_time" content="2026-11-03T00:53:51.567Z">
-<meta property="article:modified_time" content="2026-11-03T00:53:51.567Z">
+<meta property="article:published_time" content="2026-11-05T02:49:45.260Z">
+<meta property="article:modified_time" content="2026-11-04T07:37:44.000Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/RegressionAnalysis/height_scatter.png">
@@ -317,7 +317,7 @@ class="math inline">\(y\)</span></th>
 r=y-\widehat y=85-88.5=-3.5\ \mathrm{cm}.
 \]</span></p>
 <p>本书在回归分析中用 <span class="math inline">\(r\)</span> 记残差.
-配套程序中的变量名 <code>residual</code> 或 <code>e</code>
+程序中的变量名 <code>residual</code> 或 <code>e</code>
 也表示观测值减拟合值. 负号说明这条记录低于模型给出的值, 差了 3.5 cm.
 对另一个点, 残差也可能为正.</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">x = <span class="number">145</span></span><br><span class="line">y = <span class="number">85</span></span><br><span class="line">intercept = -<span class="number">13</span></span><br><span class="line">slope = <span class="number">0.7</span></span><br><span class="line"></span><br><span class="line">prediction = intercept + slope * x</span><br><span class="line">residual = y - prediction</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;prediction =&quot;</span>, prediction)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;residual =&quot;</span>, residual)</span><br></pre></td></tr></table></figure>
@@ -463,7 +463,7 @@ Q-Q 图. 图形用于寻找明显的遗漏模式.</p>
 <h2 id="不止一个解释变量时-问题怎样变化">6.5 不止一个解释变量时,
 问题怎样变化</h2>
 <p>身高案例只有一个解释变量. 若要预测某类服务的周平均需求,
-可能希望同时使用人口数量与收入水平. 配套的 12 组人工教学数据使用:</p>
+可能希望同时使用人口数量与收入水平. 下面的 12 组人工教学数据使用:</p>
 <p>表 6-3 多元服务需求例子的变量与单位.</p>
 <table>
 <thead>
@@ -511,9 +511,10 @@ class="math inline">\(y\)</span></td>
 <p>增加变量时, 既要明确每列含义, 也要留意变量是否反复提供相同的信息.
 若两项指标近乎重复, 单独系数可能不稳定.
 训练拟合改善也不保证新数据预测改善.</p>
-<p>本例完整数据与双语计算保留在进一步阅读中. 第 8 章将系统讨论设计矩阵,
-多重共线性和多元模型解释. 这里先记住: 解释变量增加后, 仍需核对数据,
-残差, 验证方式和预测对象.</p>
+<p><strong>十二组数据与点预测复算</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy <span class="keyword">import</span> stats</span><br><span class="line"></span><br><span class="line"><span class="comment"># 人工构造的教学数据, 不是调查观测.</span></span><br><span class="line">x1 = np.array([<span class="number">8</span>,<span class="number">10</span>,<span class="number">12</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">11</span>,<span class="number">15</span>,<span class="number">13</span>,<span class="number">16</span>,<span class="number">10</span>,<span class="number">17</span>,<span class="number">12.</span>])</span><br><span class="line">x2 = np.array([<span class="number">3</span>,<span class="number">3.4</span>,<span class="number">3.1</span>,<span class="number">2.8</span>,<span class="number">4</span>,<span class="number">3.6</span>,<span class="number">3.2</span>,<span class="number">4.2</span>,<span class="number">3.8</span>,<span class="number">2.9</span>,<span class="number">4.4</span>,<span class="number">3.5</span>])</span><br><span class="line">y = np.array([<span class="number">22.90</span>,<span class="number">25.56</span>,<span class="number">29.69</span>,<span class="number">22.82</span>,<span class="number">34.40</span>,<span class="number">27.84</span>,</span><br><span class="line">              <span class="number">35.38</span>,<span class="number">31.48</span>,<span class="number">37.62</span>,<span class="number">25.71</span>,<span class="number">38.96</span>,<span class="number">29.95</span>])</span><br><span class="line">X = np.column_stack((np.ones(x1.size), x1, x2))</span><br><span class="line">Q, R = np.linalg.qr(X, mode=<span class="string">&quot;reduced&quot;</span>)</span><br><span class="line">beta = np.linalg.solve(R, Q.T @ y)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;系数:&quot;</span>, beta)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;点预测:&quot;</span>, np.array([<span class="number">1.</span>,<span class="number">13.</span>,<span class="number">3.7</span>]) @ beta)</span><br></pre></td></tr></table></figure>
+<p>第 8 章将系统讨论设计矩阵, 多重共线性和多元模型解释. 这里先记住:
+解释变量增加后, 仍需核对数据, 残差, 验证方式和预测对象.</p>
 <h2 id="散点呈弯曲时-可以换一种关系形式">6.6 散点呈弯曲时,
 可以换一种关系形式</h2>
 <p>下面同样使用人工教学数据. <span class="math inline">\(x\)</span>
@@ -647,12 +648,10 @@ class="math inline">\(-13+0.7x\)</span> 比较,
 <li>将倒数曲线的预测位置改为 9. 计算时应使用 9 还是 <span
 class="math inline">\(1/9\)</span> 作为拟合函数的解释输入?
 新观测指平均等待记录还是个人等待时间?</li>
-<li>(选做) 在进一步阅读的完整程序中比较直线,
-倒数和二次多项式的相同留一误差.
+<li>(选做) 用本章等待数据, 沿用留一重拟合步骤并结合第 9 章的二次特征,
+比较直线, 倒数和二次多项式的相同留一误差.
 训练拟合更好是否一定意味着留一误差更低?</li>
 </ol>
-<p>配套阅读与实验: <a
-href="../reading/06/Index.md">本章资料索引</a>.</p>
 <h2 id="参考资料">参考资料</h2>
 <p>[1] NIST/SEMATECH. <a
 target="_blank" rel="noopener" href="https://www.itl.nist.gov/div898/handbook/pmd/section4/pmd431.htm">Least

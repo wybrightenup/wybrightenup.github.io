@@ -30,8 +30,8 @@
 <meta property="og:image" content="http://example.com/images/MathematicsInNature/Nature-FirstPoints.png">
 <meta property="og:image" content="http://example.com/images/MathematicsInNature/Nature-PolygonConstruction.png">
 <meta property="og:image" content="http://example.com/images/MathematicsInNature/Nature-EqualAreaPolygons.png">
-<meta property="article:published_time" content="2026-11-03T00:53:51.541Z">
-<meta property="article:modified_time" content="2026-11-03T00:53:51.541Z">
+<meta property="article:published_time" content="2026-11-05T02:49:45.006Z">
+<meta property="article:modified_time" content="2026-11-04T07:37:44.000Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/MathematicsInNature/Nature-SeedPatterns.png">
@@ -464,8 +464,7 @@ class="math inline">\(360^\circ\)</span></td>
 正五边形的内角是 <span class="math inline">\(108^\circ\)</span>:
 三个角合起来还差 <span class="math inline">\(36^\circ\)</span>,
 四个角又超过一周, 因而无法按同样方式拼接.</p>
-<p>本节先比较上面三种可铺满平面的图形. 为什么在"同一种正多边形,
-边对边铺砌"的条件下只有这三种, 配套选读中给出了进一步推导.</p>
+<p>本节先比较上面三种可铺满平面的图形.</p>
 <p>为公平比较, 每个单元的面积都取 <span class="math inline">\(1\
 \mathrm{cm}^2\)</span>. 我们要算的是各自的周长, 单位为 <span
 class="math inline">\(\mathrm{cm}\)</span>. 先把材料厚度等因素放到一边,
@@ -568,9 +567,49 @@ class="math inline">\(2\sqrt\pi\approx3.544908\)</span>, 比正六边形还短.
 <p>可以把 <code>area = 1</code> 改为 <code>area = 4</code> 再运行.
 每个图形的面积变成四倍, 但周长只变成两倍. 想一想:
 如果将一张图的横向和纵向都放大两倍, 它的面积会怎样变化?</p>
-<p>配套材料中还保留了 NumPy 数组版本和四幅图的完整绘图程序.
-正文先把一个点, 一次循环, 一个面积算式看懂,
-再阅读这些完整实现就容易得多.</p>
+<p><strong>练习所需的半径关系与一般周长公式</strong></p>
+<p>把半径写为 <span class="math inline">\(r_k=ck^q\)</span>, <span
+class="math inline">\(q&gt;0\)</span>, 则对应圆盘面积为</p>
+<p><span class="math display">\[
+A_k=\pi c^2k^{2q}.
+\]</span></p>
+<ul>
+<li><span class="math inline">\(q=1/2\)</span> 时,
+圆盘面积与序号成正比.</li>
+<li><span class="math inline">\(q=1\)</span> 时,
+圆盘面积与序号的平方成正比, 向外增加的面积更快.</li>
+<li><span class="math inline">\(q=1/3\)</span> 时, 圆盘面积与 <span
+class="math inline">\(k^{2/3}\)</span> 成正比, 向外增加的面积较慢.</li>
+</ul>
+<p>采用同一个黄金角和相同点数比较时,
+这些关系有助于解释中心与外围的疏密变化. 实际点间距还取决于角度分布.
+绘图软件常会自动调整显示范围, 因而比较时也要留意坐标尺度.</p>
+<p>设正 <span class="math inline">\(n\)</span> 边形边长为 <span
+class="math inline">\(s\)</span>, 中心到一条边的距离为 <span
+class="math inline">\(a\)</span>. 将它分为 <span
+class="math inline">\(n\)</span> 个等腰三角形, 再把其中一个三角形平分,
+得到</p>
+<p><span class="math display">\[
+\tan\frac{\pi}{n}=\frac{s/2}{a},
+\qquad a=\frac{s}{2\tan(\pi/n)}.
+\]</span></p>
+<p>全部三角形的面积相加:</p>
+<p><span class="math display">\[
+A=\frac{nsa}{2}
+=\frac{ns^2}{4\tan(\pi/n)},\qquad P=ns.
+\]</span></p>
+<p>由面积先解出 <span class="math inline">\(s\)</span>, 再代入周长,
+得到</p>
+<p><span class="math display">\[
+P_n=2\sqrt{nA\tan(\pi/n)}.
+\]</span></p>
+<p>这里 <span class="math inline">\(A\)</span> 与 <span
+class="math inline">\(P\)</span> 分别使用同一长度单位的平方与该长度单位.
+取 <span class="math inline">\(A=1,n=12\)</span>, 得到周长约为
+3.586302.</p>
+<p>若将面积从 <span class="math inline">\(A\)</span> 改为 <span
+class="math inline">\(4A\)</span>, 这个式子直接给出周长乘以 2.
+正文三种具体图形的推导与这个一般公式一致.</p>
 <h2 id="动手改变条件">1.7 动手改变条件</h2>
 <ol type="1">
 <li>把第一段程序中的点依次改为 <span
@@ -585,20 +624,18 @@ class="math inline">\(144^\circ\)</span>. 先预测会有几条径向排列, 再
 要考虑重复转动几次才是整周的整数倍.</li>
 <li>在种子程序中采用黄金角, 分别试用 <code>radius = k</code> 和
 <code>radius = k ** (1 / 3)</code>, 保持相同点数与转角, 观察疏密变化.
-进一步解释可参考选读中的圆盘面积关系.</li>
+进一步解释可参考上述圆盘面积关系.</li>
 <li>把三种多边形的共同面积从 1 改为 4. 用程序核对周长变化,
 并用放大图形解释为什么是两倍.</li>
 <li>根据周长表, 在忽略外边界时,
 算出三种大网格平均每个单元分担的边界长度.
 为什么每个单元都直接计入完整周长, 会把内部边重复计算?</li>
-<li>选做: 用配套选读中的一般公式, 算面积为 1 的正十二边形周长.
+<li>选做: 用上述一般公式, 算面积为 1 的正十二边形周长.
 它虽然比正六边形更短, 为什么不能直接加入本章的单一正多边形铺砌候选?</li>
 </ol>
 <p>画图以后, 我们可以继续追问为什么会形成这样的图案; 写出公式以后,
 又可以改变一个条件, 检查结果怎样变化. 下一章将从移动,
 翻转和旋转图形开始, 继续观察哪些性质发生了改变, 哪些保持不变.</p>
-<p>配套阅读与实验: <a
-href="../reading/01/Index.md">本章资料索引</a>.</p>
 <h2 id="参考资料">参考资料</h2>
 <p>[1] Vogel H. A better way to construct the sunflower head.
 Mathematical Biosciences, 1979, 44(3–4): 179–189. <a

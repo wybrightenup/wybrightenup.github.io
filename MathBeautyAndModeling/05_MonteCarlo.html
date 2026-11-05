@@ -31,8 +31,8 @@
 <meta property="og:image" content="http://example.com/images/MonteCarlo/MC-3.png">
 <meta property="og:image" content="http://example.com/images/MonteCarlo/MC-4.png">
 <meta property="og:image" content="http://example.com/images/MonteCarlo/MC-5.png">
-<meta property="article:published_time" content="2026-11-03T00:53:51.561Z">
-<meta property="article:modified_time" content="2026-11-03T00:53:51.561Z">
+<meta property="article:published_time" content="2026-11-05T02:49:45.215Z">
+<meta property="article:modified_time" content="2026-11-04T07:37:44.000Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/MonteCarlo/MC-1.png">
@@ -199,8 +199,7 @@
 如果每次记录的是一个函数值, 又能算出什么?</p>
 <p>本章先判断一个点的位置, 再重复投点, 从命中比例估计圆周率.
 做过这个实验以后, 再将平均值用于积分. 章末保留一个三盒选读实验,
-用来检查模拟规则是否与题意一致. Python 程序按步骤演示, 同样步骤的 MATLAB
-程序见配套实验对照.</p>
+用来检查模拟规则是否与题意一致. Python 程序按步骤演示.</p>
 <h2 id="先判断一个点-再统计圆内点数">5.1 先判断一个点,
 再统计圆内点数</h2>
 <h3 id="一个点是否落在圆内">5.1.1 一个点是否落在圆内</h3>
@@ -347,13 +346,21 @@ class="math inline">\(N\)</span></th>
 增加样本会降低通常的波动尺度,
 不保证某两次结果的实际误差按同一比例变化.</p>
 <h3 id="选读-用区间表达不确定性">5.2.3 选读: 用区间表达不确定性</h3>
-<p>近似区间能补充单个估计值. 例如, 配套的 <code>pi_experiment.py</code>
-对本次命中频率计算 Wilson 近似 95% 区间, 再把端点乘以 4, 得到</p>
+<p>近似区间能补充单个估计值. 例如, 对本次命中频率计算 Wilson 近似 95%
+区间, 再把端点乘以 4, 得到</p>
 <p><span class="math display">\[
 [3.110195,\ 3.174528].
 \]</span></p>
-<p>Wilson 公式和完整双语程序放在进一步阅读中,
-不需要掌握这套公式才能完成投点实验[1].</p>
+<p>Wilson 区间按下式计算, 不需要掌握这套公式才能完成投点实验[1].</p>
+<p>程序报告的 Wilson 比例区间, 先估计命中概率, 再把两个端点乘以 4,
+得到圆周率的区间估计. 设 <span
+class="math inline">\(z\approx1.959964\)</span>, 则比例区间为 <span
+class="math inline">\([c-h,c+h]\)</span>, 其中[1]</p>
+<p><span class="math display">\[
+c=\frac{\widehat p+z^2/(2N)}{1+z^2/N},\qquad
+h=\frac{z}{1+z^2/N}
+\sqrt{\frac{\widehat p(1-\widehat p)}{N}+\frac{z^2}{4N^2}}.
+\]</span></p>
 <p>95% 置信水平描述重复抽样程序的覆盖性质. 对已经算出的某个区间,
 真值是否在内是确定的事实; Wilson
 区间也不保证任意样本量下的覆盖率都恰好为 95%. 本章先固定样本量再计算,
@@ -407,8 +414,7 @@ class="math inline">\(s_f\)</span> 计算:</p>
 \widehat{\operatorname{SE}}(\widehat I_N)
 =(b-a)\frac{s_f}{\sqrt N}.
 \]</span></p>
-<p>配套的 <code>integral_experiment.py</code> 给出完整误差计算,
-本次估计标准误差为 0.000635508, 大样本近似 95% 区间为 <span
+<p>本次估计标准误差为 0.000635508, 大样本近似 95% 区间为 <span
 class="math inline">\([0.744784486,\ 0.747275676]\)</span>.
 这些量描述抽样波动, 不把一次结果与真值的差当作固定精度.</p>
 <p>对于这样的一维光滑积分, 常规数值积分通常更有效率.
@@ -488,16 +494,14 @@ class="math inline">\(u=0.6\)</span> 时, 圆内的纵向长度为 0.8,
 右图为两种单样本贡献的理论方差, 不表示本次实际误差.</p>
 <p>原投点贡献的理论方差约为 2.696766, 新贡献约为 0.797062. 相同样本量下,
 新方法的理论标准误差约为原来的 54.4%. 降低的是反复抽样时的波动尺度,
-不保证每次估计更接近真值. 进一步阅读给出条件平均的解释,
-方差推导及双语对照程序.</p>
+不保证每次估计更接近真值.</p>
 <h3 id="逐点-数组与分批各适合什么任务">5.5.2 逐点,
 数组与分批各适合什么任务</h3>
 <p>前面的逐点程序只保存计数或总和, 不必保留所有样本.
-为了更快地批量计算或绘制点图, 配套数组程序可以一次生成很多点.
+为了更快地批量计算或绘制点图, 数组程序可以一次生成很多点.
 此时若样本太多, 可每次生成一批, 累加后再处理下一批.</p>
 <p>分批只改变处理方式, 统计仍应使用总命中数除以总点数. 若最后一批不满,
-也必须计入; 各批数量不同时, 不能直接平均各批频率. 完整的
-<code>pi_batch.py</code> 和 MATLAB 对照保留在进一步阅读中.</p>
+也必须计入; 各批数量不同时, 不能直接平均各批频率.</p>
 <p>无论逐点还是分批, 都不应在每个点或每一批开始时用相同种子重置生成器.
 本轮环境下相应写法可以复现同一组均匀数; 不应推广为任意软件,
 版本或随机分布调用的保证[2].</p>
@@ -611,8 +615,6 @@ class="math inline">\(n-2\)</span> 只未被初选的空盒,
 <p>上一章从频率认识概率, 本章把概率与平均值用于近似计算.
 下一章的回归分析将根据已有观测研究变量之间的关系,
 需要继续区分模型假设与数据所支持的结论.</p>
-<p>配套阅读与实验: <a
-href="../reading/05/Index.md">本章资料索引</a>.</p>
 <h2 id="参考资料">参考资料</h2>
 <p>[1] NIST/SEMATECH. <a
 target="_blank" rel="noopener" href="https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm">Confidence

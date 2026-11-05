@@ -32,8 +32,8 @@
 <meta property="og:image" content="http://example.com/images/MinimaxAndMaximinProgramming/MM-3.png">
 <meta property="og:image" content="http://example.com/images/MinimaxAndMaximinProgramming/MM-4.png">
 <meta property="og:image" content="http://example.com/images/MinimaxAndMaximinProgramming/MM-6.png">
-<meta property="article:published_time" content="2026-11-03T00:53:51.666Z">
-<meta property="article:modified_time" content="2026-11-03T00:53:51.666Z">
+<meta property="article:published_time" content="2026-11-05T02:49:44.841Z">
+<meta property="article:modified_time" content="2026-11-04T07:37:44.000Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/MinimaxAndMaximinProgramming/MM-1.png">
@@ -452,9 +452,35 @@ t\geqslant0.
 x+y=16.5,\qquad6.5\leqslant x\leqslant8.
 \]</span></p>
 <p>因此求解器返回 <span class="math inline">\((7,9.5)\)</span> 或 <span
-class="math inline">\((8,8.5)\)</span> 都可能正确.
-完整线段的推导见进阶阅读 F.1.5; 在很多点上抽样回代,
-只能验证被抽到的点.</p>
+class="math inline">\((8,8.5)\)</span> 都可能正确. 完整线段可由下式核对;
+在很多点上抽样回代, 只能验证被抽到的点.</p>
+<p>令:</p>
+<p><span class="math display">\[
+s=x+y,\qquad q=x-y,\qquad s_i=a_i+b_i,\qquad q_i=a_i-b_i.
+\]</span></p>
+<p>根据绝对值恒等式, 最大距离可以写为:</p>
+<p><span class="math display">\[
+\max_i d_i(x,y)
+=\max\{s-\min_i s_i,\ \max_i s_i-s,\ q-\min_i q_i,\ \max_i q_i-q\}.
+\]</span></p>
+<p>本组数据有:</p>
+<p><span class="math display">\[
+\min_i s_i=3,\quad\max_i s_i=30,\qquad
+\min_i q_i=-13,\quad\max_i q_i=10.
+\]</span></p>
+<p>要使四个表达式均不超过 13.5, 必须且只需:</p>
+<p><span class="math display">\[
+s=16.5,\qquad-3.5\leqslant q\leqslant0.5.
+\]</span></p>
+<p>换回 <span class="math inline">\(x,y\)</span>, 不限制选址区域时,
+全部最优中心满足:</p>
+<p><span class="math display">\[
+x+y=16.5,\qquad6.5\leqslant x\leqslant8.5.
+\]</span></p>
+<p>再与选址矩形相交, 得到本题的全部最优中心:</p>
+<p><span class="math display">\[
+\boxed{x+y=16.5,\qquad6.5\leqslant x\leqslant8.}
+\]</span></p>
 <p><img src="/images/MinimaxAndMaximinProgramming/MM-1.png" style="width:100%"></p>
 <p>图 27-1 曼哈顿距离下的需求点, 选址矩形和最优线段. 等距离边界为菱形.
 中心在矩形边界上, 本身不能说明矩形限制提高了最优值.</p>
@@ -627,9 +653,7 @@ class="math inline">\(t\geqslant0\)</span>, 就同时要求 <span
 class="math inline">\(0\leqslant t\leqslant-3\)</span>,
 错误地产生不可行模型. Python <code>linprog</code> 的默认变量下界为 0,
 所以可能为负的保障值必须显式写成 <code>(None,None)</code>; MATLAB
-对应使用 <code>-Inf</code> 和 <code>Inf</code>. [2] 完整负值求解程序为
-<code>negative_guarantee.py</code> 与 <code>negative_guarantee.m</code>,
-也收入辅助变量求解器阅读材料.</p>
+对应使用 <code>-Inf</code> 和 <code>Inf</code>. [2]</p>
 <p>表 27-6 最小最大与最大最小的辅助变量方向.</p>
 <table>
 <thead>
@@ -792,8 +816,7 @@ class="math inline">\((9,1)\)</span>. 这次假设直线距离适合作为覆盖
 <p>平方在非负距离上严格递增,
 因而最小化最大距离的平方与最小化最大距离具有相同最优中心. <span
 class="math inline">\(\rho\)</span> 的单位为长度平方,
-输出半径必须再开平方. 完整求解与残差 Jacobian 见进阶阅读 F.4.2,
-下面先做原指标回代.</p>
+输出半径必须再开平方. 下面先做原指标回代.</p>
 <p><strong>Python · <code>step08_squared_radius.py</code></strong></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">points = np.array([[<span class="number">2.</span>,<span class="number">8.</span>],[<span class="number">6.</span>,<span class="number">4.</span>],[<span class="number">8.</span>,<span class="number">7.</span>],[<span class="number">1.</span>,<span class="number">2.</span>],[<span class="number">9.</span>,<span class="number">1.</span>]])</span><br><span class="line">center = np.array([<span class="number">75</span>/<span class="number">14</span>,<span class="number">61</span>/<span class="number">14</span>])</span><br><span class="line">squared_distances = np.<span class="built_in">sum</span>((points-center)**<span class="number">2</span>,axis=<span class="number">1</span>)</span><br><span class="line">rho = squared_distances.<span class="built_in">max</span>()</span><br><span class="line">radius = np.sqrt(rho)</span><br><span class="line">centroid = points.mean(axis=<span class="number">0</span>)</span><br><span class="line">centroid_radius = np.linalg.norm(points-centroid,axis=<span class="number">1</span>).<span class="built_in">max</span>()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;squared distances:&quot;</span>, squared_distances)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;squared radius:&quot;</span>, rho, <span class="string">&quot;radius:&quot;</span>, radius)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;points on the boundary:&quot;</span>, np.flatnonzero(np.isclose(squared_distances,rho))+<span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;centroid:&quot;</span>, centroid, <span class="string">&quot;its worst distance:&quot;</span>, centroid_radius)</span><br></pre></td></tr></table></figure>
 <p><strong>MATLAB · <code>step08_squared_radius.m</code></strong></p>
@@ -802,8 +825,35 @@ class="math inline">\(\rho\)</span> 的单位为长度平方,
 class="math inline">\(z^*=(75/14,61/14)^{\mathsf T}\)</span>, 平方半径为
 <span class="math inline">\(4810/196\)</span>, 半径约 4.953869.
 程序先算五个平方距离, 取最大值, 再开方; 点 1, 4, 5 位于边界.
-这一步检查了给定中心的覆盖情况, 其全局最优性由进阶阅读 F.4.4
-的加权平方距离下界证明.</p>
+这一步检查了给定中心的覆盖情况,
+其全局最优性由下述加权平方距离下界证明.</p>
+<p>对于边界上的点 1, 4, 5, 取非负权重:</p>
+<p><span class="math display">\[
+\lambda=\left(\frac{325}{686},\frac{2}{49},\frac{333}{686}\right)^{\mathsf
+T}.
+\]</span></p>
+<p>依次将这些权重记为 <span
+class="math inline">\(\lambda_1,\lambda_4,\lambda_5\)</span>. 它们的和为
+1, 加权坐标等于 <span class="math inline">\(z^*\)</span>, 且三个点到
+<span class="math inline">\(z^*\)</span> 的平方距离均为 <span
+class="math inline">\(4810/196\)</span>. 于是, 对任意中心 <span
+class="math inline">\(z\)</span>:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\max_i\|z-P_i\|_2^2
+&amp;\geqslant\sum\limits_{i\in\{1,4,5\}}\lambda_i\|z-P_i\|_2^2\\
+&amp;=\|z-z^*\|_2^2+\frac{4810}{196}\\
+&amp;\geqslant\frac{4810}{196}.
+\end{aligned}
+\]</span></p>
+<p>第二行可由 <span
+class="math inline">\(z-P_i=(z-z^*)+(z^*-P_i)\)</span> 展开平方得到:
+权重和为 1, 而加权坐标为 <span class="math inline">\(z^*\)</span>,
+所以交叉项相消.</p>
+<p><span class="math inline">\(z^*\)</span> 在允许范围内,
+覆盖全部点并达到上述下界, 因此是全局最优中心. 若另一个中心也达到相同值,
+上式要求 <span class="math inline">\(\|z-z^*\|_2^2=0\)</span>,
+故本例的最优中心唯一.</p>
 <p>如果把目标换成所有平方距离之和, 得到的是点坐标的平均值 <span
 class="math inline">\((5.2,4.4)^{\mathsf T}\)</span>.
 这个中心的最大距离约为 5.099020, 大于最小覆盖半径. 因此,
@@ -854,8 +904,7 @@ T}p\)</span> 和 <span class="math inline">\(Mq\)</span> 的全部分量均为
 不表示单次选取的矩阵元素都等于 0.6.</p>
 <p>有限两人零和模型允许双方采用混合策略时,
 极小极大定理保证两个方向的值相等. 本例的纯策略结果并不相等,
-也不能把该定理推广到任意优化问题.
-求出两份概率方案的完整线性规划和双语言程序见进阶阅读 F.6. 对一般函数,
+也不能把该定理推广到任意优化问题. 对一般函数,
 在有关极值存在时只能直接保证最大最小值不超过最小最大值.</p>
 <h2 id="加入情景以后-怎样解释保障范围">27.10 加入情景以后,
 怎样解释保障范围</h2>
@@ -931,8 +980,8 @@ x\in\mathcal F.
 <p>如果分量及原约束都是线性的, 转换后可用线性规划.
 如果损失分量凸且可行域凸, 最小最大模型具有凸优化结构;
 如果成效分量凹且可行域凸, 最大最小模型也可转为凸优化问题. [4]
-分量含绝对值时需要继续处理, 分量非凸时不能由辅助变量转换推断全局最优.
-详细条件和光滑接口见进阶阅读 F.3.</p>
+分量含绝对值时需要继续处理,
+分量非凸时不能由辅助变量转换推断全局最优.</p>
 <p>当原最优值存在时, minimax 可行方案给出最优值的上界, maximin
 可行方案给出最优值的下界. 想确认全局最优,
 还需要相反方向的界或其他有效证据. 本章分别使用两点距离下界,
@@ -947,48 +996,6 @@ x\in\mathcal F.
 <li>区分当前可行值与全局最优值, 再判断最优方案是否唯一.</li>
 <li>说明保障覆盖的情景, 距离假设和实际服务要求.</li>
 </ol>
-<p>表 27-8 最不利情形决策的配套阅读.</p>
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr>
-<th style="text-align: center;">想进一步理解的问题</th>
-<th style="text-align: center;">配套位置</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">全部最优中心与选址限制的影响</td>
-<td style="text-align: center;">进阶阅读 F.1.5, 拓展练习 3 与 4</td>
-</tr>
-<tr>
-<td style="text-align: center;">凸性, 取负关系, SLSQP 与 MATLAB
-接口</td>
-<td style="text-align: center;">进阶阅读 F.3</td>
-</tr>
-<tr>
-<td style="text-align: center;">欧氏覆盖的 Jacobian 与全局下界</td>
-<td style="text-align: center;">进阶阅读 F.4</td>
-</tr>
-<tr>
-<td style="text-align: center;">多条线性成效的均衡与唯一性证明</td>
-<td style="text-align: center;">进阶阅读 F.5</td>
-</tr>
-<tr>
-<td style="text-align: center;">博弈双方的 LP 和极小极大定理</td>
-<td style="text-align: center;">进阶阅读 F.6</td>
-</tr>
-<tr>
-<td style="text-align: center;">原约束, 等式, 向量残差与 Jacobian
-的封装</td>
-<td
-style="text-align: center;"><code>AuxiliaryVariableSolver.md</code></td>
-</tr>
-</tbody>
-</table>
 <p>下一章研究动态规划. 本章的一份方案要面对多个情景,
 下一章的一份方案还包含前后相接的决策阶段,
 需要把当前选择与后续最优结果联系起来.</p>
@@ -1017,10 +1024,6 @@ T}\)</span> 的三个情景成效, 说明平均值与保障值的差别.</li>
 <li>只列前两个情景的资源模型, 能否声称对严重压力也保障 0.08?
 解释增加情景时保障值不增所需的前提.</li>
 </ol>
-<p>进阶阅读 F.8.3 另有八道完整练习, 练习提示统一列在
-<code>ExerciseHints.md</code>.</p>
-<p>配套阅读与实验: <a
-href="../reading/27/Index.md">本章资料索引</a>.</p>
 <h2 id="参考资料">参考资料</h2>
 <p>[1] SciPy. minimize, SLSQP.
 https://docs.scipy.org/doc/scipy/reference/optimize.minimize-slsqp.html.</p>

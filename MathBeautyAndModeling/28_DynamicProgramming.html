@@ -31,8 +31,8 @@
 <meta property="og:image" content="http://example.com/images/DynamicProgramming/DP-3.png">
 <meta property="og:image" content="http://example.com/images/DynamicProgramming/DP-4.png">
 <meta property="og:image" content="http://example.com/images/DynamicProgramming/DP-5.png">
-<meta property="article:published_time" content="2026-11-03T00:53:51.672Z">
-<meta property="article:modified_time" content="2026-11-03T00:53:51.672Z">
+<meta property="article:published_time" content="2026-11-05T02:49:44.905Z">
+<meta property="article:modified_time" content="2026-11-04T07:37:44.000Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/DynamicProgramming/DP-1.png">
@@ -499,9 +499,9 @@ class="math inline">\(27\to22\to17\to12\to7\to0\)</span>.
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[count, plan]</span> = <span class="title">coinChangeDP</span><span class="params">(coins, target)</span></span></span><br><span class="line">    assert(isnumeric(target) &amp;&amp; <span class="built_in">isreal</span>(target) &amp;&amp; <span class="built_in">isscalar</span>(target) &amp;&amp; ...</span><br><span class="line">        <span class="built_in">isfinite</span>(target) &amp;&amp; target &gt;= <span class="number">0</span> &amp;&amp; target == <span class="built_in">floor</span>(target), ...</span><br><span class="line">        <span class="string">&#x27;目标金额必须为非负整数. &#x27;</span>);</span><br><span class="line">    assert(isnumeric(coins) &amp;&amp; <span class="built_in">isreal</span>(coins) &amp;&amp; ...</span><br><span class="line">        all(<span class="built_in">isfinite</span>(coins(:))) &amp;&amp; all(coins(:) &gt; <span class="number">0</span>) &amp;&amp; ...</span><br><span class="line">        all(coins(:) == <span class="built_in">floor</span>(coins(:))), <span class="string">&#x27;面值必须为正整数. &#x27;</span>);</span><br><span class="line">    coins = unique(coins(:).&#x27;, <span class="string">&#x27;stable&#x27;</span>);</span><br><span class="line">    dp = <span class="built_in">inf</span>(<span class="number">1</span>, target+<span class="number">1</span>);</span><br><span class="line">    last = <span class="built_in">zeros</span>(<span class="number">1</span>, target+<span class="number">1</span>);</span><br><span class="line">    dp(<span class="number">1</span>) = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> amount = <span class="number">1</span>:target</span><br><span class="line">        <span class="keyword">for</span> coin = coins</span><br><span class="line">            <span class="keyword">if</span> coin &lt;= amount</span><br><span class="line">                candidate = dp(amount-coin+<span class="number">1</span>) + <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">if</span> candidate &lt; dp(amount+<span class="number">1</span>)</span><br><span class="line">                    dp(amount+<span class="number">1</span>) = candidate;</span><br><span class="line">                    last(amount+<span class="number">1</span>) = coin;</span><br><span class="line">                <span class="keyword">end</span></span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">isinf</span>(dp(target+<span class="number">1</span>))</span><br><span class="line">        count = <span class="number">-1</span>; plan = []; <span class="keyword">return</span>;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    count = dp(target+<span class="number">1</span>);</span><br><span class="line">    plan = <span class="built_in">zeros</span>(<span class="number">1</span>, count);</span><br><span class="line">    remaining = target;</span><br><span class="line">    <span class="keyword">for</span> k = <span class="number">1</span>:count</span><br><span class="line">        coin = last(remaining+<span class="number">1</span>);</span><br><span class="line">        assert(coin &gt; <span class="number">0</span>, <span class="string">&#x27;可达状态缺少回溯记录. &#x27;</span>);</span><br><span class="line">        plan(k) = coin;</span><br><span class="line">        remaining = remaining - coin;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    assert(remaining == <span class="number">0</span>);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
 <p>Python 的 <code>coin_change(27)</code>
 返回最少枚数和一个最优面值列表. MATLAB 保存函数后, 可调用
-<code>[count,plan] = coinChangeDP([2,5,7],27)</code>. 完整 MATLAB
-检查脚本 <code>dynamic_examples.m</code> 同时核对金额, 枚数和合法面值.
-目标为 0 应返回 0 枚与空方案; 不可达金额应与可行的零枚方案区分.</p>
+<code>[count,plan] = coinChangeDP([2,5,7],27)</code>. 应同时核对金额,
+枚数和合法面值. 目标为 0 应返回 0 枚与空方案;
+不可达金额应与可行的零枚方案区分.</p>
 <p><img src="/images/DynamicProgramming/DP-2.png" style="width:100%"></p>
 <p>图 28-2 金额 0 至 27 的完整状态与回溯金额. 红叉标出不可达金额 1 与 3,
 其绘图位置不表示负的硬币数. 橙色点标出程序记录的一条最优回溯路径.</p>
@@ -768,8 +768,7 @@ class="math inline">\(4+8=12\)</span>. 阶段每次减一, 选择编号没有重
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[best, selected, dp]</span> = <span class="title">knapsackDP</span><span class="params">(weights, values, capacity)</span></span></span><br><span class="line">    assert(isnumeric(capacity) &amp;&amp; <span class="built_in">isreal</span>(capacity) &amp;&amp; <span class="built_in">isscalar</span>(capacity) &amp;&amp; ...</span><br><span class="line">        <span class="built_in">isfinite</span>(capacity) &amp;&amp; capacity &gt;= <span class="number">0</span> &amp;&amp; capacity == <span class="built_in">floor</span>(capacity), ...</span><br><span class="line">        <span class="string">&#x27;容量必须为非负整数. &#x27;</span>);</span><br><span class="line">    assert(isnumeric(weights) &amp;&amp; <span class="built_in">isreal</span>(weights) &amp;&amp; ...</span><br><span class="line">        all(<span class="built_in">isfinite</span>(weights(:))) &amp;&amp; all(weights(:) &gt; <span class="number">0</span>) &amp;&amp; ...</span><br><span class="line">        all(weights(:) == <span class="built_in">floor</span>(weights(:))), <span class="string">&#x27;重量必须为正整数. &#x27;</span>);</span><br><span class="line">    assert(isnumeric(values) &amp;&amp; <span class="built_in">isreal</span>(values) &amp;&amp; ...</span><br><span class="line">        all(<span class="built_in">isfinite</span>(values(:))) &amp;&amp; all(values(:) &gt;= <span class="number">0</span>), ...</span><br><span class="line">        <span class="string">&#x27;评分必须为非负有限数. &#x27;</span>);</span><br><span class="line">    weights = weights(:).&#x27;; values = values(:).&#x27;;</span><br><span class="line">    assert(<span class="built_in">numel</span>(weights) == <span class="built_in">numel</span>(values), <span class="string">&#x27;重量与评分数量必须一致. &#x27;</span>);</span><br><span class="line">    n = <span class="built_in">numel</span>(weights);</span><br><span class="line">    dp = <span class="built_in">zeros</span>(n+<span class="number">1</span>, capacity+<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span> = <span class="number">1</span>:n</span><br><span class="line">        <span class="keyword">for</span> <span class="built_in">j</span> = <span class="number">0</span>:capacity</span><br><span class="line">            dp(<span class="built_in">i</span>+<span class="number">1</span>,<span class="built_in">j</span>+<span class="number">1</span>) = dp(<span class="built_in">i</span>,<span class="built_in">j</span>+<span class="number">1</span>);</span><br><span class="line">            <span class="keyword">if</span> weights(<span class="built_in">i</span>) &lt;= <span class="built_in">j</span></span><br><span class="line">                dp(<span class="built_in">i</span>+<span class="number">1</span>,<span class="built_in">j</span>+<span class="number">1</span>) = <span class="built_in">max</span>(dp(<span class="built_in">i</span>+<span class="number">1</span>,<span class="built_in">j</span>+<span class="number">1</span>), ...</span><br><span class="line">                    dp(<span class="built_in">i</span>,<span class="built_in">j</span>-weights(<span class="built_in">i</span>)+<span class="number">1</span>) + values(<span class="built_in">i</span>));</span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    best = dp(n+<span class="number">1</span>,capacity+<span class="number">1</span>);</span><br><span class="line">    selected = []; <span class="built_in">j</span> = capacity;</span><br><span class="line">    <span class="keyword">for</span> <span class="built_in">i</span> = n:<span class="number">-1</span>:<span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> dp(<span class="built_in">i</span>+<span class="number">1</span>,<span class="built_in">j</span>+<span class="number">1</span>) &gt; dp(<span class="built_in">i</span>,<span class="built_in">j</span>+<span class="number">1</span>)</span><br><span class="line">            selected(<span class="keyword">end</span>+<span class="number">1</span>) = <span class="built_in">i</span>;</span><br><span class="line">            <span class="built_in">j</span> = <span class="built_in">j</span> - weights(<span class="built_in">i</span>);</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    selected = <span class="built_in">fliplr</span>(selected);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
 <p>Python 返回最大评分, 一份选中编号列表和完整表格. MATLAB 对应调用
 <code>[best,selected,table] = knapsackDP([2,3,4,5],[3,4,5,8],8)</code>.
-两者均应回算原总重量与原总评分, 不能只展示一个最大值. 配套
-<code>dynamic_examples.m</code> 给出完整调用与检查.</p>
+两者均应回算原总重量与原总评分, 不能只展示一个最大值.</p>
 <p><img src="/images/DynamicProgramming/DP-3.png" style="width:100%"></p>
 <p>图 28-3 完整装备状态表与最优回溯. 斜向回溯表示选中一件并减少容量,
 竖直回溯表示跳过当前物品. 图的物品阶段轴与数学状态对应, MATLAB
@@ -805,9 +804,8 @@ class="math inline">\(O(nW)\)</span>. 如果还要恢复方案,
 应保留二维表或正确的阶段选择记录. 后续覆盖会改变一维格子的历史,
 不能默认一组不断修改的父指针仍能还原原来的选择.</p>
 <p>这里要求倒序的是压缩后的 0-1 背包容量循环.
-不应把它误记成所有动态规划都要倒序, 前面的无限硬币金额恰恰按递增计算.
-通用一维函数与 MATLAB 对应程序见
-<code>DynamicProgrammingVariants.md</code>.</p>
+不应把它误记成所有动态规划都要倒序,
+前面的无限硬币金额恰恰按递增计算.</p>
 <h2 id="不超过容量与恰好装满-只差几个字却是两个问题">28.9
 "不超过容量"与"恰好装满", 只差几个字却是两个问题</h2>
 <p>仍只有一件重量 3, 评分 4 的物品, 容量为 4. 要求不超过容量, 带它即可得
@@ -854,9 +852,8 @@ E[i,j]=\text{从前 }i\text{ 件中选择, 总重量恰好为 }j\text{ 的最大
 <p><span class="math display">\[
 E[0,0]=0,\qquad E[0,j]=-\infty\quad(j&gt;0).
 \]</span></p>
-<p>完整函数 <code>knapsack_exact.py</code> 无解返回 <code>None</code>,
-MATLAB <code>knapsackExact.m</code> 返回 <code>-Inf</code>.
-这都表示不可达, 不能解释成评分为零. 完整双语言实现见进阶变体材料.</p>
+<p>完整函数无解时, Python可以返回 <code>None</code>, MATLAB可以返回
+<code>-Inf</code>. 这都表示不可达, 不能解释成评分为零.</p>
 <h2 id="一个两阶段分配-先算后面的最优值-再决定眼前怎么分">28.10
 一个两阶段分配: 先算后面的最优值, 再决定眼前怎么分</h2>
 <h3 id="用两份经费做一次完整计算">28.10.1 用两份经费做一次完整计算</h3>
@@ -1009,8 +1006,7 @@ V_t(s)=\max_{a\in\{0,1,\ldots,s\}}
 \]</span></p>
 <p>终点条件为 <span class="math inline">\(V_3(s)=0\)</span>.
 这种把当前收益与后续最优收益合在一起比较的关系称为 Bellman 递推.
-若改为费用最小化, 应相应改成最小值和费用函数, 完整有限阶段模型见
-<code>MultistageModels.md</code>.</p>
+若改为费用最小化, 应相应改成最小值和费用函数.</p>
 <p>能否只用剩余经费作为状态, 要看它是否保存了后续需要的信息.
 本例项目评分只由该项目分到的份数决定, 已经给 A 多少不需要另记. 若 B
 的评分还取决于 A 做过什么活动, 或存在必须搭配的要求,
@@ -1024,11 +1020,13 @@ V_t(s)=\max_{a\in\{0,1,\ldots,s\}}
 <p>动态规划英文为 dynamic programming, 简称 DP. 它既可按依赖顺序填表,
 也可用递归加缓存保存已算状态. 固定本章面值和边界规则时,
 原朴素递归的函数体执行 1672 次, 记忆化版本首次计算 26 个状态;
-计数规则和完整双语言程序见 <code>DynamicProgrammingVariants.md</code>.
-[1]</p>
+下面给出原计数程序. [1]</p>
+<p><strong><code>coin_memo.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> functools <span class="keyword">import</span> cache</span><br><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> inf</span><br><span class="line"></span><br><span class="line">coins = (<span class="number">2</span>, <span class="number">5</span>, <span class="number">7</span>)</span><br><span class="line">naive_calls = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">naive</span>(<span class="params">amount</span>):</span><br><span class="line">    <span class="keyword">global</span> naive_calls</span><br><span class="line">    naive_calls += <span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span> amount == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    answer = inf</span><br><span class="line">    <span class="keyword">for</span> coin <span class="keyword">in</span> coins:</span><br><span class="line">        <span class="keyword">if</span> coin &lt;= amount:</span><br><span class="line">            answer = <span class="built_in">min</span>(answer, naive(amount - coin) + <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> answer</span><br><span class="line"></span><br><span class="line"><span class="meta">@cache</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">memoized</span>(<span class="params">amount</span>):</span><br><span class="line">    <span class="keyword">if</span> amount == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    answer = inf</span><br><span class="line">    <span class="keyword">for</span> coin <span class="keyword">in</span> coins:</span><br><span class="line">        <span class="keyword">if</span> coin &lt;= amount:</span><br><span class="line">            answer = <span class="built_in">min</span>(answer, memoized(amount - coin) + <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> answer</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    plain_answer = naive(<span class="number">27</span>)</span><br><span class="line">    cached_answer = memoized(<span class="number">27</span>)</span><br><span class="line">    info = memoized.cache_info()</span><br><span class="line">    <span class="keyword">assert</span> plain_answer == cached_answer == <span class="number">5</span></span><br><span class="line">    <span class="keyword">assert</span> naive_calls == <span class="number">1672</span></span><br><span class="line">    <span class="keyword">assert</span> info.misses == <span class="number">26</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;最少枚数: &quot;</span>, cached_answer)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;朴素递归的函数体执行次数: &quot;</span>, naive_calls)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;记忆化搜索的函数体执行次数: &quot;</span>, info.misses)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;缓存统计: &quot;</span>, info)</span><br></pre></td></tr></table></figure>
+<p><strong><code>coin_memo.m</code></strong></p>
+<figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="params">[answer,plainCalls,memoCalls]</span> = <span class="title">coin_memo</span><span class="params">(target,coins)</span></span></span><br><span class="line">    assert(isnumeric(target) &amp;&amp; <span class="built_in">isreal</span>(target) &amp;&amp; <span class="built_in">isscalar</span>(target) &amp;&amp; <span class="built_in">isfinite</span>(target) &amp;&amp; target&gt;=<span class="number">0</span> &amp;&amp; target==<span class="built_in">floor</span>(target));</span><br><span class="line">    assert(isnumeric(coins) &amp;&amp; <span class="built_in">isreal</span>(coins) &amp;&amp; all(<span class="built_in">isfinite</span>(coins(:))) &amp;&amp; ...</span><br><span class="line">           all(coins(:)&gt;<span class="number">0</span>) &amp;&amp; all(coins(:)==<span class="built_in">floor</span>(coins(:))));</span><br><span class="line">    coins = unique(coins(:).&#x27;,<span class="string">&#x27;stable&#x27;</span>);</span><br><span class="line">    memo = <span class="built_in">nan</span>(<span class="number">1</span>,target+<span class="number">1</span>);</span><br><span class="line">    plainCalls = <span class="number">0</span>; memoCalls = <span class="number">0</span>;</span><br><span class="line">    plainAnswer = plain(target);</span><br><span class="line">    answer = cached(target);</span><br><span class="line">    assert(plainAnswer==answer);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">value</span> = <span class="title">plain</span><span class="params">(amount)</span></span></span><br><span class="line">        plainCalls = plainCalls+<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span> amount==<span class="number">0</span>, value=<span class="number">0</span>; <span class="keyword">return</span>; <span class="keyword">end</span></span><br><span class="line">        value = Inf;</span><br><span class="line">        <span class="keyword">for</span> coin = coins</span><br><span class="line">            <span class="keyword">if</span> coin&lt;=amount, value=<span class="built_in">min</span>(value,plain(amount-coin)+<span class="number">1</span>); <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">value</span> = <span class="title">cached</span><span class="params">(amount)</span></span></span><br><span class="line">        <span class="keyword">if</span> ~<span class="built_in">isnan</span>(memo(amount+<span class="number">1</span>)), value=memo(amount+<span class="number">1</span>); <span class="keyword">return</span>; <span class="keyword">end</span></span><br><span class="line">        memoCalls = memoCalls+<span class="number">1</span>;</span><br><span class="line">        value = Inf;</span><br><span class="line">        <span class="keyword">if</span> amount==<span class="number">0</span></span><br><span class="line">            value = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">for</span> coin = coins</span><br><span class="line">                <span class="keyword">if</span> coin&lt;=amount, value=<span class="built_in">min</span>(value,cached(amount-coin)+<span class="number">1</span>); <span class="keyword">end</span></span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">        memo(amount+<span class="number">1</span>) = value;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
 <p>这不是所有实现都固定具有的次数. 缓存按函数参数保存结果,
-面值改变后不能继续使用旧结果; 缓存也不会消除递归深度限制.
-进一步解释见进阶阅读 F.7.1.</p>
+面值改变后不能继续使用旧结果; 缓存也不会消除递归深度限制.</p>
 <p>二维装备表有 <span class="math inline">\((n+1)(W+1)\)</span> 个格子,
 本例是 <span class="math inline">\(5\times9=45\)</span> 个. 时间量级
 <span class="math inline">\(O(nW)\)</span> 仍依赖容量的数值大小.
@@ -1049,42 +1047,6 @@ class="math inline">\(W\)</span> 个, 所以该算法是伪多项式时间,
 <li>把最优值与记录的行动分开检查, 最后回代原金额, 重量与评分.</li>
 <li>用小规模完整枚举或独立界核对, 再估计状态数与每状态工作量.</li>
 </ol>
-<p>表 28-14 动态规划的配套阅读.</p>
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr>
-<th style="text-align: center;">想继续研究的问题</th>
-<th style="text-align: center;">完整材料位置</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">硬币递推的归纳证明与完整状态表</td>
-<td style="text-align: center;">进阶阅读 F.2</td>
-</tr>
-<tr>
-<td style="text-align: center;">最优子结构与状态充分性</td>
-<td style="text-align: center;">进阶阅读 F.4</td>
-</tr>
-<tr>
-<td style="text-align: center;">背包全部推导与表格</td>
-<td style="text-align: center;">进阶阅读 F.5, F.6</td>
-</tr>
-<tr>
-<td style="text-align: center;">记忆化, 一维压缩和恰好装满</td>
-<td style="text-align: center;">进阶阅读 F.7,
-<code>DynamicProgrammingVariants.md</code></td>
-</tr>
-<tr>
-<td style="text-align: center;">一般有限阶段模型与终端条件</td>
-<td style="text-align: center;"><code>MultistageModels.md</code></td>
-</tr>
-</tbody>
-</table>
 <p>下一章研究启发式算法. 当正确的精确模型已明确,
 但状态空间或组合空间过大时, 需要进一步学习怎样搜索较好的可行方案,
 并说明得到的是何种保证.</p>
@@ -1109,10 +1071,6 @@ class="math inline">\(W\)</span> 个, 所以该算法是伪多项式时间,
 <li>将两阶段科普经费改为总共 1 份, 重新计算最优分配.
 再解释本例为什么可以只记录剩余经费而省略此前的完整分配历史.</li>
 </ol>
-<p>进阶阅读 F.10 另有五道练习, 练习提示统一收入
-<code>ExerciseHints.md</code>.</p>
-<p>配套阅读与实验: <a
-href="../reading/28/Index.md">本章资料索引</a>.</p>
 <h2 id="参考资料">参考资料</h2>
 <p>[1] Python 官方文档. functools. cache.
 https://docs.python.org/3/library/functools.html#functools.cache.</p>

@@ -32,8 +32,8 @@
 <meta property="og:image" content="http://example.com/images/SimpleLinearRegression/influence.png">
 <meta property="og:image" content="http://example.com/images/SimpleLinearRegression/sensitivity.png">
 <meta property="og:image" content="http://example.com/images/SimpleLinearRegression/residual_case_order.png">
-<meta property="article:published_time" content="2026-11-03T00:53:51.571Z">
-<meta property="article:modified_time" content="2026-11-03T00:53:51.571Z">
+<meta property="article:published_time" content="2026-11-05T02:49:45.324Z">
+<meta property="article:modified_time" content="2026-11-04T07:37:44.000Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/SimpleLinearRegression/interval_step.png">
@@ -482,8 +482,7 @@ class="math inline">\(2.131163\times10^{-9}\)</span>.
 <p>在 0.05 水平拒绝零斜率, 与斜率 95% 区间不含零一致.
 截距区间含零不使整条直线无效. 检验不显著时应说"不拒绝原假设",
 不能断言变量不存在任何关系. 显著也不证明因果, 误差假设或外推可靠.</p>
-<p>本例 p 是很小的正数, 显示为 0.0000 只是舍入. 完整程序的 F 检验及
-MATLAB 五项输出留在进一步阅读, 不必先记住软件返回顺序再理解模型.</p>
+<p>本例 p 是很小的正数, 显示为 0.0000 只是舍入.</p>
 <h2 id="同一身高的两种区间-怎样一步步算">7.5 同一身高的两种区间,
 怎样一步步算</h2>
 <h3 id="从一个点预测开始">7.5.1 从一个点预测开始</h3>
@@ -596,7 +595,7 @@ h_{ii}=\frac1n+\frac{(x_i-\overline x)^2}{S_{xx}}.
 D_i=\frac{r_i^2}{2MSE}\frac{h_{ii}}{(1-h_{ii})^2}.
 \]</span></p>
 <p>分母中的 2 是参数数目, MSE 是全样本误差方差估计.
-完整诊断程序保留在进一步阅读, 下面先比较同一批数据中的不同记录.</p>
+下面先比较同一批数据中的不同记录.</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> scipy.stats <span class="keyword">import</span> linregress</span><br><span class="line"></span><br><span class="line">x = [<span class="number">143</span>,<span class="number">145</span>,<span class="number">146</span>,<span class="number">147</span>,<span class="number">149</span>,<span class="number">150</span>,<span class="number">153</span>,<span class="number">154</span>,<span class="number">155</span>,<span class="number">156</span>,<span class="number">157</span>,<span class="number">158</span>,<span class="number">159</span>,<span class="number">160</span>,<span class="number">162</span>,<span class="number">164</span>]</span><br><span class="line">y = [<span class="number">88</span>,<span class="number">85</span>,<span class="number">88</span>,<span class="number">91</span>,<span class="number">92</span>,<span class="number">93</span>,<span class="number">93</span>,<span class="number">95</span>,<span class="number">96</span>,<span class="number">98</span>,<span class="number">97</span>,<span class="number">96</span>,<span class="number">98</span>,<span class="number">99</span>,<span class="number">100</span>,<span class="number">102</span>]</span><br><span class="line"></span><br><span class="line">n = <span class="built_in">len</span>(x)</span><br><span class="line">mean_x = <span class="built_in">sum</span>(x) / n</span><br><span class="line">fit = linregress(x, y)</span><br><span class="line">SSE = <span class="number">0.0</span></span><br><span class="line">Sxx = <span class="number">0.0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">    residual = y[i] - fit.intercept - fit.slope * x[i]</span><br><span class="line">    SSE = SSE + residual**<span class="number">2</span></span><br><span class="line">    Sxx = Sxx + (x[i] - mean_x)**<span class="number">2</span></span><br><span class="line">MSE = SSE / (n - <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">leverages = []</span><br><span class="line">cooks = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">    residual = y[i] - fit.intercept - fit.slope * x[i]</span><br><span class="line">    h = <span class="number">1</span> / n + (x[i] - mean_x)**<span class="number">2</span> / Sxx</span><br><span class="line">    cook = residual**<span class="number">2</span> / (<span class="number">2</span> * MSE) * h / (<span class="number">1</span> - h)**<span class="number">2</span></span><br><span class="line">    leverages.append(h)</span><br><span class="line">    cooks.append(cook)</span><br><span class="line">    <span class="built_in">print</span>(i + <span class="number">1</span>, <span class="built_in">round</span>(residual, <span class="number">6</span>), <span class="built_in">round</span>(h, <span class="number">6</span>), <span class="built_in">round</span>(cook, <span class="number">6</span>))</span><br></pre></td></tr></table></figure>
 <p>表 7-4 残差与影响诊断.</p>
 <table>
@@ -719,8 +718,8 @@ class="math inline">\(|T_i|\)</span> 超过临界值, 用来提示核查,
 <p><img src="/images/SimpleLinearRegression/residual_case_order.png" style="width:100%"></p>
 <p>图 7-6 按编号排列的残差诊断区间. 区间按外部学生化定义, 只有第 2
 条的逐点区间不含零. 红色提示核查, 不判定测量错误.</p>
-<p>MATLAB <code>regress</code> 的原生残差区间在进一步阅读中命名为
-<code>rint_library</code>; 显式公式的区间另行命名[5].
+<p>MATLAB <code>regress</code>
+的原生残差区间与显式公式的区间应分别命名[5].
 不能仅因都叫残差区间就假定目标版本中的端点完全相同.</p>
 <h3 id="同时看十六条时-不能只用单条结论">7.8.3 同时看十六条时,
 不能只用单条结论</h3>
@@ -767,8 +766,6 @@ p_i^{\mathrm{adj}}=\min(np_i,1).
 解释系数唯一性, R² 定义和非退化推断会遇到什么问题.
 区分最小二乘本身与完整诊断程序的输入限制.</li>
 </ol>
-<p>配套阅读与实验: <a
-href="../reading/07/Index.md">本章资料索引</a>.</p>
 <h2 id="参考资料">参考资料</h2>
 <p>[1] NIST/SEMATECH. <a
 target="_blank" rel="noopener" href="https://www.itl.nist.gov/div898/handbook/pmd/section4/pmd431.htm">Least

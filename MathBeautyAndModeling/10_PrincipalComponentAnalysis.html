@@ -31,8 +31,8 @@
 <meta property="og:image" content="http://example.com/images/PrincipalComponentAnalysis/PrincipalComponentAnalysis-3.png">
 <meta property="og:image" content="http://example.com/images/PrincipalComponentAnalysis/PrincipalComponentAnalysis-5.png">
 <meta property="og:image" content="http://example.com/images/PrincipalComponentAnalysis/PrincipalComponentAnalysis-2.png">
-<meta property="article:published_time" content="2026-11-03T00:53:51.586Z">
-<meta property="article:modified_time" content="2026-11-03T00:53:51.586Z">
+<meta property="article:published_time" content="2026-11-05T02:49:45.510Z">
+<meta property="article:modified_time" content="2026-11-04T07:37:44.000Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/images/PrincipalComponentAnalysis/DirectionTrials.png">
@@ -418,9 +418,8 @@ a^{\mathsf T}a&amp;=1.
 \end{aligned}
 \]</span></p>
 <p>目标函数表示得分的样本方差, 约束表示方向长度为1.
-后续方向还需满足与已选方向正交. 完整推导放在进一步阅读中;
-使用程序时先记住两件事: 特征值表示该方向保留的方差,
-特征向量给出原变量的组合方法.</p>
+后续方向还需满足与已选方向正交. 使用程序时先记住两件事:
+特征值表示该方向保留的方差, 特征向量给出原变量的组合方法.</p>
 <p>五点算例恰好共线, 是一个没有损失的特殊例子. 图
 10-2用另一组略有扰动的点展示一般情形, 数据为 <span
 class="math inline">\((1,2.3),(2,3.7),(3,6.2),(4,7.7),(5,10.1)\)</span>.
@@ -1156,7 +1155,7 @@ f_{\mathrm{new}}=
 \]</span></p>
 <p>这里按一行记录书写. 如果后面要预测单产, 应先划分训练与验证数据,
 再只用训练数据估计这套变换. 对连续年份还要注意时间先后.
-配套选读程序用前12年估计变换, 再变换后6年; 这一步演示如何使用已有坐标,
+下面的程序用前12年估计变换, 再变换后6年; 这一步演示如何使用已有坐标,
 尚未建立单产预测模型.</p>
 <p>第二, <strong>保留的变化是否就是任务需要的变化?</strong>
 大方差可能来自共同趋势或测量误差, 小方差也可能包含重要预测信号.
@@ -1166,8 +1165,7 @@ f_{\mathrm{new}}=
 不同主成分在用于计算的样本中不相关, 但不相关不等于独立. 例如对称分布的
 <span class="math inline">\(U\)</span> 与 <span
 class="math inline">\(U^2\)</span> 可以不相关, 却有确定关系.
-特征值相同或很接近时, 方向还可能不唯一或对扰动敏感.
-这些问题的图示与计算放在进一步阅读中.</p>
+特征值相同或很接近时, 方向还可能不唯一或对扰动敏感.</p>
 <p>只有相关或协方差矩阵时, 可以讨论方差结构, 不会凭空得到个体得分.
 对真正的样本数据, 应同时报告尺度, 维数, 解释率与重建误差.
 常数列不能直接标准化; 全部样本没有变化时, 总方差为0, 解释率无定义.</p>
@@ -1175,6 +1173,15 @@ class="math inline">\(U^2\)</span> 可以不相关, 却有确定关系.
 常用库也可通过奇异值分解求主成分. 使用 Python 的 <code>PCA</code> 或
 MATLAB 的 <code>pca</code> 时仍要自行决定是否标准化,
 不能因为调用了库函数就省略尺度选择.</p>
+<p><strong>尺度比较、新样本变换与方向敏感性的核对程序</strong></p>
+<p>下面前两段沿用本章棉花算例的五列投入矩阵 <code>X</code>, 不含单产列,
+行顺序保持原18年顺序. 第三段可单独运行.</p>
+<p><strong><code>compare_cotton_scales.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">mean = X.mean(axis=<span class="number">0</span>)</span><br><span class="line">scale = X.std(axis=<span class="number">0</span>, ddof=<span class="number">1</span>)</span><br><span class="line">Z = (X - mean) / scale</span><br><span class="line">R = Z.T @ Z / (<span class="built_in">len</span>(X) - <span class="number">1</span>)</span><br><span class="line">raw_C = (X-mean).T @ (X-mean) / (<span class="built_in">len</span>(X)-<span class="number">1</span>)</span><br><span class="line">raw_values, raw_vectors = np.linalg.eigh(raw_C)</span><br><span class="line">raw_ratio = raw_values[::-<span class="number">1</span>] / raw_values.<span class="built_in">sum</span>()</span><br><span class="line">values, vectors = np.linalg.eigh(R)</span><br><span class="line">ratio = values[::-<span class="number">1</span>] / values.<span class="built_in">sum</span>()</span><br><span class="line">Y = X * np.array([<span class="number">1</span>, <span class="number">100</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>])</span><br><span class="line">Z_after_units = (Y-Y.mean(axis=<span class="number">0</span>)) / Y.std(axis=<span class="number">0</span>, ddof=<span class="number">1</span>)</span><br><span class="line">Z_population = (X-mean) / X.std(axis=<span class="number">0</span>, ddof=<span class="number">0</span>)</span><br><span class="line">population_values = np.linalg.eigvalsh(Z_population.T @ Z_population / <span class="number">17</span>)[::-<span class="number">1</span>]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Raw-scale variance ratios:&quot;</span>, raw_ratio)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Standardized variance ratios:&quot;</span>, ratio)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Largest standardized change after positive unit conversion:&quot;</span>,</span><br><span class="line">      np.<span class="built_in">max</span>(np.<span class="built_in">abs</span>(Z_after_units-Z)))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Eigenvalue multiplier when ddof changes from 1 to 0:&quot;</span>,</span><br><span class="line">      population_values / values[::-<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
+<p><strong><code>cotton_future_step.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">train, future = X[:<span class="number">12</span>], X[<span class="number">12</span>:]</span><br><span class="line">mean = train.mean(axis=<span class="number">0</span>)</span><br><span class="line">scale = train.std(axis=<span class="number">0</span>, ddof=<span class="number">1</span>)</span><br><span class="line">Z = (train - mean) / scale</span><br><span class="line">R = Z.T @ Z / (<span class="built_in">len</span>(train) - <span class="number">1</span>)</span><br><span class="line">values, vectors = np.linalg.eigh(R)</span><br><span class="line">order = np.argsort(values)[::-<span class="number">1</span>]</span><br><span class="line">values, vectors = values[order], vectors[:, order]</span><br><span class="line"><span class="comment"># Choose a consistent sign for display; the projection is unchanged.</span></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(vectors.shape[<span class="number">1</span>]):</span><br><span class="line">    row = np.argmax(np.<span class="built_in">abs</span>(vectors[:, j]))</span><br><span class="line">    <span class="keyword">if</span> vectors[row, j] &lt; <span class="number">0</span>:</span><br><span class="line">        vectors[:, j] *= -<span class="number">1</span></span><br><span class="line">ratio = values / values.<span class="built_in">sum</span>()</span><br><span class="line">cumulative = np.cumsum(ratio)</span><br><span class="line">cumulative[-<span class="number">1</span>] = <span class="number">1.0</span></span><br><span class="line">k = <span class="built_in">int</span>(np.searchsorted(cumulative, <span class="number">0.95</span>) + <span class="number">1</span>)</span><br><span class="line">W = vectors[:, :k]</span><br><span class="line">train_score = Z @ W</span><br><span class="line">future_score = ((future - mean) / scale) @ W</span><br><span class="line">first_again = ((train[[<span class="number">0</span>]] - mean) / scale) @ W</span><br><span class="line">future_Xhat = (future_score @ W.T) * scale + mean</span><br><span class="line">np.set_printoptions(precision=<span class="number">6</span>, suppress=<span class="literal">True</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Training mean:&quot;</span>, mean)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Training sample standard deviation:&quot;</span>, scale)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Training variance ratios:&quot;</span>, ratio)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Number retained:&quot;</span>, k)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;First training score computed again:&quot;</span>, first_again)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Training mean score:&quot;</span>, train_score.mean(axis=<span class="number">0</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;2002-2007 scores using the stored transform:\n&quot;</span>, future_score)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Future mean score:&quot;</span>, future_score.mean(axis=<span class="number">0</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Future reconstruction RMSE by variable:&quot;</span>,</span><br><span class="line">      np.sqrt(np.mean((future-future_Xhat)**<span class="number">2</span>, axis=<span class="number">0</span>)))</span><br></pre></td></tr></table></figure>
+<p><strong><code>check_pca_limits.py</code></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">u = np.linspace(-<span class="number">1</span>, <span class="number">1</span>, <span class="number">201</span>)</span><br><span class="line">v = u**<span class="number">2</span></span><br><span class="line">covariance = np.cov(u, v)[<span class="number">0</span>, <span class="number">1</span>]</span><br><span class="line">t = np.arange(<span class="number">24</span>) * <span class="number">2</span>*np.pi / <span class="number">24</span></span><br><span class="line">circle = np.column_stack((np.cos(t), np.sin(t)))</span><br><span class="line">circle_values = np.linalg.eigvalsh(np.cov(circle, rowvar=<span class="literal">False</span>))</span><br><span class="line">theta = np.pi / <span class="number">4</span></span><br><span class="line">Q = np.array([[np.cos(theta), -np.sin(theta)],</span><br><span class="line">              [np.sin(theta), np.cos(theta)]])</span><br><span class="line">epsilon = <span class="number">1e-6</span></span><br><span class="line">C1 = np.diag([<span class="number">1</span>+epsilon, <span class="number">1.0</span>])</span><br><span class="line">C2 = Q @ C1 @ Q.T</span><br><span class="line">_, V1 = np.linalg.eigh(C1)</span><br><span class="line">_, V2 = np.linalg.eigh(C2)</span><br><span class="line">cosine = np.clip(<span class="built_in">abs</span>(V1[:, -<span class="number">1</span>] @ V2[:, -<span class="number">1</span>]), <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">angle = np.degrees(np.arccos(cosine))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Covariance of U and U squared:&quot;</span>, covariance)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Variance of U squared:&quot;</span>, v.var(ddof=<span class="number">1</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Circle eigenvalues:&quot;</span>, circle_values)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Small covariance perturbation:&quot;</span>, np.linalg.norm(C1-C2, <span class="built_in">ord</span>=<span class="string">&#x27;fro&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Angle between leading directions in degrees:&quot;</span>, angle)</span><br></pre></td></tr></table></figure>
 <h2 id="写出一段完整结论-再做练习">10.9 写出一段完整结论, 再做练习</h2>
 <p>棉花案例可以这样概括: 以五项投入为输入, 先用各列样本标准差进行标准化.
 按95%的累计解释率阈值保留两个主成分, 累计保留97.7440%的标准化样本方差.
@@ -1199,15 +1206,12 @@ MATLAB 的 <code>pca</code> 时仍要自行决定是否标准化,
 应说明什么? 能否从该矩阵恢复六个人的尺寸记录?</li>
 <li>用前12年的棉花投入估计变换, 再计算后6年的得分.
 后6年的得分均值必须为0吗? 为什么这个操作还不能证明单产预测有效?</li>
-<li>运行不相关与方向敏感性的选读程序. 解释 <span
+<li>运行不相关与方向敏感性的上述核对程序. 解释 <span
 class="math inline">\(U\)</span> 与 <span
 class="math inline">\(U^2\)</span> 的零协方差, 圆周点的相同特征值,
 以及很小的协方差扰动为何仍可能使第一方向明显转动.</li>
 </ol>
-<p>进一步阅读保留完整理论推导, 原有三个完整算例和复用接口说明.
-下一章进入机器学习, 继续区分训练中的良好表现与新样本上的实际效果.</p>
-<p>配套阅读与实验: <a
-href="../reading/10/Index.md">本章资料索引</a>.</p>
+<p>下一章进入机器学习, 继续区分训练中的良好表现与新样本上的实际效果.</p>
 <h2 id="参考资料">参考资料</h2>
 <p>[1] JOLLIFFE I T, CADIMA J. Principal component analysis: a review
 and recent developments[J]. Philosophical Transactions of the Royal
